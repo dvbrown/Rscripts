@@ -1,0 +1,28 @@
+library(cummeRbund)
+setwd('~/Documents/RNAdata/RNAseqAnalysis/121116_cuffOutFull/')
+cuff_data = readCufflinks()
+
+gene_diff_data = diffData(genes(cuff_data))
+sig_gene_diff_data = subset(gene_diff_data, (significant=='yes'))
+isoforms_diff_data = diffData(isoforms(cuff_data))
+sig_isoform_diff_data = subset(isoforms_diff_data, (significant=='yes'))
+tss_diff_data = diffData(TSS(cuff_data))
+sig_tss_diff_data = subset(tss_diff_data, (significant=='yes'))
+cds_diff_data = diffData(CDS(cuff_data))
+sig_cds_diff_data = subset(cds_diff_data, (significant=='yes'))
+
+promoter_diff_data = distValues(promoters(cuff_data))
+sig_promoter_diff_data = subset(promoter_diff_data, (significant=='yes'))
+splicing_diff_data = distValues(splicing(cuff_data))
+sig_splicing_diff_data = subset(splicing_diff_data, (significant=='yes'))
+relCDS_diff_data = distValues(relCDS(cuff_data))
+sig_Relcds_diff_data = subset(relCDS_diff_data, (significant=='yes'))
+
+write.table(sig_gene_diff_data, './Rplots/sigGenes/121117_sigGenes.txt', sep='\t')
+write.table(sig_isoform_diff_data, './Rplots/sigGenes/121117_sigIsoforms.txt', sep='\t')
+write.table(sig_tss_diff_data, './Rplots/sigGenes/121117_sigTSS.txt', sep='\t')
+write.table(sig_cds_diff_data, './Rplots/sigGenes/121117_sigCDS.txt', sep='\t')
+
+write.table(sig_promoter_diff_data, './Rplots/sigGenes/121117_sigPromoters.txt', sep='\t')
+write.table(sig_splicing_diff_data, './Rplots/sigGenes/121117_sigSplicing.txt', sep='\t')
+write.table(sig_Relcds_diff_data, './Rplots/sigGenes/121117_sigRelcds.txt', sep='\t')
