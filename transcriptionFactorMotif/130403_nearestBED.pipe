@@ -1,0 +1,12 @@
+referenceBED="/Users/d.brown6/Documents/public-datasets/annotationFiles/genesChr.bed"
+
+ChIPseqToGene = {
+  doc title: "Use bedtools to find the nearest gene to the ChIPseq peaks"
+    desc: """ClosestBed searches for overlapping features in A and B. In the event that no feature in B overlaps the current feature in A, 
+    closestBed will report the closest (that is, least genomic distance from the start or end of A) feature in B"""
+  exec """closestBed -t all
+  -a $input1
+  -b $referenceBED"""
+}
+
+Bpipe.run { ChIPseqToGene }

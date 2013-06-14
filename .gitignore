@@ -38,3 +38,20 @@ transcriptionFactorMotif/.bpipe/*
 *.dcm
 
 *.mdb
+
+*.pper
+.Rproj.user*
+.Rdata
+.Rhistory
+
+intorBioconductor-data/.DS_Store
+
+.DS_Store
+
+Complete_R_Data_Files_and_Scripts/Data Files/assgn-mode.R
+
+Complete_R_Data_Files_and_Scripts/Scripts/clustercgh.r
+
+Complete_R_Data_Files_and_Scripts/Scripts/plotcgh.r
+
+*.part

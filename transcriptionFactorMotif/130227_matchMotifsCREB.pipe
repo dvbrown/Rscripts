@@ -1,0 +1,16 @@
+transcriptionFactor="CREB"
+upstream="3000"
+downstream="300"
+
+countMotifs = {
+  doc title: "Dan Brown's custom R script to match CREB full and half sites in 20,000 genes"
+    desc: " You can also use sub-fields and genotype fields / sub-fields such as"
+  exec """./130326_mainCREBfullHalfCombo.R -t $transcriptionFactor 
+  -g $input.txt
+  -o $output.txt
+  -u $upstream 
+  -s $downstream
+  """  
+}
+
+Bpipe.run { countMotifs }
