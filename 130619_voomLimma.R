@@ -35,12 +35,13 @@ design <- model.matrix(~filData$samples$group)
 v <- voom(filData,design,plot=TRUE)
 
 #Make a MDS plot to view differences
-plotMDS(v,top=50,labels=filData$samples$group, gene.selection="common", main='MDS RNA-seq clone 035 pilot')
+plotMDS(v,top=50,labels=filData$samples$group, gene.selection="common", main='MDS RNA-seq \nclone 035 pilot')
 
 #differential exppression test as for limma
 fit <- lmFit(v,design)
 fit <- eBayes(fit)
-topTable(fit,coef=2,number=100,sort="p", genelist=annotation)
+posVSneg = topTable(fit,coef=2,number=20000,sort="p", genelist=annotation)
 summary(decideTests(fit))
+write.table(posVSneg, '~/Documents/RNAdata/RNAseqAnalysis/121105_trimmomaticReads/mergedBam/121107_mergeSortTopHatAlignIndex/130619_voomLimma/130619_voomLimma_V1.txt',sep='\t',row.names=F)
 
-plotMA(fit,array=2,main="MA")
+plotMA(fit,array=2,main="MA plot clone 035 pilot voom limma", xlab='logCounts', ylab='logFC')
