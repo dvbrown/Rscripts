@@ -44,4 +44,9 @@ posVSneg = topTable(fit,coef=2,number=20000,sort="p", genelist=annotation)
 summary(decideTests(fit))
 write.table(posVSneg, '~/Documents/RNAdata/RNAseqAnalysis/121105_trimmomaticReads/mergedBam/121107_mergeSortTopHatAlignIndex/130619_voomLimma/130619_voomLimma_V1.txt',sep='\t',row.names=F)
 
+#Get rid of all the RP11 genes
+hasannot <- is.na(posVSneg$entrezgene)==0
+filPosVSneg = subset.data.frame(posVSneg)
+write.table(filPosVSneg, '~/Documents/RNAdata/RNAseqAnalysis/121105_trimmomaticReads/mergedBam/121107_mergeSortTopHatAlignIndex/130619_voomLimma/130619_voomLimma_V2.txt',sep='\t',row.names=F)
+
 plotMA(fit,array=2,main="MA plot clone 035 pilot voom limma", xlab='logCounts', ylab='logFC')
