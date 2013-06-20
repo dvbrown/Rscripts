@@ -40,13 +40,14 @@ plotMDS(v,top=50,labels=filData$samples$group, gene.selection="common", main='MD
 #differential exppression test as for limma
 fit <- lmFit(v,design)
 fit <- eBayes(fit)
-posVSneg = topTable(fit,coef=2,number=20000,sort="p", genelist=annotation)
-summary(decideTests(fit))
-write.table(posVSneg, '~/Documents/RNAdata/RNAseqAnalysis/121105_trimmomaticReads/mergedBam/121107_mergeSortTopHatAlignIndex/130619_voomLimma/130619_voomLimma_V1.txt',sep='\t',row.names=F)
+#inputting the gene list doesn't generate the right annotation ENSG mappings
+posVSneg = topTable(fit,coef=2,number=Inf,sort.by="p", resort.by='logFC')
+posVSneg = merge(posVSneg, annotation, by.x='ID',by.y='ensembl_gene_id')
+head(summary(decideTests(fit)))
+write.table(posVSneg, '~/Documents/RNAdata/RNAseqAnalysis/121105_trimmomaticReads/mergedBam/121107_mergeSortTopHatAlignIndex/130619_voomLimma/130620_voomLimma.txt',sep='\t',row.names=F)
 
-#Get rid of all the RP11 genes
-hasannot <- is.na(posVSneg$entrezgene)==0
-filPosVSneg = subset.data.frame(posVSneg)
-write.table(filPosVSneg, '~/Documents/RNAdata/RNAseqAnalysis/121105_trimmomaticReads/mergedBam/121107_mergeSortTopHatAlignIndex/130619_voomLimma/130619_voomLimma_V2.txt',sep='\t',row.names=F)
-
+#filter for known genes, significant genes and differentially expressed genes. Use a generic subset idea, take all columns
+filPosVSneg = posVSneg[(abs(posVSneg$logFC) > 1) & (posVSneg$adj.P.Val < 0.05),]
+write.table(filPosVSneg, '~/Documents/RNAdata/RNAseqAnalysis/121105_trimmomaticReads/mergedBam/121107_mergeSortTopHatAlignIndex/130619_voomLimma/130620_voomLimmaFilter.txt',sep='\t',row.names=F)
+     
 plotMA(fit,array=2,main="MA plot clone 035 pilot voom limma", xlab='logCounts', ylab='logFC')
