@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 library(optparse)
-#setwd('~/Documents/eQTL/')
+#setwd('~/Documents/eQTL/130823_fullData/')
 
 # specify our desired options in a list
 # by default OptionParser will add an help option equivalent to
@@ -9,9 +9,9 @@ library(optparse)
 option_list <- list(
   make_option(c("-v", "--verbose"), action="store_true", default=FALSE,
               help="An Rscript to that matches the column names in a mutation SNP like file with a gene expression matrix"),
-  make_option(c("-m", "--mutationFile"), action="store", type='character', default='./Matrix_eQTL_R/130822_mutFileTestGoodNames.txt',
+  make_option(c("-m", "--mutationFile"), action="store", type='character', default='./somatic.filterMaf.mafToSNP.fixPatientNames.txt',
               help="The mutation SNP-like file"),
-  make_option(c("-g", "--geneExpressionMatrix"), action="store",type = 'character', default='./Matrix_eQTL_R/130822_geneFileTest.txt',
+  make_option(c("-g", "--geneExpressionMatrix"), action="store",type = 'character', default='./GBM.uncv2.mRNAseq_raw_counts.txt',
               help="A tab delimited text file of the gene expression matrix"),
   make_option(c("-s", "--snpFiltered"), action="store", type='character', default='outputM.txt',
               help="The Filtered mutation file"),

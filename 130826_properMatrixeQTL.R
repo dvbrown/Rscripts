@@ -11,9 +11,8 @@ useModel = modelLINEAR
 #set up the SNP file and the expression file. The genotypes are coded as 0, 1 or 2 based on AA, AB, BB genotype.
 #Column names must match
 SNP_file_name = 'somatic.filterMaf.mafToSNP.fixPatientNames.txt.matchPatientNames.txt'
-expression_file_name = 'GBM.uncv2.mRNAseq_raw_counts.txt.matchPatientNames.txt'
+expression_file_name = 'GBM.uncv2.mRNAseq_RSEM_normalized_log2.txt.matchPatientNames.txt'
 
-#####################################################################################################################
 ###############The covariate input file. This will require much thought in a real analysis###########################
 #covariates_file_name = "Sample_Data/Covariates.txt"
 ######################################################################################################################
