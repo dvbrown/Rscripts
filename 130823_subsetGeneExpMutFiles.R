@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 library(optparse)
-setwd('~/Documents/eQTL/')
+#setwd('~/Documents/eQTL/')
 
 # specify our desired options in a list
 # by default OptionParser will add an help option equivalent to
@@ -23,8 +23,8 @@ option_list <- list(
 opt <- parse_args(OptionParser(option_list=option_list))
 
 mutations = read.delim(opt$mutationFile, row.names=1)
-intersectPatient = intersect(colnames(mutations), colnames(genes))
 genes = read.delim(opt$geneExpressionMatrix, row.names=1)
+intersectPatient = intersect(colnames(mutations), colnames(genes))
 
 overlapGenes = genes[,intersectPatient]
 overlapMuts = mutations[,intersectPatient]
