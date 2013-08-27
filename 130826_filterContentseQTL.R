@@ -30,10 +30,16 @@ option_list <- list(
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
 opt <- parse_args(OptionParser(option_list=option_list))
+graphical = par(no.readonly = TRUE)
 
 countNAs = function(numericMatrix) {
   num = sum(is.na(numericMatrix))
   return (num)
+}
+
+changeLabels <- function (cutoff) {
+  if (mutFilter$mutNum <= cutoff){
+    mutFilter$labels = ' '}
 }
 
 mutations = read.delim(opt$mutationFile, row.names=1)
@@ -43,10 +49,14 @@ genes$NAs = apply(genes, 1, countNAs)
 #filter for the prevalence of a mutation in a patient. Remove genes with less n % mutation rate in GBM
 patientNumber = as.numeric(length(mutations))
 mutations$mutNum = rowSums(mutations)
+mutFilter$labels = row.names(mutFilter)
+mutFilter$labels = apply(mutFilter, 1, changeLabels)
 mutFilter = subset(mutations, rowMeans(mutations) >= opt$cuttoffMut)
 
+par(cex=1, las=2, cex.axis=0.5)
 barplot(mutFilter$mutNum, names.arg=row.names(mutFilter), ylab='Number of patients with mutation',
         main='Frequency of mutations')
+par(graphical)
 
 mutFilter = mutFilter[,c(1:patientNumber)]
 
