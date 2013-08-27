@@ -1,6 +1,12 @@
 library(MatrixEQTL)
 setwd('~/Documents/eQTL/130823_fullData/')
-#This tutorial is hosted at http://www.bios.unc.edu/research/genomic_software/Matrix_eQTL/manual.html
+
+selectMutGene <- function (eQTLresult, mutedGene) {
+  #extracts the eQTLs for the mutated gene
+  mutedGene = subset(eQTLresult, eQTLresult$snps == mutedGene)
+  return (mutedGene)
+}
+#This is based off http://www.bios.unc.edu/research/genomic_software/Matrix_eQTL/manual.html
 
 #Matrix eQTL requires two input files, one with genotype information, and another with the gene expression. 
 #It can also accept extra file with covariates and an error covariance matrix.
@@ -17,10 +23,10 @@ expression_file_name = 'GBM.uncv2.mRNAseq_RSEM_normalized_log2.txt.matchPatientN
 #covariates_file_name = "Sample_Data/Covariates.txt"
 ######################################################################################################################
 
-output_file_name = "./eQTL_results_R.txt"
+output_file_name = paste(Sys.Date(),"eQTL_results_R_wholeData.txt", sep='_')
 
 #set this to 1e-5
-pvOutputThreshold = 1e-2
+pvOutputThreshold = 1e-5
 #a dummy variable that is not often used
 errorCovariance = numeric()
 
@@ -53,7 +59,9 @@ me = Matrix_eQTL_engine(snps,
                         verbose = TRUE,
                         pvalue.hist = 'qqplot') #change this parameter to change the plot
 
+#increased the bin size for the p-value hist for more bars in the plot
 plot(me)
-#output = read.delim(file='eQTL_results_M.txt')
+eQTLs = me$all$eqtls
+p53 = selectMutGene(eQTLs, 'TP53')
 
 #next time try out the separate analysis of cis and trans eQTLs. Need location parameter files.

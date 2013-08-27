@@ -29,17 +29,18 @@ option_list <- list(
 )
 # get command line options, if help option encountered print help and exit,
 # otherwise if options not found on command line then set defaults,
+
 opt <- parse_args(OptionParser(option_list=option_list))
 graphical = par(no.readonly = TRUE)
+
+# svg(filename = if(onefile) "Rplots.svg" else "Rplot%03d.svg",
+#     width = 7, height = 7, pointsize = 12,
+#     onefile = FALSE, family = "sans", bg = "white",
+#     antialias = c("default", "none", "gray", "subpixel"))
 
 countNAs = function(numericMatrix) {
   num = sum(is.na(numericMatrix))
   return (num)
-}
-
-changeLabels <- function (cutoff) {
-  if (mutFilter$mutNum <= cutoff){
-    mutFilter$labels = ' '}
 }
 
 mutations = read.delim(opt$mutationFile, row.names=1)
@@ -49,13 +50,15 @@ genes$NAs = apply(genes, 1, countNAs)
 #filter for the prevalence of a mutation in a patient. Remove genes with less n % mutation rate in GBM
 patientNumber = as.numeric(length(mutations))
 mutations$mutNum = rowSums(mutations)
-mutFilter$labels = row.names(mutFilter)
-mutFilter$labels = apply(mutFilter, 1, changeLabels)
+
 mutFilter = subset(mutations, rowMeans(mutations) >= opt$cuttoffMut)
 
-par(cex=1, las=2, cex.axis=0.5)
-barplot(mutFilter$mutNum, names.arg=row.names(mutFilter), ylab='Number of patients with mutation',
+par(cex.axis=0.5, las=2, cex.axis=0.5, mfrow=c(2,1), cex.main=0.8)
+barplot(mutFilter$mutNum, ylab='#patients with mutation', xlab='genes',
         main='Frequency of mutations')
+
+hist(mutFilter$mutNum, ylab='#frequency',
+        main='Frequency of mutations', xlab='number mutations')
 par(graphical)
 
 mutFilter = mutFilter[,c(1:patientNumber)]
@@ -63,6 +66,9 @@ mutFilter = mutFilter[,c(1:patientNumber)]
 #Filter the RNAseq data for expression. Remove genes with more than n NA values (ie not expressed). Used the RSEM log2 normalised data
 geneFilter = subset(genes, genes$NAs <= patientNumber * opt$cuttoffGene)
 geneFilter = geneFilter[,c(1:patientNumber)]
+par(cex.axis=0.5, las=2, cex.main=1)
+boxplot(geneFilter, ylab='RSEM normalised', main='Normalised gene expression', col=rainbow(patientNumber))
+par(graphical)
 
-write.table(geneFilter, file=opt$outGene, sep='\t', row.names=T)
-write.table(mutFilter, file=opt$outMut, sep='\t', row.names=T)
+write.table(geneFilter, file=paste(Sys.Date(),opt$outGene, sep='_'), sep='\t', row.names=T)
+write.table(mutFilter, file=paste(Sys.Date(),opt$outMut, sep='_'), sep='\t', row.names=T)
