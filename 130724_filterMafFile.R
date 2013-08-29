@@ -1,6 +1,5 @@
 #!/usr/bin/env Rscript
 library(optparse)
-#setwd('~/Documents/eQTL/')
 
 # specify our desired options in a list
 # by default OptionParser will add an help option equivalent to
@@ -22,7 +21,7 @@ opt <- parse_args(OptionParser(option_list=option_list))
 #A script to filter the maf file into a vcf file? Some file that is good for the tools.
 #########################################################################################
 
-mutations = read.delim(opt$mafFile, skip=4)
+mutations = read.delim(opt$mafFile)
 
 mutFilter = mutations[,c(1,9,16,26)]
 #rm(mutations)
