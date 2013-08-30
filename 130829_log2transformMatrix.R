@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 library(optparse)
-#setwd('~/Documents/eQTL/130823_fullData/')
+setwd('~/Documents/eQTL/130829_fullData/')
 
 # specify our desired options in a list
 # by default OptionParser will add an help option equivalent to
@@ -9,9 +9,9 @@ library(optparse)
 option_list <- list(
   make_option(c("-v", "--verbose"), action="store_true", default=FALSE,
               help="To take an RNA-seq file and return the log2 version"),
-  make_option(c("-g", "--geneExpressionMatrix"), action="store",type = 'character', default='~/Documents/eQTL/130829_fullData/illuminahiseq_RSEM_genes_normalized__data.data.txt',
+  make_option(c("-g", "--geneExpressionMatrix"), action="store",type = 'character', default='~/Documents/eQTL/130829_fullData/illuminahiseq_rnaseqV2_RSEMnormalised.fixpatientnames.txt',
               help="A tab delimited text file of the gene expression matrix"),
-  make_option(c("-o", "--outGene"), action="store", type='character', default='outputG.txt',
+  make_option(c("-o", "--outGene"), action="store", type='character', default='outputHiSeq.txt',
               help="The log2 transformed gene expression matrix")
 )
 # get command line options, if help option encountered print help and exit,
@@ -19,5 +19,16 @@ option_list <- list(
 opt <- parse_args(OptionParser(option_list=option_list))
 
 geneMatrix = read.delim(opt$geneExpressionMatrix, row.names=1)
+l = as.integer(nrow(geneMatrix))
+geneMatrix1 = geneMatrix[c(2:l),]
+geneMatrix2 = apply(geneMatrix1, 2, as.numeric)
 
-gaII = read.delim('~/Documents/eQTL/130829_fullData/GBM.uncv2.mRNAseq_RSEM_normalized_log2.txt')
+#Convert the 0's to NA before takng the log. <- seems to be the only thing that works
+geneMatrix2[geneMatrix2 == 0] <- NA
+geneMatrixLog = log2(geneMatrix2)
+row.names(geneMatrixLog) = row.names(geneMatrix1)
+
+write.table(geneMatrixLog, opt$outGene, sep='\t', row.names=TRUE)
+gaII = read.delim('~/Documents/eQTL/130829_fullData/GBM.uncv2.mRNAseq_RSEM_normalized_log2.txt', row.names=1)
+
+#the mRNAseq file and hiseq file are the same

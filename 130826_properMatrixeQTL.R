@@ -1,5 +1,5 @@
 library(MatrixEQTL)
-setwd('~/Documents/eQTL/130823_fullData/')
+setwd('~/Documents/eQTL/130829_fullData/')
 
 selectMutGene <- function (eQTLresult, mutedGene) {
   #extracts the eQTLs for the mutated gene
@@ -16,7 +16,7 @@ useModel = modelLINEAR
 
 #set up the SNP file and the expression file. The genotypes are coded as 0, 1 or 2 based on AA, AB, BB genotype.
 #Column names must match
-SNP_file_name = 'somatic.filterMaf.mafToSNP.fixPatientNames.txt.matchPatientNames.txt'
+SNP_file_name = 'GBM-TP.final_analysis_set.filterMaf.mafToSNP.fixPatientNames.txt.matchPatientNames.txt'
 expression_file_name = 'GBM.uncv2.mRNAseq_RSEM_normalized_log2.txt.matchPatientNames.txt'
 
 ###############The covariate input file. This will require much thought in a real analysis###########################
@@ -25,8 +25,6 @@ expression_file_name = 'GBM.uncv2.mRNAseq_RSEM_normalized_log2.txt.matchPatientN
 
 output_file_name = paste(Sys.Date(),"eQTL_results_R_wholeData.txt", sep='_')
 
-#set this to 1e-5
-pvOutputThreshold = 1e-5
 #a dummy variable that is not often used
 errorCovariance = numeric()
 
@@ -47,6 +45,9 @@ gene$fileSliceSize = 2000 # read file in pieces of 2,000 rows
 gene$LoadFile(expression_file_name)
 
 cvrt = SlicedData$new()
+
+#This is the important metric to change cutoffs
+pvOutputThreshold = 1e-8
 
 #the main meat of the script. both snps and gene are the matrix objects that will be tested.
 me = Matrix_eQTL_engine(snps,

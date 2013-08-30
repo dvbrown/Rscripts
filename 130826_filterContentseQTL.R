@@ -70,5 +70,5 @@ par(cex.axis=0.5, las=2, cex.main=1)
 boxplot(geneFilter, ylab='RSEM normalised', main='Normalised gene expression', col=rainbow(patientNumber))
 par(graphical)
 
-write.table(geneFilter, file=paste(Sys.Date(),opt$outGene, sep='_'), sep='\t', row.names=T)
-write.table(mutFilter, file=paste(Sys.Date(),opt$outMut, sep='_'), sep='\t', row.names=T)
+write.table(geneFilter, opt$outGene, sep='_'), sep='\t', row.names=T)
+write.table(mutFilter, opt$outMut, sep='_'), sep='\t', row.names=T)

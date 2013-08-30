@@ -24,10 +24,10 @@ mergeData = merge(avFC, fdrPval, by.x=c("Primary.Sequence.Name", "Sequence.Code"
 
 #filter the data for significant measurements only. FDR of 0.1
 cutoff = subset(mergeData, mergeData$Post.Hoc.P.value2.PXR2_PXR6 < 0.1)
-cutoff = sort.dataframe(cutoff, 8, TRUE)
+cutoff = sort.dataframe(cutoff, 6, TRUE)
 
 #more raw version data if wanted for GSEA
-rawGSEA = sort.dataframe(avFC, 8)
+rawGSEA = sort.dataframe(avFC, 5)
 rawGSEA = rawGSEA[,c(1,7,8)]
 
 #useful columns for gsea analysis
