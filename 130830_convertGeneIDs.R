@@ -3,25 +3,26 @@ library(biomaRt)
 library(org.Hs.eg.db)
 library(optparse)
 
-setwd('~/Documents/FredCSC/reformattedFiles/')
+setwd('~/Documents/FredCSC/reformattedFiles/symbolConversion/')
 
-geneNameToID <- function (IDvector) {
+geneNameToID <- function (inFile) {
   #Takes a matrix of gene Symbols as argument and returns the geneID mappings.
   #org.Hs.egALIAS2EG, org.Hs.egGENENAME, org.Hs.egSYMBOL2EG
+  table = read.delim(inFile)
+  IDvector = as.character(table[,1])
   holder = vector(mode = 'character', len=length(IDvector))
   i = 1
   #check that gene names match a gene ID
   for (gene in IDvector) {
     print(gene)
-    x = try(as.character(mget(gene, org.Hs.egSYMBOL)))
+    x = try(as.character(mget(gene, org.Hs.egALIAS2EG)))
     if(class(x) == "try-error") {x = 'noMatch'} 
     else {holder[i] = x}
     i = i + 1
   }
-  #retain only those geneIDs that have a match (ie are not 0)
-  #orfs = as.matrix(holder[which(holder!='0')])
   orfs = cbind(IDvector, holder)
-  return (orfs)
+  result = merge.data.frame(orfs, table, by.x='IDvector', by.y='From') 
+  return (result)
 }
 
 option_list <- list(
@@ -33,12 +34,14 @@ option_list <- list(
               help="The file you wish to output results as a tab delimited text file")
 )
 opt <- parse_args(OptionParser(option_list=option_list))
-inFile = opt$inFile
+
+inFileZ = 'ziskin.txt'
+inFileLgr = 'lgr5.txt'
+inFileEph2 = 'ephB2.txt'
 outFile = opt$outFile
 
-data = read.delim(opt$inFile, skip=2)
-id = as.character(data[,1])
-y = geneNameToID(id)
+out = geneNameToID(inFileZ)
+
 result = merge.data.frame(y, data, by.x='IDvector', by.y='NAME')
 
 write.table(result, outFile, sep='\t')
