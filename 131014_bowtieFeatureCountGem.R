@@ -33,11 +33,13 @@ counts = counts[keep,]
 d = calcNormFactors(counts)
 plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, main='MDS plot GIC RNA-seq batch1')
 
+# Maximizes the negative binomial conditional common likelihood to give the estimate of the common dispersion across all tags.
 #d = estimateCommonDisp(d)
+# Compute an empirical Bayes estimate of the negative binomial dispersion parameter for each tag or transcript, 
 d = estimateTagwiseDisp(d)
 
-# Plot the dispersions
-plotMeanVar(d, show.tagwise.vars=TRUE, NBline=TRUE)
+# Plot the dispersions. Tagwise vars is blue scatter. NB line is blue. Poisson line is black. Raw variance is maroon
+plotMeanVar(d, show.tagwise.vars=T, show.ave.raw.vars=T, NBline=T)
 plotBCV(d)
 
 # Differential expression testing
