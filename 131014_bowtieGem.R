@@ -1,5 +1,5 @@
 library(edgeR)
-setwd('~/Documents/RNAdata/danBatch1/bowtieGem/')
+setwd('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/')
 files = list.files(pattern='*.txt')
 
 f = lapply(files, read.delim, header=FALSE)
@@ -10,17 +10,18 @@ colnames(df) = c('GIC_011', 'GIC_020', 'GIC_034', 'GIC_035', 'GIC_039', 'GIC_041
 labels = c('#011', '#020', '#034', '#035', '#039', '#041')
 
 noFeatures = tail(df)
-df = df[c(1:203288),]
+noCount = rownames(df) %in% c("no_feature","ambiguous","too_low_aQual",
+                                "not_aligned","alignment_not_unique")
+df = df[!noCount,]
 totalCount = colSums(df)
 
 #Build EdgeR objects
 condition = c('long', 'long', 'long', 'short', 'short', 'short')
 counts = DGEList(counts=df, group=condition)
 
-#critical step In edgeR, it is recommended to remove features without at least 1 read per million in n of the samples,
-#where n is the size of the smallest group of replicates (here, n = 3 for the knockdown group)
+# I remove genes with less than 0.5 cpm in 3 samples. For a library size of 20M this is 10 reads.
 cpms = cpm(counts)
-keep = rowSums(cpms >1) >=3
+keep = rowSums(cpms >0.5) >=3
 counts = counts[keep,]
 
 #nomalise, plot MDS

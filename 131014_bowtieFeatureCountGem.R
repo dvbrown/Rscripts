@@ -16,6 +16,8 @@ df = data.frame(g011[,2], g020[,2], g034[,2], g035[,2], g039[,2], g041[,2], row.
 colnames(df) = c('GIC_011', 'GIC_020', 'GIC_034', 'GIC_035', 'GIC_039', 'GIC_041')
 labels = c('#011', '#020', '#034', '#035', '#039', '#041')
 
+rm(g011, g020, g034, g035, g039, g041)
+
 # Total reads
 totalCount = colSums(df)
 
