@@ -41,6 +41,8 @@ d2 = estimateGLMCommonDisp(d2, design)
 
 # Plot the dispersions. Tagwise vars is blue scatter. NB line is blue. Poisson line is black. Raw variance is maroon
 plotMeanVar(d2, show.tagwise.vars=TRUE, NBline=TRUE, main='Fitted dispersion GIC RNA-seq batch 1')
+legend('topleft', legend=c('Poisson line', 'Neg Binomial line', 'Tagwise disp', 'Raw disp'), fill=c('black', 'steelblue', 'skyblue', 'maroon'), cex=0.8)
+
 
 plotBCV(d2, main='Biological variation GIC RNA-seq batch 1')
 
