@@ -64,5 +64,6 @@ head(nc[rn,order(labels)],5)
 result = ensembl_2_geneName(tt$table)
 result = sort.dataframe(result, 8, highFirst=FALSE)
 cutoff = result[result$FDR < 0.05,]
+write.table(cpms,'GLMedgeR/131021_normalisedCPM',sep='\t')
 write.table(result, './GLMedgeR/131021_shortVSlong.txt', sep='\t')
 write.table(cutoff, './GLMedgeR/131021_shortVSlongDEgenes.txt', sep='\t')
