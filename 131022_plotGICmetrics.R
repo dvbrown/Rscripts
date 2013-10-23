@@ -9,7 +9,7 @@ colnames(da) = c('Clone', 'Passage', 'Origin', 'Group', 'Survival', 'Age', 'cell
 da$rna = as.integer(da$RNA)
 da$cellNo = as.integer(da$cellNo)
 
-colors = c('cyan', 'blue1', 'lightblue', 'darkgreen', 'lightgreen', 'springgreen')
+colors = c('darkgreen', 'lightgreen','springgreen','cyan', 'blue1', 'lightblue')
 
 par(mfrow=c(2,2), las=2, cex=1.25)
 

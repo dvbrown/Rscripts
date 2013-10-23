@@ -4,7 +4,7 @@ source('~/Documents/Rscripts/annotateEnsembIDs.R')
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
 files = list.files(pattern='*.txt')
 
-colors = c('cyan', 'blue1', 'lightblue', 'darkgreen', 'lightgreen', 'springgreen')
+colors = c('darkgreen', 'lightgreen','springgreen','cyan', 'blue1', 'lightblue')
 dm = read.csv('designMatrix.csv')
 f = lapply(files, read.delim, header=FALSE)
 df1 = cbind(f[[1]],f[[2]],f[[3]],f[[4]],f[[5]],f[[6]])
