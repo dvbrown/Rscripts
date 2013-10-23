@@ -4,6 +4,7 @@ source('~/Documents/Rscripts/annotateEnsembIDs.R')
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
 files = list.files(pattern='*.txt')
 
+colors = c('cyan', 'blue1', 'lightblue', 'darkgreen', 'lightgreen', 'springgreen')
 dm = read.csv('designMatrix.csv')
 f = lapply(files, read.delim, header=FALSE)
 df1 = cbind(f[[1]],f[[2]],f[[3]],f[[4]],f[[5]],f[[6]])
@@ -30,6 +31,7 @@ counts = counts[keep,]
 #nomalise, plot MDS
 d = calcNormFactors(counts)
 plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, main='MDS plot GIC RNA-seq batch1')
+boxplot(cpm(counts, log=T), main='Normalised counts RNA-seq batch1', ylab='Log2 CPM', col=colors, cex=1.25, las=2)
 
 # Build the design matrix
 design = model.matrix(~ libPrep + age + group, dm)

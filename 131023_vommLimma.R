@@ -4,6 +4,7 @@ source('~/Documents/Rscripts/annotateEnsembIDs.R')
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
 files = list.files(pattern='*.txt')
 
+colors = c('cyan', 'blue1', 'lightblue', 'darkgreen', 'lightgreen', 'springgreen')
 dm = read.csv('designMatrix.csv')
 f = lapply(files, read.delim, header=FALSE)
 df1 = cbind(f[[1]],f[[2]],f[[3]],f[[4]],f[[5]],f[[6]])
@@ -28,27 +29,29 @@ keep = rowSums(cpms >0.5) >=3
 counts = counts[keep,]
 
 ############################## The Voom Limma Part ##############################################
+
 #apply normalisation
 counts = calcNormFactors(counts)
 #Use voom to convert the read counts to log2-cpm, with associated weights, ready for linear modelling:
 design = model.matrix(~ libPrep + age + group, dm)
-v <- voom(counts, design, plot=TRUE)
+v <- voom(counts, design, plot=TRUE, normalize.method='none')
 
 #Make a MDS plot to view differences
+par(las=1)
 plotMDS(v,top=500, col = c("darkgreen","blue")[factor(condition)], labels=row.names(counts$samples), 
         gene.selection="pairwise", main='MDS plot RNA-seq batch1', cex=1.25)
 
+boxplot(v$E, main='Normalised counts RNA-seq batch1', ylab='Log2 CPM', col=colors, cex=1.25, las=2)
+
 #differential exppression test as for limma
-fit <- lmFit(v,design)
-fit <- eBayes(fit)
+fit <- lmFit(v, design)
+fit <- eBayes(fit, robust=T)
+
 #inputting the gene list doesn't generate the right annotation ENSG mappings
-posVSneg = topTable(fit,coef=2,number=Inf,sort.by="p", resort.by='logFC')
-posVSneg = merge(posVSneg, annotation, by.x='ID',by.y='ensembl_gene_id')
+shortVlong = topTable(fit,coef=4,number=Inf,sort.by="p", resort.by='logFC')
 head(summary(decideTests(fit)))
-write.table(posVSneg, '~/Documents/RNAdata/RNAseqAnalysis/121105_trimmomaticReads/mergedBam/121107_mergeSortTopHatAlignIndex/130619_voomLimma/130620_voomLimma.txt',sep='\t',row.names=F)
 
 #filter for known genes, significant genes and differentially expressed genes. Use a generic subset idea, take all columns
-filPosVSneg = posVSneg[(abs(posVSneg$logFC) > 1) & (posVSneg$adj.P.Val < 0.05),]
-write.table(filPosVSneg, '~/Documents/RNAdata/RNAseqAnalysis/121105_trimmomaticReads/mergedBam/121107_mergeSortTopHatAlignIndex/130619_voomLimma/130620_voomLimmaFilter.txt',sep='\t',row.names=F)
+filshortVlong = shortVlong[(abs(shortVlong$logFC) > 1) & (shortVlong$adj.P.Val < 0.05),]
 
-plotMA(fit,array=2,main="MA plot clone 035 pilot voom limma", xlab='logCounts', ylab='logFC')
+plotMA(fit,array=4,main="MA plot batch1 voom limma", xlab='logCounts', ylab='logFC')
