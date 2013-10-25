@@ -35,3 +35,20 @@ barplot(da$RNA, main='RNA extracted', ylab='Concentration (ng)', names.arg=da$Cl
 
 barplot(da$cDNA, main='Library yield', ylab='Concentration (ng)', names.arg=da$Clone, xlab='Patient ID',
         col=colors, ylim=c(0,45))
+
+################################## RNAseQC plots ##################################
+rnaSEqc = read.delim('danBatch1/rnaSeQC_reports/131008_rnaseQCSummary.txt', row.names=1)
+rnaSEqc = rnaSEqc[,c(1,3,4,6,7,10,11,12,13,14)]
+par(mfrow=c(2,2), cex=1.1)
+
+barplot(rnaSEqc$TotalReadsSequenced, main='Total reads sequenced', ylab='Reads (millions)',
+        col=colors, names.arg=row.names(rnaSEqc), las=2, cex.names=0.8)
+
+barplot(rnaSEqc$Mapped_Unique, main='Uniquely mapped reads', ylab='Reads (millions)',
+        col=colors, names.arg=row.names(rnaSEqc), las=2, ylim=c(0,70), cex.names=0.8)
+
+barplot(rnaSEqc$Duplication_Rate_, main='PCR and optical duplicates', ylab='Duplication rate',
+        col=colors, names.arg=row.names(rnaSEqc), las=2, ylim=c(0,1), cex.names=0.8)
+
+barplot(rnaSEqc$Intragenic_Rate, main='Reads located in coding reigons', ylab='Intragenic rate',
+        col=colors, names.arg=row.names(rnaSEqc), las=2, ylim=c(0,1), cex.names=0.8)
