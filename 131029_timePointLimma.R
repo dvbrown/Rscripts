@@ -29,12 +29,18 @@ keep = rowSums(cpms >0.5) >=3
 counts = counts[keep,]
 
 ############################## The Voom Limma Part ##############################################
+library(splines)
+X = ns(dm$survival, df=3)
+# switch survival to a factor
 
 #apply normalisation
 counts = calcNormFactors(counts)
 #Use voom to convert the read counts to log2-cpm, with associated weights, ready for linear modelling:
-design = model.matrix(~ survival + libPrep + age, dm)
-v <- voom(counts, design, plot=TRUE, normalize.method='quantile')
+design = model.matrix(~ X + libPrep, dm)# + age, dm)
+
+#mc = makeContrasts('survival4-survival7', 'survival7-survival14','survival14-survival16', 'survival16-survival36',levels = design)
+
+v <- voom(counts, design)#, plot=TRUE, normalize.method='quantile')
 
 #Make a MDS plot to view differences
 par(las=1)
@@ -45,6 +51,7 @@ boxplot(v$E, main='Normalised counts RNA-seq batch1', ylab='Log2 CPM', col=color
 
 #differential exppression test as for limma
 fit <- lmFit(v, design)
+#fit2 = contrasts.fit(f, mc)
 fit <- eBayes(fit, robust=T)
 
 #inputting the gene list doesn't generate the right annotation ENSG mappings
