@@ -31,10 +31,10 @@ counts = counts[keep,]
 ############################## The Voom Limma Part ##############################################
 
 #apply normalisation
-counts = calcNormFactors(counts)
+counts = calcNormFactors(counts, method='TMM', doWeighting=T)
 #Use voom to convert the read counts to log2-cpm, with associated weights, ready for linear modelling:
-design = model.matrix(~ survival + libPrep + age, dm)
-v <- voom(counts, design, plot=TRUE, normalize.method='quantile')
+design = model.matrix(~ group + libPrep + age, dm)
+v <- voom(counts, design, plot=F, normalize.method='none')
 
 #Make a MDS plot to view differences
 par(las=1)
@@ -55,3 +55,4 @@ head(summary(decideTests(fit)))
 filshortVlong = shortVlong[(abs(shortVlong$logFC) > 1) & (shortVlong$adj.P.Val < 0.05),]
 
 plotMA(fit,array=4,main="MA plot batch1 voom limma", xlab='logCounts', ylab='logFC')
+volcanoplot(fit, coef=5)
