@@ -14,3 +14,17 @@ write.table(output, './networks/131025_cytoscapeInput.txt', sep='\t', row.names=
 
 gd = geneData[,c(1,3,4,7)]
 write.table(gd, './networks/131025_cytoscapeData.txt', sep='\t', row.names=F, quote=F)
+
+################################## Heat map or other clustering plot of ssGSEA ##############################
+library(RColorBrewer)
+
+setwd('~/Documents/RNAdata/danBatch1/GSEA/131031_ssGSEA/')
+data = read.delim('131022_log2CPM.PROJ.gct', skip=2)
+row.names(data) = data$Name
+data = as.matrix(data[,c(3:8)])
+data1 = t(data)
+
+cc = brewer.pal(9, 'YlOrRd')
+
+heatmap(data1, Colv=NA, col=cc, margins=c(7,5),cexRow=1.25, cexCol=1.25, main='Classifying RNA-seq batch 1 by TCGA subtype', 
+        xlab='Patient clones')
