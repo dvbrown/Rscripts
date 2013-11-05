@@ -5,17 +5,16 @@ source('~/Documents/Rscripts/120704-sortDataFrame.R')
 files = list.files(pattern='*.txt')
 
 colors = c('darkgreen', 'lightgreen','springgreen','cyan', 'blue1', 'lightblue')
-dm = read.csv('designMatrix.csv')
+dm = read.csv('../bowtieGem/revHTSeq/designMatrix.csv')
 f = lapply(files, read.delim, header=FALSE)
 df1 = cbind(f[[1]],f[[2]],f[[3]],f[[4]],f[[5]],f[[6]])
 df = df1[,c(2,4,6,8,10,12)]
 row.names(df) = df1[,1]
 colnames(df) = c('GIC_011', 'GIC_020', 'GIC_034', 'GIC_035', 'GIC_039', 'GIC_041')
 labels = c('#011', '#020', '#034', '#035', '#039', '#041')
-
 noFeatures = tail(df)
-noCount = rownames(df) %in% c("no_feature","ambiguous","too_low_aQual",
-                              "not_aligned","alignment_not_unique")
+noCount = rownames(df) %in% c("_empty","_ambiguous","_lowaqual",
+                              "_notaligned")
 df = df[!noCount,]
 totalCount = colSums(df)
 
@@ -23,7 +22,7 @@ totalCount = colSums(df)
 condition = c('long', 'long', 'long', 'short', 'short', 'short')
 counts = DGEList(counts=df, group=condition)
 
-# I remove genes with less than 0.5 cpm in 3 samples. For a library size of 20M this is 10 reads.
+# I remove genes with less than 0.5 cpm in 3 samples. For a library size of 80M this is 40 reads.
 cpms = cpm(counts)
 keep = rowSums(cpms >0.5) >=3
 counts = counts[keep,]
@@ -51,7 +50,6 @@ d2 = estimateGLMTagwiseDisp(d2, design)
 # Plot the dispersions. Tagwise vars is blue scatter. NB line is blue. Poisson line is black. Raw variance is maroon
 plotMeanVar(d2, show.tagwise.vars=TRUE, NBline=TRUE, main='Fitted dispersion GIC RNA-seq batch 1')
 legend('topleft', legend=c('Poisson line', 'Neg Binomial line', 'Tagwise disp', 'Raw disp'), fill=c('black', 'steelblue', 'skyblue', 'maroon'), cex=0.8)
-
 
 plotBCV(d2, main='Biological variation GIC RNA-seq batch 1')
 
@@ -87,7 +85,7 @@ result = ensembl_2_geneName(tt$table)
 result = sort.dataframe(result, 8, highFirst=FALSE)
 cutoff = result[result$FDR < 0.05,]
 cutoffLib = result[result$FDR < 0.1 & abs(result$logFC) > 1,]
-write.table(cpms,'GLMedgeR/131021_normalisedCPM',sep='\t')
-write.table(result, './GLMedgeR/131021_shortVSlong.txt', sep='\t')
-write.table(cutoff, './GLMedgeR/131021_shortVSlongDEgenes.txt', sep='\t')
-write.table(cutoffLib, './GLMedgeR/131021_shortVSlongLiberalDE.txt', sep='\t')
+write.table(cpms,'131105_normalisedCPM',sep='\t')
+write.table(result, './131105_shortVSlongExons.txt', sep='\t')
+write.table(cutoff, './131105_shortVSlongDEexons.txt', sep='\t')
+write.table(cutoffLib, './131105_shortVSlongLiberalDE.txt', sep='\t')
