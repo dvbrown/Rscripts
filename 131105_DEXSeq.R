@@ -3,7 +3,7 @@ library(multicore)
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
 
 setwd('~/Documents/RNAdata/danBatch1/dexSeq_count/')
-samples = c('#011', '#020', '#034', '#035', '#039', '#041')
+samples = c('long1', 'long2', 'long3', 'short1', 'short2', 'short3')
 dm = read.csv('../bowtieGem/revHTSeq/designMatrix.csv')
 dm = dm[,c(1,2,4,5)]
 condition = as.factor(c('long', 'long', 'long', 'short', 'short', 'short'))
@@ -20,12 +20,17 @@ data = estimateDispersions(data, minCount=20) #there is no replicates so will ha
 # fData(data)$dispersion = 0.1
 # fData(data)$dispFitted = 0.1
 data = fitDispersionFunction(data)
+head(fData(data)$dispBeforeSharing)
 fData(data)$testable = ifelse((rowSums(counts(data) > 50)), TRUE, FALSE) #only test exon usage for genes with more than 50 counts
+data@dispFitCoefs
+head(fData(data)$dispFitted)
+plotDispEsts(data)
 
 condition = as.factor(c('long', 'long', 'long', 'short', 'short', 'short'))
-fvarLabels(dataNorm)$contrasts = condition
+data@phenoData@data$condition
 
-dataNorm = testForDEU(data)#, formula0=count ~ sample + exon + data[[5]], formula1=count ~ sample + exon + data[[5]] *I (exon==exonID))
+#data = testForDEU(data)#, formula0=count ~ sample + exon + data[[2]], formula1=count ~ sample + exon + data[[2]] *I (exon==exonID))
+data = testForDEUTRT(data)
 dataNorm = estimatelog2FoldChanges(data)
 result = DEUresultTable(data)
 table(result$padjust != NA)
