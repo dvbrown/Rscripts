@@ -31,11 +31,18 @@ data@phenoData@data$condition
 
 #data = testForDEU(data)#, formula0=count ~ sample + exon + data[[2]], formula1=count ~ sample + exon + data[[2]] *I (exon==exonID))
 data = testForDEUTRT(data)
-dataNorm = estimatelog2FoldChanges(data)
+data= estimatelog2FoldChanges(data)
 result = DEUresultTable(data)
 table(result$padjust != NA)
+
+resultSorted = sort.dataframe(result, 5, highFirst=FALSE)
+colnames(resultSorted) = c("geneID","exonID","dispersion","pvalue","padjust",'meanBase', 'lfc_short'  )
+sigGenes = resultSorted[(resultSorted$padjust < 0.1) & (abs(resultSorted$lfc_short) >= 1), ]
 
 plot(result$meanBase, result[, "log2fold(negative/positive)"], log = "x",
      col = ifelse(res1$padjust < 0.1, "red", "black"), ylim = c(-4,4), main = "CD133 MvsA")
 
 keep = rowSums(counts(dataNorm) > 10)
+
+write.table(resultSorted, '131114_dexSeqResultSorted.txt', sep ='\t')
+write.table(sigGenes, '131114_dexSeqSigGenes.txt', sep ='\t')
