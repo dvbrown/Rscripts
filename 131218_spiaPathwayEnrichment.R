@@ -1,5 +1,6 @@
 # Measuring pathway enrichment using SPIA in RNA-seq batch1
 library(SPIA)
+library(pathview)
 source('~/Documents/Rscripts/131218_ensemblToEnterezConversion.R')
 setwd('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/')
 
@@ -26,5 +27,18 @@ result.spia[1:20, -12]
 # pXXX is all the various FDR corrections
 
 spiaNoNAs = result.spia[!is.na(result.spia$pPERT),]
-plot(-log10(result.spia$NDE), -log10(result.spia$pPERT))
-plotP(spiaNoNAs)
+plotP(spiaNoNAs, threshold=0.1)# x.lab='Enrichment score', ylab='Pertubation score', main='Disrupted pathways in short-term surviving GICs')
+
+# output the results of the analysis
+write.table(result.spia, './output/spia/131218_spiaResults.txt', sep='\t', row.names=F)
+write.table(spiaNoNAs, './output/spia/131218_spiaNoNAsResults.txt', sep='\t', row.names=F)
+
+# Visualise the KEGG pathway data in R
+# Use the results of plotP to get the pathway ids
+setwd('./output/spia/')
+pv.out = pathview(gene.data=de.genes, pathway.id='04970', species='hsa', out.suffix='salivarySecretion', kegg.native=T)
+pv.out = pathview(gene.data=de.genes, pathway.id='04512', species='hsa', out.suffix='ECMreceptor', kegg.native=T)
+pv.out = pathview(gene.data=de.genes, pathway.id='05222', species='hsa', out.suffix='smallCellLungCancer', kegg.native=T)
+pv.out = pathview(gene.data=de.genes, pathway.id='04020', species='hsa', out.suffix='calciumSignalling', kegg.native=T)
+pv.out = pathview(gene.data=de.genes, pathway.id='04080', species='hsa', out.suffix='neuroactiveLigand', kegg.native=T)
+
