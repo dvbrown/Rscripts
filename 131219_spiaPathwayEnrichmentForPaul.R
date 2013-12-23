@@ -46,7 +46,7 @@ heatmap(zScorePlot, col=cc, margins=c(7,5),cexRow=0.2, main='GBM gene expression
 
 ############################# Now the SPIA enrichment #############################
 
-abnormalGenes = zScore[rowMeans(zScore > 2),]
+abnormalGenes = as.data.frame(zScore[zScore[,596] > 3,])
 
 allIDs = read.delim('ensemblGeneIDsmart_export.txt')
 row.names(allIDs) = allIDs$Ensembl.Gene.ID
