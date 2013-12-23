@@ -4,8 +4,24 @@ library(pathview)
 source('~/Documents/Rscripts/131218_ensemblToEnterezConversion.R')
 setwd('~/Documents/CREB/paulEnrichment/')
 
-# Import the full dataset
-data = read.delim('GBMz1hits.txt', row.names=1)
+zTransform = function(matrixElement, rowMean, rowSD ) { 
+  # Convert to the unitless z-score based on a normal distribution
+  z = (matrixElement - rowMean)/rowSD
+  return (z)
+}
+
+############################# First z transform the TCGA data that Paul downloaded#############################
+
+# Import the full dataset that Paul gave me. This is microarray data
+data = read.delim('Colated TCGA_GBM.txt', row.names=1)
+dataNum = apply(data, 2, as.numeric)
+head(dataNum)
+
+# Obtain the z score for each gene
+rowMean = rowMeans(dataNum, na.rm=T)
+rowStdDev = apply(dataNum, 1, sd)
+zScore = apply(data, 1, zTransform, rowMean, rowStdDev) #compute the z-scores for the dataFrame
+
 allIDs = read.delim('ensemblGeneIDsmart_export.txt')
 row.names(allIDs) = allIDs$Ensembl.Gene.ID
 
