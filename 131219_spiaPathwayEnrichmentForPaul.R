@@ -1,7 +1,9 @@
 # Measuring pathway enrichment using SPIA in RNA-seq batch1
 library(SPIA)
 library(pathview)
+library(RColorBrewer)
 source('~/Documents/Rscripts/131218_ensemblToEnterezConversion.R')
+source('~/Documents/Rscripts/120704-sortDataFrame.R')
 setwd('~/Documents/CREB/paulEnrichment/')
 
 zTransform = function(matrixElement, rowMean, rowSD ) { 
@@ -23,8 +25,28 @@ head(dataNum)
 rowMean = rowMeans(control, na.rm=T)
 rowStdDev = apply(control, 1, sd)
 # Compute the z-scores for the dataFrame
-zScore = apply(head(dataNum), 2, zTransform, head(rowMean), head(rowStdDev))
-write.table(zScore, './131223_zTransormedTCGAgenes.txt', sep='/t', row.names=FALSE)
+zScore = apply(dataNum, 2, zTransform, head(rowMean), rowStdDev)
+row.names(zScore) = row.names(data)
+write.table(zScore, './131223_zTransormedTCGAgenes.txt', sep='\t', row.names=FALSE)
+
+geneMean = rowMeans(zScore)
+names(geneMean) = row.names(zScore)
+zScore = cbind(zScore, geneMean)
+zScore = sort.dataframe(zScore, 596, highFirst=T)
+
+#Now build a the heat map
+geneMean = sort.default(geneMean)
+sub = geneMean[1:1000]
+zScorePlot = zScore[names(sub),]
+
+corrdist = function(x) as.dist(1-cor(t(x)))
+cc = brewer.pal(9, 'YlOrRd')
+heatmap(zScorePlot, col=cc, margins=c(7,5),cexRow=0.2, main='GBM gene expression TCGA', 
+        xlab='Patients', ylab='zTransformed genes')
+
+############################# Now the SPIA enrichment #############################
+
+abnormalGenes = zScore[rowMeans(zScore > 2),]
 
 allIDs = read.delim('ensemblGeneIDsmart_export.txt')
 row.names(allIDs) = allIDs$Ensembl.Gene.ID
