@@ -23,10 +23,15 @@ head(dataNum)
 
 # Obtain the z score for each gene
 rowMean = rowMeans(control, na.rm=T)
-rowStdDev = apply(control, 1, sd)
+rowStdDev = apply(control, 1, sd, na.rm=T)
+dataNum = cbind(dataNum, rowMean)
 # Compute the z-scores for the dataFrame
-zScore = apply(dataNum, 2, zTransform, head(rowMean), rowStdDev)
+zScore = apply(dataNum, 2, zTransform, rowMean, rowStdDev)
 row.names(zScore) = row.names(data)
+# Check the calculation of the z score
+x = as.data.frame(zScore)
+x$rowMean
+
 write.table(zScore, './131223_zTransormedTCGAgenes.txt', sep='\t', row.names=FALSE)
 
 geneMean = rowMeans(zScore)
