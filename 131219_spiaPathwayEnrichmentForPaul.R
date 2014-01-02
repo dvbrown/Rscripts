@@ -12,13 +12,21 @@ zTransform = function(matrixElement, rowMean, rowSD ) {
   return (z)
 }
 
+# LOG TRANSFORM
+
 ############################# First z transform the TCGA data that Paul downloaded #############################
 
 # Import the full dataset that Paul gave me. This is microarray data
 data = read.delim('Colated TCGA_GBM.txt', row.names=1)
+
 control = read.delim('colated TCGA_Controls.txt', row.names=1)
 control = apply(control, 2, as.numeric)
+# Remove the log tranformation if the data is still buggered
+control = log2(control)
+
 dataNum = apply(data, 2, as.numeric)
+# Remove the log tranformation if the data is still buggered
+dataNum = log2(dataNum)
 head(dataNum)
 
 # Obtain the z score for each gene
@@ -29,7 +37,6 @@ dataNum = cbind(dataNum, rowMean)
 zScore = apply(dataNum, 2, zTransform, rowMean, rowStdDev)
 row.names(zScore) = row.names(data)
 # Check the calculation of the z score
-x = as.data.frame(zScore)
 x$rowMean
 
 write.table(zScore, './131223_zTransormedTCGAgenes.txt', sep='\t', row.names=FALSE)
@@ -37,7 +44,8 @@ write.table(zScore, './131223_zTransormedTCGAgenes.txt', sep='\t', row.names=FAL
 geneMean = rowMeans(zScore)
 names(geneMean) = row.names(zScore)
 zScore = cbind(zScore, geneMean)
-zScore = sort.dataframe(zScore, 596, highFirst=T)
+x = as.data.frame(zScore)
+x = sort.dataframe(x, 596, highFirst=T)
 
 #Now build a the heat map
 geneMean = sort.default(geneMean)
@@ -51,8 +59,9 @@ heatmap(zScorePlot, col=cc, margins=c(7,5),cexRow=0.2, main='GBM gene expression
 
 ############################# Now the SPIA enrichment #############################
 
-x = rowMedians(zScore[,c(1:596)], na.rm=T)
-abnormalGenes = as.data.frame(zScore[abs(zScore[,596] > 2),])
+# y = rowMedians(zScore[,c(1:596)], na.rm=T)
+# abnormalGenes = x[(x$geneMean > 2),]
+abnormalGenes = subset.data.frame(x, -2 < geneMean > 2, select=TCGA.02.0074.01A.01R.0195.07:TCGA.76.6280.01A.21R.1847.07)
 
 allIDs = read.delim('ensemblGeneIDsmart_export.txt')
 row.names(allIDs) = allIDs$Ensembl.Gene.ID
