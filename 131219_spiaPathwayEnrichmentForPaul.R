@@ -59,8 +59,8 @@ heatmap(zScorePlot, col=cc, margins=c(7,5),cexRow=0.2, main='GBM gene expression
 
 ########################################## Now the SPIA enrichment ########################################
 # First try to subset untransformed data
-ab = subset.data.frame(d, rowMean > 2 , select=TCGA.02.0074.01A.01R.0195.07:TCGA.76.6280.01A.21R.1847.07)
-ac = subset.data.frame(d, rowMean < -2 , select=TCGA.02.0074.01A.01R.0195.07:TCGA.76.6280.01A.21R.1847.07)
+ab = subset.data.frame(d, rowMean > 2)# , select=TCGA.02.0074.01A.01R.0195.07:TCGA.76.6280.01A.21R.1847.07)
+ac = subset.data.frame(d, rowMean < -2)# , select=TCGA.02.0074.01A.01R.0195.07:TCGA.76.6280.01A.21R.1847.07)
 abnormalGenes = rbind(ab, ac)
 rm(ab, ac)
 
@@ -69,6 +69,12 @@ row.names(allIDs) = allIDs$Ensembl.Gene.ID
 
 # Extract the enterez IDs of all the genes tested
 ensemblEnterezMap = ensembl2enterezConvert(allIDs)
+
+# Merge the IDs with the untransformed data
+abnormalGenes$gene = row.names(abnormalGenes)
+mData = merge(abnormalGenes, ensemblEnterezMap, by.x='gene', by.y='SYMBOL')
+#Just take the row mean
+sumData = mData[,c(1, 597,598, 599)]
 
 # Extract the interesting genes in GBM and CREB sites
 de.genes <- data$CREBcounts[data$CREBcounts > 0]
