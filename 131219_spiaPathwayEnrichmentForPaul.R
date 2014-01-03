@@ -22,11 +22,11 @@ data = read.delim('Colated TCGA_GBM.txt', row.names=1)
 control = read.delim('colated TCGA_Controls.txt', row.names=1)
 control = apply(control, 2, as.numeric)
 # Remove the log tranformation if the data is still buggered
-control = log2(control)
+# control = log2(control)
 
 dataNum = apply(data, 2, as.numeric)
 # Remove the log tranformation if the data is still buggered
-dataNum = log2(dataNum)
+# dataNum = log2(dataNum)
 head(dataNum)
 
 # Obtain the z score for each gene
@@ -36,8 +36,9 @@ dataNum = cbind(dataNum, rowMean)
 # Compute the z-scores for the dataFrame
 zScore = apply(dataNum, 2, zTransform, rowMean, rowStdDev)
 row.names(zScore) = row.names(data)
-# Check the calculation of the z score
-x$rowMean
+
+d = cbind(data, rowMean)
+d = sort.dataframe(data, 595)
 
 write.table(zScore, './131223_zTransormedTCGAgenes.txt', sep='\t', row.names=FALSE)
 
