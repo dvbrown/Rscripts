@@ -57,7 +57,7 @@ cc = brewer.pal(9, 'YlOrRd')
 heatmap(zScorePlot, col=cc, margins=c(7,5),cexRow=0.2, main='GBM gene expression TCGA', 
         xlab='Patients', ylab='zTransformed genes')
 
-########################################## Now the SPIA enrichment ########################################
+####################################### Sumarise data and merge with CRE sites ########################################
 # First try to subset untransformed data
 ab = subset.data.frame(d, rowMean > 2)# , select=TCGA.02.0074.01A.01R.0195.07:TCGA.76.6280.01A.21R.1847.07)
 ac = subset.data.frame(d, rowMean < -2)# , select=TCGA.02.0074.01A.01R.0195.07:TCGA.76.6280.01A.21R.1847.07)
@@ -75,13 +75,17 @@ abnormalGenes$gene = row.names(abnormalGenes)
 mData = merge(abnormalGenes, ensemblEnterezMap, by.x='gene', by.y='SYMBOL')
 #Just take the row mean
 sumData = mData[,c(1, 597,598, 599)]
+rm(d, allIDs, abnormalGenes, ensemblEnterezMap)
+
+# Read in the CREB genes
+crebTargets = read.delim('AllgenesCREBhits.txt')
+sumData = merge.data.frame(sumData, crebTargets, by.x='ENTREZID', by.y='gene')
 
 # Extract the interesting genes in GBM and CREB sites
-de.genes <- data$CREBcounts[data$CREBcounts > 0]
-names(de.genes) <- data$gene_id[data$CREBcounts > 0]
-all.genes <- ensemblEnterezMap$ENTREZID
+intData = sumData[sumData$CREBcounts > 0,]
 
-# Run spia
+########################################## Now the SPIA enrichment ########################################
+
 result.spia = spia(de=de.genes, all=all.genes, organism='hsa', nB=2000, plots=F)
 result.spia$Name <- substr(spia.results$Name, 1, 25)
 result.spia[1:20, -12]
