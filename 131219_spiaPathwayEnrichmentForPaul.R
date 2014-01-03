@@ -12,8 +12,6 @@ zTransform = function(matrixElement, rowMean, rowSD ) {
   return (z)
 }
 
-# LOG TRANSFORM
-
 ############################# First z transform the TCGA data that Paul downloaded #############################
 
 # Import the full dataset that Paul gave me. This is microarray data
@@ -37,8 +35,9 @@ dataNum = cbind(dataNum, rowMean)
 zScore = apply(dataNum, 2, zTransform, rowMean, rowStdDev)
 row.names(zScore) = row.names(data)
 
+# Don't log transform and see if that makes some sense
 d = cbind(data, rowMean)
-d = sort.dataframe(data, 595)
+d = sort.dataframe(d, 596)
 
 write.table(zScore, './131223_zTransormedTCGAgenes.txt', sep='\t', row.names=FALSE)
 
@@ -58,11 +57,12 @@ cc = brewer.pal(9, 'YlOrRd')
 heatmap(zScorePlot, col=cc, margins=c(7,5),cexRow=0.2, main='GBM gene expression TCGA', 
         xlab='Patients', ylab='zTransformed genes')
 
-############################# Now the SPIA enrichment #############################
-
-# y = rowMedians(zScore[,c(1:596)], na.rm=T)
-# abnormalGenes = x[(x$geneMean > 2),]
-abnormalGenes = subset.data.frame(x, -2 < geneMean > 2, select=TCGA.02.0074.01A.01R.0195.07:TCGA.76.6280.01A.21R.1847.07)
+########################################## Now the SPIA enrichment ########################################
+# First try to subset untransformed data
+ab = subset.data.frame(d, rowMean > 2 , select=TCGA.02.0074.01A.01R.0195.07:TCGA.76.6280.01A.21R.1847.07)
+ac = subset.data.frame(d, rowMean < -2 , select=TCGA.02.0074.01A.01R.0195.07:TCGA.76.6280.01A.21R.1847.07)
+abnormalGenes = rbind(ab, ac)
+rm(ab, ac)
 
 allIDs = read.delim('ensemblGeneIDsmart_export.txt')
 row.names(allIDs) = allIDs$Ensembl.Gene.ID
