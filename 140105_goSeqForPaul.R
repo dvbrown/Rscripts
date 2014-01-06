@@ -27,12 +27,12 @@ kegg_enrichmentUp <- goseq(null_model_up, genome = "hg19", id = "ensGene",
 #kegg_enrichmentUp <- goseq(null_model_up, genome = "hg19", id = "ensGene", 
 #                           test.cats = "KEGG", method = "Wallenius")
 kegg_enrichmentDown <- goseq(null_model_down, genome = "hg19", id = "ensGene", 
-                             test.cats = c("GO:BP","GO:MF"), method = "Wallenius")
+                             test.cats = "GO:MF", method = "Wallenius")
 #kegg_enrichmentDown <- goseq(null_model_down, genome = "hg19", id = "ensGene", 
 #                             test.cats = "KEGG", method = "Wallenius")
 
 kegg_enrichmentAll <- goseq(null_model_all, genome = "hg19", id = "ensGene", 
-                             test.cats = c("GO:BP","GO:MF"), method = "Wallenius")
+                             test.cats = "GO:BP", method = "Wallenius")
 kegg_enrichmentAllK <- goseq(null_model_all, genome = "hg19", id = "ensGene", 
                                                          test.cats = "KEGG", method = "Wallenius")
 # Control for FDR
@@ -48,6 +48,12 @@ kegg_enrichment_all <- cbind(kegg_enrichmentAll, FDR = kegg_fdrs_all)
 kegg_fdrs_allK <- p.adjust(kegg_enrichmentAllK[, 2], method = "BH")
 kegg_enrichment_allK <- cbind(kegg_enrichmentAllK, FDR = kegg_fdrs_allK)
 # No KEGG pathways aere significant if I take all the genes regardless of up or downregulation
+
+# Now annotate IDs
+library(biomaRt)
+mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+results <- getBM(attributes = c("go_id", "name_1006"), #filters = "refseq_dna",
+                 values = enriched_pathwaysAll$pathway, mart = mart)
 
 # Annotate the KEGG IDs
 library(KEGGREST)
@@ -83,10 +89,8 @@ dim(enriched_pathwaysAll)[1]
 head(enriched_pathwaysAll)
 #write.table(enriched_pathwaysDown, './goSeq/140105_enrichedKEGGpathwaysLongTerm.txt', sep='\t')
 enriched_pathwaysAll1 = merge.data.frame(enriched_pathwaysAll, results, by.x='category', by.y='go_id')
-write.table(enriched_pathwaysAll1, './goSeq/140105_enrichedGOtermsAllGenes.txt', sep='\t', row.names=F)
+write.table(enriched_pathwaysAll1, './goSeq/140105_enrichedGOtermsAllGenesGO_BP.txt', sep='\t', row.names=F)
 
-# Now annotate IDs
-library(biomaRt)
-mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
-results <- getBM(attributes = c("go_id", "name_1006"), #filters = "refseq_dna",
-                 values = enriched_pathwaysUp$pathway, mart = mart)
+# Now divide the numDE in cat by numInCat
+enriched_pathwaysAll1$percentDEofTotal = enriched_pathwaysAll1$numDEInCat / enriched_pathwaysAll1$numInCat *100
+plot(enriched_pathwaysAll1$percentDEofTotal, -log10(enriched_pathwaysAll1$FDR), xlim=c(0,100))
