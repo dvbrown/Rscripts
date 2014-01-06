@@ -2,6 +2,7 @@
 library(SPIA)
 library(pathview)
 library(RColorBrewer)
+library(ggplot2)
 source('~/Documents/Rscripts/131218_ensemblToEnterezConversion.R')
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
 setwd('~/Documents/CREB/paulEnrichment/')
@@ -48,14 +49,14 @@ x = as.data.frame(zScore)
 x = sort.dataframe(x, 596, highFirst=T)
 
 #Now build a the heat map
-geneMean = sort.default(geneMean)
-sub = geneMean[1:1000]
-zScorePlot = zScore[names(sub),]
+#geneMean = sort.default(geneMean)
+#sub = geneMean[1:1000]
+#zScorePlot = zScore[names(sub),]
 
-corrdist = function(x) as.dist(1-cor(t(x)))
-cc = brewer.pal(9, 'YlOrRd')
-heatmap(zScorePlot, col=cc, margins=c(7,5),cexRow=0.2, main='GBM gene expression TCGA', 
-        xlab='Patients', ylab='zTransformed genes')
+#corrdist = function(x) as.dist(1-cor(t(x)))
+#cc = brewer.pal(9, 'YlOrRd')
+#heatmap(zScorePlot, col=cc, margins=c(7,5),cexRow=0.2, main='GBM gene expression TCGA', 
+#        xlab='Patients', ylab='zTransformed genes')
 
 ####################################### Sumarise data and merge with CRE sites ########################################
 # First try to subset untransformed data
@@ -97,7 +98,34 @@ result.spia[1:20, -12]
 # tA is the equivaent of fold hange pertubation in the pathway.
 # pXXX is all the various FDR corrections
 
-plotP(result.spia, threshold=0.1)# x.lab='Enrichment score', ylab='Pertubation score', main='Disrupted pathways in short-term surviving GICs')
+plotP(result.spia, threshold=0.05)# x.lab='Enrichment score', ylab='Pertubation score', main='Disrupted pathways in short-term surviving GICs')
+
+# Make a plot more amenable to publication
+subsetResults.spia = result.spia[, c(1,2,3,4,6,7,9)]
+colnames(subsetResults.spia) = c('Name', 'KEGG ID', 'Pathway size', 'Altered in GBM & CREB target genes', 'Pertubation_score', 'Pertubation score significance', 'Global_FDR_adjusted_pvalue')
+subsetResults.spia[10,1] = ''
+plot.default(subsetResults.spia$Pertubation_score, -log10(subsetResults.spia$Global_FDR_adjusted_pvalue),
+             ylim=c(0,5))
+
+################################# Construct the volcano plot object. ########################################
+
+##Highlight genes that have an Pertubation score > 2 and a p-value < Bonferroni cut-off
+subsetResults.spia$threshold = as.factor(abs(subsetResults.spia$Pertubation_score) > 2 & subsetResults.spia$Global_FDR_adjusted_pvalue < 0.05)
+
+g = ggplot(data=subsetResults.spia, aes(x=Pertubation_score, y=-log10(Global_FDR_adjusted_pvalue), colour=threshold)) +
+  geom_point(alpha=0.75, size=2) +
+  opts(legend.position = "none", title=("Signaling Pathway Impact Analysis")
+  ) +
+  #xlim(c(-5, 5)) + ylim(c(0, 50)) +
+  xlab("Pertubation score") + ylab("Significance")
+g
+#subset gene names for only significant genes
+dd_text = subsetResults.spia[(abs(subsetResults.spia$Pertubation_score) > 2) & (subsetResults.spia$Global_FDR_adjusted_pvalue < 0.01),]
+#add text to volcano
+g + geom_text(data = dd_text, aes(x=Pertubation_score, y=-log10(Global_FDR_adjusted_pvalue),
+                                  label=Name, size=0.2), colour="black")
+
+########################################################################################################################
 
 # output the results of the analysis
 write.table(result.spia, './output/spia/140103_spiaResults.txt', sep='\t', row.names=F)
