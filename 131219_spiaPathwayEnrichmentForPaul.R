@@ -113,8 +113,8 @@ plot.default(subsetResults.spia$Pertubation_score, -log10(subsetResults.spia$Glo
 subsetResults.spia$threshold = as.factor(abs(subsetResults.spia$Pertubation_score) > 2 & subsetResults.spia$Global_FDR_adjusted_pvalue < 0.05)
 
 g = ggplot(data=subsetResults.spia, aes(x=Pertubation_score, y=-log10(Global_FDR_adjusted_pvalue), colour=threshold)) +
-  geom_point(alpha=0.75, size=2) +
-  opts(legend.position = "none", title=("Signaling Pathway Impact Analysis")
+  geom_point(alpha=0.80, size=2) +
+  opts(legend.position = "none", title=("CREB dependednt pathways disrupted in GBM")
   ) +
   #xlim(c(-5, 5)) + ylim(c(0, 50)) +
   xlab("Pertubation score") + ylab("Significance")
