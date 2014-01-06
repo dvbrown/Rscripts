@@ -1,11 +1,11 @@
 library(goseq)
 setwd('~/Documents/CREB/paulEnrichment/')
 
-up.genes <- as.integer(data$FDR < 0.1 & data$logFC > 0)
-names(up.genes) <- data$ensembl_gene_id
+up.genes <- as.integer(intData$rowMean > 2 & intData$CREBcounts > 0)
+names(up.genes) <- intData$ENSEMBL
 table(up.genes)
 
-down.genes <- as.integer(data$FDR < 0.1 & data$logFC < 0)
+down.genes <- as.integer(intData$rowMean < 2 & intData$CREBcounts > 0)
 names(down.genes) <- data$ensembl_gene_id
 table(down.genes)
 
