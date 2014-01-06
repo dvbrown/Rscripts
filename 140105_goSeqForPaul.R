@@ -1,15 +1,17 @@
 library(goseq)
 setwd('~/Documents/CREB/paulEnrichment/')
+intData = read.delim('140205_tcgaGeneMean_CREBsites')
+intData = intData[!duplicated(intData$ENSEMBL),]
 
 up.genes <- as.integer(intData$rowMean > 2 & intData$CREBcounts > 0)
 names(up.genes) <- intData$ENSEMBL
 table(up.genes)
 
 down.genes <- as.integer(intData$rowMean < 2 & intData$CREBcounts > 0)
-names(down.genes) <- data$ensembl_gene_id
+names(down.genes) <-  intData$ENSEMBL
 table(down.genes)
 
-# Model th bias from gene length of DE genes
+# The null model should be flat for microarray data
 null_model_up <- nullp(up.genes, genome = "hg19", id = "ensGene")
 null_model_down <- nullp(down.genes, genome = "hg19", id = "ensGene")
 
@@ -35,13 +37,13 @@ names(keggid2name) <- sapply(names(keggid2name), substring, 9)
 kegg_enrichment <- cbind(kegg_enrichment_up, pathway = keggid2name[kegg_enrichment_up$category])
 enriched_pathwaysUp <- kegg_enrichment_up[kegg_enrichment_up$FDR < 0.1, ]
 dim(enriched_pathwaysUp)[1]
-write.table(enriched_pathwaysUp, './131220_enrichedKEGGpathwaysShortTerm.txt', sep='\t')
+write.table(enriched_pathwaysUp, './goSeq/140105_enrichedKEGGpathwaysShortTerm.txt', sep='\t')
 
 names(keggid2name) <- sapply(names(keggid2name), substring, 9)
 kegg_enrichment <- cbind(kegg_enrichment_down, pathway = keggid2name[kegg_enrichment_down$category])
 enriched_pathwaysDown <- kegg_enrichment[kegg_enrichment_down$FDR < 0.1, ]
 dim(enriched_pathwaysDown)[1]
-write.table(enriched_pathwaysDown, './131220_enrichedKEGGpathwaysLongTerm.txt', sep='\t')
+write.table(enriched_pathwaysDown, './goSeq/140105_enrichedKEGGpathwaysLongTerm.txt', sep='\t')
 
 # Now annotate IDs
 library(biomaRt)
