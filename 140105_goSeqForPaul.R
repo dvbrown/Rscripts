@@ -33,6 +33,7 @@ kegg_enrichmentDown <- goseq(null_model_down, genome = "hg19", id = "ensGene",
 
 kegg_enrichmentAll <- goseq(null_model_all, genome = "hg19", id = "ensGene", 
                              test.cats = "GO:BP", method = "Wallenius")
+
 kegg_enrichmentAllK <- goseq(null_model_all, genome = "hg19", id = "ensGene", 
                                                          test.cats = "KEGG", method = "Wallenius")
 # Control for FDR
@@ -84,7 +85,7 @@ keggid2name <- keggList("pathway", "hsa")
 head(keggid2name)
 names(keggid2name) <- sapply(names(keggid2name), substring, 9)
 kegg_enrichment <- cbind(kegg_enrichment_all, pathway = keggid2name[kegg_enrichment_all$category])
-enriched_pathwaysAll <- kegg_enrichment[kegg_enrichment_all$FDR < 0.1, ]
+enriched_pathwaysAll <- kegg_enrichment #[kegg_enrichment_all$FDR < 0.1, ] KEEP ALL THE PATHWAYS
 dim(enriched_pathwaysAll)[1]
 head(enriched_pathwaysAll)
 #write.table(enriched_pathwaysDown, './goSeq/140105_enrichedKEGGpathwaysLongTerm.txt', sep='\t')
@@ -94,3 +95,24 @@ write.table(enriched_pathwaysAll1, './goSeq/140105_enrichedGOtermsAllGenesGO_BP.
 # Now divide the numDE in cat by numInCat
 enriched_pathwaysAll1$percentDEofTotal = enriched_pathwaysAll1$numDEInCat / enriched_pathwaysAll1$numInCat *100
 plot(enriched_pathwaysAll1$percentDEofTotal, -log10(enriched_pathwaysAll1$FDR), xlim=c(0,100))
+
+################# Make a ggplot object #######################
+source('~/Documents/Rscripts/120704-sortDataFrame.R')
+enriched_pathwaysAll1 = sort.dataframe(enriched_pathwaysAll1, 6, highFirst=FALSE)
+library(ggplot2))
+enriched_pathwaysAll1$threshold = as.factor(abs(enriched_pathwaysAll1$percentDEofTotal > 15 & enriched_pathwaysAll1$FDR < 0.05))
+
+g = ggplot(data=enriched_pathwaysAll1, aes(x=percentDEofTotal, y=-log10(FDR), colour=threshold)) +
+  geom_point(alpha=0.80, size=2) +
+  opts(legend.position = "none", title=("CREB dependent pathways disrupted in GBM")
+  ) +
+  #xlim(c(-5, 5)) + ylim(c(0, 50)) +
+  xlab("Proportion of CREB regulated disrupted GBM genes in pathway") + ylab("Significance")
+g
+#subset gene names for only significant genes
+# dd_text = enriched_pathwaysAll1[(abs(enriched_pathwaysAll1$percentDEofTotal) > 20) & (enriched_pathwaysAll1$FDR < 0.01),]
+dd_text = enriched_pathwaysAll1[c(19, 36, 47),]
+
+#add text to volcano
+g + geom_text(data = dd_text, aes(x=percentDEofTotal, y=-log10(FDR),
+                                  label=name_1006, size=0.2), colour="black")
