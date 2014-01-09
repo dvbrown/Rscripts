@@ -4,13 +4,13 @@ source('~/Documents/Rscripts/120704-sortDataFrame.R')
 setwd('~/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/')
 list.files()
 
-makeDesignMatrix <- function (dataFrame,colNumSurvival = 1, colNumAge = 4, partitionSurvivalTime) {
+makeDesignMatrix <- function (dataFrame,colNumSurvival, colNumAge, partitionSurvivalTime) {
   # Takes a dataframe containing survival data and patient names (the column names). Also specify which column contains survival data
   # Last argument is integer defining the cutoff (days) for short-term survivors (inclusive) and long-term survivors (exclusive)
   # Not sure how the row.names first line part is working. Check this if things go wrong
   patientNames = row.names(dataFrame)
   survival = dataFrame[,colNumSurvival]
-  age = survival = dataFrame[,colNumAge]
+  age = dataFrame[,colNumAge]
   status = ifelse(survival, survival <= partitionSurvivalTime, survival > partitionSurvivalTime )
   status = (ifelse(status, 'short', 'long'))
   design = cbind(patientNames, age, status)
@@ -46,7 +46,9 @@ rm(agilent, agilent2)
 # Make a vector of short or long term survivors based on survival time
 clinical2 = read.delim('140109_clinicalDataTCGA.txt')
 # Check the row.names of clinical 2 for the below function to work. Should be patient names
-design = makeDesignMatrix(clinical2, partitionSurvivalTime=365)
+design = makeDesignMatrix(clinical2, 1, 4, partitionSurvivalTime=365)
+
+
 write.table(design, './dataRearranging/140109_targets.txt', sep='\t')
 write.table(affy, './dataRearranging/140109_affyMetrix.txt', sep='\t')
 write.table(agilentTotal, './dataRearranging/140109_agilent.txt', sep='\t')
