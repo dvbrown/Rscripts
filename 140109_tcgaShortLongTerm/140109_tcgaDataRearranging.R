@@ -46,4 +46,6 @@ rm(agilent, agilent2)
 clinical2 = read.delim('140109_clinicalDataTCGA.txt')
 # Check the row.names of clinical 2 for the below function to work. Should be patient names
 design = makeDesignMatrix(clinical2, partitionSurvivalTime=365)
-write.table(design, '140109_targets.txt', sep='\t')
+write.table(design, './dataRearranging/140109_targets.txt', sep='\t')
+write.table(affy, './dataRearranging/140109_affyMetrix.txt', sep='\t')
+write.table(agilentTotal, './dataRearranging/140109_agilent.txt', sep='\t')
