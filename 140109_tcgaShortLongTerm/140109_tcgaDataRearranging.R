@@ -1,4 +1,5 @@
 # This script will import some TCGA data and test for differential expression between long and short term survivors
+#This is level 3 data (already summarized and normalised by the TCGA themselves)
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
 setwd('~/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/')
 list.files()
