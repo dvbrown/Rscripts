@@ -17,9 +17,9 @@ overlapClinicalExpression = function(designMatrix, expresionDataFrame) {
   return (output)
 }
 
-affy = read.delim('140109_affyMetrix.txt')
+affy = read.delim('140110_affyNoNulls.txt')
 
-agilent = read.delim('140109_agilent.txt')
+agilent = read.delim('140110_agilentNoNulls.txt')
 # Patient number 500 is weirdly high in agilent 
 agilent = agilent[,c(1:499,501:512)]
 par(mfrow=c(2,1))
@@ -39,9 +39,14 @@ designAffy$status = as.factor(designAffy$status)
 # May need to normalise the data at the end
 
 # Agilent data was => unc_lowess_normalization_gene_level__data
+# Fix where certsin columns have null values. This stupidly gets converted to a character matrix
+aM = agilentDesign[[2]]
+aM2 = data.matrix(aM)
 agilentEst = ExpressionSet(assayData=as.matrix(agilentDesign[[2]]))
 designAgilent = agilentDesign[[1]]
 
 # Some differential expression testing. THIS currently doesn't work pick up tomorrow
-dAgilent = model.matrix(~age, designAgilent)
+
+# Agilent has better normalisation characteristics
+dAgilent = model.matrix(~age + status, designAgilent)
 fit = lmFit(agilentEst, dAgilent)
