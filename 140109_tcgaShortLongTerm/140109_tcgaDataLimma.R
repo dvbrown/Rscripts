@@ -28,6 +28,8 @@ boxplot(agilent[,c(1,5,10,50,100,150,200,211,333,444,499,500,501,511)], par(las=
 
 # The design matrix
 design = readTargets('140109_targets.txt', sep='\t')
+noNAs = !is.na(design$status)
+design2 = design[noNAs,]
 
 affyDesign = overlapClinicalExpression(design, affy)
 agilentDesign = overlapClinicalExpression(design, agilent)
@@ -42,11 +44,11 @@ designAffy$status = as.factor(designAffy$status)
 # Fix where certsin columns have null values. This stupidly gets converted to a character matrix
 aM = agilentDesign[[2]]
 aM2 = data.matrix(aM)
-agilentEst = ExpressionSet(assayData=as.matrix(agilentDesign[[2]]))
+agilentEst = ExpressionSet(assayData=aM2)
 designAgilent = agilentDesign[[1]]
 
 # Some differential expression testing. THIS currently doesn't work pick up tomorrow
 
 # Agilent has better normalisation characteristics
-dAgilent = model.matrix(~age + status, designAgilent)
+dAgilent = model.matrix(~age + status, designAgilent2)
 fit = lmFit(agilentEst, dAgilent)
