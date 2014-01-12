@@ -6,12 +6,11 @@ list.files()
 
 overlapClinicalExpression = function(designMatrix, expresionDataFrame) {
   # Return a list with the first element is the overlapped design matrix. The second element is the gene expression matrix
+  row.names(designMatrix) = designMatrix[,1]
   dSample = design[,1]
   eSample = colnames(expresionDataFrame)
-  overlap = intersect(dSample, eSample)
-  row.names(designMatrix) = designMatrix[,1]
+  overlap = intersect(eSample, dSample)
   dOutput = designMatrix[overlap,]
-  #dOutput = subset.data.frame(designMatrix, designMatrix[,1] == overlap)
   sOutput = expresionDataFrame[,overlap]
   output = list(dOutput, sOutput)
   return (output)
@@ -28,11 +27,12 @@ boxplot(agilent[,c(1,5,10,50,100,150,200,211,333,444,499,500,501,511)], par(las=
 
 # The design matrix
 design = readTargets('140109_targets.txt', sep='\t')
+# Remove NAs
 noNAs = !is.na(design$status)
 design2 = design[noNAs,]
 
-affyDesign = overlapClinicalExpression(design, affy)
-agilentDesign = overlapClinicalExpression(design, agilent)
+affyDesign = overlapClinicalExpression(design2, affy)
+agilentDesign = overlapClinicalExpression(design2, agilent)
 
 # Affy was subjected gene_rma__data
 affyEst = ExpressionSet(assayData=as.matrix(affyDesign[[2]]))
@@ -50,5 +50,7 @@ designAgilent = agilentDesign[[1]]
 # Some differential expression testing. THIS currently doesn't work pick up tomorrow
 
 # Agilent has better normalisation characteristics
-dAgilent = model.matrix(~age + status, designAgilent2)
-fit = lmFit(agilentEst, dAgilent)
+dAgilent = model.matrix(~age + status, designAgilent)
+
+# PROBLEM > designAgilent1 = !is.na(designAgilent$status)
+# PROBLEM Error in design[obs, , drop = FALSE] : (subscript) logical subscript too long
