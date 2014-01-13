@@ -16,10 +16,10 @@ overlapClinicalExpression = function(designMatrix, expresionDataFrame) {
   return (output)
 }
 
-countSurvivalStatus <- function (design) {
+countSurvivalStatus <- function (designMatrix) {
   # How many long and short survivors in the dataset?
-  long = length(design$status[(design$status == 'long')])
-  short = length(design$status[(design$status == 'short')])
+  long = length(designMatrix$status[(designMatrix$status == 'long')])
+  short = length(designMatrix$status[(designMatrix$status == 'short')])
   survival = list(short, long)
   names(survival) = c('short', 'long')
   return (survival)
@@ -34,8 +34,9 @@ par(mfrow=c(2,1))
 boxplot(affy[,c(1,5,10,50,100,150,200,211,333,444,499,500,501,511)], par(las=2, cex=0.8), main='Affymetrix RMA normalised')
 boxplot(agilent[,c(1,5,10,50,100,150,200,211,333,444,499,500,501,511)], par(las=2, cex=0.8), main='Agilent Lowess normalised')
 
-# The design matrix
-design = readTargets('140109_targets.txt', sep='\t')
+#####################################################  The design matrix ##################################################### 
+design = readTargets('140113_targets_3years.txt', sep='\t')
+########################################################################################################## 
 
 # Remove NAs
 noNAs = !is.na(design$status)
@@ -75,7 +76,11 @@ fitAgilent = eBayes(fitAgilent)
 # Specify 
 resultAgilent = topTable(fitAgilent, number=17814 ,coef='statusshort', sort.by='B', adjust.method='BH')
 sigAgilent = as.data.frame(decideTests(fitAgilent, p.value=0.1, lfc=1))
-write.table(resultAgilent, './limmaResults/140113_agilentShortvsLong.txt', sep='\t', row.names=F)
+#write.table(resultAgilent, './limmaResults/140113_agilentShortvsLong_14months.txt', sep='\t', row.names=F)
+
+par(mfrow=c(1,2))
+volcanoplot(fitAffy, coef=3, highlight=25, names=fitAffy$genes, main='Affymetrix 3 years')
+
 #####################################################################################################################
 
 ##################################################### AffyMetrix DE testing #########################################
@@ -87,7 +92,9 @@ fitAffy = eBayes(fitAffy)
 # Specify 
 resultAffy = topTable(fitAffy, number=12042 ,coef='statusshort', sort.by='B', adjust.method='BH')
 sigAffy = as.data.frame(decideTests(fitAffy, p.value=0.1, lfc=1))
-write.table(resultAffy, './limmaResults/140113_affymetrixShortvsLong.txt', sep='\t', row.names=F)
+#write.table(resultAffy, './limmaResults/140113_affymetrixShortvsLong_14months.txt', sep='\t', row.names=F)
+
+volcanoplot(fitAgilent, coef=3, highlight=25, names=fitAgilent$genes, main='Agilent 3 years')
 #####################################################################################################################
 
 # Compare the 2 array types and the results they find
