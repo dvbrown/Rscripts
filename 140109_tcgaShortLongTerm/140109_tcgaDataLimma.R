@@ -84,9 +84,8 @@ par(mfrow=c(2,2))
 plot(mergedResult$logFC.x, mergedResult$logFC.y, xlab='Affymetrix', ylab='Agilent', main='Log fold change comparsion \nbetween array platforms TCGA GBM')
 plot(mergedResult$B.x, mergedResult$B.y, xlab='Affymetrix', ylab='Agilent', main='B value comparsion \nbetween array platforms TCGA GBM')
 
-commonAgilent = intersect(resultAffy$ID, resultAgilent$ID)
-row.names(resultAffy) = resultAffy$ID
-row.names(resultAgilent) = resultAgilent$ID
-agilentCommon = resultAgilent[commonAgilent,]
-affyCommon = resultAffy[commonAgilent,]
-mergedResult = merge.data.frame(affyCommon, agilentCommon, by.x='ID', by.y='ID')
+commonSig = intersect(row.names(sigAffy), row.names(sigAgilent))
+agilentC = sigAgilent[commonSig,]
+affyC = sigAffy[commonSig,]
+plot(affyC$statusshort, agilentC$statusshort, xlab='Affymetrix', ylab='Agilent', main='Significance calls between\narray platforms TCGA GBM')
+plot(affyC[,1], agilentC[,1], xlab='Affymetrix', ylab='Agilent', main='Intercept between\narray platforms TCGA GBM')
