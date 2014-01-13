@@ -25,6 +25,10 @@ countSurvivalStatus <- function (designMatrix) {
   return (survival)
 }
 
+#####################################################  The design matrix #################################
+design = readTargets('140113_targets_3years.txt', sep='\t')
+########################################################################################################## 
+
 affy = read.delim('140110_affyNoNulls.txt')
 
 agilent = read.delim('140110_agilentNoNulls.txt')
@@ -34,10 +38,6 @@ par(mfrow=c(2,1))
 boxplot(affy[,c(1,5,10,50,100,150,200,211,333,444,499,500,501,511)], par(las=2, cex=0.8), main='Affymetrix RMA normalised')
 boxplot(agilent[,c(1,5,10,50,100,150,200,211,333,444,499,500,501,511)], par(las=2, cex=0.8), main='Agilent Lowess normalised')
 
-#####################################################  The design matrix ##################################################### 
-design = readTargets('140113_targets_3years.txt', sep='\t')
-########################################################################################################## 
-
 # Remove NAs
 noNAs = !is.na(design$status)
 design2 = design[noNAs,]
@@ -46,7 +46,14 @@ affyDesign = overlapClinicalExpression(design2, affy)
 agilentDesign = overlapClinicalExpression(design2, agilent)
 
 # Affy was subjected gene_rma__data
-affyEst = ExpressionSet(assayData=as.matrix(affyDesign[[2]]))
+aF = affyDesign[[2]]
+aF2 = data.matrix(aF)
+aF2 = apply(aF2, 2, log2)
+aF3 = normalizeBetweenArrays(aF2, method='scale')
+boxplot(aF3[,c(1,5,10,50,100,150,200,211,333,375,400,409)], main='Affymetrix quantile normalised')#, par(las=2, cex=0.8))
+
+
+affyEst = ExpressionSet(assayData=aF2)
 designAffy = affyDesign[[1]]
 designAffy$status = as.factor(designAffy$status)
 
@@ -69,6 +76,7 @@ agilentReplicates
 ##################################################### Agilent DE testing #########################################
 # Agilent has better normalisation characteristics
 dAgilent = model.matrix(~age + status, designAgilent)
+
 # Fit the linear model
 fitAgilent = lmFit(agilentEst, dAgilent)
 # Estimate dispersions
@@ -77,9 +85,6 @@ fitAgilent = eBayes(fitAgilent)
 resultAgilent = topTable(fitAgilent, number=17814 ,coef='statusshort', sort.by='B', adjust.method='BH')
 sigAgilent = as.data.frame(decideTests(fitAgilent, p.value=0.1, lfc=1))
 #write.table(resultAgilent, './limmaResults/140113_agilentShortvsLong_14months.txt', sep='\t', row.names=F)
-
-par(mfrow=c(1,2))
-volcanoplot(fitAffy, coef=3, highlight=25, names=fitAffy$genes, main='Affymetrix 3 years')
 
 #####################################################################################################################
 
@@ -94,7 +99,12 @@ resultAffy = topTable(fitAffy, number=12042 ,coef='statusshort', sort.by='B', ad
 sigAffy = as.data.frame(decideTests(fitAffy, p.value=0.1, lfc=1))
 #write.table(resultAffy, './limmaResults/140113_affymetrixShortvsLong_14months.txt', sep='\t', row.names=F)
 
-volcanoplot(fitAgilent, coef=3, highlight=25, names=fitAgilent$genes, main='Agilent 3 years')
+# Draw the volcano plots for both Agilent and Affymetrix
+#par(mfrow=c(1,2))
+#volcanoplot(fitAffy, coef=3, highlight=25, names=fitAffy$genes, main='Affymetrix 3 years')
+#legend('topleft', 'short-term n=378 \nlong-term=31', cex=0.75)
+#volcanoplot(fitAgilent, coef=3, highlight=25, names=fitAgilent$genes, main='Agilent 3 years')
+#legend('topleft', 'short-term n=363 \nlong-term=32', cex=0.75)
 #####################################################################################################################
 
 # Compare the 2 array types and the results they find
