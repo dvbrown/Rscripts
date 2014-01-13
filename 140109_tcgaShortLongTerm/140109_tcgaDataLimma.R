@@ -7,7 +7,7 @@ list.files()
 overlapClinicalExpression = function(designMatrix, expresionDataFrame) {
   # Return a list with the first element is the overlapped design matrix. The second element is the gene expression matrix
   row.names(designMatrix) = designMatrix[,1]
-  dSample = design[,1]
+  dSample = designMatrix[,1]
   eSample = colnames(expresionDataFrame)
   overlap = intersect(eSample, dSample)
   dOutput = designMatrix[overlap,]
@@ -47,10 +47,26 @@ aM2 = data.matrix(aM)
 agilentEst = ExpressionSet(assayData=aM2)
 designAgilent = agilentDesign[[1]]
 
-# Some differential expression testing. THIS currently doesn't work pick up tomorrow
-
+##################################################### Agilent DE testing #########################################
 # Agilent has better normalisation characteristics
 dAgilent = model.matrix(~age + status, designAgilent)
+# Fit the linear model
+fitAgilent = lmFit(agilentEst, dAgilent)
+# Estimate dispersions
+fitAgilent = eBayes(fitAgilent)
+# Specify 
+resultAgilent = topTable(fitAgilent, number=17814 ,coef='statusshort', sort.by='B', adjust.method='BH')
+sigAgilent = as.data.frame(decideTests(fitAgilent, p.value=0.1, lfc=1))
+write.table(resultAgilent, './limmaResults/140113_agilentShortvsLong.txt', sep='\t', row.names=F)
+#####################################################################################################################
 
-# PROBLEM > designAgilent1 = !is.na(designAgilent$status)
-# PROBLEM Error in design[obs, , drop = FALSE] : (subscript) logical subscript too long
+##################################################### AffyMetrix DE testing #########################################
+dAffy = model.matrix(~age + status, designAffy)
+# Fit the linear model
+fitAffy = lmFit(affyEst, dAffy)
+# Estimate dispersions
+fitAffy = eBayes(fitAffy)
+# Specify 
+resultAffy = topTable(fitAffy, number=12042 ,coef='statusshort', sort.by='B', adjust.method='BH')
+sigAffy = as.data.frame(decideTests(fitAffy, p.value=0.1, lfc=1))
+write.table(resultAgilent, './limmaResults/140113_affymetrixShortvsLong.txt', sep='\t', row.names=F)
