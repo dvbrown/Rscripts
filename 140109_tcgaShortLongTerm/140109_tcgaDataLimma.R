@@ -69,4 +69,24 @@ fitAffy = eBayes(fitAffy)
 # Specify 
 resultAffy = topTable(fitAffy, number=12042 ,coef='statusshort', sort.by='B', adjust.method='BH')
 sigAffy = as.data.frame(decideTests(fitAffy, p.value=0.1, lfc=1))
-write.table(resultAgilent, './limmaResults/140113_affymetrixShortvsLong.txt', sep='\t', row.names=F)
+write.table(resultAffy, './limmaResults/140113_affymetrixShortvsLong.txt', sep='\t', row.names=F)
+#####################################################################################################################
+
+# Compare the 2 array types and the results they find
+commonTable = intersect(resultAffy$ID, resultAgilent$ID)
+row.names(resultAffy) = resultAffy$ID
+row.names(resultAgilent) = resultAgilent$ID
+agilentCommon = resultAgilent[commonTable,]
+affyCommon = resultAffy[commonTable,]
+mergedResult = merge.data.frame(affyCommon, agilentCommon, by.x='ID', by.y='ID')
+
+par(mfrow=c(2,2))
+plot(mergedResult$logFC.x, mergedResult$logFC.y, xlab='Affymetrix', ylab='Agilent', main='Log fold change comparsion \nbetween array platforms TCGA GBM')
+plot(mergedResult$B.x, mergedResult$B.y, xlab='Affymetrix', ylab='Agilent', main='B value comparsion \nbetween array platforms TCGA GBM')
+
+commonAgilent = intersect(resultAffy$ID, resultAgilent$ID)
+row.names(resultAffy) = resultAffy$ID
+row.names(resultAgilent) = resultAgilent$ID
+agilentCommon = resultAgilent[commonAgilent,]
+affyCommon = resultAffy[commonAgilent,]
+mergedResult = merge.data.frame(affyCommon, agilentCommon, by.x='ID', by.y='ID')
