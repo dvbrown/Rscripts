@@ -16,6 +16,15 @@ overlapClinicalExpression = function(designMatrix, expresionDataFrame) {
   return (output)
 }
 
+countSurvivalStatus <- function (design) {
+  # How many long and short survivors in the dataset?
+  long = length(design$status[(design$status == 'long')])
+  short = length(design$status[(design$status == 'short')])
+  survival = list(short, long)
+  names(survival) = c('short', 'long')
+  return (survival)
+}
+
 affy = read.delim('140110_affyNoNulls.txt')
 
 agilent = read.delim('140110_agilentNoNulls.txt')
@@ -27,6 +36,7 @@ boxplot(agilent[,c(1,5,10,50,100,150,200,211,333,444,499,500,501,511)], par(las=
 
 # The design matrix
 design = readTargets('140109_targets.txt', sep='\t')
+
 # Remove NAs
 noNAs = !is.na(design$status)
 design2 = design[noNAs,]
@@ -38,6 +48,10 @@ agilentDesign = overlapClinicalExpression(design2, agilent)
 affyEst = ExpressionSet(assayData=as.matrix(affyDesign[[2]]))
 designAffy = affyDesign[[1]]
 designAffy$status = as.factor(designAffy$status)
+
+# Count the number of long and short term survivors
+affyReplicates = countSurvivalStatus(designAffy)
+affyReplicates
 # May need to normalise the data at the end
 
 # Agilent data was => unc_lowess_normalization_gene_level__data
@@ -46,6 +60,10 @@ aM = agilentDesign[[2]]
 aM2 = data.matrix(aM)
 agilentEst = ExpressionSet(assayData=aM2)
 designAgilent = agilentDesign[[1]]
+
+# Count the number of long and short term survivors
+agilentReplicates = countSurvivalStatus(designAgilent)
+agilentReplicates
 
 ##################################################### Agilent DE testing #########################################
 # Agilent has better normalisation characteristics
