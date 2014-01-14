@@ -48,24 +48,36 @@ agilentDesign = overlapClinicalExpression(design2, agilent)
 # Affy was subjected gene_rma__data
 aF = affyDesign[[2]]
 aF2 = data.matrix(aF)
-aF2 = apply(aF2, 2, log2)
-aF3 = normalizeBetweenArrays(aF2, method='scale')
+
+########################################### Normalise Affymetrix #############################################
+# It is necesary to log transform the Affymetrix data
+ks.test(aF2[400,], 'pnorm', mean=mean(aF2[400,]), sd=sd(aF2[400,]))
+aF3 = log2(aF2)
+aF3 = normalizeBetweenArrays(aF3, method='quantile')
+ks.test(aF3[400,], 'pnorm', mean=mean(aF3[400,]), sd=sd(aF3[400,]))
 boxplot(aF3[,c(1,5,10,50,100,150,200,211,333,375,400,409)], main='Affymetrix quantile normalised')#, par(las=2, cex=0.8))
+hist(aF3[c(3000),], breaks='FD')
 
+qqnorm(aF3[,400])
+qqline(aF3[,400])
 
-affyEst = ExpressionSet(assayData=aF2)
+affyEst = ExpressionSet(assayData=aF3)
 designAffy = affyDesign[[1]]
 designAffy$status = as.factor(designAffy$status)
 
 # Count the number of long and short term survivors
 affyReplicates = countSurvivalStatus(designAffy)
 affyReplicates
-# May need to normalise the data at the end
+##############################################################################################################
 
 # Agilent data was => unc_lowess_normalization_gene_level__data
-# Fix where certsin columns have null values. This stupidly gets converted to a character matrix
 aM = agilentDesign[[2]]
 aM2 = data.matrix(aM)
+boxplot(aM3[,c(1,5,10,50,100,150,200,211,333,395)], main='Agilent Lowess + Scale normalised')#, par(las=2, cex=0.8))
+hist(aM2[c(100),], breaks='FD')
+ks.test(aM2[250,], 'pnorm')#, mean=mean(aM3[,300]), sd=sd(aM3[,300]))
+qqnorm(aM2[,c(100)])
+qqline(aM2[,100])
 agilentEst = ExpressionSet(assayData=aM2)
 designAgilent = agilentDesign[[1]]
 
@@ -86,8 +98,6 @@ resultAgilent = topTable(fitAgilent, number=17814 ,coef='statusshort', sort.by='
 sigAgilent = as.data.frame(decideTests(fitAgilent, p.value=0.1, lfc=1))
 #write.table(resultAgilent, './limmaResults/140113_agilentShortvsLong_14months.txt', sep='\t', row.names=F)
 
-#####################################################################################################################
-
 ##################################################### AffyMetrix DE testing #########################################
 dAffy = model.matrix(~age + status, designAffy)
 # Fit the linear model
@@ -97,7 +107,7 @@ fitAffy = eBayes(fitAffy)
 # Specify 
 resultAffy = topTable(fitAffy, number=12042 ,coef='statusshort', sort.by='B', adjust.method='BH')
 sigAffy = as.data.frame(decideTests(fitAffy, p.value=0.1, lfc=1))
-#write.table(resultAffy, './limmaResults/140113_affymetrixShortvsLong_14months.txt', sep='\t', row.names=F)
+#write.table(resultAffy, './limmaResults/140113_affymetrixShortvsLong_3years.txt', sep='\t', row.names=F)
 
 # Draw the volcano plots for both Agilent and Affymetrix
 #par(mfrow=c(1,2))
