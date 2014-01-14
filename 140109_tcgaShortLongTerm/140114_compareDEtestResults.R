@@ -25,11 +25,18 @@ head(affySig)
 head(agilentSig)
 
 # Read in the result of my RNA-seq batch 1
-stemCell =  read.delim('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/131021_shortVSlong.txt', row.names=1)
-stemCell1 = stemCell[unique(stemCell$external_gene_id),]
-
-# FIX ROWNAMES DAN
-row.names(stemCell1) = stemCell1[,2]
+stemCell =  read.delim('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/131021_shortVSlong.txt', row.names=1, stringsAsFactors=F)
+genes = !duplicated(stemCell$external_gene_id)
+stemCell1 = stemCell[genes,]
+row.names(stemCell1) = stemCell1$external_gene_id
 stemCellDE = stemCell1[,c(4,5,6,7,8)]
 
-sigGenes = list(stemCellDE[stemCellDE$logFC >= 1,])
+Ag = as.data.frame(agilFiles[[3]])
+row.names(Ag$ID)
+Af = as.data.frame(affy[[5]])
+row.names(Af$ID)
+
+sigGenes = list(stemCellDE[abs(stemCellDE$logFC) >= 1 & stemCellDE$FDR < 0.1,],
+                Ag[abs(Ag$logFC >= 1) & Ag$adj.P.Val < 0.1,],
+                Af[abs(Af$logFC >= 1) & Af$adj.P.Val < 0.1,])
+names(sigGenes) = c('My RNA-seq', 'Agilent', 'Affymatrix')
