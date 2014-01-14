@@ -23,3 +23,13 @@ agilentSig = -log10(agilentPval)
 
 head(affySig)
 head(agilentSig)
+
+# Read in the result of my RNA-seq batch 1
+stemCell =  read.delim('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/131021_shortVSlong.txt', row.names=1)
+stemCell1 = stemCell[unique(stemCell$external_gene_id),]
+
+# FIX ROWNAMES DAN
+row.names(stemCell1) = stemCell1[,2]
+stemCellDE = stemCell1[,c(4,5,6,7,8)]
+
+sigGenes = list(stemCellDE[stemCellDE$logFC >= 1,])
