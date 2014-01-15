@@ -54,12 +54,17 @@ aF2 = data.matrix(aF)
 ks.test(aF2[400,], 'pnorm', mean=mean(aF2[400,]), sd=sd(aF2[400,]))
 aF3 = log2(aF2)
 aF3 = normalizeBetweenArrays(aF3, method='quantile')
+# Some plots to explore distribution
 ks.test(aF3[400,], 'pnorm', mean=mean(aF3[400,]), sd=sd(aF3[400,]))
 boxplot(aF3[,c(1,5,10,50,100,150,200,211,333,375,400,409)], main='Affymetrix quantile normalised')#, par(las=2, cex=0.8))
-hist(aF3[c(3000),], breaks='FD')
+hist(aF2[,1], breaks='FD', main='Affymetrix patient 1 expression', xlab='RMA normalised expression score')
+qqnorm(aF2[,1], main='Affymetrix patient 1 Q-Q')
+qqline(aF2[,1])
 
-qqnorm(aF3[,400])
-qqline(aF3[,400])
+gapdhAf = aF2['ACTB',]
+hist(gapdhAf, breaks='FD', main='Affymetrix B-Actin \nexpression distribution')
+qqnorm(gapdhAf, main='Affymetrix B-Actin Q-Q')
+qqline(gapdhAf)
 
 affyEst = ExpressionSet(assayData=aF3)
 designAffy = affyDesign[[1]]
@@ -73,11 +78,19 @@ affyReplicates
 # Agilent data was => unc_lowess_normalization_gene_level__data
 aM = agilentDesign[[2]]
 aM2 = data.matrix(aM)
-boxplot(aM3[,c(1,5,10,50,100,150,200,211,333,395)], main='Agilent Lowess + Scale normalised')#, par(las=2, cex=0.8))
-hist(aM2[c(100),], breaks='FD')
+#boxplot(aM3[,c(1,5,10,50,100,150,200,211,333,395)], main='Agilent Lowess + Scale normalised')#, par(las=2, cex=0.8))
+
+# Some plots to explore distribution
+hist(aM2[,1], breaks='FD', main='Agilent patient 1 expression', xlab='Loess normalised expression score')
 ks.test(aM2[250,], 'pnorm')#, mean=mean(aM3[,300]), sd=sd(aM3[,300]))
-qqnorm(aM2[,c(100)])
-qqline(aM2[,100])
+qqnorm(aM2[,c(1)],main='Agilent patient 1 Q-Q')
+qqline(aM2[,1])
+
+gapdhAg = aM2['ACTB',]
+hist(gapdhAg, breaks='FD', main='Agilent B-Actin \nexpression distribution')
+qqnorm(gapdhAg, main='Agilent B-Actin Q-Q')
+qqline(gapdhAg)
+
 agilentEst = ExpressionSet(assayData=aM2)
 designAgilent = agilentDesign[[1]]
 

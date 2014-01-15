@@ -32,11 +32,25 @@ row.names(stemCell1) = stemCell1$external_gene_id
 stemCellDE = stemCell1[,c(4,5,6,7,8)]
 
 Ag = as.data.frame(agilFiles[[3]])
-row.names(Ag$ID)
+row.names(Ag) = Ag$ID
 Af = as.data.frame(affy[[5]])
-row.names(Af$ID)
+row.names(Af) = Af$ID
 
 sigGenes = list(stemCellDE[abs(stemCellDE$logFC) >= 1 & stemCellDE$FDR < 0.1,],
                 Ag[abs(Ag$logFC >= 1) & Ag$adj.P.Val < 0.1,],
                 Af[abs(Af$logFC >= 1) & Af$adj.P.Val < 0.1,])
-names(sigGenes) = c('My RNA-seq', 'Agilent', 'Affymatrix')
+names(sigGenes) = c('My RNA-seq', 'Agilent', 'Affymetrix')
+
+# Make some overlap plots
+overlap = intersect(Af$ID, stemCell1$external_gene_id)
+stemCellcommon = stemCell1[overlap,]
+AfCommon = Af[overlap,]
+
+par(mfrow=c(2,1))
+plot(AfCommon$logFC, stemCellcommon$logFC, main='logFC stem cell \nvs TCGA bulk GBM',
+     ylab='My RNAseq batch 1', xlab='Affymetrix TCGA GBM')
+abline(lsfit(AfCommon$logFC, stemCellcommon$logFC), col='red')
+
+plot(-log10(AfCommon$adj.P.Val), -log10(stemCellcommon$FDR), main='Significance stem cell \nvs TCGA bulk GBM',
+     ylab='My RNAseq batch 1', xlab='Affymetrix TCGA GBM')
+abline(lsfit(-log10(AfCommon$adj.P.Val), -log10(stemCellcommon$FDR)), col='red')
