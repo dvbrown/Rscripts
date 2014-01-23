@@ -2,6 +2,7 @@ library(edgeR)
 setwd('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/')
 source('~/Documents/Rscripts/annotateEnsembIDs.R')
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
+source('~/Documents/Rscripts/140107_ggPlotGraphsFunction.R')
 files = list.files(pattern='*.txt')
 
 colors = c('darkgreen', 'lightgreen','springgreen','cyan', 'blue1', 'lightblue')
@@ -55,4 +56,19 @@ head(summary(decideTests(fit)))
 filshortVlong = shortVlong[(abs(shortVlong$logFC) > 1) & (shortVlong$adj.P.Val < 0.05),]
 
 plotMA(fit,array=4,main="MA plot batch1 voom limma", xlab='logCounts', ylab='logFC')
-volcanoplot(fit, coef=5)
+volcanoplot(fit, coef=2)
+
+shortVlong$threshold = as.factor(abs(shortVlong[,'logFC'] > 2 & shortVlong[,'adj.P.Val'] < 0.05))
+# Make the volcano plot object
+g = ggplot(data=shortVlong, aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
+  geom_point(alpha=0.7, size=2) +
+  theme(legend.position = "none") + ggtitle('voom limma short vs long term survivors RNA-seq batch 1') +
+  #Add some custome limits to the axes here
+  xlim(c(-10, 10)) + ylim(c(0, 0.2)) + 
+  geom_point(shape=19,      # Use solid circles
+             alpha=1/8) +    # 1/4 opacity
+  xlab(as.character('log2 fold change')) + ylab('-log10 FDR adjusted p-value')
+
+g + theme(axis.title.x = element_text(face="bold", size=12))
+g + theme(axis.title.y = element_text(face="bold", size=12))
+g + theme(title = element_text(face="bold", size=16))

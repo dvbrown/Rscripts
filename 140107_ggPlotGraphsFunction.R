@@ -1,18 +1,18 @@
 # A function to make ggplots the proper way
 require(ggplot2)
+
 makeGGplotGraph = function(dataFrameOfResult, xAxis, yAxis, main) {
   # Take a dataframe of the data to be graphed, Column number of threshold element 1, threshold element 2
   # Third argument is the title
   
   # Generate a vector to define which elements will be coloured differently as a threshold.
   # Change the thresholds here within the function
-  dataFrameOfResult$threshold = as.factor(abs(dataFrameOfResult$yAxis > 2 & dataFrameOfResult$yAxis < 0.05))
+  dataFrameOfResult$threshold = as.factor(abs(dataFrameOfResult[[xAxis]] > 2 & dataFrameOfResult[,yAxis] < 0.05))
   
   # Make the plot object
   g = ggplot(data=dataFrameOfResult, aes(x=xAxis, y=-log10(yAxis), colour=threshold)) +
     geom_point(alpha=0.80, size=2) +
-    opts(legend.position = "none", title=(main)
-    ) +
+    theme(legend.position = "none") + ggtitle(main) +
     #Add some custome limits to the axes here
     #xlim(c(-5, 5)) + ylim(c(0, 50)) +
     xlab(as.character(xAxis)) + ylab(as.character(yAxis))

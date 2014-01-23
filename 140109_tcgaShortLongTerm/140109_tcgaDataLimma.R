@@ -26,7 +26,8 @@ countSurvivalStatus <- function (designMatrix) {
 }
 
 #####################################################  The design matrix #################################
-design = readTargets('140113_targets_3years.txt', sep='\t')
+# Female is '1'. Male is '2'
+design = readTargets('140115_design3yearMatrix.txt', sep='\t')
 ########################################################################################################## 
 
 affy = read.delim('140110_affyNoNulls.txt')
@@ -100,7 +101,7 @@ agilentReplicates
 
 ##################################################### Agilent DE testing #########################################
 # Agilent has better normalisation characteristics
-dAgilent = model.matrix(~age + status, designAgilent)
+dAgilent = model.matrix(~age + gender + status, designAgilent)
 
 # Fit the linear model
 fitAgilent = lmFit(agilentEst, dAgilent)
@@ -109,10 +110,10 @@ fitAgilent = eBayes(fitAgilent)
 # Specify 
 resultAgilent = topTable(fitAgilent, number=17814 ,coef='statusshort', sort.by='B', adjust.method='BH')
 sigAgilent = as.data.frame(decideTests(fitAgilent, p.value=0.1, lfc=1))
-#write.table(resultAgilent, './limmaResults/140113_agilentShortvsLong_14months.txt', sep='\t', row.names=F)
+#write.table(resultAgilent, './limmaResults/140115_agilentShortvsLong_3yearsGender.txt', sep='\t', row.names=F)
 
 ##################################################### AffyMetrix DE testing #########################################
-dAffy = model.matrix(~age + status, designAffy)
+dAffy = model.matrix(~age + gender + status, designAffy)
 # Fit the linear model
 fitAffy = lmFit(affyEst, dAffy)
 # Estimate dispersions
@@ -120,7 +121,7 @@ fitAffy = eBayes(fitAffy)
 # Specify 
 resultAffy = topTable(fitAffy, number=12042 ,coef='statusshort', sort.by='B', adjust.method='BH')
 sigAffy = as.data.frame(decideTests(fitAffy, p.value=0.1, lfc=1))
-#write.table(resultAffy, './limmaResults/140113_affymetrixShortvsLong_3years.txt', sep='\t', row.names=F)
+#write.table(resultAffy, './limmaResults/140115_affymetrixShortvsLong_3yearsGender.txt', sep='\t', row.names=F)
 
 # Draw the volcano plots for both Agilent and Affymetrix
 #par(mfrow=c(1,2))
