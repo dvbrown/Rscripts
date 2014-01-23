@@ -4,7 +4,7 @@
 setwd('~/Documents/RNAdata/qPCRexpt/140122_testNewPrimers/')
 
 buildCpDataframe <- function (sampleLabel, cp) {
-  # Take the dataframe listing the well and sample name and bind it to the file with well position and Cp
+  # Take the full dataframe listing the well and sample name and bind it to the file with well position and Cp
   mySampleLabels = sampleLabels[c(313:340),]
   myCp = cp[c(313:340),]
   # Merge labels with data
@@ -32,28 +32,31 @@ cp = read.delim('140123_Pmd_Dvb.txt', skip=1)
 tm = read.delim('140123_Pmd_DvbTmCALL.txt', skip=1)
 tm = tm[,c(1,2,5,6,7)]
 colnames(tm) = c('well', 'gene','sample', 'Tm1', 'Tm2' )
+myTm = tm[c(313:340),]
 repTm = extractReplicates(c(1:28), tm)
+repTm = repTm[[3]]
 
 # Convert the 384 well plate into the sample labels
 system('./transposeLinear.py -i 140122_validationPrimerTest384.txt > 140123_sampleLabels.txt')
 sampleLabels = read.delim('140123_sampleLabels.txt', header=F)
 
 # Set some graphs
-par(las=2, mfrow=c(2,1))
+par(las=2, mfrow=c(2,2))
 
-myTm = tm[c(313:340),]
 tm = merge(mySampleLabels, myTm, by.x='V1', by.y='Pos')
-plot(myTm$Tm1, myTm$Tm2, main='Replicate accuracy Tm', ylab='Tm')
-abline(lm(myTm$Tm1 ~ myTm$Tm2), col='red')
+# Plot Tm
+plot(repTm$Tm1.x, repTm$Tm1.y, main='Replicate accuracy Tm', ylab='Tm')
+abline(lm(repTm$Tm1.x ~ repTm$Tm1.y), col='red')
 
-data = buildCpDataframe(mySampleLabels, myCp)
+# Plot Cp
+data = buildCpDataframe(sampleLabels, cp)
 replicates = extractReplicates(c(1:28), data)
 rep1 = replicates[[1]]
 rep2 = replicates[[2]]
 completeData = replicates[[3]]
-#completeData$mean = rowMeans(cbind(completeData$Cp.x, completeData$Cp.y))
+completeData$mean = rowMeans(cbind(completeData$Cp.x, completeData$Cp.y))
 
-plot(rep1$Cp, rep2$Cp, main='Replicate accuracy', ylab='Cp')
+plot(rep1$Cp, rep2$Cp, main='Replicate accuracy Cp', ylab='Cp')
 abline(lm(rep1$Cp ~ rep2$Cp), col='red')
 summary(lm(rep1$Cp ~ rep2$Cp))
 text(50, 50, labels='R squared = 0.6964')
