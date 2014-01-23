@@ -1,0 +1,51 @@
+# Analyse the new batch of primers I got to analyse RNA-seq batch 1.
+# The sample was clone #004
+
+setwd('~/Documents/RNAdata/qPCRexpt/140122_testNewPrimers/')
+
+buildCpDataframe <- function (sampleLabel, cp) {
+  # Take the dataframe listing the well and sample name and bind it to the file with well position and Cp
+  mySampleLabels = sampleLabels[c(313:340),]
+  myCp = cp[c(313:340),]
+  # Merge labels with data
+  data = merge(mySampleLabels, myCp, by.x='V1', by.y='Pos')
+  data = data[,c(1,2,5,6,9)]
+  colnames(data) = c('well', 'gene','sample', 'Cp', 'notes' )
+  return (data)
+}
+
+extractReplicates <- function (indexes, cpData) {
+  # Subset each Cp into its replicates. Takes a vector with the indexes to to subset and then takes the
+  # even entries and odd entries separately from the dataframe containing cp values
+  even = indexes[indexes%%2 == 0]
+  odd = indexes[indexes%%2 == 1]
+  rep1 = cpData[odd, ]
+  rep2 = cpData[even, ]
+  boundData = merge(rep1, rep2, by.x='gene', by.y='gene')
+  boundData = boundData[,c(1,2,4,6,8)]
+  boundData$mean = rowMeans(cbind(boundData$Cp.x, boundData$Cp.y))
+  result = list(rep1, rep2, boundData)
+  return (result)
+}
+
+cp = read.delim('140123_Pmd_Dvb.txt', skip=1)
+tm = read.delim('140123_Pmd_DvbTmCALL.txt', skip=1)
+
+# Convert the 384 well plate into the sample labels
+system('./transposeLinear.py -i 140122_validationPrimerTest384.txt > 140123_sampleLabels.txt')
+sampleLabels = read.delim('140123_sampleLabels.txt', header=F)
+
+myTm = tm[c(313:340),]
+data = buildCpDataframe(mySampleLabels, myCp)
+replicates = extractReplicates(c(1:28), data)
+rep1 = replicates[[1]]
+rep2 = replicates[[2]]
+completeData = replicates[[3]]
+#completeData$mean = rowMeans(cbind(completeData$Cp.x, completeData$Cp.y))
+
+plot(rep1$Cp, rep2$Cp, main='Replicate accuracy')
+abline(lm(rep1$Cp ~ rep2$Cp), col='red')
+summary(lm(rep1$Cp ~ rep2$Cp))
+text(50, 50, labels='R squared = 0.6964')
+
+barplot
