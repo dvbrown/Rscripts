@@ -30,12 +30,22 @@ extractReplicates <- function (indexes, cpData) {
 
 cp = read.delim('140123_Pmd_Dvb.txt', skip=1)
 tm = read.delim('140123_Pmd_DvbTmCALL.txt', skip=1)
+tm = tm[,c(1,2,5,6,7)]
+colnames(tm) = c('well', 'gene','sample', 'Tm1', 'Tm2' )
+repTm = extractReplicates(c(1:28), tm)
 
 # Convert the 384 well plate into the sample labels
 system('./transposeLinear.py -i 140122_validationPrimerTest384.txt > 140123_sampleLabels.txt')
 sampleLabels = read.delim('140123_sampleLabels.txt', header=F)
 
+# Set some graphs
+par(las=2, mfrow=c(2,1))
+
 myTm = tm[c(313:340),]
+tm = merge(mySampleLabels, myTm, by.x='V1', by.y='Pos')
+plot(myTm$Tm1, myTm$Tm2, main='Replicate accuracy Tm', ylab='Tm')
+abline(lm(myTm$Tm1 ~ myTm$Tm2), col='red')
+
 data = buildCpDataframe(mySampleLabels, myCp)
 replicates = extractReplicates(c(1:28), data)
 rep1 = replicates[[1]]
@@ -43,9 +53,11 @@ rep2 = replicates[[2]]
 completeData = replicates[[3]]
 #completeData$mean = rowMeans(cbind(completeData$Cp.x, completeData$Cp.y))
 
-plot(rep1$Cp, rep2$Cp, main='Replicate accuracy')
+plot(rep1$Cp, rep2$Cp, main='Replicate accuracy', ylab='Cp')
 abline(lm(rep1$Cp ~ rep2$Cp), col='red')
 summary(lm(rep1$Cp ~ rep2$Cp))
 text(50, 50, labels='R squared = 0.6964')
 
-barplot
+barplot(completeData$mean, space=0.2, names.arg=completeData$gene, main='Mean of the Cp', col=rainbow(12),
+        ylab='Crossing point')
+abline(a=20, b=0)
