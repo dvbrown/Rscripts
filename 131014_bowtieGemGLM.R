@@ -31,10 +31,23 @@ counts = counts[keep,]
 #nomalise, plot MDS
 d = calcNormFactors(counts)
 
+#par(mfrow=c(2,2))
 # Plots according to the biological coefficient of variation
 plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
-        main='MDS plot GIC RNA-seq batch1')
+       main='MDS plot GIC RNA-seq batch1')
 legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.5)
+# 
+# plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
+#         main='MDS plot GIC RNA-seq batch1', dim.plot=c(2,3))
+# #legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
+# 
+# plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
+#         main='MDS plot GIC RNA-seq batch1', dim.plot=c(3,4))
+# #legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
+# 
+# plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
+#         main='MDS plot GIC RNA-seq batch1', dim.plot=c(4,5))
+#legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
 
 boxplot(cpm(counts, log=T), main='Normalised counts RNA-seq batch1', ylab='Log2 CPM', col=colors, cex=1.25, las=2)
 
