@@ -1,7 +1,7 @@
 setwd('~/Documents/RNAdata/')
 
 data = read.delim('RNAseqProgress.txt')
-da = data[c(1:7),c(4,5,6,7,8,9,10,11,12,14)]
+da = data[c(1:7),c(4,5,6,7,8,9,10,11,12,15)]
 da[4,3] = as.factor('primary')
 da = da[c(1,3,4,5,6,7),]
 colnames(da) = c('Clone', 'Passage', 'Origin', 'Group', 'Survival', 'Age', 'cellNo','CD133', 'RNA', 'cDNA')
@@ -30,11 +30,14 @@ par(mfrow=c(2,2), cex=1.25)
 barplot(as.integer(da$cellNo), main='Cell number', ylab="Cell number (000's)", names.arg=da$Clone, xlab='Patient ID',
         col=colors)
 
-barplot(da$RNA, main='RNA extracted', ylab='Concentration (ng)', names.arg=da$Clone, xlab='Patient ID',
+barplot(da$rna, main='RNA extracted', ylab='Concentration (ng)', names.arg=da$Clone, xlab='Patient ID',
         col=colors)
 
 barplot(da$cDNA, main='Library yield', ylab='Concentration (ng)', names.arg=da$Clone, xlab='Patient ID',
         col=colors, ylim=c(0,45))
+
+barplot(rnaSEqc$TotalReadsSequenced, main='Total reads sequenced', ylab='Reads (millions)',
+        col=colors, names.arg=row.names(rnaSEqc), las=2, cex.names=0.8)
 
 ################################## RNAseQC plots ##################################
 rnaSEqc = read.delim('danBatch1/rnaSeQC_reports/131008_rnaseQCSummary.txt', row.names=1)

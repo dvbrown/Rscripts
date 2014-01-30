@@ -38,16 +38,17 @@ extractReplicates <- function (indexes, cpData) {
 }
 
 ################################### Munging the Tm manually ####################################
-tm = tm[,c(1,2,5,6,7)]
+tm = tm[,c(3,4,5,6)]
+mySampleLabels = sampleLabels[c(313:340),]
+tm = merge(mySampleLabels, tm, by.x='V1', by.y='Pos')
+#myTm = tm[c(313:340),]
 colnames(tm) = c('well', 'gene','sample', 'Tm1', 'Tm2' )
-myTm = tm[c(313:340),]
 repTm = extractReplicates(c(1:28), tm)
 repTm = repTm[[3]]
 
 # Set some graphs
 par(las=2, mfrow=c(2,2))
 
-tm = merge(mySampleLabels, myTm, by.x='V1', by.y='Pos')
 # Plot Tm
 plot(repTm$Tm1.x, repTm$Tm1.y, main='Replicate accuracy Tm', ylab='Tm')
 abline(lm(repTm$Tm1.x ~ repTm$Tm1.y), col='red')
@@ -60,9 +61,9 @@ rep2 = replicates[[2]]
 completeData = replicates[[3]]
 completeData$mean = rowMeans(cbind(completeData$Cp.x, completeData$Cp.y))
 
-plot(rep1$Cp, rep2$Cp, main='Replicate accuracy Cp', ylab='Cp')
-abline(lm(rep1$Cp ~ rep2$Cp), col='red')
-summary(lm(rep1$Cp ~ rep2$Cp))
+plot(completeData$Cp.x, completeData$Cp.y, main='Replicate accuracy Cp', ylab='Cp')
+abline(lm(completeData$Cp.x ~ completeData$Cp.y), col='red')
+summary(lm(completeData$Cp.x ~ completeData$Cp.y))
 text(50, 50, labels='R squared = 0.6964')
 
 # barplot the mean of the Cp

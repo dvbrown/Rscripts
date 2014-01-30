@@ -64,7 +64,7 @@ tt = topTags(de, n=nrow(d))
 head(tt$table)
 summary(decideTestsDGE(de))
 
-# The quasi likihood metod deosn't give any differentially expressed genes
+# The quasi likihood metod doesn't give any differentially expressed genes
 # fit <- glmQLFTest(d2,design,robust=TRUE,plot=TRUE)
 # t = topTags(fit, n=nrow(d))
 # head(t$table)
