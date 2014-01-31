@@ -54,3 +54,18 @@ abline(lsfit(AfCommon$logFC, stemCellcommon$logFC), col='red')
 plot(-log10(AfCommon$adj.P.Val), -log10(stemCellcommon$FDR), main='Significance stem cell \nvs TCGA bulk GBM',
      ylab='My RNAseq batch 1', xlab='Affymetrix TCGA GBM')
 abline(lsfit(-log10(AfCommon$adj.P.Val), -log10(stemCellcommon$FDR)), col='red')
+
+
+# Make a volcano plot of Affymetrix
+g = ggplot(data=Ag, aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
+  geom_point(alpha=0.80, size=2) +
+  theme(legend.position = "none") + ggtitle('Differently expressed genes between short-term survivors\nand > 3 year survivors') +
+  #Add some custome limits to the axes here
+  #xlim(c(-5, 5)) + ylim(c(0, 50)) +
+  xlab(as.character(logFC)) + ylab(as.character(adj.P.Val))
+
+# Add annotation
+dd_text = dataFrameOfResult[(abs(dataFrameOfResult$xAxis) > 5) & (dataFrameOfResult$yAxis < 0.001),]
+# Draw text
+ggplotObject + geom_text(data = dd_text, aes(x=xAxis, y=-log10(yAxis),
+                                             label=name, size=0.2), colour="black")
