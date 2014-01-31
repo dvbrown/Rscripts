@@ -69,7 +69,8 @@ g = ggplot(data=Af, aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
 g
 
 # Add annotation
-dd_text = Af[abs(Af$logFC > 2 & Af$adj.P.Val < 0.01),]
+dd_text = Af[(abs(Af$logFC) > 1) & (Af$adj.P.Val < 0.05),]
+
 # Draw text
 g + geom_text(data = dd_text, aes(x=logFC, y=-log10(adj.P.Val),
                                              label=ID, size=0.2), colour="black")
