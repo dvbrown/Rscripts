@@ -3,6 +3,13 @@ library(biomaRt)
 library(org.Hs.eg.db)
 library(optparse)
 
+# Now annotate IDs
+
+# EncaPSULATE THIS Bit in a function when I can be bothered
+mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
+results <- getBM(attributes = c("description", "external_gene_id"), filters = "ensembl_gene_id",
+                 values = row.names(inData), mart = mart)
+
 setwd('~/Documents/FredCSC/reformattedFiles/symbolConversion/')
 
 geneNameToID <- function (inFile) {
