@@ -57,15 +57,19 @@ abline(lsfit(-log10(AfCommon$adj.P.Val), -log10(stemCellcommon$FDR)), col='red')
 
 
 # Make a volcano plot of Affymetrix
-g = ggplot(data=Ag, aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
+Af$threshold = as.factor(abs(Af$logFC > 2 & Af$adj.P.Val < 0.05))
+require(ggplot2)
+
+g = ggplot(data=Af, aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
   geom_point(alpha=0.80, size=2) +
   theme(legend.position = "none") + ggtitle('Differently expressed genes between short-term survivors\nand > 3 year survivors') +
   #Add some custome limits to the axes here
   #xlim(c(-5, 5)) + ylim(c(0, 50)) +
-  xlab(as.character(logFC)) + ylab(as.character(adj.P.Val))
+  xlab(as.character('logFC')) + ylab(as.character('adj.P.Val'))
+g
 
 # Add annotation
-dd_text = dataFrameOfResult[(abs(dataFrameOfResult$xAxis) > 5) & (dataFrameOfResult$yAxis < 0.001),]
+dd_text = Af[abs(Af$logFC > 2 & Af$adj.P.Val < 0.01),]
 # Draw text
-ggplotObject + geom_text(data = dd_text, aes(x=xAxis, y=-log10(yAxis),
-                                             label=name, size=0.2), colour="black")
+g + geom_text(data = dd_text, aes(x=logFC, y=-log10(adj.P.Val),
+                                             label=ID, size=0.2), colour="black")
