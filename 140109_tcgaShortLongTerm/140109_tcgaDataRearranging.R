@@ -4,7 +4,7 @@ source('~/Documents/Rscripts/120704-sortDataFrame.R')
 setwd('~/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/')
 list.files()
 
-makeDesignMatrix <- function (dataFrame,colNumSurvival, colNumAge, shortTermTime, longTermTime) {
+makeDesignMatrix <- function (dataFrame,colNumSurvival, colNumAge, shortTermTime) {
   # Takes a dataframe containing survival data and patient names (the column names). Also specify which column contains survival data
   # Last argument is integer defining the cutoff (days) for short-term survivors (inclusive) and long-term survivors (exclusive)
   # Not sure how the row.names first line part is working. Check this if things go wrong
@@ -12,8 +12,9 @@ makeDesignMatrix <- function (dataFrame,colNumSurvival, colNumAge, shortTermTime
   survival = dataFrame[,colNumSurvival]
   age = dataFrame[,colNumAge]
   gender = dataFrame[,5]
-  status = ifelse(survival, survival <= shortTermTime, survival > longTermTime )
-  status = (ifelse(status, 'short', 'long'))
+  #status = ifelse(survival, survival <= shortTermTime, survival > longTermTime )
+  #status = (ifelse(status, 'short', 'long'))
+  status = ifelse(survival <= shortTermTime, 'short', 'long')
   design = cbind(patientNames, survival, age, gender, status)
   #design = as.data.frame(design)
   return (design)
@@ -46,9 +47,12 @@ rm(agilent, agilent2)
 # Make a vector of short or long term survivors based on survival time
 clinical2 = read.delim('140109_clinicalDataTCGA.txt')
 # Check the row.names of clinical 2 for the below function to work. Should be patient names
-# 140203 -> Changed the survival time to be before 14 months and after 3 years. This is not working!!!
-design = makeDesignMatrix(clinical2, 1, 4, 413, 1095)
 
+# Subset the clinical dataframe to remove cases that lie between short and long term survivors
+clinical3 = clinical2[clinical2[,1] > 1095 | clinical2[,1] <= 413,]
+design = makeDesignMatrix(clinical3, 1, 4, 413)
+design = na.omit(design)
+tail(design)
 
 write.table(design, './dataRearranging/140115_design3yearMatrix.txt', sep='\t', row.names=F)
 write.table(affy, './dataRearranging/140109_affyMetrix.txt', sep='\t')
