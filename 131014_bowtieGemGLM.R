@@ -31,10 +31,11 @@ counts = counts[keep,]
 #nomalise, plot MDS
 d = calcNormFactors(counts)
 
+############################################## MDS plots and removing batch effects #########################################
 #par(mfrow=c(2,2))
 # Plots according to the biological coefficient of variation
 plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
-       main='MDS plot GIC RNA-seq batch1')
+       main='MDS plot GIC RNA-seq batch1 original')
 legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.5)
 # 
 # plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
@@ -49,10 +50,12 @@ legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"
 #         main='MDS plot GIC RNA-seq batch1', dim.plot=c(4,5))
 #legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
 
+##############################################################################################################################
+
 boxplot(cpm(counts, log=T), main='Normalised counts RNA-seq batch1', ylab='Log2 CPM', col=colors, cex=1.25, las=2)
 
 # Build the design matrix
-design = model.matrix(~ libPrep + age + group, dm)
+design = model.matrix(~ facsSort + age + group, dm)
 
 # Estimate dispersion, adjusting for the GLM
 d2 = estimateGLMCommonDisp(d, design, verbose=T)
@@ -100,7 +103,9 @@ result = ensembl_2_geneName(tt$table)
 result = sort.dataframe(result, 8, highFirst=FALSE)
 cutoff = result[result$FDR < 0.05,]
 cutoffLib = result[result$FDR < 0.1 & abs(result$logFC) > 1,]
-write.table(cpms,'GLMedgeR/131021_normalisedCPM',sep='\t')
-write.table(result, './GLMedgeR/131021_shortVSlong.txt', sep='\t')
-write.table(cutoff, './GLMedgeR/131021_shortVSlongDEgenes.txt', sep='\t')
-write.table(cutoffLib, './GLMedgeR/131021_shortVSlongLiberalDE.txt', sep='\t')
+
+################################################ Write out results ##############################################
+write.table(cpms,'GLMedgeR/140203_facsBatch/140203_normalisedCPM',sep='\t')
+write.table(result, './GLMedgeR/140203_facsBatch/140203_shortVSlong.txt', sep='\t')
+write.table(cutoff, './GLMedgeR/140203_facsBatch/140203_shortVSlongDEgenes.txt', sep='\t')
+write.table(cutoffLib, './GLMedgeR/140203_facsBatch/140203_shortVSlongLiberalDE.txt', sep='\t')
