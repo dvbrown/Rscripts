@@ -2,11 +2,12 @@ library(edgeR)
 library(ggplot2)
 library(Heatplus)
 library(RColorBrewer)
-setwd('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/')
+setwd('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/140203_facsBatch/')
 
-finalResult = read.delim('GLMedgeR/131021_shortVSlong.txt')
-
-sigGenes=read.delim('GLMedgeR/131021_shortVSlongDEgenes.txt')
+#finalResult = read.delim('GLMedgeR/131021_shortVSlong.txt')
+finalResult = read.delim('140203_shortVSlong.txt')
+#sigGenes=read.delim('GLMedgeR/131021_shortVSlongDEgenes.txt')
+sigGenes=read.delim('140203_shortVSlongDEgenes.txt')
 
 require(ggplot2)
 ##Highlight genes that have an absolute fold change > 2 and a p-value < Bonferroni cut-off

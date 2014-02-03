@@ -32,12 +32,24 @@ counts = counts[keep,]
 d = calcNormFactors(counts)
 
 ############################################## MDS plots and removing batch effects #########################################
-#par(mfrow=c(2,2))
+par(mfrow=c(2,2))
 # Plots according to the biological coefficient of variation
 plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
        main='MDS plot GIC RNA-seq batch1 original')
-legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.5)
+legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
 # 
+facs = removeBatchEffect(d, batch=dm$facsSort)
+plotMDS(facs, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
+        main='MDS plot GIC RNA-seq batch1 facs sorts')
+
+lib = removeBatchEffect(d, batch=dm$libPrep)
+plotMDS(lib, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
+        main='MDS plot GIC RNA-seq batch1 library prep')
+
+doubleCorrect = removeBatchEffect(d, batch=dm$facsSort, batch2=dm$libPrep)
+plotMDS(doubleCorrect, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
+        main='MDS plot GIC RNA-seq batch1 \nlibrary and FACS correct')
+
 # plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
 #         main='MDS plot GIC RNA-seq batch1', dim.plot=c(2,3))
 # #legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
@@ -104,7 +116,7 @@ result = sort.dataframe(result, 8, highFirst=FALSE)
 cutoff = result[result$FDR < 0.05,]
 cutoffLib = result[result$FDR < 0.1 & abs(result$logFC) > 1,]
 
-################################################ Write out results ##############################################
+########################################################### Write out results ############################################## 
 write.table(cpms,'GLMedgeR/140203_facsBatch/140203_normalisedCPM',sep='\t')
 write.table(result, './GLMedgeR/140203_facsBatch/140203_shortVSlong.txt', sep='\t')
 write.table(cutoff, './GLMedgeR/140203_facsBatch/140203_shortVSlongDEgenes.txt', sep='\t')
