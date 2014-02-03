@@ -12,12 +12,15 @@ makeDesignMatrix <- function (dataFrame,colNumSurvival, colNumAge, shortTermTime
   survival = dataFrame[,colNumSurvival]
   age = dataFrame[,colNumAge]
   gender = dataFrame[,5]
-  status = ifelse(survival, survival <= shortTermTime, survival > longTermTime )
-  status = (ifelse(status, 'short', 'long'))
-  design = cbind(patientNames, age, gender, status)
+  #status = ifelse(survival, survival <= shortTermTime, survival > longTermTime )
+  status = ifelse(survival, survival <= shortTermTime)#, survival > longTermTime )
+  status = (ifelse(status, 'short', NA))
+  #status = (ifelse(status, 'short', 'long'))
+  design = cbind(patientNames, age, gender, status, survival)
   #design = as.data.frame(design)
   return (design)
 }
+design = makeDesignMatrix(clinical2, 1, 4, 413, 1095)
 
 # This is normalised level 3 data from the TCGA. Downloaded using firehose and then filtered using python scripts
 
