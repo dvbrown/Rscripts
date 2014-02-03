@@ -110,7 +110,7 @@ fitAgilent = eBayes(fitAgilent)
 # Specify 
 resultAgilent = topTable(fitAgilent, number=17814 ,coef='statusshort', sort.by='B', adjust.method='BH')
 sigAgilent = as.data.frame(decideTests(fitAgilent, p.value=0.1, lfc=1))
-#write.table(resultAgilent, './limmaResults/140115_agilentShortvsLong_3yearsGender.txt', sep='\t', row.names=F)
+write.table(resultAgilent, './limmaResults/140203_agilentShortvsLong_3yearsHardCutoff.txt', sep='\t', row.names=F)
 
 ##################################################### AffyMetrix DE testing #########################################
 dAffy = model.matrix(~age + gender + status, designAffy)
