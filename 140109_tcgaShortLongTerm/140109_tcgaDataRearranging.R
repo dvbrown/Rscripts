@@ -14,7 +14,7 @@ makeDesignMatrix <- function (dataFrame,colNumSurvival, colNumAge, shortTermTime
   gender = dataFrame[,5]
   status = ifelse(survival, survival <= shortTermTime, survival > longTermTime )
   status = (ifelse(status, 'short', 'long'))
-  design = cbind(patientNames, age, gender, status)
+  design = cbind(patientNames, survival, age, gender, status)
   #design = as.data.frame(design)
   return (design)
 }
@@ -46,10 +46,10 @@ rm(agilent, agilent2)
 # Make a vector of short or long term survivors based on survival time
 clinical2 = read.delim('140109_clinicalDataTCGA.txt')
 # Check the row.names of clinical 2 for the below function to work. Should be patient names
-# 140203 -> Changed the survival time to be before 14 months and after 3 years
+# 140203 -> Changed the survival time to be before 14 months and after 3 years. This is not working!!!
 design = makeDesignMatrix(clinical2, 1, 4, 413, 1095)
 
 
-write.table(design, './dataRearranging/140115_design3yearMatrix.txt', sep='\t')
+write.table(design, './dataRearranging/140115_design3yearMatrix.txt', sep='\t', row.names=F)
 write.table(affy, './dataRearranging/140109_affyMetrix.txt', sep='\t')
 write.table(agilentTotal, './dataRearranging/140109_agilent.txt', sep='\t')
