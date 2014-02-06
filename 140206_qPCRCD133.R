@@ -3,12 +3,12 @@ source('~/Documents/Rscripts/qPCRFunctions.R')
 ################################## IO ################################## 
 setwd('~/Documents/RNAdata/qPCRexpt/140206_cd133posNeg/')
 
-# Convert the 384 well plate into the sample labels
-#system('~/Documents/Eclipseworkspace/Bioinformatics/Filtering/transposeLinear.py -i 140206_384wellMap.txt > 140206_linearSamples.txt')
-#sampleLabels = read.delim('140206_linearSamples.txt', header=F)
-
+# Convert the 384 well plate into the sample label
 # Read in qPCR data
-coomand = 
+plate = transposeLinear('140206_384wellMap.txt')
+# Split the transposed file into source and gene
+plateMap = splitSampleName(plate)
+
 cp = read.delim('140123_Pmd_Dvb.txt', skip=1)
 tm = read.delim('140123_Pmd_DvbTmCALL.txt', skip=1)
 
