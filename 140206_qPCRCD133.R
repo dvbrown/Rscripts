@@ -16,7 +16,7 @@ tm = read.delim('140206_melt.txt', skip=1)
 
 data = buildDataFrameForddCT(plateMap, cp)
 noNAs = na.omit(data)
-hist(noNAs$Cp, 25)
+hist(noNAs$Cp, 25, main='qPCR results in raw form', col='yellow')
 
 # Fix this function
 replicates = extractReplicates(c(1:384), data)
