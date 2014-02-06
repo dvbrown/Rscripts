@@ -18,17 +18,18 @@ data = buildDataFrameForddCT(plateMap, cp)
 noNAs = na.omit(data)
 hist(noNAs$Cp, 25, main='qPCR results in raw form', col='yellow')
 
-# Fix this function
+# Return a datframe with the replicate data alongside
 replicates = extractReplicates(c(1:384), data)
+data = replicates[[1]]
 
-################################### Munging the Tm manually ####################################
-tm = tm[,c(3,4,5,6)]
-mySampleLabels = sampleLabels[c(313:340),]
-tm = merge(mySampleLabels, tm, by.x='V1', by.y='Pos')
-#myTm = tm[c(313:340),]
-colnames(tm) = c('well', 'gene','sample', 'Tm1', 'Tm2' )
-repTm = extractReplicates(c(1:28), tm)
-repTm = repTm[[3]]
+# ################################### Munging the Tm manually ####################################
+# tm = tm[,c(3,4,5,6)]
+# mySampleLabels = sampleLabels[c(313:340),]
+# tm = merge(mySampleLabels, tm, by.x='V1', by.y='Pos')
+# #myTm = tm[c(313:340),]
+# colnames(tm) = c('well', 'gene','sample', 'Tm1', 'Tm2' )
+# repTm = extractReplicates(c(1:28), tm)
+# repTm = repTm[[3]]
 
 # Set some graphs
 par(las=2, mfrow=c(2,2))

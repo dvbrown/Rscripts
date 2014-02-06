@@ -27,11 +27,12 @@ buildDataFrameForddCT = function(plateMap, CtData) {
   return (result)
 }
 
-extractReplicates <- function (indexes, CtData) {
+extractReplicates <- function (indexes, ctData) {
+  # Retreive the indexes of the 384 wellplate
   indexes = c(1:384)
   
-  # NEED TO CHECK THE NA CASES AS THE MERGE FUNCTION MAY DROP THEM!
-  CtData = data#[(data[,3]) != <NA>,]
+  # Keep only cases with data in them as the merge function doesn't work with NAs
+  CtData = data[complete.cases(data[,3]),]
   # Subset each Cp into its replicates. Takes a vector with the indexes to to subset and then takes the
   # even entries and odd entries separately from the dataframe containing cp values
   even = indexes[indexes%%2 == 0]
@@ -42,9 +43,12 @@ extractReplicates <- function (indexes, CtData) {
   rep2 = CtData[even, c(1:6)]
   rep2 = na.omit(rep2)
   boundData = merge(rep1, rep2, by.x='sample', by.y='sample')
-  ################
-  boundData = boundData[,c(1,2,3,4,6,7,11)]
-  boundData$mean = rowMeans(cbind(boundData$Cp.x, boundData$Cp.y))
-  result = list(rep1, rep2, boundData)
+  ################ Remove columns that do not add information
+  usefulData = boundData[,c(1,2,3,4,6,7,11)]
+  # Compute the mean and the standard deviation of the replicates
+  usefulData$mean = rowMeans(cbind(usefulData$Cp.x, usefulData$Cp.y))
+  usefulData$stdDev = apply(cbind(usefulData$Cp.x, usefulData$Cp.y), 1, sd)
+  # Package the output in a list
+  result = list(rep1, rep2, usefulData)
   return (result)
 }
