@@ -9,36 +9,17 @@ plate = transposeLinear('140206_384wellMap.txt')
 # Split the transposed file into source and gene
 plateMap = splitSampleName(plate)
 
-cp = read.delim('140123_Pmd_Dvb.txt', skip=1)
-tm = read.delim('140123_Pmd_DvbTmCALL.txt', skip=1)
-
+cp = read.delim('140206_Cps.txt', skip=1)
+tm = read.delim('140206_melt.txt', skip=1)
 
 ########################################################################
 
-buildCpDataframe <- function (sampleLabel, cp) {
-  # Take the full dataframe listing the well and sample name and bind it to the file with well position and Cp
-  mySampleLabels = sampleLabels[c(313:340),]
-  myCp = cp[c(313:340),]
-  # Merge labels with data
-  data = merge(mySampleLabels, myCp, by.x='V1', by.y='Pos')
-  data = data[,c(1,2,5,6,9)]
-  colnames(data) = c('well', 'gene','sample', 'Cp', 'notes' )
-  return (data)
-}
+data = buildDataFrameForddCT(plateMap, cp)
+noNAs = na.omit(data)
+hist(noNAs$Cp, 25)
 
-extractReplicates <- function (indexes, cpData) {
-  # Subset each Cp into its replicates. Takes a vector with the indexes to to subset and then takes the
-  # even entries and odd entries separately from the dataframe containing cp values
-  even = indexes[indexes%%2 == 0]
-  odd = indexes[indexes%%2 == 1]
-  rep1 = cpData[odd, ]
-  rep2 = cpData[even, ]
-  boundData = merge(rep1, rep2, by.x='gene', by.y='gene')
-  boundData = boundData[,c(1,2,4,6,8)]
-  boundData$mean = rowMeans(cbind(boundData$Cp.x, boundData$Cp.y))
-  result = list(rep1, rep2, boundData)
-  return (result)
-}
+# Fix this function
+replicates = extractReplicates(c(1:384), data)
 
 ################################### Munging the Tm manually ####################################
 tm = tm[,c(3,4,5,6)]
