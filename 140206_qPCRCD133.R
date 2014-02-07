@@ -81,14 +81,14 @@ p3 = plot_ddCt(ddCt_B2M_020_P ~ origin.x, rawData,'Look no hands')
 print(p1, position=c(0, .6, 1, 1), more=TRUE)
 print(p2, position=c(0, 0, 1, .4))
 #################################### Now the actual plots of interest
-barchart(ddCt_B2M_020_P~origin.x,data=shortLongSurvival,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors')
+sl = plot_ddCt(ddCt_B2M_020_P~origin.x, shortLongSurvival, 'Short term vs long-term survivors')
 
-barchart(ddCt_GAP_030_P~origin.x,data=primaryRecurrent,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='Primary vs recurrent tumours')
+s2 = plot_ddCt(ddCt_GAP_030_P~origin.x, primaryRecurrent, 'Primary vs recurrent tumours')
+print(sl, position=c(0, .6, 1, 1), more=TRUE)
+print(s2, position=c(0, 0, 1, .4))
 
-barchart(ddCt_020_N~origin.x,data=cd133negPos,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='Cd133 negative vs CD133 positive tumours')
+s3 = plot_ddCt(ddCt_020_N~origin.x, cd133negPos, 'CD133 negative vs CD133 positive tumours')
+
 
 # ################################### Munging the Tm manually ####################################
 # tm = tm[,c(3,4,5,6)]
