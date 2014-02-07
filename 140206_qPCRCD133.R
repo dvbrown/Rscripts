@@ -25,18 +25,6 @@ row.names(rawData) = rawData$sample
 rep1 = replicates[[1]]
 rep2 = replicates[[2]]
 
-# ################################### Munging the Tm manually ####################################
-# tm = tm[,c(3,4,5,6)]
-# mySampleLabels = sampleLabels[c(313:340),]
-# tm = merge(mySampleLabels, tm, by.x='V1', by.y='Pos')
-# #myTm = tm[c(313:340),]
-# colnames(tm) = c('well', 'gene','sample', 'Tm1', 'Tm2' )
-# repTm = extractReplicates(c(1:28), tm)
-# repTm = repTm[[3]]
-# Plot Tm
-#plot(repTm$Tm1.x, repTm$Tm1.y, main='Replicate accuracy Tm', ylab='Tm')
-#abline(lm(repTm$Tm1.x ~ repTm$Tm1.y), col='red')
-
 par(las=2)
 barchart(meanCP~gene.x,data=rawData,groups=origin.x, 
         scales=list(x=list(rot=90,cex=0.8)), main='Raw Cp values GIC cells')
@@ -53,3 +41,23 @@ plot(rawData$Cp.x, rawData$Cp.y, main='Replicate accuracy Cp', ylab='Cp replicat
 abline(lm(rawData$Cp.x ~ rawData$Cp.y), col='red')
 summary(lm(rawData$Cp.x ~ rawData$Cp.y))
 text(50, 50, labels='R squared = 0.979')
+
+# Generate the ddCt values by calling a custom function
+rawData$ddCt = ddCTcalculate(geneOfInterest=rawData$gene.x, sampleOfInterest=rawData$origin.x,
+                             houseKeepingGene='GAPDH', referenceSample='020_N', data=rawData)
+
+
+
+
+
+# ################################### Munging the Tm manually ####################################
+# tm = tm[,c(3,4,5,6)]
+# mySampleLabels = sampleLabels[c(313:340),]
+# tm = merge(mySampleLabels, tm, by.x='V1', by.y='Pos')
+# #myTm = tm[c(313:340),]
+# colnames(tm) = c('well', 'gene','sample', 'Tm1', 'Tm2' )
+# repTm = extractReplicates(c(1:28), tm)
+# repTm = repTm[[3]]
+# Plot Tm
+#plot(repTm$Tm1.x, repTm$Tm1.y, main='Replicate accuracy Tm', ylab='Tm')
+#abline(lm(repTm$Tm1.x ~ repTm$Tm1.y), col='red')

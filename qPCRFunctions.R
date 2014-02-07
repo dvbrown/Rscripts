@@ -55,30 +55,38 @@ extractReplicates <- function (indexes, ctData) {
 
 # Now try and get ddCT to work in R
 
-ddCTcalculate = function(da=rawData, referenceSample='020_N', sampleOfInterest, houseKeepingGene='GAPDH') {
-  da = rawData
-  sampleOfInterest = '020_N'
-  referenceSample = '020_N'
-  houseKeepingGene = 'GAPDH'
+ddCTcalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKeepingGene='GAPDH', referenceSample='020_N', data=rawData) {
+#   da = rawData
+#   sampleOfInterest = '020_N'
+#   referenceSample = '020_N'
+#   houseKeepingGene = 'GAPDH'
+#   geneOfInterest = 'ATP5G3'
   
   #This will work on a per element basis. Call this function will a tapply on the vector of Cps
-  house = paste(sampleOfInterest, houseKeepingGene)
-  gene = paste(sampleOfInterest, )
+  sampleHouse = paste(sampleOfInterest, houseKeepingGene)
+  SampleGene = paste(sampleOfInterest, geneOfInterest)
   # Extract the Cp of the hosue keeping gene
-  houseCp = da[house, 'meanCP']
+  houseCp = data[sampleHouse, 'meanCP']
   # place holder 020_N ATP5G3 as the current row
-  geneCp = da[1, 'meanCP']
+  geneCp = data[SampleGene, 'meanCP']
   # dCt calculation for the sample of interest
   dCt = houseCp - geneCp
   
   # Extract the meanCP for the reference sample. First get the index of the housekeeping gene, then the gene of interest
   refDctRowHouse = paste(referenceSample, houseKeepingGene)
-  refDctRowGene = paste(referenceSample, 'ATP5G3')
+  refDctRowGene = paste(referenceSample, geneOfInterest)
   # Calculate dCt for the reference sample
-  referenceSampleCp = da[refDctRowHouse, 'meanCP'] - da[refDctRowGene, 'meanCP']
+  referenceSampleCp = data[refDctRowHouse, 'meanCP'] - data[refDctRowGene, 'meanCP']
   
   # Calculate ddCt
   ddCtNotSquared = referenceSampleCp - dCt
   ddCt = 2^-ddCtNotSquared
+  
   return (ddCt)
 }
+
+# ddCt = vector(mode = 'double', length=length(rawData$meanCP))
+# for (entry in rawData) {
+#   result = ddCTcalculate(entry['gene.x'])
+#   append(ddCt, result)
+# }
