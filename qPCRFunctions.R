@@ -84,22 +84,11 @@ plot_ddCt = function(Expressionformula, dataFrame, title='A grouped barchart') {
   # This will make barcharts without error bars
   # Expression formula is of the type ddCt ~ cell type or whatever you want the bars to be grouped by
   p = barchart(Expressionformula, data = dataFrame, groups = gene.x, 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-                scales = list(x = list(rot=90,cex=0.8)), main = title,  ylim=c(0,10),
-               ylab=Expression)
-=======
                 scales = list(x = list(rot=90,cex=0.8)), main = title)
->>>>>>> parent of e21c6dc... the bar plot doesn't work anymore
-=======
-                scales = list(x = list(rot=90,cex=0.8)), main = title)
->>>>>>> parent of e21c6dc... the bar plot doesn't work anymore
-=======
-                scales = list(x = list(rot=90,cex=0.8)), main = title)
->>>>>>> parent of e21c6dc... the bar plot doesn't work anymore
   #returns a plot object that when you look at it plots stuff
   return (p)
 }
 # Run this at the end to intialise the package
-#package.skeleton(name = 'qPCRcustomFunctions', list=c(), path='~/Documents/Rscripts/', force=F)
+#package.skeleton(name = 'qPCRcustomFunctions', list=c('buildDataFrameForddCT', 'ddCTcalculate','extractReplicates',
+#                                                      'plot_ddCt', 'splitSampleName', 'transposeLinear', 'cp', 'map'),
+#                 path='/Library/Frameworks/R.framework/Versions/3.0/Resources/library/', force=F)

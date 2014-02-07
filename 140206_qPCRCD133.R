@@ -13,7 +13,7 @@ plateMap = splitSampleName(plate)
 cp = read.delim('140206_Cps.txt', skip=1)
 tm = read.delim('140206_melt.txt', skip=1)
 
-########################################################################
+######################################### Filter and prepare data #####################################
 
 data = buildDataFrameForddCT(plateMap, cp)
 
@@ -22,27 +22,33 @@ replicates = extractReplicates(c(1:384), data)
 rawData = replicates[[3]]
 row.names(rawData) = rawData$sample
 
+# Get rid of the primers that didn't work and remove their factor levels
+rawData = rawData[rawData$gene.x %in% c('ATP5G3', 'B2M', 'CREB1', 'GAPDH', 'GFAP', 'GRIA2', 'HAPLN1',
+                                        'LAMB1', 'OCT4', 'PROM1', 'REST'),]
+rawData = droplevels(rawData)
+
+# Extract replictes from the data set
 rep1 = replicates[[1]]
 rep2 = replicates[[2]]
 
-par(las=2)
-barchart(meanCP~gene.x,data=rawData,groups=origin.x, 
-        scales=list(x=list(rot=90,cex=0.8)), main='Raw Cp values GIC cells')
+# par(las=2)
+# barchart(meanCP~gene.x,data=rawData,groups=origin.x, 
+#         scales=list(x=list(rot=90,cex=0.8)), main='Raw Cp values GIC cells')
+# 
+# # Set some graphs
+# par(las=2, mfrow=c(1,2))
+# 
+# # Plot the frequency of the Cp values
+# hist(data$Cp, 25, main='qPCR results in raw form', col='blue', xlab='Crossing point')
+# 
+# # Plot correlation of the replicates
+# 
+# plot(rawData$Cp.x, rawData$Cp.y, main='Replicate accuracy Cp', ylab='Cp replicate 1', xlab='Cp replicate 2')
+# abline(lm(rawData$Cp.x ~ rawData$Cp.y), col='red')
+# summary(lm(rawData$Cp.x ~ rawData$Cp.y))
+# text(50, 50, labels='R squared = 0.979')
 
-# Set some graphs
-par(las=2, mfrow=c(1,2))
-
-# Plot the frequency of the Cp values
-hist(data$Cp, 25, main='qPCR results in raw form', col='blue', xlab='Crossing point')
-
-# Plot correlation of the replicates
-
-plot(rawData$Cp.x, rawData$Cp.y, main='Replicate accuracy Cp', ylab='Cp replicate 1', xlab='Cp replicate 2')
-abline(lm(rawData$Cp.x ~ rawData$Cp.y), col='red')
-summary(lm(rawData$Cp.x ~ rawData$Cp.y))
-text(50, 50, labels='R squared = 0.979')
-
-# Generate the ddCt values by calling a custom function
+##########################################  Generate the ddCt values by calling a custom function ######################################### 
 rawData$ddCt_GAP_020_P = ddCTcalculate(geneOfInterest=rawData$gene.x, sampleOfInterest=rawData$origin.x,
                              houseKeepingGene='GAPDH', referenceSample='020_P', data=rawData)
 
@@ -54,7 +60,8 @@ rawData$ddCt_GAP_030_P = ddCTcalculate(geneOfInterest=rawData$gene.x, sampleOfIn
 (rawData)
 
 
-write.table(rawData, '140207_ddCt_calculations.txt', sep='\t', row.names=F)
+#write.table(rawData, '140207_ddCt_calculations.txt', sep='\t', row.names=F)
+######################################### ######################################### ######################################### 
 
 # Subset the dataFrame by the comparisons of interest to make graphs clearer
 shortLongSurvival = rawData[rawData$origin.x %in% c('020_P', '041_P'),]
@@ -71,11 +78,21 @@ cd133negPos$ddCt_041_N = ddCTcalculate(geneOfInterest=cd133negPos$gene.x, sample
 
 # ######################################## Plot the ddCt values ####################################
 # First compare B2M and GAPDH as house keeping genes
-p1 = barchart(ddCt_B2M_020_P~origin.x,data=rawData,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='B2M as the house keeping gene')
-p2 = barchart(ddCt_GAP_020_P~origin.x,data=rawData,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='GAPDH as the house keeping gene')
+system('mkdir qcplots')
 
+pdf("qcplots/B2M.pdf")
+barchart(log2(ddCt_B2M_020_P)~origin.x,data=rawData,groups=gene.x, 
+         scales=list(x=list(rot=90,cex=0.8)), main='B2M as the house keeping gene',
+              auto.key=list(space="top", columns=4,
+                            title="gene legend", cex.title=1))
+dev.off()
+
+barchart(log2(ddCt_GAP_020_P)~origin.x,data=rawData,groups=gene.x, 
+         scales=list(x=list(rot=90,cex=0.8)), main='GAPDH as the house keeping gene',
+              auto.key=list(space="top", columns=5,
+                            title="genes", cex.title=1))
+
+# Use custom function from now on
 p3 = plot_ddCt(ddCt_B2M_020_P ~ origin.x, rawData,'Look no hands')
 
 print(p1, position=c(0, .6, 1, 1), more=TRUE)
