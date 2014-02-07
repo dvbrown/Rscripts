@@ -1,4 +1,5 @@
 # Analyse the the clones I was sequencing in batch 1 and compare primary and recurrent
+library(lattice)
 source('~/Documents/Rscripts/qPCRFunctions.R')
 ################################## IO ################################## 
 setwd('~/Documents/RNAdata/qPCRexpt/140206_cd133posNeg/')
@@ -19,6 +20,7 @@ data = buildDataFrameForddCT(plateMap, cp)
 # Return a datframe with the replicate data alongside
 replicates = extractReplicates(c(1:384), data)
 rawData = replicates[[3]]
+row.names(rawData) = rawData$sample
 
 rep1 = replicates[[1]]
 rep2 = replicates[[2]]
@@ -35,8 +37,12 @@ rep2 = replicates[[2]]
 #plot(repTm$Tm1.x, repTm$Tm1.y, main='Replicate accuracy Tm', ylab='Tm')
 #abline(lm(repTm$Tm1.x ~ repTm$Tm1.y), col='red')
 
+par(las=2)
+barchart(meanCP~gene.x,data=rawData,groups=origin.x, 
+        scales=list(x=list(rot=90,cex=0.8)), main='Raw Cp values GIC cells')
+
 # Set some graphs
-par(las=2, mfrow=c(2,1))
+par(las=2, mfrow=c(1,2))
 
 # Plot the frequency of the Cp values
 hist(data$Cp, 25, main='qPCR results in raw form', col='blue', xlab='Crossing point')

@@ -52,3 +52,19 @@ extractReplicates <- function (indexes, ctData) {
   result = list(rep1, rep2, usefulData)
   return (result)
 }
+
+# Now try and get ddCT to work in R
+
+ddCTcalculate = function(da=rawData, calibrationSample=020_N, sampleOfInterest, houseKeepingGene='GAPDH') {
+  da = rawData
+  sampleOfInterest = '020_N'
+  houseKeepingGene = 'GAPDH'
+  
+  #This will work on a per element basis. Call this function will a tapply on the vector of Cps
+  house = paste(sampleOfInterest, houseKeepingGene)
+  gene = paste(sampleOfInterest, )
+  # Extract the Cp of the hosue keeping gene
+  houseCp = da[house, 'meanCP']
+  geneCp = da[]
+  
+}
