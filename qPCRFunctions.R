@@ -1,7 +1,6 @@
 library(reshape)
 
 # Intialise the package at the end by building a list containing all the functions in this script
-#package.skeleton(name = 'qPCRcustomFunctions', list=c(), path='~/Documents/Rscripts/', force=T)
 
 # Transpose the 384 well map (tab text) using a python script and output into another file
 transposeLinear = function(well384Map, linearMapFile='output.txt') {
@@ -53,16 +52,11 @@ extractReplicates <- function (indexes, ctData) {
   return (result)
 }
 
-# Now try and get ddCT to work in R
-
 ddCTcalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKeepingGene='GAPDH', referenceSample='020_N', data=rawData) {
-#   da = rawData
-#   sampleOfInterest = '020_N'
-#   referenceSample = '020_N'
-#   houseKeepingGene = 'GAPDH'
-#   geneOfInterest = 'ATP5G3'
+  # The gene of interest and the sample of interest are both vectors from the dataFrame.
+  # House keeping gene and 
   
-  #This will work on a per element basis. Call this function will a tapply on the vector of Cps
+  # This function has been successfully debugged and has been shown to work.
   sampleHouse = paste(sampleOfInterest, houseKeepingGene)
   SampleGene = paste(sampleOfInterest, geneOfInterest)
   # Extract the Cp of the hosue keeping gene
@@ -76,17 +70,14 @@ ddCTcalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKeepingG
   refDctRowHouse = paste(referenceSample, houseKeepingGene)
   refDctRowGene = paste(referenceSample, geneOfInterest)
   # Calculate dCt for the reference sample
-  referenceSampleCp = data[refDctRowHouse, 'meanCP'] - data[refDctRowGene, 'meanCP']
+  referenceSample_dCt = data[refDctRowHouse, 'meanCP'] - data[refDctRowGene, 'meanCP']
   
   # Calculate ddCt
-  ddCtNotSquared = referenceSampleCp - dCt
-  ddCt = 2^-ddCtNotSquared
+  ddCtNotSquared = dCt - referenceSample_dCt
+  ddCt = 2^ddCtNotSquared
   
   return (ddCt)
 }
 
-# ddCt = vector(mode = 'double', length=length(rawData$meanCP))
-# for (entry in rawData) {
-#   result = ddCTcalculate(entry['gene.x'])
-#   append(ddCt, result)
-# }
+# Run this at the end to intialise the package
+#package.skeleton(name = 'qPCRcustomFunctions', list=c(), path='~/Documents/Rscripts/', force=F)

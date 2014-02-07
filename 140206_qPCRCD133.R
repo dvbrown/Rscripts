@@ -43,12 +43,41 @@ summary(lm(rawData$Cp.x ~ rawData$Cp.y))
 text(50, 50, labels='R squared = 0.979')
 
 # Generate the ddCt values by calling a custom function
-rawData$ddCt = ddCTcalculate(geneOfInterest=rawData$gene.x, sampleOfInterest=rawData$origin.x,
-                             houseKeepingGene='GAPDH', referenceSample='020_N', data=rawData)
+rawData$ddCt_GAP_020_P = ddCTcalculate(geneOfInterest=rawData$gene.x, sampleOfInterest=rawData$origin.x,
+                             houseKeepingGene='GAPDH', referenceSample='020_P', data=rawData)
+
+rawData$ddCt_B2M_020_P = ddCTcalculate(geneOfInterest=rawData$gene.x, sampleOfInterest=rawData$origin.x,
+                                       houseKeepingGene='B2M', referenceSample='020_P', data=rawData)
+
+rawData$ddCt_GAP_030_P = ddCTcalculate(geneOfInterest=rawData$gene.x, sampleOfInterest=rawData$origin.x,
+                                       houseKeepingGene='GAPDH', referenceSample='030_P', data=rawData)
+(rawData)
 
 
+write.table(rawData, '140207_ddCt_calculations.txt', sep='\t', row.names=F)
 
+# Subset the dataFrame by the comparisons of interest to make graphs clearer
+shortLongSurvival = rawData[rawData$origin.x %in% c('020_P', '041_P'),]
+primaryRecurrent = rawData[rawData$origin.x %in% c('030_P', '030a_P'),]
+cd133negPos = rawData[rawData$origin.x %in% c('020_N','020_P', '030a_N', '030a_P', '041_N', '041_P'),]
 
+# Generate ddCT values for the cd133 negative cell lines
+cd133negPos$ddCt_020_N = ddCTcalculate(geneOfInterest=cd133negPos$gene.x, sampleOfInterest=cd133negPos$origin.x,
+                                       houseKeepingGene='GAPDH', referenceSample='020_N', data=cd133negPos)
+cd133negPos$ddCt_030_N = ddCTcalculate(geneOfInterest=cd133negPos$gene.x, sampleOfInterest=cd133negPos$origin.x,
+                                       houseKeepingGene='GAPDH', referenceSample='030a_N', data=cd133negPos)
+cd133negPos$ddCt_041_N = ddCTcalculate(geneOfInterest=cd133negPos$gene.x, sampleOfInterest=cd133negPos$origin.x,
+                                       houseKeepingGene='GAPDH', referenceSample='041_N', data=cd133negPos)
+
+# ######################################## Plot the ddCt values ####################################
+barchart(ddCt_B2M_020_P~origin.x,data=shortLongSurvival,groups=gene.x, 
+         scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors')
+
+barchart(ddCt_GAP_030_P~origin.x,data=primaryRecurrent,groups=gene.x, 
+         scales=list(x=list(rot=90,cex=0.8)), main='Primary vs recurrent tumours')
+
+barchart(ddCt_020_N~origin.x,data=cd133negPos,groups=gene.x, 
+         scales=list(x=list(rot=90,cex=0.8)), main='Cd133 negative vs CD133 positive tumours')
 
 # ################################### Munging the Tm manually ####################################
 # tm = tm[,c(3,4,5,6)]
