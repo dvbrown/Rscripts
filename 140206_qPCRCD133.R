@@ -87,17 +87,7 @@ s2 = plot_ddCt(ddCt_GAP_030_P~origin.x, primaryRecurrent, 'Primary vs recurrent 
 print(sl, position=c(0, .6, 1, 1), more=TRUE)
 print(s2, position=c(0, 0, 1, .4))
 
-s3 = plot_ddCt(ddCt_020_N~origin.x, cd133negPos, 'CD133 negative vs CD133 positive tumours')
+s3 = plot_ddCt(ddCt_020_N~origin.x, dataFrame=cd133negPos,
+               title='CD133 negative vs CD133 positive tumours')
+print(s3)
 
-
-# ################################### Munging the Tm manually ####################################
-# tm = tm[,c(3,4,5,6)]
-# mySampleLabels = sampleLabels[c(313:340),]
-# tm = merge(mySampleLabels, tm, by.x='V1', by.y='Pos')
-# #myTm = tm[c(313:340),]
-# colnames(tm) = c('well', 'gene','sample', 'Tm1', 'Tm2' )
-# repTm = extractReplicates(c(1:28), tm)
-# repTm = repTm[[3]]
-# Plot Tm
-#plot(repTm$Tm1.x, repTm$Tm1.y, main='Replicate accuracy Tm', ylab='Tm')
-#abline(lm(repTm$Tm1.x ~ repTm$Tm1.y), col='red')
