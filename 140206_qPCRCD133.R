@@ -84,7 +84,9 @@ print(p2, position=c(0, 0, 1, .4))
 barchart(ddCt_B2M_020_P~origin.x,data=shortLongSurvival,groups=gene.x, 
          scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors')
 
-s2 = plot_ddCt(ddCt_GAP_030_P~origin.x, primaryRecurrent, 'Primary vs recurrent tumours')
+# Changed to logs
+sl = plot_ddCt(log2(ddCt_B2M_020_P)~origin.x, shortLongSurvival, 'Short vs Long term survival')
+s2 = plot_ddCt(log2(ddCt_GAP_030_P)~origin.x, primaryRecurrent, 'Primary vs recurrent tumours')
 print(sl, position=c(0, .6, 1, 1), more=TRUE)
 print(s2, position=c(0, 0, 1, .4))
 
