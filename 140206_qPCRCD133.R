@@ -84,8 +84,6 @@ print(p2, position=c(0, 0, 1, .4))
 barchart(ddCt_B2M_020_P~origin.x,data=shortLongSurvival,groups=gene.x, 
          scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors')
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 s2 = plot_ddCt(ddCt_GAP_030_P~origin.x, primaryRecurrent, 'Primary vs recurrent tumours')
 print(sl, position=c(0, .6, 1, 1), more=TRUE)
 print(s2, position=c(0, 0, 1, .4))
@@ -93,18 +91,6 @@ print(s2, position=c(0, 0, 1, .4))
 s3 = plot_ddCt(ddCt_020_N~origin.x, dataFrame=cd133negPos,
                title='CD133 negative vs CD133 positive tumours')
 print(s3)
-
-=======
-barchart(ddCt_GAP_030_P~origin.x,data=primaryRecurrent,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='Primary vs recurrent tumours')
-
-=======
-barchart(ddCt_GAP_030_P~origin.x,data=primaryRecurrent,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='Primary vs recurrent tumours')
-
->>>>>>> parent of e21c6dc... the bar plot doesn't work anymore
-barchart(ddCt_020_N~origin.x,data=cd133negPos,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='Cd133 negative vs CD133 positive tumours')
 
 # ################################### Munging the Tm manually ####################################
 # tm = tm[,c(3,4,5,6)]
@@ -117,4 +103,3 @@ barchart(ddCt_020_N~origin.x,data=cd133negPos,groups=gene.x,
 # Plot Tm
 #plot(repTm$Tm1.x, repTm$Tm1.y, main='Replicate accuracy Tm', ylab='Tm')
 #abline(lm(repTm$Tm1.x ~ repTm$Tm1.y), col='red')
->>>>>>> parent of e21c6dc... the bar plot doesn't work anymore
