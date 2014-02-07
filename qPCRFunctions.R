@@ -85,8 +85,12 @@ plot_ddCt = function(Expressionformula, dataFrame, title='A grouped barchart') {
   # Expression formula is of the type ddCt ~ cell type or whatever you want the bars to be grouped by
   p = barchart(Expressionformula, data = dataFrame, groups = gene.x, 
 <<<<<<< HEAD
+<<<<<<< HEAD
                 scales = list(x = list(rot=90,cex=0.8)), main = title,  ylim=c(0,10),
                ylab=Expression)
+=======
+                scales = list(x = list(rot=90,cex=0.8)), main = title)
+>>>>>>> parent of e21c6dc... the bar plot doesn't work anymore
 =======
                 scales = list(x = list(rot=90,cex=0.8)), main = title)
 >>>>>>> parent of e21c6dc... the bar plot doesn't work anymore
