@@ -70,6 +70,17 @@ cd133negPos$ddCt_041_N = ddCTcalculate(geneOfInterest=cd133negPos$gene.x, sample
                                        houseKeepingGene='GAPDH', referenceSample='041_N', data=cd133negPos)
 
 # ######################################## Plot the ddCt values ####################################
+# First compare B2M and GAPDH as house keeping genes
+p1 = barchart(ddCt_B2M_020_P~origin.x,data=rawData,groups=gene.x, 
+         scales=list(x=list(rot=90,cex=0.8)), main='B2M as the house keeping gene')
+p2 = barchart(ddCt_GAP_020_P~origin.x,data=rawData,groups=gene.x, 
+         scales=list(x=list(rot=90,cex=0.8)), main='GAPDH as the house keeping gene')
+
+p3 = plot_ddCt(ddCt_B2M_020_P ~ origin.x, rawData,'Look no hands')
+
+print(p1, position=c(0, .6, 1, 1), more=TRUE)
+print(p2, position=c(0, 0, 1, .4))
+#################################### Now the actual plots of interest
 barchart(ddCt_B2M_020_P~origin.x,data=shortLongSurvival,groups=gene.x, 
          scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors')
 

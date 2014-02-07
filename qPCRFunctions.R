@@ -1,4 +1,5 @@
 library(reshape)
+library(lattice)
 
 # Intialise the package at the end by building a list containing all the functions in this script
 
@@ -79,5 +80,13 @@ ddCTcalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKeepingG
   return (ddCt)
 }
 
+plot_ddCt = function(Expressionformula, dataFrame, title='A grouped barchart') {
+  # This will make barcharts without error bars
+  # Expression formula is of the type ddCt ~ cell type or whatever you want the bars to be grouped by
+  p = barchart(Expressionformula, data = dataFrame, groups = gene.x, 
+                scales = list(x = list(rot=90,cex=0.8)), main = title)
+  #returns a plot object that when you look at it plots stuff
+  return (p)
+}
 # Run this at the end to intialise the package
 #package.skeleton(name = 'qPCRcustomFunctions', list=c(), path='~/Documents/Rscripts/', force=F)
