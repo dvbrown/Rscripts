@@ -54,7 +54,7 @@ kegg_enrichment_all <- cbind(kegg_enrichmentAll, FDR = kegg_fdrs_all)
 library(biomaRt)
 mart <- useMart(biomart = "ensembl", dataset = "hsapiens_gene_ensembl")
 results <- getBM(attributes = c("go_id", "name_1006"), #filters = "refseq_dna",
-                 values = enriched_pathwaysAll$pathway, mart = mart)
+                 values = enriched_pathwaysUp$pathway, mart = mart)
 
 # Annotate the KEGG IDs
 library(KEGGREST)
