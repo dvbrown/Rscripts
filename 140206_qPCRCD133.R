@@ -111,7 +111,7 @@ update(lSplot, par.settings = list(fontsize = list(text = 18, points = 4)))
 # Changed to logs
 sl = plot_ddCt(log2(ddCt_B2M_020_P)~origin.x, shortLongSurvival, 'Short vs Long term survival')
 
-s2 = plot_ddCt((ddCt_GAP_030_P)~origin.x, primaryRecurrent, 'Primary vs recurrent tumours', yaxisLabel='ddCT')
+s2 = plot_ddCt(log2(ddCt_GAP_030_P)~origin.x, primaryRecurrent, 'Primary vs recurrent tumours', yaxisLabel='ddCT')
 update(s2, par.settings = list(fontsize = list(text = 18, points = 4)))
 
 print(sl, position=c(0, .6, 1, 1), more=TRUE)
