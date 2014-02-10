@@ -80,11 +80,13 @@ ddCTcalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKeepingG
   return (ddCt)
 }
 
-plot_ddCt = function(Expressionformula, dataFrame, title='A grouped barchart') {
+plot_ddCt = function(Expressionformula, dataFrame, title='A grouped barchart', yaxisLabel='y axis') {
   # This will make barcharts without error bars
   # Expression formula is of the type ddCt ~ cell type or whatever you want the bars to be grouped by
   p = barchart(Expressionformula, data = dataFrame, groups = gene.x, 
-                scales = list(x = list(rot=90,cex=0.8)), main = title)
+                scales = list(x = list(rot=90,cex=0.8)), main = title, ylab=yaxisLabel,
+                auto.key=list(space="top", columns=3,
+                title="genes", cex.title=1))      
   #returns a plot object that when you look at it plots stuff
   return (p)
 }

@@ -87,10 +87,13 @@ barchart(log2(ddCt_B2M_020_P)~origin.x,data=rawData,groups=gene.x,
                             title="gene legend", cex.title=1))
 dev.off()
 
+pdf('140210_GAPDH_housekeeper.pdf')
 barchart(log2(ddCt_GAP_020_P)~origin.x,data=rawData,groups=gene.x, 
          scales=list(x=list(rot=90,cex=0.8)), main='GAPDH as the house keeping gene',
-              auto.key=list(space="top", columns=5,
+              auto.key=list(space="top", columns=4,
                             title="genes", cex.title=1))
+dev.off()
+
 
 # Use custom function from now on
 p3 = plot_ddCt(ddCt_B2M_020_P ~ origin.x, rawData,'Look no hands')
@@ -98,18 +101,46 @@ p3 = plot_ddCt(ddCt_B2M_020_P ~ origin.x, rawData,'Look no hands')
 print(p1, position=c(0, .6, 1, 1), more=TRUE)
 print(p2, position=c(0, 0, 1, .4))
 #################################### Now the actual plots of interest
-barchart(ddCt_B2M_020_P~origin.x,data=shortLongSurvival,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors')
+lSplot = barchart((ddCt_B2M_020_P)~origin.x,data=shortLongSurvival,groups=gene.x, ylab='ddCt',
+         scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors', 
+         auto.key=list(space="top", columns=4,
+                       title="genes", cex.title=1))
+update(lSplot, par.settings = list(fontsize = list(text = 18, points = 4)))
+
 
 # Changed to logs
 sl = plot_ddCt(log2(ddCt_B2M_020_P)~origin.x, shortLongSurvival, 'Short vs Long term survival')
-s2 = plot_ddCt(log2(ddCt_GAP_030_P)~origin.x, primaryRecurrent, 'Primary vs recurrent tumours')
+
+s2 = plot_ddCt((ddCt_GAP_030_P)~origin.x, primaryRecurrent, 'Primary vs recurrent tumours', yaxisLabel='ddCT')
+update(s2, par.settings = list(fontsize = list(text = 18, points = 4)))
+
 print(sl, position=c(0, .6, 1, 1), more=TRUE)
 print(s2, position=c(0, 0, 1, .4))
 
-s3 = plot_ddCt(ddCt_020_N~origin.x, dataFrame=cd133negPos,
-               title='CD133 negative vs CD133 positive tumours')
-print(s3)
+######################### Build a dataframe for individual CD133 ddCT then rbind for plotting ########
+# 030a
+cd133_30a = rawData[c(33:53),c(1:9)]
+cd133_30a$ddCt = ddCTcalculate(geneOfInterest=cd133_30a$gene.x, sampleOfInterest=cd133_30a$origin.x,
+                                       houseKeepingGene='GAPDH', referenceSample='030a_N', data=cd133_30a)
+
+#041
+cd133_41 = rawData[c(54:75),c(1:9)]
+cd133_41$ddCt = ddCTcalculate(geneOfInterest=cd133_41$gene.x, sampleOfInterest=cd133_41$origin.x,
+                                     houseKeepingGene='GAPDH', referenceSample='041_N', data=cd133_41)
+
+#020
+cd133_20 = rawData[c(1:22),c(1:9)]
+cd133_20$ddCt = ddCTcalculate(geneOfInterest=cd133_20$gene.x, sampleOfInterest=cd133_20$origin.x,
+                              houseKeepingGene='GAPDH', referenceSample='020_N', data=cd133_20)
+
+cd133negPos = rbind(cd133_20, cd133_30a, cd133_41)
+
+cd133Plot = barchart(log(ddCt)~origin.x,data=cd133negPos,groups=gene.x, ylab='ddCt',
+                  scales=list(x=list(rot=90,cex=0.8)), main='CD133 negative vs positive', 
+                  auto.key=list(space="top", columns=3,
+                                title="genes", cex.title=1))
+update(cd133Plot, par.settings = list(fontsize = list(text = 18, points = 4)))
+
 
 # ################################### Munging the Tm manually ####################################
 # tm = tm[,c(3,4,5,6)]
