@@ -1,5 +1,6 @@
 # Analyse the the clones I was sequencing in batch 1 and compare primary and recurrent
 library(lattice)
+source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 source('~/Documents/Rscripts/qPCRFunctions.R')
 ################################## IO ################################## 
 setwd('~/Documents/RNAdata/qPCRexpt/140206_cd133posNeg/')
@@ -94,28 +95,76 @@ barchart(log2(ddCt_GAP_020_P)~origin.x,data=rawData,groups=gene.x,
                             title="genes", cex.title=1))
 #dev.off()
 
+b2m = ggplot(data=rawData[!rawData$gene.x %in% c('GFAP'),], aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    xlab("Sample") + ylab("ddCt") + # Set axis labels
+    ggtitle("B2M as a house keeping gene") +  # Set title
+    theme_bw(base_size=14)
 
+gapdh = ggplot(data=rawData[!rawData$gene.x %in% c('GFAP'),], aes(x=origin.x, y=ddCt_GAP_020_P, fill=gene.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    xlab("Sample") + ylab("ddCt") + # Set axis labels
+    ggtitle("GAPDH as a house keeping gene") +  # Set title
+    theme_bw(base_size=14)
+
+multiplot(b2m, gapdh)
 # Use custom function from now on
-p3 = plot_ddCt(ddCt_B2M_020_P ~ origin.x, rawData,'Look no hands')
+# p3 = plot_ddCt(ddCt_B2M_020_P ~ origin.x, rawData,'Look no hands')
+# 
+# print(p1, position=c(0, .6, 1, 1), more=TRUE)
+# print(p2, position=c(0, 0, 1, .4))
+# #################################### Now the actual plots of interest
+# lSplot = barchart((ddCt_B2M_020_P)~origin.x,data=shortLongSurvival,groups=gene.x, ylab='ddCt', ylim=c(0,10),
+#          scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors', 
+#          auto.key=list(space="top", columns=4,
+#                        title="genes", cex.title=1))
+# update(lSplot, par.settings = list(fontsize = list(text = 18, points = 4)))
 
-print(p1, position=c(0, .6, 1, 1), more=TRUE)
-print(p2, position=c(0, 0, 1, .4))
-#################################### Now the actual plots of interest
-lSplot = barchart((ddCt_B2M_020_P)~origin.x,data=shortLongSurvival,groups=gene.x, ylab='ddCt', ylim=c(0,10),
-         scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors', 
-         auto.key=list(space="top", columns=4,
-                       title="genes", cex.title=1))
-update(lSplot, par.settings = list(fontsize = list(text = 18, points = 4)))
+#################################### Try ggplot2
+library(ggplot2)
+# Long and short term
+ls1 = ggplot(data=shortLongSurvival, aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene.x)) + 
+           geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+      scale_fill_hue(name="Gene") +      # Set legend title
+      xlab("Sample") + ylab("ddCt") + # Set axis labels
+      ggtitle("Expression relative to short-term survivor") +  # Set title
+      theme_bw(base_size=14)
 
+ls2 = ggplot(data=shortLongSurvival[c(1:4,6:15,17:22),], aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    xlab("Sample") + ylab("ddCt") + # Set axis labels
+    ggtitle("Expression relative to short-term survivor") +  # Set title
+    theme_bw(base_size=14)
+
+multiplot(ls1, ls2)
+
+# Primary and recurrent
+p1 = ggplot(data=primaryRecurrent, aes(x=origin.x, y=ddCt_GAP_030_P, fill=gene.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    xlab("Sample") + ylab("ddCt") + # Set axis labels
+    ggtitle("Expression relative to primary GIC CD133 positive") +  # Set title
+    theme_bw(base_size=14)
+
+p2 = ggplot(data=primaryRecurrent[!primaryRecurrent$gene.x %in% c('LAMB1', 'OCT4'),], aes(x=origin.x, y=ddCt_GAP_030_P, fill=gene.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    xlab("Sample") + ylab("ddCt") + # Set axis labels
+    ggtitle("Expression relative to primary GIC CD133 positive") +  # Set title
+    theme_bw(base_size=14)
+
+multiplot(p1, p2)
+#################################### end ggplot 2
 
 # Changed to logs
-sl = plot_ddCt(log2(ddCt_B2M_020_P)~origin.x, shortLongSurvival, 'Short vs Long term survival')
-
-s2 = plot_ddCt(log2(ddCt_GAP_030_P)~origin.x, primaryRecurrent, 'Primary vs recurrent tumours', yaxisLabel='ddCT')
-update(s2, par.settings = list(fontsize = list(text = 18, points = 4)))
-
-print(sl, position=c(0, .6, 1, 1), more=TRUE)
-print(s2, position=c(0, 0, 1, .4))
+#sl = plot_ddCt(log2(ddCt_B2M_020_P)~origin.x, shortLongSurvival, 'Short vs Long term survival')
+#s2 = plot_ddCt(log2(ddCt_GAP_030_P)~origin.x, primaryRecurrent, 'Primary vs recurrent tumours', yaxisLabel='ddCT')
+#update(s2, par.settings = list(fontsize = list(text = 18, points = 4)))
+#print(sl, position=c(0, .6, 1, 1), more=TRUE)
+#print(s2, position=c(0, 0, 1, .4))
 
 ######################### Build a dataframe for individual CD133 ddCT then rbind for plotting ########
 # 030a
@@ -135,13 +184,32 @@ cd133_20$ddCt = ddCTcalculate(geneOfInterest=cd133_20$gene.x, sampleOfInterest=c
 
 cd133negPos = rbind(cd133_20, cd133_30a, cd133_41)
 
-cd133Plot = barchart(log(ddCt)~origin.x,data=cd133negPos,groups=gene.x, ylab='ddCt',
-                  scales=list(x=list(rot=90,cex=0.8)), main='CD133 negative vs positive', 
-                  auto.key=list(space="top", columns=3,
-                                title="genes", cex.title=1))
-update(cd133Plot, par.settings = list(fontsize = list(text = 18, points = 4)))
+# cd133Plot = barchart(log(ddCt)~origin.x,data=cd133negPos,groups=gene.x, ylab='ddCt',
+#                   scales=list(x=list(rot=90,cex=0.8)), main='CD133 negative vs positive', 
+#                   auto.key=list(space="top", columns=3,
+#                                 title="genes", cex.title=1))
+# update(cd133Plot, par.settings = list(fontsize = list(text = 18, points = 4)))
 
+cd1 = ggplot(data=cd133negPos, aes(x=origin.x, y=ddCt, fill=gene.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    xlab("Sample") + ylab("ddCt") + # Set axis labels
+    ggtitle("Expression relative to CD133 negative sample") +  # Set title
+    theme_bw(base_size=14)
 
+# Take out LAMB1 to make it easier to see stuff
+cd2 = ggplot(data=cd133negPos[!cd133negPos$gene.x %in% c('HAPLN1'),], aes(x=origin.x, y=ddCt, fill=gene.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    xlab("Sample") + ylab("ddCt") + # Set axis labels
+    ggtitle("Expression relative to CD133 negative sample") +  # Set title
+    theme_bw(base_size=14)
+
+multiplot(cd1, cd2)
+
+# Altogerther now
+multiplot(ls1, cd1, p1)
+multiplot(ls2, cd2, p2)
 # ################################### Munging the Tm manually ####################################
 # tm = tm[,c(3,4,5,6)]
 # mySampleLabels = sampleLabels[c(313:340),]

@@ -1,5 +1,6 @@
 library(reshape)
 library(lattice)
+library(ggplot2)
 
 # Intialise the package at the end by building a list containing all the functions in this script
 
@@ -90,6 +91,17 @@ plot_ddCt = function(Expressionformula, dataFrame, title='A grouped barchart', y
   #returns a plot object that when you look at it plots stuff
   return (p)
 }
+
+niceGroupedBarPlot <- function (dataFrame, ddCt, sampleOrigin="origin.x", gene="gene.x", title="A pretty plot") {
+  ggplot(data=dataFrame, aes(x=sampleOrigin, y=ddCt, fill=gene)) + 
+      geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+      scale_fill_hue(name="Gene") +      # Set legend title
+      xlab("Sample") + ylab("ddCt") + # Set axis labels
+      ggtitle(title) +  # Set title
+      theme_bw(base_size=18)
+}
+
+
 # Run this at the end to intialise the package
 #package.skeleton(name = 'qPCRcustomFunctions', list=c('buildDataFrameForddCT', 'ddCTcalculate','extractReplicates',
 #                                                      'plot_ddCt', 'splitSampleName', 'transposeLinear', 'cp', 'map'),
