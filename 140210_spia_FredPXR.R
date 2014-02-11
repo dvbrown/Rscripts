@@ -39,8 +39,9 @@ result.spia[1:20, -12]
 # tA is the equivaent of fold hange pertubation in the pathway.
 # pXXX is all the various FDR corrections
 
-spiaNoNAs = result.spia[!is.na(result.spia$pPERT),]
-plotP(spiaNoNAs, threshold=0.1)# x.lab='Enrichment score', ylab='Pertubation score', main='Disrupted pathways in short-term surviving GICs')
+spiaNoNAs = result.spia[!is.na(result.spia$pPERT),c(1:11)]
+plotP(spiaNoNAs, threshold=0.1)#, x.lab='Enrichment score', ylab='Pertubation score', main='Disrupted pathways PXR overexpressing cells')
+title(main='Pathway alteration in PXR \noverexpressing cells', xlab='Pathway enrichment', ylab='Pathway pertubation')
 
 # output the results of the analysis
 write.table(result.spia, './spia/140211_spiaResults.txt', sep='\t', row.names=F)
