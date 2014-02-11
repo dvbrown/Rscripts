@@ -2,10 +2,10 @@
 library(SPIA)
 library(pathview)
 source('~/Documents/Rscripts/131218_ensemblToEnterezConversion.R')
-setwd('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/140203_facsBatch/')
+setwd('~/Documents/FredCSC/reformattedFiles/')
 
 # Import the full dataset
-data = read.delim('140203_shortVSlong.txt', row.names=2)
+data = read.delim('130828_inputToSPIA.txt')
 data = data[,c(2:8)]
 data$ensembl = row.names(data)
 

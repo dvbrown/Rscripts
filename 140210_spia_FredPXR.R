@@ -2,21 +2,34 @@
 library(SPIA)
 library(pathview)
 source('~/Documents/Rscripts/131218_ensemblToEnterezConversion.R')
-setwd('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/140203_facsBatch/')
+source('~/Documents/Rscripts/120704-sortDataFrame.R')
+setwd('~/Documents/FredCSC/reformattedFiles/')
+
+symbolEnterezMap = function(genesTestedforDE) {
+    ensembl2enterez = select(org.Hs.eg.db, keys=(genesTestedforDE[,1]), cols=c('ENTREZID','ENSEMBL'), 
+                             keytype='SYMBOL')
+    ensembl2enterez = ensembl2enterez[!is.na(ensembl2enterez),]
+    ensembl2enterez = ensembl2enterez[!is.na(ensembl2enterez$ENTREZID),]
+    ensembl2enterez = ensembl2enterez[!duplicated(ensembl2enterez$ENTREZID),]
+    return (ensembl2enterez)
+}
 
 # Import the full dataset
-data = read.delim('140203_shortVSlong.txt', row.names=2)
-data = data[,c(2:8)]
-data$ensembl = row.names(data)
+data = read.delim('130828_inputToSPIA.txt')
+data = sort.dataframe(data, 5, highFirst=T)
+# Remove duplicated entries should be 25,647 entries
+dedupData = data[!duplicated(data[,1]),]
+dupData = data[duplicated(data[,1]),]
+dedupData$FDR = p.adjust(dedupData$P.value, method='BH')
 
 # Add the enterez IDs
-ensemblEnterezMap = ensembl2enterezConvert(data)
-rnaseq.data.ent <- cbind(entid = ensemblEnterezMap$ENTREZID, data[ensemblEnterezMap$ENSEMBL,])
+dataEnterez = symbolEnterezMap(dedupData)
+data.ent = merge(dedupData, dataEnterez, by.x='Primary.Sequence.Name', by.y='SYMBOL')
 
 # Extract the differentially expressed genes
-de.genes <- rnaseq.data.ent$logFC[data$FDR < 0.1]
-names(de.genes) <- rnaseq.data.ent$entid[data$FDR < 0.1]
-all.genes <- rnaseq.data.ent$entid
+de.genes = data.ent$log2FC[data.ent$FDR < 0.1]
+names(de.genes) <- data.ent$ENTREZID[data.ent$FDR < 0.1]
+all.genes <- data.ent$ENTREZID
 
 # Run spia
 result.spia = spia(de=de.genes, all=all.genes, organism='hsa', nB=2000, plots=F)
