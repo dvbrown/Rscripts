@@ -79,21 +79,7 @@ cd133negPos$ddCt_041_N = ddCTcalculate(geneOfInterest=cd133negPos$gene.x, sample
 
 # ######################################## Plot the ddCt values ####################################
 # First compare B2M and GAPDH as house keeping genes
-system('mkdir qcplots')
-
-#pdf("qcplots/B2M.pdf")
-barchart(log2(ddCt_B2M_020_P)~origin.x,data=rawData,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='B2M as the house keeping gene',
-              auto.key=list(space="top", columns=4,
-                            title="gene legend", cex.title=1))
-#dev.off()
-
-#pdf('140210_GAPDH_housekeeper.pdf')
-barchart(log2(ddCt_GAP_020_P)~origin.x,data=rawData,groups=gene.x, 
-         scales=list(x=list(rot=90,cex=0.8)), main='GAPDH as the house keeping gene',
-              auto.key=list(space="top", columns=4,
-                            title="genes", cex.title=1))
-#dev.off()
+#################################### Try ggplot2
 
 b2m = ggplot(data=rawData[!rawData$gene.x %in% c('GFAP'),], aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
@@ -110,20 +96,7 @@ gapdh = ggplot(data=rawData[!rawData$gene.x %in% c('GFAP'),], aes(x=origin.x, y=
     theme_bw(base_size=14)
 
 multiplot(b2m, gapdh)
-# Use custom function from now on
-# p3 = plot_ddCt(ddCt_B2M_020_P ~ origin.x, rawData,'Look no hands')
-# 
-# print(p1, position=c(0, .6, 1, 1), more=TRUE)
-# print(p2, position=c(0, 0, 1, .4))
-# #################################### Now the actual plots of interest
-# lSplot = barchart((ddCt_B2M_020_P)~origin.x,data=shortLongSurvival,groups=gene.x, ylab='ddCt', ylim=c(0,10),
-#          scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors', 
-#          auto.key=list(space="top", columns=4,
-#                        title="genes", cex.title=1))
-# update(lSplot, par.settings = list(fontsize = list(text = 18, points = 4)))
 
-#################################### Try ggplot2
-library(ggplot2)
 # Long and short term
 ls1 = ggplot(data=shortLongSurvival, aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene.x)) + 
            geom_bar(stat="identity", position=position_dodge(), colour="black") + 
@@ -139,7 +112,9 @@ ls2 = ggplot(data=shortLongSurvival[c(1:4,6:15,17:22),], aes(x=origin.x, y=ddCt_
     ggtitle("Expression relative to long-term survivor") +  # Set title
     theme_bw(base_size=14)
 
+pdf(file='140212_longShortSurv.pdf', paper='a4')
 multiplot(ls1, ls2)
+dev.off()
 
 # Primary and recurrent
 p1 = ggplot(data=primaryRecurrent, aes(x=origin.x, y=ddCt_GAP_030_P, fill=gene.x)) + 
@@ -149,22 +124,16 @@ p1 = ggplot(data=primaryRecurrent, aes(x=origin.x, y=ddCt_GAP_030_P, fill=gene.x
     ggtitle("Expression relative to primary GIC CD133 positive") +  # Set title
     theme_bw(base_size=14)
 
-p2 = ggplot(data=primaryRecurrent[!primaryRecurrent$gene.x %in% c('LAMB1', 'OCT4'),], aes(x=origin.x, y=ddCt_GAP_030_P, fill=gene.x)) + 
+p2 = ggplot(data=primaryRecurrent[!primaryRecurrent$gene.x %in% c('LAMB1', 'OCT4','PROM1'),], aes(x=origin.x, y=ddCt_GAP_030_P, fill=gene.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
     xlab("Sample") + ylab("ddCt") + # Set axis labels
     ggtitle("Expression relative to primary GIC CD133 positive") +  # Set title
     theme_bw(base_size=14)
 
+pdf(file='140212_primaryRecurrent.pdf', paper='a4')
 multiplot(p1, p2)
-#################################### end ggplot 2
-
-# Changed to logs
-#sl = plot_ddCt(log2(ddCt_B2M_020_P)~origin.x, shortLongSurvival, 'Short vs Long term survival')
-#s2 = plot_ddCt(log2(ddCt_GAP_030_P)~origin.x, primaryRecurrent, 'Primary vs recurrent tumours', yaxisLabel='ddCT')
-#update(s2, par.settings = list(fontsize = list(text = 18, points = 4)))
-#print(sl, position=c(0, .6, 1, 1), more=TRUE)
-#print(s2, position=c(0, 0, 1, .4))
+dev.off()
 
 ######################### Build a dataframe for individual CD133 ddCT then rbind for plotting ########
 # 030a
@@ -205,7 +174,9 @@ cd2 = ggplot(data=cd133negPos[!cd133negPos$gene.x %in% c('HAPLN1'),], aes(x=orig
     ggtitle("Expression relative to CD133 negative sample") +  # Set title
     theme_bw(base_size=14)
 
+pdf(file='140212_cd133NegPos.pdf', paper='a4')
 multiplot(cd1, cd2)
+dev.off()
 
 # Altogerther now
 multiplot(ls1, cd1, p1)
