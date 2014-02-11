@@ -124,7 +124,7 @@ p1 = ggplot(data=primaryRecurrent, aes(x=origin.x, y=ddCt_GAP_030_P, fill=gene.x
     ggtitle("Expression relative to primary GIC CD133 positive") +  # Set title
     theme_bw(base_size=14)
 
-p2 = ggplot(data=primaryRecurrent[!primaryRecurrent$gene.x %in% c('LAMB1', 'OCT4','PROM1'),], aes(x=origin.x, y=ddCt_GAP_030_P, fill=gene.x)) + 
+p2 = ggplot(data=primaryRecurrent[!primaryRecurrent$gene.x %in% c('LAMB1', 'OCT4','REST'),], aes(x=origin.x, y=ddCt_GAP_030_P, fill=gene.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
     xlab("Sample") + ylab("ddCt") + # Set axis labels
@@ -136,13 +136,14 @@ multiplot(p1, p2)
 dev.off()
 
 ######################### Build a dataframe for individual CD133 ddCT then rbind for plotting ########
+# BE CAREFUL WHEN HARD CODING ROW NAMES
 # 030a
-cd133_30a = rawData[c(33:53),c(1:9)]
+cd133_30a = rawData[c(34:55),c(1:9)]
 cd133_30a$ddCt = ddCTcalculate(geneOfInterest=cd133_30a$gene.x, sampleOfInterest=cd133_30a$origin.x,
                                        houseKeepingGene='GAPDH', referenceSample='030a_N', data=cd133_30a)
 
 #041
-cd133_41 = rawData[c(54:75),c(1:9)]
+cd133_41 = rawData[c(56:77),c(1:9)]
 cd133_41$ddCt = ddCTcalculate(geneOfInterest=cd133_41$gene.x, sampleOfInterest=cd133_41$origin.x,
                                      houseKeepingGene='GAPDH', referenceSample='041_N', data=cd133_41)
 
@@ -152,12 +153,7 @@ cd133_20$ddCt = ddCTcalculate(geneOfInterest=cd133_20$gene.x, sampleOfInterest=c
                               houseKeepingGene='GAPDH', referenceSample='020_N', data=cd133_20)
 
 cd133negPos = rbind(cd133_20, cd133_30a, cd133_41)
-
-# cd133Plot = barchart(log(ddCt)~origin.x,data=cd133negPos,groups=gene.x, ylab='ddCt',
-#                   scales=list(x=list(rot=90,cex=0.8)), main='CD133 negative vs positive', 
-#                   auto.key=list(space="top", columns=3,
-#                                 title="genes", cex.title=1))
-# update(cd133Plot, par.settings = list(fontsize = list(text = 18, points = 4)))
+write.table(cd133negPos, './140211_ddCtValuesCd133negPos.txt', sep='\t', row.names=T)
 
 cd1 = ggplot(data=cd133negPos, aes(x=origin.x, y=ddCt, fill=gene.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
@@ -174,7 +170,7 @@ cd2 = ggplot(data=cd133negPos[!cd133negPos$gene.x %in% c('HAPLN1'),], aes(x=orig
     ggtitle("Expression relative to CD133 negative sample") +  # Set title
     theme_bw(base_size=14)
 
-pdf(file='140212_cd133NegPos.pdf', paper='a4')
+pdf(file='./qcplots/ggPlot/140212_cd133NegPos.pdf', paper='a4')
 multiplot(cd1, cd2)
 dev.off()
 
@@ -192,3 +188,12 @@ multiplot(ls2, cd2, p2)
 # Plot Tm
 #plot(repTm$Tm1.x, repTm$Tm1.y, main='Replicate accuracy Tm', ylab='Tm')
 #abline(lm(repTm$Tm1.x ~ repTm$Tm1.y), col='red')
+
+# ################################### Test differential expression in CD133 pos neg ##############
+head(cd133negPos)
+cd133negPos = read.delim('140211_ddCtValuesCd133negPos.txt', row.names=1)
+cd133neg = cd133negPos[cd133negPos$cd133 %in% 'CD133_negative',c(2,3,4,10)]
+cd133pos = cd133negPos[cd133negPos$cd133 %in% 'CD133_positive',c(2,3,4,10)]
+
+# Need to find a group by replicate function. Looks like the t.test can do it read help
+t.test(cd133neg$ddCt, cd133pos$ddCt, alternative='t', paired=T, var.equal=T, formula=ddCt~gene, data=cd133negPos)
