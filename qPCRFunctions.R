@@ -40,15 +40,15 @@ extractReplicates <- function (indexes, ctData) {
   odd = indexes[indexes%%2 == 1]
   
   rep1 = CtData[odd, c(1:6)]
-  rep1 = na.omit(rep1)
+  #rep1 = na.omit(rep1)
   rep2 = CtData[even, c(1:6)]
-  rep2 = na.omit(rep2)
+  #rep2 = na.omit(rep2)
   boundData = merge(rep1, rep2, by.x='sample', by.y='sample')
   ################ Remove columns that do not add information
   usefulData = boundData[,c(1,2,3,4,6,7,11)]
   # Compute the mean and the standard deviation of the replicates
   usefulData$meanCP = rowMeans(cbind(usefulData$Cp.x, usefulData$Cp.y), na.rm=T)
-  usefulData$stdDevCP = apply(cbind(usefulData$Cp.x, usefulData$Cp.y), 1, sd)
+  usefulData$stdDevCP = apply(cbind(usefulData$Cp.x, usefulData$Cp.y), 1, sd, na.rm=T)
   # Package the output in a list
   result = list(rep1, rep2, usefulData)
   return (result)

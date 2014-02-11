@@ -129,14 +129,14 @@ ls1 = ggplot(data=shortLongSurvival, aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene
            geom_bar(stat="identity", position=position_dodge(), colour="black") + 
       scale_fill_hue(name="Gene") +      # Set legend title
       xlab("Sample") + ylab("ddCt") + # Set axis labels
-      ggtitle("Expression relative to short-term survivor") +  # Set title
+      ggtitle("Expression relative to long-term survivor") +  # Set title
       theme_bw(base_size=14)
 
 ls2 = ggplot(data=shortLongSurvival[c(1:4,6:15,17:22),], aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
     xlab("Sample") + ylab("ddCt") + # Set axis labels
-    ggtitle("Expression relative to short-term survivor") +  # Set title
+    ggtitle("Expression relative to long-term survivor") +  # Set title
     theme_bw(base_size=14)
 
 multiplot(ls1, ls2)
