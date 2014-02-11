@@ -40,9 +40,9 @@ extractReplicates <- function (indexes, ctData) {
   odd = indexes[indexes%%2 == 1]
   
   rep1 = CtData[odd, c(1:6)]
-  #rep1 = na.omit(rep1)
+  rep1 = rep1[complete.cases(rep1$sample),]
   rep2 = CtData[even, c(1:6)]
-  #rep2 = na.omit(rep2)
+  rep2 = rep2[complete.cases(rep2$sample),]
   boundData = merge(rep1, rep2, by.x='sample', by.y='sample')
   ################ Remove columns that do not add information
   usefulData = boundData[,c(1,2,3,4,6,7,11)]
