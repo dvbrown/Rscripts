@@ -80,19 +80,19 @@ cd133negPos$ddCt_041_N = ddCTcalculate(geneOfInterest=cd133negPos$gene.x, sample
 # First compare B2M and GAPDH as house keeping genes
 system('mkdir qcplots')
 
-pdf("qcplots/B2M.pdf")
+#pdf("qcplots/B2M.pdf")
 barchart(log2(ddCt_B2M_020_P)~origin.x,data=rawData,groups=gene.x, 
          scales=list(x=list(rot=90,cex=0.8)), main='B2M as the house keeping gene',
               auto.key=list(space="top", columns=4,
                             title="gene legend", cex.title=1))
-dev.off()
+#dev.off()
 
-pdf('140210_GAPDH_housekeeper.pdf')
+#pdf('140210_GAPDH_housekeeper.pdf')
 barchart(log2(ddCt_GAP_020_P)~origin.x,data=rawData,groups=gene.x, 
          scales=list(x=list(rot=90,cex=0.8)), main='GAPDH as the house keeping gene',
               auto.key=list(space="top", columns=4,
                             title="genes", cex.title=1))
-dev.off()
+#dev.off()
 
 
 # Use custom function from now on
@@ -101,7 +101,7 @@ p3 = plot_ddCt(ddCt_B2M_020_P ~ origin.x, rawData,'Look no hands')
 print(p1, position=c(0, .6, 1, 1), more=TRUE)
 print(p2, position=c(0, 0, 1, .4))
 #################################### Now the actual plots of interest
-lSplot = barchart((ddCt_B2M_020_P)~origin.x,data=shortLongSurvival,groups=gene.x, ylab='ddCt',
+lSplot = barchart((ddCt_B2M_020_P)~origin.x,data=shortLongSurvival,groups=gene.x, ylab='ddCt', ylim=c(0,10),
          scales=list(x=list(rot=90,cex=0.8)), main='Short term vs long-term survivors', 
          auto.key=list(space="top", columns=4,
                        title="genes", cex.title=1))
