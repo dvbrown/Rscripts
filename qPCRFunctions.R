@@ -47,7 +47,7 @@ extractReplicates <- function (indexes, ctData) {
   ################ Remove columns that do not add information
   usefulData = boundData[,c(1,2,3,4,6,7,11)]
   # Compute the mean and the standard deviation of the replicates
-  usefulData$meanCP = rowMeans(cbind(usefulData$Cp.x, usefulData$Cp.y))
+  usefulData$meanCP = rowMeans(cbind(usefulData$Cp.x, usefulData$Cp.y), na.rm=T)
   usefulData$stdDevCP = apply(cbind(usefulData$Cp.x, usefulData$Cp.y), 1, sd)
   # Package the output in a list
   result = list(rep1, rep2, usefulData)
