@@ -49,4 +49,6 @@ write.table(spiaNoNAs, './spia/140211_spiaNoNAsResults.txt', sep='\t', row.names
 
 # Visualise the KEGG pathway data in R
 # Use the results of plotP to get the pathway ids
-setwd('./output/spia/')
+setwd('spia/')
+pv.out = pathview(gene.data=de.genes, pathway.id='04010', species='hsa', out.suffix='MAPK', kegg.native=T)
+pv.out = pathview(gene.data=de.genes, pathway.id='04142', species='hsa', out.suffix='Lysosome', kegg.native=T)
