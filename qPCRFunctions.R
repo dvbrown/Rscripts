@@ -1,5 +1,6 @@
 library(reshape)
 library(ggplot2)
+library(plyr)
 
 # Intialise the package at the end by building a list containing all the functions in this script
 
@@ -100,6 +101,24 @@ niceGroupedBarPlot <- function (dataFrame, ddCt, sampleOrigin="origin.x", gene="
       theme_bw(base_size=18)
 }
 
+niceErrorBarPlot <- function (summarisedData, xAxis=gene.x, yAxis=mean, groupVariable=cd133, 
+                              title='A title', xLabel='Gene', yLabel='Expression', plot) {
+  p = ggplot(summarisedData, aes(x=xAxis, y=yAxis, fill=groupVariable)) + 
+        geom_bar(position=position_dodge(), stat="identity") +
+        geom_errorbar(aes(ymin=yAxis-se, ymax=yAxis+se),
+                    width=.2,                    # Width of the error bars
+                    position=position_dodge(.9)) +
+        xlab(xLabel) +
+        ylab(yLabel) +
+        scale_fill_hue(name="CD133")+#, Legend label, use darker colors
+        ggtitle(title) +
+        scale_y_continuous(breaks=0:20*4) +
+        # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
+        geom_text(aes(label=star), colour="black", vjust=-2, size=10) +
+        theme_bw(base_size=16)
+  return (p)
+}
+
 build_ddCTmatrix = function(ddCtFile, originColumn=2, geneColumn=3, ddCtColumn=9, output='matrix.txt') {
     # A function to coerce ddCT values and genes into a double matrix for statistical analysis
     # origin is the name of the sample eg #020 CD133 negative
@@ -113,9 +132,24 @@ build_ddCTmatrix = function(ddCtFile, originColumn=2, geneColumn=3, ddCtColumn=9
     g = f[with(f, order(f[,1], decreasing=F)),]
     # set rownames then remove
     row.names(g) = g[,1]
-    g = g[,2:length(g[,2])]
     return (g)
 }
+
+summariseStatistics_ddCt <- function (dataFrame, groupVariableA='cd133', gropVariableB='gene.x') {
+    # Generate N, mean, sd and se
+    cData = ddply(cd133negPos, c(groupVariableA, gropVariableB), summarise,
+                N    = sum(!is.na(ddCt)),
+                mean = mean(ddCt, na.rm=TRUE),
+                sd   = sd(ddCt, na.rm=TRUE),
+                se   = sd / sqrt(N) )
+  return (cData)
+# The dataFrame of input should conform to the type below
+# sample    location  origin  gene  Cp.x    location  Cp meanCP   stdDevCP ddCt    cd133
+#020_N ATP5G3   B2    020_N ATP5G3 25.68         B3 25.11 25.395 0.40305087    1 negative
+#020_N B2M      B4    020_N    B2M 21.34         B5 21.52 21.430 0.12727922    1 negative
+#020_N CREB1    B6    020_N  CREB1 26.47         B7 26.22 26.345 0.17677670    1 negative
+}
+
 # Run this at the end to intialise the package
 #package.skeleton(name = 'qPCRcustomFunctions', list=c('buildDataFrameForddCT', 'ddCTcalculate','extractReplicates',
 #                                                      'plot_ddCt', 'splitSampleName', 'transposeLinear', 'cp', 'map'),
