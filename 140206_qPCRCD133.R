@@ -190,10 +190,15 @@ multiplot(ls2, cd2, p2)
 
 # ################################### Test differential expression in CD133 pos neg ##############
 cd133negPos = build_ddCTmatrix('140211_ddCtValuesCd133negPos.txt')
-head(cd133negPos)
+# Read a design matrix that I specified by hand
+design = read.delim('designMatrix.txt', row.names=1)
 
+d = model.matrix(cd133negPos~origin+cd133, design)
 
 # Need to find a group by replicate function. Two way ANOVA is the way to go
-aovCD133 = aov(ddCt~cd133+sample,data=cd133negPos)
-summary(aovCD133)
-lm
+fit = aov(cd133negPos ~ origin + cd133, design)
+summary(fit)
+
+gfap = cd133negPos[,5]
+f = aov(gfap~origin+cd133, design)
+TukeyHSD(f)

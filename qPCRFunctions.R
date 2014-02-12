@@ -108,9 +108,13 @@ build_ddCTmatrix = function(ddCtFile, originColumn=2, geneColumn=3, ddCtColumn=9
                        '>', output, sep=' ')
     system(pythonCall)
 
-    f = read.delim('matrix.txt', header=T, row.names=1)
-    mat = as.matrix(f)
-    return (mat)
+    f = read.delim('matrix.txt', header=T)
+    # sort the dataframe
+    g = f[with(f, order(f[,1], decreasing=F)),]
+    # set rownames then remove
+    row.names(g) = g[,1]
+    g = g[,2:length(g[,2])]
+    return (g)
 }
 # Run this at the end to intialise the package
 #package.skeleton(name = 'qPCRcustomFunctions', list=c('buildDataFrameForddCT', 'ddCTcalculate','extractReplicates',
