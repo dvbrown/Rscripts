@@ -1,5 +1,4 @@
 library(reshape)
-library(lattice)
 library(ggplot2)
 
 # Intialise the package at the end by building a list containing all the functions in this script
@@ -101,7 +100,18 @@ niceGroupedBarPlot <- function (dataFrame, ddCt, sampleOrigin="origin.x", gene="
       theme_bw(base_size=18)
 }
 
+build_ddCTmatrix = function(ddCtFile, originColumn=2, geneColumn=3, ddCtColumn=9, output='matrix.txt') {
+    # A function to coerce ddCT values and genes into a double matrix for statistical analysis
+    # origin is the name of the sample eg #020 CD133 negative
+    pythonCall = paste('./buildNumericMatrix_ddCt.py', '-i', ddCtFile,
+                       '-o', originColumn, '-g', geneColumn, '-d', ddCtColumn,
+                       '>', output, sep=' ')
+    system(pythonCall)
 
+    f = read.delim('matrix.txt', header=T, row.names=1)
+    mat = as.matrix(f)
+    return (mat)
+}
 # Run this at the end to intialise the package
 #package.skeleton(name = 'qPCRcustomFunctions', list=c('buildDataFrameForddCT', 'ddCTcalculate','extractReplicates',
 #                                                      'plot_ddCt', 'splitSampleName', 'transposeLinear', 'cp', 'map'),

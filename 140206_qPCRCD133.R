@@ -1,5 +1,4 @@
 # Analyse the the clones I was sequencing in batch 1 and compare primary and recurrent
-library(lattice)
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 source('~/Documents/Rscripts/qPCRFunctions.R')
 ################################## IO ################################## 
@@ -153,7 +152,7 @@ cd133_20$ddCt = ddCTcalculate(geneOfInterest=cd133_20$gene.x, sampleOfInterest=c
                               houseKeepingGene='GAPDH', referenceSample='020_N', data=cd133_20)
 
 cd133negPos = rbind(cd133_20, cd133_30a, cd133_41)
-write.table(cd133negPos, './140211_ddCtValuesCd133negPos.txt', sep='\t', row.names=T)
+#write.table(cd133negPos, './140211_ddCtValuesCd133negPos.txt', sep='\t', row.names=T)
 
 cd1 = ggplot(data=cd133negPos, aes(x=origin.x, y=ddCt, fill=gene.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
@@ -190,10 +189,11 @@ multiplot(ls2, cd2, p2)
 #abline(lm(repTm$Tm1.x ~ repTm$Tm1.y), col='red')
 
 # ################################### Test differential expression in CD133 pos neg ##############
+cd133negPos = build_ddCTmatrix('140211_ddCtValuesCd133negPos.txt')
 head(cd133negPos)
-cd133negPos = read.delim('140211_ddCtValuesCd133negPos.txt', row.names=1)
-cd133neg = cd133negPos[cd133negPos$cd133 %in% 'CD133_negative',c(2,3,4,10)]
-cd133pos = cd133negPos[cd133negPos$cd133 %in% 'CD133_positive',c(2,3,4,10)]
 
-# Need to find a group by replicate function. Looks like the t.test can do it read help
-t.test(cd133neg$ddCt, cd133pos$ddCt, alternative='t', paired=T, var.equal=T, formula=ddCt~gene, data=cd133negPos)
+
+# Need to find a group by replicate function. Two way ANOVA is the way to go
+aovCD133 = aov(ddCt~cd133+sample,data=cd133negPos)
+summary(aovCD133)
+lm
