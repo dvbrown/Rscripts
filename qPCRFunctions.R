@@ -101,8 +101,8 @@ niceGroupedBarPlot <- function (dataFrame, ddCt, sampleOrigin="origin.x", gene="
       theme_bw(base_size=18)
 }
 
-niceErrorBarPlot <- function (summarisedData, xAxis='gene.x', yAxis='mean', groupVariable='cd133', 
-                              title='A title', xLabel='Gene', yLabel='Expression') {
+niceErrorBarPlot <- function (summarisedData, xAxis=gene.x, yAxis=mean, groupVariable=cd133, 
+                              title='A title', xLabel='Gene', yLabel='Expression', plot) {
   p = ggplot(summarisedData, aes(x=xAxis, y=yAxis, fill=groupVariable)) + 
         geom_bar(position=position_dodge(), stat="identity") +
         geom_errorbar(aes(ymin=yAxis-se, ymax=yAxis+se),
