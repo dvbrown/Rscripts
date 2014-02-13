@@ -39,6 +39,9 @@ plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.
 legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
 # 
 facs = removeBatchEffect(d, batch=dm$facsSort)
+# Retreive cpms from FACS
+cpmFacs = cpm(facs)
+
 plotMDS(facs, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
         main='MDS plot GIC RNA-seq batch1 facs sorts')
 
@@ -117,7 +120,7 @@ cutoff = result[result$FDR < 0.05,]
 cutoffLib = result[result$FDR < 0.1 & abs(result$logFC) > 1,]
 
 ########################################################### Write out results ############################################## 
-write.table(cpms,'GLMedgeR/140203_facsBatch/140203_normalisedCPM',sep='\t')
+write.table(cpmFacs,'GLMedgeR/140203_facsBatch/140203_normalisedCPM_facs.txt',sep='\t')
 write.table(result, './GLMedgeR/140203_facsBatch/140203_shortVSlong.txt', sep='\t')
 write.table(cutoff, './GLMedgeR/140203_facsBatch/140203_shortVSlongDEgenes.txt', sep='\t')
 write.table(cutoffLib, './GLMedgeR/140203_facsBatch/140203_shortVSlongLiberalDE.txt', sep='\t')

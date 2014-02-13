@@ -2,7 +2,7 @@
 library(SPIA)
 library(pathview)
 source('~/Documents/Rscripts/131218_ensemblToEnterezConversion.R')
-setwd('~/Documents/FredCSC/reformattedFiles/')
+setwd('~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/140203_facsBatch/')
 
 # Import the full dataset
 data = read.delim('130828_inputToSPIA.txt')
