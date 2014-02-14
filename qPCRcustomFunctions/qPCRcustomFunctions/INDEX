@@ -1,0 +1,16 @@
+buildDataFrameFromddCT
+                        Make a dataFrame that contains Cp calls and
+                        annotated sample info.
+cp                      A example of data to manipulate
+ddCTcalculate           Calculate ddCt from raw Cp calls
+extractReplicates       Subset each Cp into its replicates
+map                     An example of an experimental plate map
+plot_ddCt               Plot a grouped bar chart organised by sample
+                        origin.
+qPCRcustomFunctions-package
+                        This package contains conveinace functions to
+                        analyse qPCR generated using 384 well plates,
+                        specifically the lightcycler 480
+splitSampleName         Split a column containing origin and gene into
+                        2 columns
+transposeLinear         Convert plate map to R object

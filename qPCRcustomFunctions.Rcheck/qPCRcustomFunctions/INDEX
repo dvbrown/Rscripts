@@ -1,0 +1,22 @@
+buildDataFrameFromddCT
+                        Make a dataFrame that contains Cp calls and
+                        annotated sample info.
+build_ddCTmatrix        A function to coerce ddCT values and genes into
+                        a double matrix for statistical analysis
+cp                      A example of data to manipulate
+ddCTcalculate           Calculate ddCt from raw Cp calls
+extractReplicates       Subset each Cp into its replicates
+map                     An example of an experimental plate map
+niceErrorBarPlot        Generates a nice looking barplot that has error
+                        bars
+niceGroupedBarPlot      Make a nice barchart to summarise a qPCR
+                        experiment.
+qPCRcustomFunctions-package
+                        This package contains conveinace functions to
+                        analyse qPCR generated using 384 well plates,
+                        specifically the lightcycler 480
+splitSampleName         Split a column containing origin and gene into
+                        2 columns
+summariseStatistics_ddCt
+                        Generate mean and standard error.
+transposeLinear         Convert plate map to R object

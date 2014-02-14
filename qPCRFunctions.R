@@ -21,7 +21,7 @@ splitSampleName = function(plateMap) {
   return (result)
 }
 
-buildDataFrameForddCT = function(plateMap, CtData) {
+buildDataFrameFromddCT = function(plateMap, CtData) {
   #Bind the dataframes containing the sample labels with the raw data itself and remove useless columns
   rawData = CtData[,c(3,4,5,8)]
   result = merge.data.frame(plateMap, rawData, by.x='location', by.y='Pos')
@@ -81,28 +81,28 @@ ddCTcalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKeepingG
   return (ddCt)
 }
 
-plot_ddCt = function(Expressionformula, dataFrame, title='A grouped barchart', yaxisLabel='y axis') {
+plot_ddCt = function(Expressionformula, dataFrame, graphTitle='A grouped barchart', yaxisLabel='y axis') {
   # This will make barcharts without error bars
   # Expression formula is of the type ddCt ~ cell type or whatever you want the bars to be grouped by
   p = barchart(Expressionformula, data = dataFrame, groups = gene.x, 
-                scales = list(x = list(rot=90,cex=0.8)), main = title, ylab=yaxisLabel,
+                scales = list(x = list(rot=90,cex=0.8)), main = graphTitle, ylab=yaxisLabel,
                 auto.key=list(space="top", columns=3,
                 title="genes", cex.title=1))      
   #returns a plot object that when you look at it plots stuff
   return (p)
 }
 
-niceGroupedBarPlot <- function (dataFrame, ddCt, sampleOrigin="origin.x", gene="gene.x", title="A pretty plot") {
+niceGroupedBarPlot <- function (dataFrame, ddCt='ddCt', sampleOrigin="origin.x", gene="gene.x", graphTitle="A pretty plot") {
   ggplot(data=dataFrame, aes(x=sampleOrigin, y=ddCt, fill=gene)) + 
       geom_bar(stat="identity", position=position_dodge(), colour="black") + 
       scale_fill_hue(name="Gene") +      # Set legend title
       xlab("Sample") + ylab("ddCt") + # Set axis labels
-      ggtitle(title) +  # Set title
+      ggtitle(graphTitle) +  # Set title
       theme_bw(base_size=18)
 }
 
 niceErrorBarPlot <- function (summarisedData, xAxis=gene.x, yAxis=mean, groupVariable=cd133, 
-                              title='A title', xLabel='Gene', yLabel='Expression', plot) {
+                              title='A title', xLabel='Gene', yLabel='Expression') {
   p = ggplot(summarisedData, aes(x=xAxis, y=yAxis, fill=groupVariable)) + 
         geom_bar(position=position_dodge(), stat="identity") +
         geom_errorbar(aes(ymin=yAxis-se, ymax=yAxis+se),
@@ -136,7 +136,7 @@ build_ddCTmatrix = function(ddCtFile, originColumn=2, geneColumn=3, ddCtColumn=9
 }
 
 summariseStatistics_ddCt <- function (dataFrame, groupVariableA='cd133', gropVariableB='gene.x') {
-    # Generate N, mean, sd and se
+    # Generate N, mean, sd and se statistics for a dataframe
     cData = ddply(cd133negPos, c(groupVariableA, gropVariableB), summarise,
                 N    = sum(!is.na(ddCt)),
                 mean = mean(ddCt, na.rm=TRUE),
@@ -151,6 +151,8 @@ summariseStatistics_ddCt <- function (dataFrame, groupVariableA='cd133', gropVar
 }
 
 # Run this at the end to intialise the package
-#package.skeleton(name = 'qPCRcustomFunctions', list=c('buildDataFrameForddCT', 'ddCTcalculate','extractReplicates',
-#                                                      'plot_ddCt', 'splitSampleName', 'transposeLinear', 'cp', 'map'),
-#                 path='/Library/Frameworks/R.framework/Versions/3.0/Resources/library/', force=F)
+package.skeleton(name = 'qPCRcustomFunctions', 
+                 list=c('buildDataFrameForddCT', 'ddCTcalculate','extractReplicates',
+                                                      'plot_ddCt', 'splitSampleName', 'transposeLinear', 'cp', 'map'),
+                path='~/Documents/Rscripts/', force=F) 
+#               path='/Library/Frameworks/R.framework/Versions/3.0/Resources/library/', force=F)

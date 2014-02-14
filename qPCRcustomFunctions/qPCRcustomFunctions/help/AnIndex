@@ -1,0 +1,10 @@
+qPCRcustomFunctions-package	qPCRcustomFunctions-package
+buildDataFrameFromddCT	buildDataFrameFromddCT
+cp	cp
+ddCTcalculate	ddCTcalculate
+extractReplicates	extractReplicates
+map	map
+plot_ddCt	plot_ddCt
+qPCRcustomFunctions	qPCRcustomFunctions-package
+splitSampleName	splitSampleName
+transposeLinear	transposeLinear
