@@ -10,7 +10,7 @@ agilent = read.delim('~/Documents/public-datasets/firehose/stddata__2013_12_10/G
 #agilent = agilent[,c(1:499,501:512)]
 #boxplot(agilent[,c(1,5,10,50,100,150,200,211,333,444,499,500,501,511)], par(las=2, cex=0.8), main='Agilent Lowess normalised')
 
-# Check that the data has been z-transformed by looking at a few genes
+############################# Check that the data has been z-transformed by looking at a few genes ############################ 
 par(mfrow=c(2,2))
 geneMatrix = t(agilent)
 hist((geneMatrix[,'TP53']), main='p53 distribution', xlab='TP53')
@@ -18,15 +18,20 @@ hist((geneMatrix[,'GAPDH']), main='GAPDH distribution', xlab='GAPDH')
 hist((geneMatrix[,'EGFR']), main='EGFR distribution', xlab='EGFR')
 hist((geneMatrix[,'ACTB']), main='B-Actin distribution', xlab='B-Actin')
 par(mfrow=c(1,1))
-# rm(geneMatrix) 
 
-# Try a z transform
+###########################################  Perform a z transformation myself ########################################## 
+zScore = apply(t(geneMatrix), 1, scale)
 
-zTransform = function(matrixElement, rowMean, rowSD ) { #convert to the unitless z-score based on a normal distribution
-    z = (matrixElement - rowMean)/rowSD
-    return (z)
-}
+colnames(zScore) = colnames(geneMatrix)
+row.names(zScore) = row.names(geneMatrix)
 
-rowMean = rowMeans(agilent)
-rowStdDev = apply(agilent, 1, sd)
-zScore = apply(agilent, 2, zTransform, rowMean, rowStdDev) #compute the z-scores for the dataFrame
+par(mfrow=c(2,2))
+hist((zScore[,'TP53']), main='p53 distribution', xlab='TP53')
+hist((zScore[,'GAPDH']), main='GAPDH distribution', xlab='GAPDH')
+hist((zScore[,'EGFR']), main='EGFR distribution', xlab='EGFR')
+hist((zScore[,'ACTB']), main='B-Actin distribution', xlab='B-Actin')
+par(mfrow=c(1,1))
+
+#write.table(zScore, '140218_zTransformedTCGA.txt', sep='\t')
+
+############################################# Subset the dataframe with the signature of genes ##################################
