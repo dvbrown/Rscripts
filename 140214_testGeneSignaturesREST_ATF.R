@@ -18,4 +18,15 @@ hist((geneMatrix[,'GAPDH']), main='GAPDH distribution', xlab='GAPDH')
 hist((geneMatrix[,'EGFR']), main='EGFR distribution', xlab='EGFR')
 hist((geneMatrix[,'ACTB']), main='B-Actin distribution', xlab='B-Actin')
 par(mfrow=c(1,1))
-rm(geneMatrix) 
+# rm(geneMatrix) 
+
+# Try a z transform
+
+zTransform = function(matrixElement, rowMean, rowSD ) { #convert to the unitless z-score based on a normal distribution
+    z = (matrixElement - rowMean)/rowSD
+    return (z)
+}
+
+rowMean = rowMeans(agilent)
+rowStdDev = apply(agilent, 1, sd)
+zScore = apply(agilent, 2, zTransform, rowMean, rowStdDev) #compute the z-scores for the dataFrame
