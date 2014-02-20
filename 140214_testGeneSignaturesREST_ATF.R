@@ -44,12 +44,13 @@ sigScore = computeSignatureScore(zScore, signature)
 data = bindSignatureToSurvival(sigScore, censored)
 write.table(data, '140220_stemCellSignatureScore', sep='\t', row.names=F)
 
-#some graphs
-subsetTCGA.1 = subsetTCGA[c(1:11,13,14),]
-boxplot(t(subsetTCGA.1),las=2, cex.axis=1.5, main='Stem cell gene expression',cex.main=2.2, col=rainbow(13))
-hist(geneScore, freq=F, col='royalblue', main='Stem cell score distribution in TCGA dataset', xlab='Stem cell signature score')
+#some graphs to view the distrubution of the scores
+subsetTCGA.1 = zScore[c(1:11,13,14),]
+boxplot(t(subsetTCGA.1),las=2, cex.axis=1, main='Stem cell gene expression',cex.main=2.2, col=rainbow(13))
+hist(sigScore, freq=F, col='royalblue', main='Stem cell score distribution in TCGA dataset', xlab='Stem cell signature score')
 
-plot(data$survival, data$sigScore,main='GMB TCGA total data',ylab='Survival (days)', xlab='Stem cell signature score')
-qqnorm(data$sigScore,distribution='norm')
-qqline(data$sigScore, distribution=qnorm)
-plot(dataSub$sigScore,dataSub$survival, main='GMB TCGA upper an lower quartiles',ylab='Survival (days)', xlab='Stem cell signature score')
+plot(data$survival, data$sigScore,main='GMB TCGA total data',xlab='Survival (days)', ylab='Stem cell signature score')
+qqnorm(data$sigScore, main='Distrubtion of patients gene signature scores')
+qqline(data$sigScore, distribution=qnorm, col='red')
+
+############################################# Analysing the data for survival ##################################
