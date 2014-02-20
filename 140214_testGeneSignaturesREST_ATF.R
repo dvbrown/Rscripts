@@ -42,48 +42,37 @@ surv = censorData(clinical)
 sigScore = computeSignatureScore(zScore, signature)
 
 #attach censored clinical data to the signature score
-data = bindSignatureToSurvival(sigScore, censored)
-write.table(data, '140220_stemCellSignatureScore', sep='\t', row.names=F)
-# Remove NAs
-#data = data[complete.cases(data$survival),]
+data = bindSignatureToSurvival(sigScore, surv)
+
+write.table(data, '140220_stemCellSignatureScore', sep='\t', row.names=T)
+# For whatever reason censorship column is not nicley coerced to integer
+rm(data)
+data = read.delim('140220_stemCellSignatureScore', row.names=1)
+# data = data[complete.cases(data$survival),]
+# data = data[complete.cases(data$censorship),]
+data$censorship = as.integer(data$censorship)
 
 #some graphs to view the distrubution of the scores
 subsetTCGA.1 = zScore[c(1:11,13,14),]
 boxplot(t(subsetTCGA.1),las=2, cex.axis=1, main='Stem cell gene expression',cex.main=2.2, col=rainbow(13))
 hist(sigScore, freq=F, col='royalblue', main='Stem cell score distribution in TCGA dataset', xlab='Stem cell signature score')
-
 plot(data$survival, data$sigScore,main='GMB TCGA total data',xlab='Survival (days)', ylab='Stem cell signature score')
 qqnorm(data$sigScore, main='Distrubtion of patients gene signature scores')
 qqline(data$sigScore, distribution=qnorm, col='red')
 
 ############################################# Analysing the data for survival ##################################
 
-#generate the survival object
 #generate a column listing above the kth percentile
-percentile = quantile(data$sigScore, probs=0.50, names=T)
-data$percentile = ifelse(data$sigScore >= percentile, 'high', 'low')
+data1 = buildClassifier(data, 0.5)
 
 #generate the survival object and plot a Kaplan-Meier
 data.surv = Surv(data$survival, event=data$censorship)
 sur.fit = survfit(data.surv~data$percentile)
-########################2: In log(xx) : NaNs produced
 
-
-
-
-
-plot(sur.fit, main='CREB ChIP Gravandeel',ylab='Survival probability',xlab='survival(months)', col=c('red','blue'),xlim=c(0,750))
-legend('topright', c('CREB score > 50th, n=102', 'Stem score < 50th, n=94'), col=c('red', 'blue'),lwd=1, cex=0.6)
+plot(sur.fit, main='TCGA stem cell signature',ylab='Survival probability',xlab='survival(days)', col=c('red','blue'),xlim=c(0,750))
+legend('topright', c('stem cell score > 50th, n=199', 'Stem score < 50th, n=182'), col=c('red', 'blue'),lwd=1, cex=0.6)
 summary(data.surv)
 #test for a difference between curves
 test = survdiff(data.surv~data$percentile)
 test
-text(locator(1),labels='p=0.0136', cex=1) #add the p-value to the graph
-
-#plot the CREB score for each tumour grade. Go into initaialise R to fix cex, las, mar(9,7,5,2)) and mgp
-boxplot(data$sigScore~data$grade, col=rainbow(8), main='CREB target genes Gravendeel glioma data set',xlab='Tumour Grade',
-        ylab='CREB signature score', par(cex=1.25,las=2))
-
-matGrav = as.matrix(subsetGrav)
-heatmap(matGrav, margins=c(7,5),cexRow=0.5, Colv=data$grade, labCol=NA, Rowv=NA,xlab='Patients', col=brewer.pal(9,"YlOrRd"),
-        ylab='CREB target gene set', main='Gravandeel glioma dataset CREB signature')
+text(locator(1),labels='p=0.025', cex=1) #add the p-value to the graph
