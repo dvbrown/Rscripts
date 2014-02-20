@@ -4,7 +4,7 @@ source('~/Documents/Rscripts/120704-sortDataFrame.R')
 
 #objects for use in library
 clinical = read.delim('~/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/140109_clinicalDataTCGA.txt', row.names=1)
-zSCore = read.delim('~/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/140214_testSignaturesAgilent/140218_zTransformedTCGA.txt', sep='\t')
+zScore = read.delim('~/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/140214_testSignaturesAgilent/140218_zTransformedTCGA.txt', sep='\t', row.names=1)
 
 extractDataClinical = function(clinicalData) { #A function to get useful clinical data and match rownames to expression
     sur = clinicalData[,c(2,7,8,10,13,19,29)]
@@ -16,12 +16,13 @@ extractDataClinical = function(clinicalData) { #A function to get useful clinica
 }
 #Arrange data so right censored paitents coded 0 with the days to death changed to days to last followup
 censorData = function(survivalData) {
-    status = survivalData$patient.followups.followup.vitalstatus
+    # Takes patient dataframe
+    status = survivalData[,'patient.followups.followup.vitalstatus']
     status = gsub('alive', 0, status)
     status = gsub('dead', 1, status)
-    status = as.numeric(status)
-    deathFollow = (survivalData[,c(4,5)])
-    censored = ifelse(deathFollow$days_to_death %in% NA, deathFollow$days_to_last_followup, deathFollow$days_to_death)
+    # Check if the survival analysis can handle NAs for survival
+    result = survivalData[,c(1,4,5)]
+    censored = cbind(result, status)
     return (censored)
 }
 betterGeneScore = function(GeneExpressionMatrix, upRegGenes, downRegGenes) {
@@ -46,4 +47,16 @@ bindSignatureToSurvival = function(signatureScore, clinical) {
     data = cbind(geneSet[set,], clinical[set,]) #bind the 2 datasets together based on overlap
     colnames(data) = c('sigScore', 'survival', 'censorship')
     return(data)
+}
+
+computeSignatureScore = function(zTransformedGem, geneSignature) {
+    # Takes a gene expression matrix that has been z transformed and a vector of gene names to return a signature score for each patient
+    subsetTCGA = zTransformedGem[geneSignature,] #subset the tcga data with the gene list. This is the signature     
+    upDown = (sort(apply(subsetTCGA, 1, median))) #get the median expression score to define up and down genes
+    #subset the gene score for upregulated and downregulated genes
+    up = upDown[upDown > 0] #upregulaed genes input for the geneSignature score function
+    down = upDown[upDown < 0]
+    #compute the geneScore
+    geneScore = betterGeneScore(zTransformedGem, up, down)
+    return (geneScore)
 }
