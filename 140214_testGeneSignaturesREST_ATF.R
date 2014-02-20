@@ -3,6 +3,7 @@ source('~/Documents/Rscripts/140220_TCGAsignatureAnalysisFunctions.R')
 
 # I accidently deleted the read delim to Agilent data. Find it when I can be bothered
 setwd('~/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/140214_testSignaturesAgilent/')
+
 ############################# Check that the data has been z-transformed by looking at a few genes ############################ 
 par(mfrow=c(2,2))
 geneMatrix = t(agilent)
@@ -36,9 +37,12 @@ signature = signature[,1]
 # Transform the clinical data into a form that can be analysed by survival package
 surv = censorData(clinical)
 
-#attach clinical data to the signature score
-data = bindSignatureToSurvival(geneScore)
-write.table(data, '140220_stemCellSig50thpercentile.txt', sep='\t', row.names=F)
+# Compute the gene signature score
+sigScore = computeSignatureScore(zScore, signature)
+
+#attach censored clinical data to the signature score
+data = bindSignatureToSurvival(sigScore, censored)
+write.table(data, '140220_stemCellSignatureScore', sep='\t', row.names=F)
 
 #some graphs
 subsetTCGA.1 = subsetTCGA[c(1:11,13,14),]
