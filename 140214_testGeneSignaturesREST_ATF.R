@@ -32,7 +32,7 @@ setwd('~/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/140214_testS
 
 ############################################# Subset the dataframe with the signature of genes ##################################
 # A dummy signature until I generate the proper REST and ATF-2 one
-signature = read.delim('~/Documents/RNAdata/danBatch1/GSEA/signaturesToTest/PID_ATF2_PATHWAY.txt', header=F, stringsAsFactors=F)
+signature = read.delim('~/Documents/RNAdata/danBatch1/GSEA/signaturesToTest/NRSF_01.txt', header=F, stringsAsFactors=F)
 signature = signature[,1]
 
 # Transform the clinical data into a form that can be analysed by survival package
@@ -69,10 +69,11 @@ data = buildClassifier(data, 0.5)
 data.surv = Surv(data$survival, event=data$censorship)
 sur.fit = survfit(data.surv~data$percentile)
 
-plot(sur.fit, main='Predictive power of ATF2 signature \nin the TCGA',ylab='Survival probability',xlab='survival(days)', col=c('red','blue'),xlim=c(0,750))
-legend('topright', c('Gene signature score > 50th, n=188', 'Gene signature score < 50th, n=193'), col=c('red', 'blue'),lwd=1, cex=0.6)
+plot(sur.fit, main='Predictive power of REST signature \nin the TCGA',ylab='Survival probability',xlab='survival(days)', col=c('red','blue'),xlim=c(0,750), cex=1.75)
+legend('topright', c('Gene sig score \n> 50th, n=188', 'Gene sig score \n< 50th, n=194'), 
+       col=c('red', 'blue'),lwd=1, cex=0.9, bty='n', xjust=0.5, yjust=0.5)
 summary(data.surv)
 #test for a difference between curves
 test = survdiff(data.surv~data$percentile)
 test
-text(locator(1),labels='p=0.536', cex=1) #add the p-value to the graph
+text(locator(1),labels='p=0.93', cex=1) #add the p-value to the graph
