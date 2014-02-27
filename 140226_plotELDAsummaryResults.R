@@ -14,10 +14,10 @@ x = ggplot(data, aes(x=Group, y=Estimate, fill=cd133)) +
                   position=position_dodge(.9)) +
     xlab("Patient clone") +
     ylab("Sphere forming efficiency (inverse)") +
-    ggtitle("Repopulation efficency of CD133 sorted cells") +
+    ggtitle("Repopulation potential of CD133 sorted cells") +
     scale_y_continuous(breaks=0:20*4) +
     # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
-    theme_bw(base_size=16)
+    theme_bw(base_size=20)
 
 # rotate x axis label
 x + theme(axis.text.x = element_text(angle = 90, hjust = 1))
