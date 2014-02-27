@@ -227,6 +227,8 @@ cData$star[cData$adj_pVal < .01]  <- "**"
 cData$star[cData$adj_pVal < .001] <- "***"
  
 ggplot(cData, aes(x=gene.x, y=mean, fill=cd133)) + 
+    # Define my own colors
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
     geom_bar(position=position_dodge(), stat="identity") +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
                   width=.2,                    # Width of the error bars

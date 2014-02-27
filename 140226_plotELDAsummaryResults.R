@@ -2,23 +2,22 @@
 setwd('~/Documents/ELDA/140226_2ndyearReviewSummary/')
 data = read.delim('140226_sphereEficiency.txt')
 pvals = read.delim('140226_differenceTests.txt')
+pvals = pvals[c(1:6),]
 
-# Add a column with stars describing if a test is significant
-cData$star <- " "
-cData$star[cData$adj_pVal < .05]  = "*"
-cData$star[cData$adj_pVal < .01]  <- "**"
-cData$star[cData$adj_pVal < .001] <- "***"
+pvals$adj_pVal = p.adjust(pvals$pVal, 'fdr')
 
-ggplot(cData, aes(x=gene.x, y=mean, fill=cd133)) + 
+x = ggplot(data, aes(x=Group, y=Estimate, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
     geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
+    geom_errorbar(aes(ymin=Lower, ymax=Upper),
                   width=.2,                    # Width of the error bars
                   position=position_dodge(.9)) +
-    xlab("Gene") +
-    ylab("Expression normalised to GAPDH") +
-    scale_fill_hue(name="CD133")+#, Legend label, use darker colors
-    ggtitle("Differential expression relative to CD133 negative") +
+    xlab("Patient clone") +
+    ylab("Sphere forming efficiency (inverse)") +
+    ggtitle("Repopulation efficency of CD133 sorted cells") +
     scale_y_continuous(breaks=0:20*4) +
     # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
-    geom_text(aes(label=star), colour="black", vjust=-2, size=10) +
     theme_bw(base_size=16)
+
+# rotate x axis label
+x + theme(axis.text.x = element_text(angle = 90, hjust = 1))
