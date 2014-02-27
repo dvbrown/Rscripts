@@ -150,9 +150,9 @@ summariseStatistics_ddCt <- function (dataFrame, groupVariableA='cd133', gropVar
 #020_N CREB1    B6    020_N  CREB1 26.47         B7 26.22 26.345 0.17677670    1 negative
 }
 
-# Run this at the end to intialise the package
-package.skeleton(name = 'qPCRcustomFunctions', 
-                 list=c('buildDataFrameForddCT', 'ddCTcalculate','extractReplicates',
-                                                      'plot_ddCt', 'splitSampleName', 'transposeLinear', 'cp', 'map'),
-                path='~/Documents/Rscripts/', force=F) 
-#               path='/Library/Frameworks/R.framework/Versions/3.0/Resources/library/', force=F)
+# # Run this at the end to intialise the package
+# package.skeleton(name = 'qPCRcustomFunctions', 
+#                  list=c('buildDataFrameForddCT', 'ddCTcalculate','extractReplicates',
+#                                                       'plot_ddCt', 'splitSampleName', 'transposeLinear', 'cp', 'map'),
+#                 path='~/Documents/Rscripts/', force=F) 
+# #               path='/Library/Frameworks/R.framework/Versions/3.0/Resources/library/', force=F)
