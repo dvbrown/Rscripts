@@ -1,4 +1,4 @@
-
+library(ggplot2)
 setwd('~/Documents/ELDA/140226_2ndyearReviewSummary/')
 data = read.delim('140226_sphereEficiency.txt')
 pvals = read.delim('140226_differenceTests.txt')

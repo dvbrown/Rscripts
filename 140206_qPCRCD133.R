@@ -104,12 +104,14 @@ ls1 = ggplot(data=shortLongSurvival, aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene
       ggtitle("Expression relative to long-term survivor") +  # Set title
       theme_bw(base_size=14)
 
-ls2 = ggplot(data=shortLongSurvival[c(1:4,6:15,17:22),], aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene.x)) + 
+ls2 = ggplot(data=shortLongSurvival[!shortLongSurvival$gene.x %in% c('B2M','GAPDH','OCT4','HAPLN1','GFAP','ATP5G3'),], 
+             aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
-    xlab("Sample") + ylab("ddCt") + # Set axis labels
-    ggtitle("Expression relative to long-term survivor") +  # Set title
-    theme_bw(base_size=14)
+    xlab("Sample") + ylab("Gene expression normalised to long-term survivor") + # Set axis labels
+    ggtitle("Follow up of genes identified as differentially expressed by RNA-seq") +  # Set title
+    theme_bw(base_size=20)
+ls2
 
 pdf(file='140212_longShortSurv.pdf', paper='a4')
 multiplot(ls1, ls2)
