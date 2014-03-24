@@ -75,3 +75,5 @@ events = actualEvents(driversList)
 
 res
 results
+# Compared both the results from exome and the targeted panel and conclude that drverNet works alright.
+# Don't capture the full extent of events but the p values and other metrics are the same.

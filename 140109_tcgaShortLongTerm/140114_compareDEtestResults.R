@@ -62,11 +62,13 @@ require(ggplot2)
 
 g = ggplot(data=Ag, aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
   geom_point(alpha=0.80, size=2) +
-  theme(legend.position = "none") + ggtitle('Differently expressed genes between less than \n14 month survivors and greater than 3 year survivors') +
-  theme(plot.title = element_text(size=16, face="bold")) +
+  theme(legend.position = "none") + ggtitle('Differentially expressed genes between less than \n14 month survivors and greater than 3 year survivors') +
+  theme(plot.title = element_text(size=20, face="bold")) +
   #Add some custome limits to the axes here
   #xlim(c(-5, 5)) + ylim(c(0, 50)) +
-  xlab(as.character('Agilent log fold change')) + ylab(as.character('Agilent FDR adjusted significance'))
+  xlab(as.character('Log2 fold change')) + ylab(as.character('Significance')) +
+        theme(text = element_text(size = 18)) + theme(plot.title = element_text(size=24))
+g
 
 # Add annotation
 dd_text = Ag[(abs(Ag$logFC) > 1) & (Ag$adj.P.Val < 0.1),]
