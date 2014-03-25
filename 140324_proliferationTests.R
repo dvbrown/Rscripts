@@ -74,9 +74,30 @@ tmzSub = tmz[,4:6] - 1948
 tmzSub$mean = rowMeans(tmzSub[,c(1:3)])
 tmzSub$sd = apply(tmzSub[,c(1:3)], 1, sd)
 tmzSub$conc = c(0, 6.25, 12.5, 25, 50)
+tmz$conc = c(0, 6.25, 12.5, 25, 50)
+tmz$mean = rowMeans(tmz[,c(4:6)])
+tmz$sd = apply(tmz[,c(4:6)], 1, sd)
 
-ggplot(data=tmzSub, aes(x=conc, y=mean, group=1) + geom_line() + geom_point())
-    ggtitle('Effect of Temozolomide on cell number') + xlab('TMZ dose (uM)') + ylab('Fluorescence at 585nm') +
-    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
-    theme_bw(base_size=20) + theme(plot.title = element_text(size = rel(1.25))))
+tmzPlot = ggplot(data=tmzSub, aes(x=conc, y=mean, group=1)) + geom_line(color='blue') + geom_point(color='darkblue') + 
+            ggtitle('Effect of Temozolomide on cell number') + xlab('TMZ dose (uM)') + ylab('Fluorescence at 585nm') + 
+            geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) + 
+            theme_bw(base_size=20) + theme(plot.title = element_text(size = rel(1.25)))
 tmzPlot
+
+tmzRawPlot = ggplot(data=tmz, aes(x=conc, y=mean, group=1)) + geom_line(color='red') + geom_point(color='darkred') + 
+    ggtitle('Effect of Temozolomide on cell number') + xlab('TMZ dose (uM)') + ylab('Fluorescence at 585nm') + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) + 
+    theme_bw(base_size=20) + theme(plot.title = element_text(size = rel(1.25)))
+tmzRawPlot
+multiplot(tmzPlot, tmzRawPlot)
+################################################################################################################################# 
+########################################### Compare LDH to resazurin ###############################################################
+ldh30$mean = rowMeans(ldh30[,c(4:6)])
+resazurin = dataDaily[c(13:18),7]
+ldh = ldh30$mean * 10000
+# scale the resazurin and ldh. WORK ON THIS
+pdf('../analysis/140325_correlationResazurinLDH.pdf', paper='a4')
+plot(resazurin, ldh, main='Correlation Resazurin vs LDH')
+abline(lm(resazurin~ldh), col="red") # regression line (y~x)
+dev.off()
+lines(lowess(resazurin, ldh), col="blue") # lowess line (x,y) 
