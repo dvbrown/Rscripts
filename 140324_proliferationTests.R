@@ -1,4 +1,5 @@
 # This script will measure the proliferation over 3 days and also compare Resazurin and LDH
+library(scatterplot3d)
 source('~/Documents/Rscripts/qPCRFunctions.R')
 
 setwd('~/Documents/Cell_biology/proliferation/Resazurin/140318_testing/linear/')
@@ -17,3 +18,10 @@ ldh5 = read.delim('../LDH/5min.txt')
 ldh30 = read.delim('../LDH/30min.txt')
 
 # Plot the replication correlations
+par(mfrow=c(2,1))
+s3d = scatterplot3d(day1$rep1, day1$rep2, day1$rep3, main="Day 1 Resazurin 3D Scatterplot", highlight.3d=TRUE, type="h", pch=16)
+fit <- lm(rep1 ~ rep2+rep3, day1)
+s3d$plane3d(fit)
+t3d = scatterplot3d(day3$rep1, day3$rep2, day3$rep3, main="Day 3 Resazurin 3D Scatterplot", highlight.3d=TRUE, type="h", pch=16)
+fit <- lm(rep1 ~ rep2+rep3, day3)
+t3d$plane3d(fit)
