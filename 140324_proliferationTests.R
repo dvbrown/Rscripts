@@ -8,13 +8,13 @@ setwd('~/Documents/Cell_biology/proliferation/Resazurin/140318_testing/linear/')
 backgroundMeanSD <- function (dataFrame) {
     # Take the dataframe of raw data and then remove background fluorescence and take the mean and sd
     # Subtract the background (0 cells) which is the first row
-    background = rowMeans(dataFrame[1,c(4:6)])
+    background = rowMeans(dataFrame[1,c(4:6)], na.rm=T)
     # Subtract the background and bind back the metaData
     holder = dataFrame[,c(4:6)] - background
     result = cbind(dataFrame[,c(7:9)], holder)
     # Compute the mean and sd
-    result$mean = rowMeans(result[,c(4:6)])
-    result$sd = apply(result[,c(4:6)], 1, sd)
+    result$mean = rowMeans(result[,c(4:6)], na.rm=T)
+    result$sd = apply(result[,c(4:6)], 1, sd, na.rm=T)
     return (result)
 }
 
@@ -66,6 +66,9 @@ dailyPlot = ggplot(data=dataDaily, aes(x=day_plated, y=mean, group=cells, colour
 dailyPlot
 
 multiplot(cellPlot, dailyPlot)
+
+resDay2 = day2
+
 ################################################################################################################################# 
 
 ########################################### Analysis temozolomide ###############################################################
@@ -92,6 +95,7 @@ tmzRawPlot
 multiplot(tmzPlot, tmzRawPlot)
 ################################################################################################################################# 
 ########################################### Compare LDH to resazurin ###############################################################
+# This ain't working properly yet
 ldh30$mean = rowMeans(ldh30[,c(4:6)])
 resazurin = dataDaily[c(13:18),7]
 ldh = ldh30$mean * 10000
