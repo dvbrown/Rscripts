@@ -90,7 +90,7 @@ Some of the important references are \textbf {WGCNA: an R package for weighted c
 
 <<fig=TRUE, echo=FALSE>>=
 plot(10, 20)
-# Some code goes here
+# Some code goes here. Need to figure out how to make figures nice
 @
 Some documentation goes here
 
