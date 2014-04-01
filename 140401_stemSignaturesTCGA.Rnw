@@ -39,7 +39,7 @@
 %----------------------------------------------------------------------------------------
 
 \JournalInfo{PlosOne or similar bioinformatics journal} % Journal information
-% \Archive{Original article using public data} % Additional notes (e.g. copyright, DOI, review/research article)
+\Archive{Original article using public data} % Additional notes (e.g. copyright, DOI, review/research article)
 
 \PaperTitle{In silico investigation of cancer stem markers} % Article title
 
