@@ -1,12 +1,83 @@
-\documentclass{article}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Stylish Article
+% LaTeX Template
+% Version 1.0 (31/1/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Mathias Legrand (legrand.mathias@gmail.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\title{In silico analysis of stem cell signatures in the cancer genome atlas}
-\author{Daniel V Brown}
-%\date{}
+%----------------------------------------------------------------------------------------
+%    PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[fleqn,10pt]{SelfArx} % Document font size and equations flushed left
+
+\setlength{\columnsep}{0.55cm} % Distance between the two columns of text
+\setlength{\fboxrule}{0.75pt} % Width of the border around the abstract
+
+\definecolor{color1}{RGB}{178,34,34} % Color of the article title and sections
+\definecolor{color2}{RGB}{0,102,52} % Color of the boxes behind the abstract and headings
+
+\newlength{\tocsep} 
+\setlength\tocsep{1.5pc} % Sets the indentation of the sections in the table of contents
+\setcounter{tocdepth}{3} % Show only three levels in the table of contents section: sections, subsections and subsubsections
+
+\usepackage{lipsum} % Required to insert dummy text
+\usepackage[english]{babel} %more dumb text
+\usepackage{blindtext}
+
+%----------------------------------------------------------------------------------------
+%    ARTICLE INFORMATION
+%----------------------------------------------------------------------------------------
+
+\JournalInfo{PlosOne or similar bioinformatics journal} % Journal information
+\Archive{Original article using public data} % Additional notes (e.g. copyright, DOI, review/research article)
+
+\PaperTitle{In silico investigation of cancer stem markers} % Article title
+
+\Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
+\affiliation{\textsuperscript{1}\textit{Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
+\affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
+
+\Keywords{Stem Cell Markers --- Glioblastoma --- Coexpression --- Gene signature} % Keywords - if you don't want any simply remove all the text between the curly brackets
+\newcommand{\keywordname}{Keywords} % Defines the keywords heading name
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\Abstract{I will attempt to publish a quick and dirty bioinformatics paper that examines the clinical relevence of the proposed cancer stem markers. This article
+will primarily focus on glioblastoma multiforme but I may throw in Breast and colorectal cancer if there are different results. I will comapre the derivation of a cancer stem cell signature de novo from the data itself based on coexpression. I will comapre this to signatures from the the literature and also pathways. I will use this signature to
+predict survival and the examine if a marker defines a particular subtype. Maybe pad it out at the end with some qRT-PCR, but I will need primary tissue!}
 
 \begin{document}
 \SweaveOpts{concordance=TRUE}
 
-\maketitle
+\flushbottom % Makes all text pages the same height
+
+\maketitle % Print the title and abstract box
+
+\tableofcontents % Print the contents section
+
+% \thispagestyle{empty} % Removes page numbering from the first page
+
+%----------------------------------------------------------------------------------------
+%    INTRODUCTION
+%----------------------------------------------------------------------------------------
+\section*{Introduction} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}{Introduction} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{Why glioblastoma is bad}  
+    \paragraph {Some stats on prevalence and mortality} 
+    
+    
 
 \end{document}
