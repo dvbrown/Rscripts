@@ -1,0 +1,12 @@
+\documentclass{article}
+
+\title{In silico analysis of stem cell signatures in the cancer genome atlas}
+\author{Daniel V Brown}
+%\date{}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
+\maketitle
+
+\end{document}
