@@ -46,11 +46,11 @@ hist(data$Cp, main='Raw Cp values GIC cells', col='orange')
 par(las=2, mfrow=c(1,2))
 
 # Plot correlation of the replicates
-
+par(mfrow=c(1,1))
 plot(rawData$Cp.x, rawData$Cp.y, main='Replicate accuracy Cp', ylab='Cp replicate 1', xlab='Cp replicate 2', pch=16)
 abline(lm(rawData$Cp.x ~ rawData$Cp.y), col='red')
 summary(lm(rawData$Cp.x ~ rawData$Cp.y))
-text(locator(1), labels='R squared = 0.9809')
+text(locator(1), labels='R squared = 0.9765')
 
 ############################################ Calculate the ddCt scores #################################################
 # Subset the data by cell line
@@ -85,10 +85,12 @@ c041$ddCt = ddCTcalculate(geneOfInterest=c041$gene.x, sampleOfInterest=c041$orig
 bindData = rbind(c011, c030a, c035, c041, c020, c030)
 
 ######################################### Plot the ddCt values ########################################################
-ls2 = ggplot(data=shortLongSurvival[!shortLongSurvival$gene.x %in% c('B2M','GAPDH','OCT4','HAPLN1','GFAP','ATP5G3'),], 
-             aes(x=origin.x, y=ddCt_B2M_020_P, fill=gene.x)) + 
+allPlots = ggplot(data=bindData, 
+             aes(x=origin.x, y=ddCt, fill=gene.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
-    xlab("Sample") + ylab("Gene expression normalised to long-term survivor") + # Set axis labels
-    ggtitle("Follow up of genes identified as differentially expressed by RNA-seq") +  # Set title
+    coord_cartesian(ylim = c(0, 10)) +
+    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
+    ggtitle("Comapring CD133 status") +  # Set title
     theme_bw(base_size=20)
+allPlots
