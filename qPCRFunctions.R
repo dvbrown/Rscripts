@@ -17,7 +17,6 @@ transposeLinear = function(well384Map, linearMapFile='output.txt') {
 splitSampleName = function(plateMap) {
   # The column with sample is the vector containing the sample names you wish to split
   splitted = colsplit.factor(plateMap[['sample']], split = " ", names = c('origin', 'gene'))
-  plateMap = plateMap[!plateMap$sample %in% '',]
   result = cbind(plateMap, splitted)
   return (result)
 }
@@ -34,16 +33,24 @@ extractReplicates <- function (indexes, ctData) {
   indexes = c(1:384)
   
   # Keep only cases with data in them as the merge function doesn't work with NAs
-  CtData = data[complete.cases(data[,3]),]
+  CtData = ctData[complete.cases(ctData[,3]),]
   # Subset each Cp into its replicates. Takes a vector with the indexes to to subset and then takes the
   # even entries and odd entries separately from the dataframe containing cp values
-  even = indexes[indexes%%2 == 0]
-  odd = indexes[indexes%%2 == 1]
+  even = as.character(indexes[indexes%%2 == 0])
+  odd = as.character(indexes[indexes%%2 == 1])
+  even = paste('Sample', even, sep=' ')
+  odd = paste('Sample', odd, sep=' ')
   
-  rep1 = CtData[odd, c(1:6)]
-  rep1 = rep1[complete.cases(rep1$sample),]
-  rep2 = CtData[even, c(1:6)]
-  rep2 = rep2[complete.cases(rep2$sample),]
+  #rep1 = CtData[odd, c(1:6)]
+  rep1 = CtData[CtData$Name %in% odd, c(1:6)]
+  
+  #rep1 = rep1[complete.cases(rep1$sample),]
+  
+  #rep2 = CtData[even, c(1:6)]
+  rep2 = CtData[CtData$Name %in% even, c(1:6)]
+  
+  #rep2 = rep2[complete.cases(rep2$sample),]
+  
   boundData = merge(rep1, rep2, by.x='sample', by.y='sample')
   ################ Remove columns that do not add information
   usefulData = boundData[,c(1,2,3,4,6,7,11)]
