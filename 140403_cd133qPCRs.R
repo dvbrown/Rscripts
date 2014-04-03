@@ -83,7 +83,7 @@ c041$ddCt = ddCTcalculate(geneOfInterest=c041$gene.x, sampleOfInterest=c041$orig
 
 # Bind the data together
 bindData = rbind(c011, c030a, c035, c041, c020, c030)
-
+write.table(bindData, '140403_ddCtValues.txt', sep='\t')
 ######################################### Plot the ddCt values ########################################################
 allPlots = ggplot(data=bindData, 
              aes(x=origin.x, y=ddCt, fill=gene.x)) + 
@@ -93,4 +93,35 @@ allPlots = ggplot(data=bindData,
     xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
     ggtitle("Comapring CD133 status") +  # Set title
     theme_bw(base_size=20)
-allPlots
+pdf('140403_ddCtBySample.pdf', paper='a4')
+allPlots + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+dev.off()
+
+otherPlot = ggplot(data=bindData, 
+                  aes(x=gene.x, y=ddCt, fill=origin.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="sample") +      # Set legend title
+    coord_cartesian(ylim = c(0, 7.5)) +
+    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
+    ggtitle("Comapring CD133 status") +  # Set title
+    theme_bw(base_size=20)
+pdf('140403_ddCtBySample.pdf', paper='a4')
+otherPlot + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+dev.off()
+
+multiplot(allPlots, otherPlot)
+
+positives = c('011_pos', '020_pos', '030_pos', '020_pos', '030a_pos', '035_pos', '041_pos')
+
+posPlot = ggplot(data=bindData[bindData$origin.x %in% positives,], 
+                 aes(x=gene.x, y=ddCt, fill=origin.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="sample") +      # Set legend title
+    coord_cartesian(ylim = c(0, 7.5)) +
+    scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),1)) +
+    xlab("Sample") + ylab("Gene expression normalised to CD133 negative") + # Set axis labels
+    ggtitle("Comapring CD133 status") +  # Set title
+    theme_bw(base_size=20)
+pdf('140403_ddCtSamplePositives.pdf', paper='a4')
+posPlot + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+dev.off()
