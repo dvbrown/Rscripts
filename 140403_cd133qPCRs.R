@@ -17,3 +17,9 @@ cp = read.delim('140403_cpScores.txt', skip=1)
 tm = read.delim('140403_melt.txt', skip=1)
 
 ######################################### Filter and prepare data #####################################
+data = buildDataFrameFromddCT(plateMap, cp)
+
+# Return a datframe with the replicate data alongside
+replicates = extractReplicates(c(1:384), data)
+rawData = replicates[[3]]
+row.names(rawData) = rawData$sample
