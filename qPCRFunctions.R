@@ -17,6 +17,7 @@ transposeLinear = function(well384Map, linearMapFile='output.txt') {
 splitSampleName = function(plateMap) {
   # The column with sample is the vector containing the sample names you wish to split
   splitted = colsplit.factor(plateMap[['sample']], split = " ", names = c('origin', 'gene'))
+  plateMap = plateMap[!plateMap$sample %in% '',]
   result = cbind(plateMap, splitted)
   return (result)
 }
