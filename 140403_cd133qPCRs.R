@@ -91,6 +91,7 @@ allPlots = ggplot(data=bindData[bindData$origin.x %in% positives,],
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
     coord_cartesian(ylim = c(0, 10)) +
+    scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 1),1)) + # This modifies the scale of the y axis.
     xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
     ggtitle("Comapring CD133 status") +  # Set title
     theme_bw(base_size=20)
@@ -103,6 +104,7 @@ otherPlot = ggplot(data=bindData[bindData$origin.x %in% positives,],
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="sample") +      # Set legend title
     coord_cartesian(ylim = c(0, 7.5)) +
+    scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 1),1)) + # This modifies the scale of the y axis.
     xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
     ggtitle("Comapring CD133 status") +  # Set title
     theme_bw(base_size=20)
@@ -117,7 +119,7 @@ posPlot = ggplot(data=bindData[bindData$origin.x %in% positives,],
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="sample") +      # Set legend title
     coord_cartesian(ylim = c(0, 7.5)) + # This sets the y axis limits
-    scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),1)) + # This modifies the scale of the y axis.
+    scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 1),1)) + # This modifies the scale of the y axis.
     xlab("Sample") + ylab("Gene expression normalised to CD133 negative") + # Set axis labels
     ggtitle("Comapring CD133 status") +  # Set title
     theme_bw(base_size=20)
