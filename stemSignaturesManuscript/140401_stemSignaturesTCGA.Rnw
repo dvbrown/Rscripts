@@ -33,6 +33,7 @@
 \usepackage{lipsum} % Required to insert dummy text
 \usepackage[english]{babel} %more dumb text
 \usepackage{blindtext}
+\usepackage{pdfpages}
 
 %----------------------------------------------------------------------------------------
 %    ARTICLE INFORMATION
@@ -61,6 +62,8 @@ predict survival and the examine if a marker defines a particular subtype. Maybe
 \begin{document}
 <<setup, include=FALSE, cache=FALSE>>=
 library(knitr)
+library(affy)
+library(limma)
 options(replace.assign=TRUE,width=50)
 opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center', fig.width=5, fig.height=5, fig.show='hold', cache=TRUE, par=TRUE)
 knit_hooks$set(par=function(before, options, envir){
@@ -90,6 +93,7 @@ if (before && options$fig.show!='none') par(mar=c(4,4,.1,.1),cex.lab=.95,cex.axi
 
 \subsection*{Some info on cancer stem cell theory}  
     \paragraph {Some stuff}
+    
 Some of the important references are \textbf {Mesenchymal glioma stem cells are maintained by activated glycolytic metabolism involving aldehyde dehydrogenase 1A3}. This 
 article states that proneural GSCs express mainly CD133 whereas mesenchymal GSCs express mainly CD44. There is also overlap with ALDH1 and CD44.
     
@@ -162,6 +166,29 @@ abline(0, 1)    # low-level change
   \subsection*{This will be empty}  
     \paragraph {Use Papers2 for this part}
 \blindtext
+
+
+%----------------------------------------------------------------------------------------
+%    Supplementary Data
+%----------------------------------------------------------------------------------------
+\newpage % Put the supplementary on a new page
+\section*{Supplementary Data} % The \section*{} command stops section numbering
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Supplementary data} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{Aquisition and preparation of gene expression data ie data munging}  
+ 
+    \paragraph {TCGA GBM data} 
+The level 3 data was aquired using the broad firehose data with the following command: 
+    % You gotta escape the underscore _ with a backslash
+\textbf{firehose\_get -b -o MAF Agilent U133A clinical stddata 2013\_12\_10 GBM}. This includes clinical, affymetrix and agilent data. The clinical data was reformatted for R using the python script \textbf{meltTCGAGenefiles.py}. The agilent data, which was originally in 2 parts 
+was formatted using the script  \textbf{meltTCGAGenefile.py}. The TCGA uses the keyword "null" when describing empty values. This was changed to "NA" using the script \textbf{changeEmpties2NA.py}.
+
+    \paragraph {Deciding whether to use RNA-seq, Affymetrix or Agilent data} 
+As at March 2014 there were 160 cases with available RNA-seq data, compared to 540 for Affymetrix and Agilent. There for the sake of statistical power, the microarray platforms were preferred. Comaparing the properties of the data showed the Agilent data had a more normal distribution.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Distribution plots of Affymetrix and Agilent %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\includepdf[pages={1}, scale=0.8]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/limmaResults/explorationPlots/140115_gapdhPlots.pdf}
+caption{Distribution of the GAPDH gene in the Agilent and Affymetrix level 3 normalised TCGA GBM data.}
+
 
 
 \end{document}

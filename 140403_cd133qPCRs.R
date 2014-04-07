@@ -94,7 +94,7 @@ allPlots = ggplot(data=bindData[bindData$origin.x %in% positives,],
     scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 1),1)) + # This modifies the scale of the y axis.
     xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
     ggtitle("Comapring CD133 status") +  # Set title
-    theme_bw(base_size=20)
+    theme_bw(base_size=18)
 #pdf('140403_ddCtBySample.pdf', paper='a4')
 allPlots + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 #dev.off()
