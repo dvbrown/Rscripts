@@ -28,7 +28,7 @@ plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="",
 powers = c(c(1:10), seq(from = 12, to=20, by=2))
 # Call the network topology analysis function. Use an unsigned network to begin with
 #sft = pickSoftThreshold(datExpr0, powerVector = powers, verbose = 5, blockSize=4000)
-save.image('140407_workspace.rdata')
+#save.image('140407_workspace.rdata')
 
 # Plot the results of the thresholding function
 #pdf('140407_thresholdingPlots.pdf', paper='a4')
@@ -55,10 +55,12 @@ text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
 ##################################### Automatic network construction ######################################################
 
 # You want to choose the power value based on where the curve flattens out
-net = blockwiseModules(datExpr0, power = 6,
-                       TOMType = "unsigned", minModuleSize = 30,
-                       reassignThreshold = 0, mergeCutHeight = 0.25,
-                       numericLabels = TRUE, pamRespectsDendro = FALSE,
-                       saveTOMs = TRUE,
-                       saveTOMFileBase = "gbm_tcga",
-                       verbose = 3)
+# This step is very slow
+# net = blockwiseModules(datExpr0, power = 6,
+#                        TOMType = "unsigned", minModuleSize = 30,
+#                        reassignThreshold = 0, mergeCutHeight = 0.25,
+#                        numericLabels = TRUE, pamRespectsDendro = FALSE,
+#                        saveTOMs = TRUE,
+#                        saveTOMFileBase = "gbm_tcga",
+#                        verbose = 3)
+save.image('./wgcna/140407_networkBuilt.RData')
