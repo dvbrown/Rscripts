@@ -23,8 +23,8 @@
 \setlength{\columnsep}{0.55cm} % Distance between the two columns of text
 \setlength{\fboxrule}{0.75pt} % Width of the border around the abstract
 
-\definecolor{color1}{RGB}{178,34,34} % Color of the article title and sections
-\definecolor{color2}{RGB}{0,102,52} % Color of the boxes behind the abstract and headings
+\definecolor{color1}{RGB}{0,0,153} % Color of the article title and sections
+\definecolor{color2}{RGB}{204,102,0} % Color of the boxes behind the abstract and headings
 
 \newlength{\tocsep} 
 \setlength\tocsep{1.5pc} % Sets the indentation of the sections in the table of contents
@@ -59,7 +59,16 @@ will primarily focus on glioblastoma multiforme but I may throw in Breast and co
 predict survival and the examine if a marker defines a particular subtype. Maybe pad it out at the end with some qRT-PCR, but I will need primary tissue!}
 
 \begin{document}
-\SweaveOpts{concordance=TRUE}
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+options(replace.assign=TRUE,width=50)
+opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center', fig.width=5, fig.height=5, fig.show='hold', cache=TRUE, par=TRUE)
+knit_hooks$set(par=function(before, options, envir){
+if (before && options$fig.show!='none') par(mar=c(4,4,.1,.1),cex.lab=.95,cex.axis=.9,mgp=c(2,.7,0),tcl=-.3)
+}, crop=hook_pdfcrop)
+@
+%\SweaveOpts{concordance=TRUE}
+%This says that figures should be resized so that they fit the full width of the text.
 
 \flushbottom % Makes all text pages the same height
 
@@ -88,10 +97,71 @@ article states that proneural GSCs express mainly CD133 whereas mesenchymal GSCs
     \paragraph {Some stuff}
 Some of the important references are \textbf {WGCNA: an R package for weighted correlation network analysis}
 
-<<fig=TRUE, echo=FALSE>>=
-plot(10, 20)
-# Some code goes here. Need to figure out how to make figures nice
+%To make the plot a little nicer, we can add a caption. Also lets change the size of the plot to be 4" in height and 6" in width
+<<test-plot, echo=FALSE, fig.cap='This is a test plot'>>=
+plot(1)         # high-level plot
+abline(0, 1)    # low-level change
+#plot(rnorm(10)) # high-level plot
+## many low-level changes in a loop (a single R expression)
+#for(i in 1:10) {
+#    abline(v = i, lty = 2)
+#}
 @
-Some documentation goes here
+
+%----------------------------------------------------------------------------------------
+%    METHODS
+%----------------------------------------------------------------------------------------
+\section*{Methods} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Methods} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{How I did this stuff}  
+    \paragraph {Some stats gobbygook}
+\blindtext
+
+
+
+%----------------------------------------------------------------------------------------
+%    RESULTS
+%----------------------------------------------------------------------------------------
+\section*{RESULTS} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Results} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{What I discovered}  
+    \paragraph {SThis is where I insert my work}
+\blindtext
+
+
+%----------------------------------------------------------------------------------------
+%    DISCUSSION
+%----------------------------------------------------------------------------------------
+\section*{Discussion} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Discussion} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{I will wildy speculate on my results here}  
+    \paragraph {Say something clever here}
+\blindtext
+
+
+%----------------------------------------------------------------------------------------
+%    ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+\section*{Acknowledgements} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Acknowledgements} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{My thanking list}  
+    \paragraph {Nice people are listed here}
+\blindtext
+
+
+%----------------------------------------------------------------------------------------
+%    References
+%----------------------------------------------------------------------------------------
+\section*{References} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}References} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{This will be empty}  
+    \paragraph {Use Papers2 for this part}
+\blindtext
+
 
 \end{document}

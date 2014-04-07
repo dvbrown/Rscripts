@@ -1,6 +1,0 @@
-\select@language {english}
-\contentsline {section}{\hspace *{-\tocsep }Introduction}{1}
-\contentsline {paragraph}{Some stats on prevalence and mortality}{1}
-\contentsline {paragraph}{Some stuff}{1}
-\contentsline {paragraph}{Some stuff}{1}
-\contentsfinish 

@@ -39,18 +39,17 @@ write.table(rawData, '140403_rawData.txt', sep='\t')
 rep1 = replicates[[1]]
 rep2 = replicates[[2]]
 
+# Set some graphs
+par(las=2, mfrow=c(2,1))
 par(las=2)
 hist(data$Cp, main='Raw Cp values GIC cells', col='orange')
 
-# Set some graphs
-par(las=2, mfrow=c(1,2))
-
 # Plot correlation of the replicates
-par(mfrow=c(1,1))
 plot(rawData$Cp.x, rawData$Cp.y, main='Replicate accuracy Cp', ylab='Cp replicate 1', xlab='Cp replicate 2', pch=16)
 abline(lm(rawData$Cp.x ~ rawData$Cp.y), col='red')
 summary(lm(rawData$Cp.x ~ rawData$Cp.y))
 text(locator(1), labels='R squared = 0.9765')
+par(mfrow=c(1,1))
 
 ############################################ Calculate the ddCt scores #################################################
 # Subset the data by cell line
@@ -85,7 +84,9 @@ c041$ddCt = ddCTcalculate(geneOfInterest=c041$gene.x, sampleOfInterest=c041$orig
 bindData = rbind(c011, c030a, c035, c041, c020, c030)
 write.table(bindData, '140403_ddCtValues.txt', sep='\t')
 ######################################### Plot the ddCt values ########################################################
-allPlots = ggplot(data=bindData, 
+positives = c('011_pos', '020_pos', '030_pos', '020_pos', '030a_pos', '035_pos', '041_pos')
+
+allPlots = ggplot(data=bindData[bindData$origin.x %in% positives,], 
              aes(x=origin.x, y=ddCt, fill=gene.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
@@ -93,11 +94,11 @@ allPlots = ggplot(data=bindData,
     xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
     ggtitle("Comapring CD133 status") +  # Set title
     theme_bw(base_size=20)
-pdf('140403_ddCtBySample.pdf', paper='a4')
+#pdf('140403_ddCtBySample.pdf', paper='a4')
 allPlots + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-dev.off()
+#dev.off()
 
-otherPlot = ggplot(data=bindData, 
+otherPlot = ggplot(data=bindData[bindData$origin.x %in% positives,], 
                   aes(x=gene.x, y=ddCt, fill=origin.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="sample") +      # Set legend title
@@ -105,23 +106,25 @@ otherPlot = ggplot(data=bindData,
     xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
     ggtitle("Comapring CD133 status") +  # Set title
     theme_bw(base_size=20)
-pdf('140403_ddCtBySample.pdf', paper='a4')
+#pdf('140403_ddCtBySample.pdf', paper='a4')
 otherPlot + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-dev.off()
+#dev.off()
 
-multiplot(allPlots, otherPlot)
-
-positives = c('011_pos', '020_pos', '030_pos', '020_pos', '030a_pos', '035_pos', '041_pos')
+multiplot(allPlots + theme(axis.text.x = element_text(angle = 90, hjust = 1)), otherPlot+ theme(axis.text.x = element_text(angle = 90, hjust = 1)))
 
 posPlot = ggplot(data=bindData[bindData$origin.x %in% positives,], 
                  aes(x=gene.x, y=ddCt, fill=origin.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="sample") +      # Set legend title
-    coord_cartesian(ylim = c(0, 7.5)) +
-    scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),1)) +
+    coord_cartesian(ylim = c(0, 7.5)) + # This sets the y axis limits
+    scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),1)) + # This modifies the scale of the y axis.
     xlab("Sample") + ylab("Gene expression normalised to CD133 negative") + # Set axis labels
     ggtitle("Comapring CD133 status") +  # Set title
     theme_bw(base_size=20)
-pdf('140403_ddCtSamplePositives.pdf', paper='a4')
+#pdf('140403_ddCtSamplePositives.pdf', paper='a4')
 posPlot + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-dev.off()
+#dev.off()
+
+############################################ Construct the mean of the data #################################################
+cd133 = build_ddCTmatrix('140403_ddCtValues.txt')
+# Ran this on the command line but got only 1 column of data althoguh the headers appeared to have worked
