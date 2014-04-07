@@ -26,5 +26,5 @@ plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="",
 ##################################### Automatic network construction ######################################################
 # Choose a set of soft-thresholding powers
 powers = c(c(1:10), seq(from = 12, to=20, by=2))
-# Call the network topology analysis function
-sft = pickSoftThreshold(datExpr, powerVector = powers, verbose = 5)
+# Call the network topology analysis function. Use an unsigned network to begin with
+sft = pickSoftThreshold(datExpr0, powerVector = powers, verbose = 5, blockSize=5)
