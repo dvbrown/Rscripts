@@ -8,7 +8,10 @@ list.files()
 data = read.delim('140110_agilentNoNulls.txt')
 
 # We now transpose the expression data for further analysis.
-datExpr0 = as.data.frame(t(data))
+datExpr = as.data.frame(t(data))
+
+# Use only 100 patients to make things run quicker. CHANGE THIS to full set when optimised
+datExpr0 = datExpr[c(1:100),]
 # Check for genes with missing values and with no variance
 gag = goodSamplesGenes(datExpr0, verbose=3)
 gag$allOK
@@ -21,7 +24,17 @@ plot(sampleTree, main = "Sample clustering to detect outliers", sub="", xlab="",
      cex.axis = 1.5, cex.main = 2, cex=0.6)
 #dev.off()
 
-# There are a small number of outliers but I will not trim them for the timebeing
+# Choose a height cut that will remove the oending sample, say 140 (the red line in the plot), and use a branch cut at that height.
+# Plot a line to show the cut
+abline(h = 140, col = "red");
+# Determine cluster under the line
+clust = cutreeStatic(sampleTree, cutHeight = 140, minSize = 10)
+table(clust)
+# clust 1 contains the samples we want to keep.
+keepSamples = (clust==1)
+datExpr = datExpr0[keepSamples, ]
+nGenes = ncol(datExpr)
+nSamples = nrow(datExpr)
 
 ##################################### Selecting the threshold ######################################################
 # Choose a set of soft-thresholding powers
@@ -83,3 +96,11 @@ moduleLabels = net$colors
 moduleColors = labels2colors(net$colors)
 MEs = net$MEs
 geneTree = net$dendrograms[[1]]
+
+# That wasn't particularly informative and there are many modules
+
+##################################### Manual network construction ######################################################
+
+# We now calculate the adjacencies, using the soft thresholding power 6:
+softPower = 6
+adjacency = adjacency(datExpr0, power = softPower)
