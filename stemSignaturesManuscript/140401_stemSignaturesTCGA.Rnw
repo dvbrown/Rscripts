@@ -92,7 +92,7 @@ if (before && options$fig.show!='none') par(mar=c(4,4,.1,.1),cex.lab=.95,cex.axi
 Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the central nervous system. These diverse morphological features have made diagnosis of GBM difficult (1). Molecular profiling of GBM tumours has revealed that similar to other tumours such as breast and ovarian cancer (2,3), GBM is not a single disease but consists of several distinct malignancies. The median age of primary GBM is 66.2 years (4). The majority of GBM appear to arise de novo with no prior clinical history. The pathological symptoms of GBM are behavioral changes, headaches, nausea and seizures due to increased cranial pressure by the tumour bulk (5). Due to the nonspecificity of these symptoms patients typically present at an advanced stage of disease.\\ 
 The incidence of GBM in Australia is 3.96 per 100,000 persons, increasing to 14.42 per 100,000 for the greater than 65 age group (6). Although GBM is a relatively rare type of cancer it has a 5 year survival of less than 5\% rendering it one of the most lethal types of tumours. Age is the most important risk factor for GBM, with incidence showing a 4th power relationship with age, indicative of a gradual accumulation of oncogenic mutations over time (7).
 
-    \subsection {Molecular Sub-classification of GBM}
+    \subsection*{Molecular Sub-classification of GBM}
       \paragraph{The TCGA and other studies}
 
 The classification of multiple subtypes of breast cancer by patterns of gene expression was a new paradigm in molecular pathology (2,12). Information encoded in the messenger RNA was able to predict relapse, treatment
@@ -126,7 +126,11 @@ article states that proneural GSCs express mainly CD133 whereas mesenchymal GSCs
     
 \subsection*{Some info on weighted coexpression analysis}  
     \paragraph {Some stuff}
-Some of the important references are \textbf {WGCNA: an R package for weighted correlation network analysis}
+Some of the important references are \textbf {WGCNA: an R package for weighted correlation network analysis}.
+Instead of relating thousands of genes to a microarray sample trait, it focuses on the relationship between a few (typically less than 10) modules and the sample trait. 
+Modules are constructed from the expression data by using hierarchical clustering.\\
+By raising the absolute value of the correlation to a power \math{\beta > 1} % Check this line
+ $ (soft thresholding), the weighted gene co-expression network construction emphasizes high correlations at the expense of low correlations.
 
 %To make the plot a little nicer, we can add a caption. Also lets change the size of the plot to be 4" in height and 6" in width
 <<test-plot, echo=FALSE, fig.cap='This is a test plot'>>=
@@ -232,5 +236,8 @@ As at March 2014 there were 160 cases with available RNA-seq data, compared to 5
 \end{figure}
 
 Therefore the analysis was performed with Agilent as it was congruent with statistical assumptions of normality.
+    \subsection {More definitions of WGCNA}
+    \paragraph {Copy and pasted from Background of WGCNA}
+Intramodular connectivity measures how connected, or co-expressed, a given gene is with respect to the genes of a particular module. The intramodular connectivity may be interpreted as a measure of module membership. It is this value which will be interested with respect to which genes are coexpressed with a marker.
 
 \end{document}

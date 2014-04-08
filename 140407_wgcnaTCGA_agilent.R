@@ -63,4 +63,23 @@ text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
 #                        saveTOMs = TRUE,
 #                        saveTOMFileBase = "gbm_tcga",
 #                        verbose = 3)
-save.image('./wgcna/140407_networkBuilt.RData')
+#save.image('./wgcna/140407_networkBuilt.RData')
+load('./wgcna/140407_networkBuilt.RData')
+
+# Identify how many modules there are and how bif theu are.
+table(net$colors)
+
+# View the dendogram you can cut the tree without recutting it.
+# Convert labels to colors for plotting
+mergedColors = labels2colors(net$colors)
+# Plot the dendrogram and the module colors underneath
+plotDendroAndColors(net$dendrograms[[1]], mergedColors[net$blockGenes[[1]]],
+                    "Module colors",
+                    dendroLabels = FALSE, hang = 0.03,
+                    addGuide = TRUE, guideHang = 0.05)
+
+# We now save the module assignment and module eigengene information necessary for subsequent analysis.
+moduleLabels = net$colors
+moduleColors = labels2colors(net$colors)
+MEs = net$MEs
+geneTree = net$dendrograms[[1]]
