@@ -5,7 +5,12 @@ list.files()
 #################################### Data input and clustering visualisations ##############################################
 data = read.delim('140110_agilentNoNulls.txt')
 setwd('./correlations/')
-dataM = as.matrix(data)
+dataM = (as.matrix(data))
 
 prom1 = dataM['PROM1',]
-cd133Sig = cor(dataM, prom1, na.rm=T)
+egfr = dataM['EGFR',]
+
+dataM = t(data)
+
+cd133 = cor(dataM)
+save.image('1404089_correlationMatrix')

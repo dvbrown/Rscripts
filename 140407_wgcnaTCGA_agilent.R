@@ -54,19 +54,21 @@ text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
 
 ##################################### Automatic network construction ######################################################
 
-# You want to choose the power value based on where the curve flattens out
-# This step is very slow
-# net = blockwiseModules(datExpr0, power = 6,
-#                        TOMType = "unsigned", minModuleSize = 30,
-#                        reassignThreshold = 0, mergeCutHeight = 0.25,
-#                        numericLabels = TRUE, pamRespectsDendro = FALSE,
-#                        saveTOMs = TRUE,
-#                        saveTOMFileBase = "gbm_tcga",
-#                        verbose = 3)
-#save.image('./wgcna/140407_networkBuilt.RData')
+You want to choose the power value based on where the curve flattens out
+This step is very slow
+net = blockwiseModules(datExpr0, power = 6,
+                       TOMType = "unsigned", minModuleSize = 30,
+                       reassignThreshold = 0, mergeCutHeight = 0.25,
+                       numericLabels = TRUE, pamRespectsDendro = FALSE,
+                       saveTOMs = TRUE,
+                       saveTOMFileBase = "gbm_tcga",
+                       verbose = 3)
+# MEs = a data frame containing module eigengenes of the found modules (given by colors).
+
+save.image('./wgcna/140407_networkBuilt.RData')
 load('./wgcna/140407_networkBuilt.RData')
 
-# Identify how many modules there are and how bif theu are.
+# Identify how many modules there are and how big theu are.
 table(net$colors)
 
 # View the dendogram you can cut the tree without recutting it.
@@ -87,10 +89,22 @@ geneTree = net$dendrograms[[1]]
 ##################################### Identify which genes are highly correlated with modules ######################################################
 dat = as.matrix(datExpr0)
 geneModuleMembership = as.data.frame(corFast(dat, MEs, use = "p"))
+geneModuleMembership = abs(geneModuleMembership)
 
 # Subset the module membership for CD133
 prom1 = t(geneModuleMembership['PROM1',])
 # It appears to belong to at least 2 modules
 
-base::co
 prom1 = sort(prom1[,1], decreasing=TRUE)
+
+prom1Members = geneModuleMembership$ME19
+names(prom1Members) = row.names(geneModuleMembership)
+hist(prom1Members)
+
+##################################### Try calculate network adjaceny again ######################################################
+prom1 = 1590
+
+adj = adjacency(datExpr, 
+                selectCols = prom1, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
+                type = "unsigned", power = 6, corFnc = "cor", corOptions = "use = 'p'",
+                distFnc = "dist", distOptions = "method = 'euclidean'")
