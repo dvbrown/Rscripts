@@ -84,5 +84,13 @@ moduleColors = labels2colors(net$colors)
 MEs = net$MEs
 geneTree = net$dendrograms[[1]]
 
-##################################### Identify modules. This may crash my comp ######################################################
-geneModuleMembership = as.data.frame(cor(datExpr, MEs, use = "p"));
+##################################### Identify which genes are highly correlated with modules ######################################################
+dat = as.matrix(datExpr0)
+geneModuleMembership = as.data.frame(corFast(dat, MEs, use = "p"))
+
+# Subset the module membership for CD133
+prom1 = t(geneModuleMembership['PROM1',])
+# It appears to belong to at least 2 modules
+
+base::co
+prom1 = sort(prom1[,1], decreasing=TRUE)
