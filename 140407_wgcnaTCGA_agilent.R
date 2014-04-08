@@ -83,3 +83,6 @@ moduleLabels = net$colors
 moduleColors = labels2colors(net$colors)
 MEs = net$MEs
 geneTree = net$dendrograms[[1]]
+
+##################################### Identify modules. This may crash my comp ######################################################
+geneModuleMembership = as.data.frame(cor(datExpr, MEs, use = "p"));
