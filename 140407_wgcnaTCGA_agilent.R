@@ -112,26 +112,30 @@ egfr = ifelse(cnames %in% 'EGFR', TRUE, FALSE)
 # Build a vector that matches the presence of an index
 
 # Calculate the adjacency for only prom1.  (correlation or distance) network adjacency
-adj = adjacency(datExpr0, 
+adjProm1 = adjacency(datExpr0, 
                 selectCols = prom1, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
                 type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
                 distFnc = "dist", distOptions = "method = 'euclidean'")
+adjProm1 = as.data.frame(adjProm1)
 
-hist(adj, breaks='FD', ylim=c(0,20), main='Frequency of adjacency values', xlab='Adjacency')
+par(mfrow=c(2,1))
+hist(adjProm1$V1, breaks='FD', ylim=c(0,20), main='Frequency of adjacency values', xlab='Adjacency')
+logAdj = log10(adjProm1$V1)
+hist(logAdj, breaks='FD', main='Frequency of log adjacency values', xlab='Adjacency')
+par(mfrow=c(1,1))
 
-prom1Genes = adj[adj > 0.5]
+prom1Genes = adjProm1[abs(adjProm1 >= 0.1)]
 
 # adjE = adjacency(datExpr0, 
 #                 selectCols = egfr, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
 #                 type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
 #                 distFnc = "dist", distOptions = "method = 'euclidean'")
 
+# Need to build a square symmetric matrix to calculate the similarity score
 
 ##################################### Start here tomorrow ######################################################
-adj = adjacency(datExpr0, 
-                selectCols = null, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
-                type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
-                distFnc = "dist", distOptions = "method = 'euclidean'")
+# adj = adjacency(datExpr0, This ended up being a big 2Gb matrix
+#                 selectCols = NULL, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
+#                 type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
+#                 distFnc = "dist", distOptions = "method = 'euclidean'")
 
-TOM = TOMsimilarity(adj);
-dissTOM = 1-TOM
