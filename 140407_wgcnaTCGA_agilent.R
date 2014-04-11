@@ -66,6 +66,8 @@ net = blockwiseModules(datExpr0, power = 6,
 # MEs = a data frame containing module eigengenes of the found modules (given by colors).
 
 #save.image('./wgcna/140407_networkBuilt.RData')
+##################################### Start working on analysis here ######################################################
+
 load('./wgcna/140407_networkBuilt.RData')
 
 # Identify how many modules there are and how big theu are.
