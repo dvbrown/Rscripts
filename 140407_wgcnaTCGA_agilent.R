@@ -65,7 +65,7 @@ net = blockwiseModules(datExpr0, power = 6,
                        verbose = 3)
 # MEs = a data frame containing module eigengenes of the found modules (given by colors).
 
-save.image('./wgcna/140407_networkBuilt.RData')
+#save.image('./wgcna/140407_networkBuilt.RData')
 load('./wgcna/140407_networkBuilt.RData')
 
 # Identify how many modules there are and how big theu are.
@@ -112,6 +112,9 @@ egfr = ifelse(cnames %in% 'EGFR', TRUE, FALSE)
 # Build a vector that matches the presence of an index
 
 # Calculate the adjacency for only prom1.  (correlation or distance) network adjacency
+#If selectCols is given, the corFnc function will be given arguments (datExpr, datExpr[selectCols], ...); 
+#hence the returned adjacency will have rows corresponding to all genes and columns corresponding to genes selected by selectCols.
+
 adjProm1 = adjacency(datExpr0, 
                 selectCols = prom1, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
                 type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
@@ -121,21 +124,46 @@ adjProm1 = as.data.frame(adjProm1)
 par(mfrow=c(2,1))
 hist(adjProm1$V1, breaks='FD', ylim=c(0,20), main='Frequency of adjacency values', xlab='Adjacency')
 logAdj = log10(adjProm1$V1)
+names(logAdj) = row.names(adjProm1)
 hist(logAdj, breaks='FD', main='Frequency of log adjacency values', xlab='Adjacency')
 par(mfrow=c(1,1))
-
-prom1Genes = adjProm1[abs(adjProm1 >= 0.1)]
 
 # adjE = adjacency(datExpr0, 
 #                 selectCols = egfr, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
 #                 type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
 #                 distFnc = "dist", distOptions = "method = 'euclidean'")
 
-# Need to build a square symmetric matrix to calculate the similarity score
+##################################### Build a symmetric matrix ######################################################
+#aquire the mean and standard deviation of prom1 correlated genes
+prom1M = mean(logAdj)
+prom1Sd = sd(logAdj)
 
-##################################### Start here tomorrow ######################################################
-# adj = adjacency(datExpr0, This ended up being a big 2Gb matrix
-#                 selectCols = NULL, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
-#                 type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
-#                 distFnc = "dist", distOptions = "method = 'euclidean'")
+# Subset the suite of correlations for high correlation
+prom1Genes = logAdj[(logAdj >= (prom1M + 1.5*prom1Sd))]
+#prom1Genes = logAdj[(logAdj >= (-5))]
+
+length(prom1Genes)
+
+# Use the top correlated genes with PROM1 and measure their correlation with the transcriptome
+squareAdjacency = adjacency(datExpr0, 
+                            selectCols = names(prom1Genes), #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
+                            type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
+                            distFnc = "dist", distOptions = "method = 'euclidean'")
+
+# Make the adjacency matrix square
+squareAdjacency1 = log10(squareAdjacency[colnames(squareAdjacency),])
+heatmap(squareAdjacency1, main='Top 34% correlated genes with CD133 (n = 40)', Rowv=NA, sym=TRUE)
+
+prom1Correlated = row.names(squareAdjacency)
+write.table(prom1Correlated, './wgcna/140411_prom1Coexpressed_1-5SDs.txt', sep='\t')
+
+##################################### Build a simlarity matrix ######################################################
+
+# Turn back into real scale by reversing the log transformation
+squareAdjacency2 = 10^squareAdjacency1
+similarity = TOMsimilarity(squareAdjacency2, TOMType='unsigned', verbose=3)
+
+row.names(similarity) = row.names(squareAdjacency2)
+colnames(similarity) = row.names(squareAdjacency2)
+heatmap(log10(similarity), main='Top 34% similar genes with CD133 (n = 40)', Rowv=NA, sym=TRUE)
 
