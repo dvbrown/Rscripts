@@ -167,6 +167,26 @@ The  weighted gene co-expression network analysis package was used within the R 
     \paragraph {This is where I insert my work}
 \blindtext
 
+%----------------------------------------This is the code to generate the square matrix of CD133 correlated genes------------------------------------------
+<<cd133_histogram, echo=FALSE, fig.cap='This is the distribution of cd133 correlated genes'>>=
+setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
+library(WGCNA)
+load('140407_networkBuilt.RData')
+cnames = colnames(datExpr0)
+# This works as a method to subset the gene expression matrix
+prom1 = ifelse(cnames %in% 'PROM1', TRUE, FALSE)
+adjProm1 = adjacency(datExpr0,  selectCols = prom1, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
+                type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
+                distFnc = "dist", distOptions = "method = 'euclidean'")
+adjProm1 = as.data.frame(adjProm1)
+par(mfrow=c(2,1))
+hist(adjProm1$V1, breaks='FD', ylim=c(0,20), main='Frequency of adjacency values', xlab='Adjacency')
+logAdj = log10(adjProm1$V1)
+names(logAdj) = row.names(adjProm1)
+hist(logAdj, breaks='FD', main='Frequency of log adjacency values', xlab='Adjacency')
+par(mfrow=c(1,1))
+@
+
 
 %----------------------------------------------------------------------------------------
 %    DISCUSSION

@@ -156,8 +156,9 @@ squareAdjacency = adjacency(datExpr0,
 squareAdjacency1 = log10(squareAdjacency[colnames(squareAdjacency),])
 heatmap(squareAdjacency1, main='Top 34% correlated genes with CD133 (n = 40)', Rowv=NA, sym=TRUE)
 
-prom1Correlated = row.names(squareAdjacency)
-write.table(prom1Correlated, './wgcna/140411_prom1Coexpressed_1-5SDs.txt', sep='\t')
+prom1Correlated = row.names(squareAdjacency1)
+# Write out the gene signature to disk
+write.table(prom1Correlated, './wgcna/140411_prom1Coexpressed_1-5SDs.txt', sep='\t', row.names=F)
 
 ##################################### Build a simlarity matrix ######################################################
 
@@ -169,3 +170,5 @@ row.names(similarity) = row.names(squareAdjacency2)
 colnames(similarity) = row.names(squareAdjacency2)
 heatmap(log10(similarity), main='Top 34% similar genes with CD133 (n = 40)', Rowv=NA, sym=TRUE)
 
+# Do a GSEA with this gene list.
+# Next subset this into the TCGA to identify survival patterns
