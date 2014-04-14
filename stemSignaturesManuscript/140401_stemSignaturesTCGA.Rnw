@@ -164,11 +164,11 @@ The  weighted gene co-expression network analysis package was used within the R 
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Results} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
   \subsection*{What I discovered}  
-    \paragraph {This is where I insert my work}
-\blindtext
+    \paragraph {Discovering the suite of CD133 coexpressed genes}
+The PROM1 gene was processed with WGCNA using the Agilent microarray data from the TCGA glioblastoma (figure 2 top). The correlated genes were log transformed to make the data more normally distributed. 
 
-%----------------------------------------This is the code to generate the square matrix of CD133 correlated genes------------------------------------------
-<<cd133_histogram, echo=FALSE, fig.cap='This is the distribution of cd133 correlated genes'>>=
+%----------------------------------------This is the code to generate the histogram of CD133 correlated genes------------------------------------------
+<<cd133_histogram, echo=FALSE, fig.cap='Distribution of cd133 correlated genes'>>=
 setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
 library(WGCNA)
 load('140407_networkBuilt.RData')
@@ -186,7 +186,39 @@ names(logAdj) = row.names(adjProm1)
 hist(logAdj, breaks='FD', main='Frequency of log adjacency values', xlab='Adjacency')
 par(mfrow=c(1,1))
 @
+However there is still a strong skew to the left (figure 2 bottom).
 
+%----------------------------------------This is the code to generate the square matrix of CD133 correlated genes------------------------------------------
+<<cd133_heatmap, echo=FALSE, fig.cap='Heatmap of cd133 correlated genes'>>=
+#aquire the mean and standard deviation of prom1 correlated genes
+prom1M = mean(logAdj)
+prom1Sd = sd(logAdj)
+
+# Subset the suite of correlations for high correlation
+prom1Genes = logAdj[(logAdj >= (prom1M + 1.5*prom1Sd))]
+#prom1Genes = logAdj[(logAdj >= (-5))]
+
+length(prom1Genes)
+
+# Use the top correlated genes with PROM1 and measure their correlation with the transcriptome
+squareAdjacency = adjacency(datExpr0, 
+                            selectCols = names(prom1Genes), #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
+                            type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
+                            distFnc = "dist", distOptions = "method = 'euclidean'")
+
+# Make the adjacency matrix square
+squareAdjacency1 = log10(squareAdjacency[colnames(squareAdjacency),])
+prom1Correlated = row.names(squareAdjacency1)
+
+# Turn back into real scale by reversing the log transformation
+squareAdjacency2 = 10^squareAdjacency1
+similarity = TOMsimilarity(squareAdjacency2, TOMType='unsigned', verbose=3)
+
+row.names(similarity) = row.names(squareAdjacency2)
+colnames(similarity) = row.names(squareAdjacency2)
+heatmap(log10(similarity), main='Top 34% similar genes with CD133 (n = 40)', Rowv=NA, sym=TRUE)
+@
+The top genes 1.5 standard deviations away from the mean of the PROM1 correlated genes was then used to generate a squared matrix so that the similarity was calculated (figure 3).
 
 %----------------------------------------------------------------------------------------
 %    DISCUSSION
@@ -208,8 +240,6 @@ par(mfrow=c(1,1))
   \subsection*{My thanking list}  
     \paragraph {Nice people are listed here}
 Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne Ng for discussions about stem cells and Eric Joo for coffee runs. Also Colonel Sanders made a contribution to my nutrition.
-\blindtext
-
 
 %----------------------------------------------------------------------------------------
 %    References

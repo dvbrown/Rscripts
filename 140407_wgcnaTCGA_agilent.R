@@ -1,6 +1,7 @@
 getwd()
 setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/')
 library(WGCNA)
+library(biomaRt)
 options(stringsAsFactors=F)
 list.files()
 
@@ -66,9 +67,8 @@ net = blockwiseModules(datExpr0, power = 6,
 # MEs = a data frame containing module eigengenes of the found modules (given by colors).
 
 #save.image('./wgcna/140407_networkBuilt.RData')
-##################################### Start working on analysis here ######################################################
 
-load('./wgcna/140407_networkBuilt.RData')
+#load('./wgcna/140407_networkBuilt.RData')
 
 # Identify how many modules there are and how big theu are.
 table(net$colors)
@@ -170,5 +170,22 @@ row.names(similarity) = row.names(squareAdjacency2)
 colnames(similarity) = row.names(squareAdjacency2)
 heatmap(log10(similarity), main='Top 34% similar genes with CD133 (n = 40)', Rowv=NA, sym=TRUE)
 
-# Do a GSEA with this gene list.
-# Next subset this into the TCGA to identify survival patterns
+# Try to get some sort of p-value for the similarity or correlation. FDR is going to be an issue I guess
+
+##################################### Gene set enrichment and so on ######################################################
+load('wgcna/140414_heatMapDone.RData')
+x <- org.Hs.egSYMBOL2EG
+# Get the entrez gene identifiers that are mapped to a gene symbol
+mapped_genes <- mappedkeys(x)
+# Convert to a list
+xx <- as.list(x[mapped_genes])
+if(length(xx) > 0) {
+    # Get the entrez gene ID for the first five genes
+    xx[1:5]
+}
+
+# This function is apparently experimental so maybe just use GSEA
+
+GOenr = GOenrichmentAnalysis(prom1Correlated, allLLIDs, organism = "human", nBestP = 10)
+#The function runs for awhile and returns a long list, the most interesting component of which is
+tab = GOenr$bestPTerms[[4]]$enrichment
