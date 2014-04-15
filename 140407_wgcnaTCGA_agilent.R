@@ -55,38 +55,38 @@ text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=cex1,col="red")
 
 ##################################### Automatic network construction ######################################################
 
-You want to choose the power value based on where the curve flattens out
-This step is very slow
-net = blockwiseModules(datExpr0, power = 6,
-                       TOMType = "unsigned", minModuleSize = 30,
-                       reassignThreshold = 0, mergeCutHeight = 0.25,
-                       numericLabels = TRUE, pamRespectsDendro = FALSE,
-                       saveTOMs = TRUE,
-                       saveTOMFileBase = "gbm_tcga",
-                       verbose = 3)
-# MEs = a data frame containing module eigengenes of the found modules (given by colors).
-
-#save.image('./wgcna/140407_networkBuilt.RData')
-
-#load('./wgcna/140407_networkBuilt.RData')
-
-# Identify how many modules there are and how big theu are.
-table(net$colors)
-
-# View the dendogram you can cut the tree without recutting it.
-# Convert labels to colors for plotting
-mergedColors = labels2colors(net$colors)
-# Plot the dendrogram and the module colors underneath
-plotDendroAndColors(net$dendrograms[[1]], mergedColors[net$blockGenes[[1]]],
-                    "Module colors",
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05)
-
-# We now save the module assignment and module eigengene information necessary for subsequent analysis.
-moduleLabels = net$colors
-moduleColors = labels2colors(net$colors)
-MEs = net$MEs
-geneTree = net$dendrograms[[1]]
+# You want to choose the power value based on where the curve flattens out
+# This step is very slow
+# net = blockwiseModules(datExpr0, power = 6,
+#                        TOMType = "unsigned", minModuleSize = 30,
+#                        reassignThreshold = 0, mergeCutHeight = 0.25,
+#                        numericLabels = TRUE, pamRespectsDendro = FALSE,
+#                        saveTOMs = TRUE,
+#                        saveTOMFileBase = "gbm_tcga",
+#                        verbose = 3)
+# # MEs = a data frame containing module eigengenes of the found modules (given by colors).
+# 
+# #save.image('./wgcna/140407_networkBuilt.RData')
+# 
+load('./wgcna/140407_networkBuilt.RData')
+# 
+# # Identify how many modules there are and how big theu are.
+# table(net$colors)
+# 
+# # View the dendogram you can cut the tree without recutting it.
+# # Convert labels to colors for plotting
+# mergedColors = labels2colors(net$colors)
+# # Plot the dendrogram and the module colors underneath
+# plotDendroAndColors(net$dendrograms[[1]], mergedColors[net$blockGenes[[1]]],
+#                     "Module colors",
+#                     dendroLabels = FALSE, hang = 0.03,
+#                     addGuide = TRUE, guideHang = 0.05)
+# 
+# # We now save the module assignment and module eigengene information necessary for subsequent analysis.
+# moduleLabels = net$colors
+# moduleColors = labels2colors(net$colors)
+# MEs = net$MEs
+# geneTree = net$dendrograms[[1]]
 
 ##################################### Identify which genes are highly correlated with modules ######################################################
 dat = as.matrix(datExpr0)
@@ -124,10 +124,10 @@ adjProm1 = adjacency(datExpr0,
 adjProm1 = as.data.frame(adjProm1)
 
 par(mfrow=c(2,1))
-hist(adjProm1$V1, breaks='FD', ylim=c(0,20), main='Frequency of adjacency values', xlab='Adjacency')
+#hist(adjProm1$V1, breaks='FD', ylim=c(0,20), main='Frequency of adjacency values', xlab='Adjacency')
 logAdj = log10(adjProm1$V1)
 names(logAdj) = row.names(adjProm1)
-hist(logAdj, breaks='FD', main='Frequency of log adjacency values', xlab='Adjacency')
+#hist(logAdj, breaks='FD', main='Frequency of log adjacency values', xlab='Adjacency')
 par(mfrow=c(1,1))
 
 # adjE = adjacency(datExpr0, 
@@ -152,9 +152,26 @@ squareAdjacency = adjacency(datExpr0,
                             type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
                             distFnc = "dist", distOptions = "method = 'euclidean'")
 
+
+########################################################## Standard correlations ###############################################
+
+# Calculate the correlation between PROM1 expression and all the genes in TCGA GBM
+prom1CorrPval = corAndPvalue(x=datExpr0[,'PROM1'], y=dat)
+
+#Extract the corrlation and p-value from the returned list
+pC = prom1CorrPval$cor
+pP = prom1CorrPval$p
+
+par(mfrow=c(2,1))
+hist(pC, main='Prom1 correlations', breaks='FD')
+hist(pP, main='Prom1 p-values', breaks='FD')
+par(mfrow=c(1,1))
+
+################################################################################################################### 
+
 # Make the adjacency matrix square
 squareAdjacency1 = log10(squareAdjacency[colnames(squareAdjacency),])
-heatmap(squareAdjacency1, main='Top 34% correlated genes with CD133 (n = 40)', Rowv=NA, sym=TRUE)
+#heatmap(squareAdjacency1, main='Top 34% correlated genes with CD133 (n = 40)', Rowv=NA, sym=TRUE)
 
 prom1Correlated = row.names(squareAdjacency1)
 # Write out the gene signature to disk
@@ -168,6 +185,6 @@ similarity = TOMsimilarity(squareAdjacency2, TOMType='unsigned', verbose=3)
 
 row.names(similarity) = row.names(squareAdjacency2)
 colnames(similarity) = row.names(squareAdjacency2)
-heatmap(log10(similarity), main='Top 34% similar genes with CD133 (n = 40)', Rowv=NA, sym=TRUE)
+#heatmap(log10(similarity), main='Top 34% similar genes with CD133 (n = 40)', Rowv=NA, sym=TRUE)
 
 # Try to get some sort of p-value for the similarity or correlation. FDR is going to be an issue I guess

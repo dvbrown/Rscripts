@@ -158,8 +158,9 @@ The  weighted gene co-expression network analysis package was used within the R 
     \paragraph {How and why various thresholds were set}
 A single argument "selectCols = PROM1" was used to compute the set of genes coexpressed with PROM1.
     
-\blindtext
-
+  \subsection*{Gene set enrichment of coexpressed genes}  
+    \paragraph {How the enrichments were done}
+As the R package for GSEA is not fully mature the analysis was carried out with the java based GUI. Preranked mode
 
 
 %----------------------------------------------------------------------------------------
