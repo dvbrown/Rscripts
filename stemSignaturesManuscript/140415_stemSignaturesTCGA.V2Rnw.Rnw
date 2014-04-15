@@ -1,0 +1,264 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Stylish Article
+% LaTeX Template
+% Version 1.0 (31/1/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Mathias Legrand (legrand.mathias@gmail.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%    PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[fleqn,10pt]{SelfArx} % Document font size and equations flushed left
+
+\setlength{\columnsep}{0.55cm} % Distance between the two columns of text
+\setlength{\fboxrule}{0.75pt} % Width of the border around the abstract
+
+\definecolor{color1}{RGB}{0,0,153} % Color of the article title and sections
+\definecolor{color2}{RGB}{204,102,0} % Color of the boxes behind the abstract and headings
+
+\newlength{\tocsep} 
+\setlength\tocsep{1.5pc} % Sets the indentation of the sections in the table of contents
+\setcounter{tocdepth}{3} % Show only three levels in the table of contents section: sections, subsections and subsubsections
+
+\usepackage{lipsum} % Required to insert dummy text
+\usepackage[english]{babel} %more dumb text
+\usepackage{blindtext}
+\usepackage{pdfpages}
+
+%----------------------------------------------------------------------------------------
+%    ARTICLE INFORMATION
+%----------------------------------------------------------------------------------------
+
+\JournalInfo{PlosOne or similar bioinformatics journal} % Journal information
+\Archive{Original article using public data} % Additional notes (e.g. copyright, DOI, review/research article)
+
+\PaperTitle{In silico investigation of cancer stem markers} % Article title
+
+\Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
+\affiliation{\textsuperscript{1}\textit{Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
+\affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
+
+\Keywords{Stem Cell Markers --- Glioblastoma --- Coexpression --- Gene signature} % Keywords - if you don't want any simply remove all the text between the curly brackets
+\newcommand{\keywordname}{Keywords} % Defines the keywords heading name
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\Abstract{I will attempt to publish a quick and dirty bioinformatics paper that examines the clinical relevence of the proposed cancer stem markers. This article
+will primarily focus on glioblastoma multiforme but I may throw in Breast and colorectal cancer if there are different results. I will comapre the derivation of a cancer stem cell signature de novo from the data itself based on coexpression. I will comapre this to signatures from the the literature and also pathways. I will use this signature to
+predict survival and the examine if a marker defines a particular subtype. Maybe pad it out at the end with some qRT-PCR, but I will need primary tissue!}
+
+\begin{document}
+<<setup, include=FALSE, cache=FALSE>>=
+library(knitr)
+library(affy)
+library(limma)
+options(replace.assign=TRUE,width=50)
+opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center', fig.width=5, fig.height=5, fig.show='hold', cache=TRUE, par=TRUE)
+knit_hooks$set(par=function(before, options, envir){
+if (before && options$fig.show!='none') par(mar=c(4,4,.1,.1),cex.lab=.95,cex.axis=.9,mgp=c(2,.7,0),tcl=-.3)
+}, crop=hook_pdfcrop)
+@
+%\SweaveOpts{concordance=TRUE}
+%This says that figures should be resized so that they fit the full width of the text.
+
+\flushbottom % Makes all text pages the same height
+
+\maketitle % Print the title and abstract box
+
+\tableofcontents % Print the contents section
+
+% \thispagestyle{empty} % Removes page numbering from the first page
+
+%----------------------------------------------------------------------------------------
+%    INTRODUCTION
+%----------------------------------------------------------------------------------------
+\section*{Introduction} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Introduction} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{Why glioblastoma is bad}  
+    \paragraph {Some stats on prevalence and mortality}
+Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the central nervous system. These diverse morphological features have made diagnosis of GBM difficult (1). Molecular profiling of GBM tumours has revealed that similar to other tumours such as breast and ovarian cancer (2,3), GBM is not a single disease but consists of several distinct malignancies. The median age of primary GBM is 66.2 years (4). The majority of GBM appear to arise de novo with no prior clinical history. The pathological symptoms of GBM are behavioral changes, headaches, nausea and seizures due to increased cranial pressure by the tumour bulk (5). Due to the nonspecificity of these symptoms patients typically present at an advanced stage of disease.\\ 
+The incidence of GBM in Australia is 3.96 per 100,000 persons, increasing to 14.42 per 100,000 for the greater than 65 age group (6). Although GBM is a relatively rare type of cancer it has a 5 year survival of less than 5\% rendering it one of the most lethal types of tumours. Age is the most important risk factor for GBM, with incidence showing a 4th power relationship with age, indicative of a gradual accumulation of oncogenic mutations over time (7).
+
+    \subsection*{Molecular Sub-classification of GBM}
+      \paragraph{The TCGA and other studies}
+
+The classification of multiple subtypes of breast cancer by patterns of gene expression was a new paradigm in molecular pathology (2,12). Information encoded in the messenger RNA was able to predict relapse, treatment
+response and metastatic potential. A similar approach was applied to GBM, with the aim to assist in the classification of different grades of gliomas. Quantification of gene expression by microarray combined with unsupervised
+machine learning techniques was able to differentiate between glioblastoma multiforme, low grade astrocytoma and oligodendrogliomas (13). Within the GBM set further clustering could separate 3 distinct groups of tumours (1,14).
+These 3 groups were found to resemble specific stages in neuronal development. The proneural subtype resembled a differentiated neural cell type and displayed the best prognosis. Conversely the mesenchymal subtype resembled a primitive cell type and had the shortest survival (2,3,14). 
+In agreement with these earlier studies, a proneural and mesenchymal subtype could be identified from gene expression measurements and could be further broken up into “A” and “B” subtypes and then divided into A1, A2, B1 and B2 subtypes (4,15). Genomic profiling of GBM has been performed by multiple laboratories with consistent segregation of proneural and mesenchymal subtypes. However differences occur in the number and molecular properties of subtypes that lie between the two extreme phenotypes (5,14,16-18).
+
+    \paragraph {Predictive significance of a stemness signature}
+    
+The clinical significance of CD133 and other stem cell markers are controversial. Immunohistochemistry does not show a statistically significant association of CD133 or CD15 positivity on survival (59). This is in contrast to
+studies at the mRNA level demonstrating that CD133 (PROM1) expression is a significant negative prognostic factor for both progression-free and overall survival in GBM (60). 
+Immunohistochemistry was performed in this study but CD133 expression was not assessed for statistical association with survival. Microarray experiments identified an association between CD133 and response to treatment in glioma stem cells (61). Hierarchical clustering of GICs was followed by testing the individual clusters for association with survival by Cox proportional hazards analysis. Expression of the Hox gene cluster and EGFR gene set were determined to be significant and were
+validated by immunohistochemistry, whereas CD133 was not validated by immunohistochemistry.
+
+\subsection*{Some info on cancer stem cell theory}  
+    \paragraph {Why CD133 is not a good marker}
+
+GICs were characterised by expression of the stem cell marker CD133 (PROM1) and were able to form tumours from 100 cells in immune deficient NOD-SCID mice (41). 
+CD133 or prominin-1 was originally described as being an epitope enriched in a hybridoma screen against CD34 isolated haemopoetic progenitors (42). 
+The marker was later shown to be expressed by neural progenitor cells from human fetal brains (43). There are a number of limitations of the CD133 marker for glioma initiating cells. The protein itself is a 115-kDa membrane-associated glycoprotein with no known molecular function, conserved in humans, mice, worms and flies (44). 
+The two major commercial antibodies target different glycoslyated regions of the protein, the precise locations of which are currently unknown. (45). CD133 undergoes mRNA splicing, generating at least 28 isoforms (46), contributing to the variation in detection by antibodies.
+Technical issues aside CD133- cells also display clonogenic potential, although at a 3 fold lower efficiency as CD133+ cells (47). CD133- cells were able to form tumours when 10 spheroids were orthotopically implanted into rat brains. The resulting tumours contained a small fraction of CD133+ cells (48).
+Without a molecular marker to separate CD133- stem cells from non-stem cells it is difficult to examine the properties of this cell type. A variety of other stem cell markers have been trialed such as the adhesion molecules CD44, Integrin-alpha6, CD15 and the multiple-drug resistance protein ABCG2 but have not found wide spread use (45).
+
+\subsection*{Literature on studies which compare markers}  
+    \paragraph {Studies that I am trying to copy}
+    
+Some of the important references are \textbf {Mesenchymal glioma stem cells are maintained by activated glycolytic metabolism involving aldehyde dehydrogenase 1A3}. This 
+article states that proneural GSCs express mainly CD133 whereas mesenchymal GSCs express mainly CD44. There is also overlap with ALDH1 and CD44.
+    
+\subsection*{Some info on weighted coexpression analysis}  
+    \paragraph {Some stuff}
+Some of the important references are \textbf {WGCNA: an R package for weighted correlation network analysis}.
+Instead of relating thousands of genes to a microarray sample trait, it focuses on the relationship between a few (typically less than 10) modules and the sample trait. 
+Modules are constructed from the expression data by using hierarchical clustering.\\
+By raising the absolute value of the correlation to a power \math{\beta > 1} % Check this line
+ $ (soft thresholding), the weighted gene co-expression network construction emphasizes high correlations at the expense of low correlations.
+
+%----------------------------------------------------------------------------------------
+%    METHODS
+%----------------------------------------------------------------------------------------
+\section*{Methods} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Methods} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{Raw data munging}  
+    \paragraph {The boring stuff}
+The munging information is located in the supplemental data.
+The  weighted gene co-expression network analysis package was used within the R version 3.0.1 environment. The gene expression data was level 3 data that was measured by the TCGA was imported using the broad firehose wget tool.
+
+  \subsection*{WGCNA parameters}  
+    \paragraph {How and why various thresholds were set}
+A single argument "selectCols = PROM1" was used to compute the set of genes coexpressed with PROM1.
+    
+  \subsection*{Gene set enrichment of coexpressed genes}  
+    \paragraph {How the enrichments were done}
+As the R package for GSEA is not fully mature the analysis was carried out with the java based GUI. Preranked mode
+
+
+%----------------------------------------------------------------------------------------
+%    RESULTS
+%----------------------------------------------------------------------------------------
+\section*{RESULTS} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Results} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{What I discovered}  
+    \paragraph {Discovering the suite of CD133 coexpressed genes}
+The PROM1 gene was processed with WGCNA using the Agilent microarray data from the TCGA glioblastoma (figure 2 top).
+
+%----------------------------------This is the code to generate the histogram of CD133 correlated genes-------------------------
+<<cd133_histogram, echo=FALSE, fig.cap='Distribution of cd133 correlated genes', fig.pos='H'>>=
+setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
+library(WGCNA)
+load('140415_justTheAgilentData.RData')
+
+# Calculate the correlation between PROM1 expression and all the genes in TCGA GBM
+prom1CorrPval = corAndPvalue(x=datExpr0[,'PROM1'], y=dat)
+
+#Extract the correlation and p-value from the returned list
+prom1C = prom1CorrPval$cor
+prom1Cpower = prom1C^2
+
+prom1P = prom1CorrPval$p
+prom1FDR = p.adjust(prom1P, method='fdr')
+result = t(rbind(prom1C, prom1Cpower, prom1P, prom1FDR))
+colnames(result) = c('correlation', 'weighted_correlation', 'p-value', 'FDR')
+par(mfrow=c(2,2))
+hist(prom1C, main='Prom1 correlations', breaks='FD', xlab='Raw correlation values', cex.main=0.8)
+hist(prom1Cpower, main='Prom1 weighted correlations', breaks='FD', xlab='R squared values')
+hist(prom1P, main='Prom1 p-values', breaks='FD', xlab='Raw p-values')
+hist(prom1FDR, main='Prom1FDR corrected p-values', breaks='FD', xlab='FDR corrected p-values')
+par(mfrow=c(1,1))
+qqnorm(result[,1], main='Distrubution of PROM1 correlated genes')
+qqline(result[,1])
+@
+Raising the power to 6 for the weighted network results in no genes being pushed to the right.
+The top genes 1.5 standard deviations away from the mean of the PROM1 correlated genes was then used to generate a squared matrix so that the similarity was calculated (figure 3).
+
+%----------------------------------------------------------------------------------------
+%    DISCUSSION
+%----------------------------------------------------------------------------------------
+\section*{Discussion} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Discussion} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{I will wildy speculate on my results here}  
+    \paragraph {Say something clever here}
+\blindtext
+
+
+%----------------------------------------------------------------------------------------
+%    ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+\section*{Acknowledgements} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Acknowledgements} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{My thanking list}  
+    \paragraph {Nice people are listed here}
+Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne Ng for discussions about stem cells and Eric Joo for coffee runs. Also Colonel Sanders made a contribution to my nutrition.
+
+%----------------------------------------------------------------------------------------
+%    References
+%----------------------------------------------------------------------------------------
+\section*{References} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}References} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{This will be empty}  
+    \paragraph {Use Papers2 for this part}
+\blindtext
+
+
+%----------------------------------------------------------------------------------------
+%    Supplementary Data
+%----------------------------------------------------------------------------------------
+\newpage % Put the supplementary on a new page
+\section*{Supplementary Data} % The \section*{} command stops section numbering
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Supplementary data} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{Aquisition and preparation of gene expression data ie data munging}  
+ 
+    \paragraph {TCGA GBM data} 
+The level 3 data was aquired using the broad firehose data with the following command: 
+    % You gotta escape the underscore _ with a backslash
+\textbf{firehose\_get -b -o MAF Agilent U133A clinical stddata 2013\_12\_10 GBM}. This includes clinical, affymetrix and agilent data. The clinical data was reformatted for R using the python script \textbf{meltTCGAGenefiles.py}. The agilent data, which was originally in 2 parts 
+was formatted using the script  \textbf{meltTCGAGenefile.py}. The TCGA uses the keyword "null" when describing empty values. This was changed to "NA" using the script \textbf{changeEmpties2NA.py}.
+
+    \paragraph {Deciding whether to use RNA-seq, Affymetrix or Agilent data} 
+As at March 2014 there were 160 cases with available RNA-seq data, compared to 540 for Affymetrix and Agilent. There for the sake of statistical power, the microarray platforms were preferred. Comaparing the properties of the data showed the Agilent data had a more normal distribution.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Distribution plots of Affymetrix and Agilent %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[h]
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.45\textwidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/limmaResults/explorationPlots/140115_gapdhPlots.pdf}
+    \caption{{Distribution of the GAPDH gene in the Agilent and Affymetrix level 3 normalised TCGA GBM data.}  }
+    \label{fig:S1}
+\end{figure}
+
+\begin{figure}[h]
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.45\textwidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/limmaResults/explorationPlots/140115_patientCentricPlots.pdf}
+    \caption{{Distribution of the the probe intensities on Affymetirx and Agilent data for the first patient.}  }
+    \label{fig:S2}
+\end{figure}
+
+Therefore the analysis was performed with Agilent as it was congruent with statistical assumptions of normality.
+    \subsection {More definitions of WGCNA}
+    \paragraph {Copy and pasted from Background of WGCNA}
+Intramodular connectivity measures how connected, or co-expressed, a given gene is with respect to the genes of a particular module. The intramodular connectivity may be interpreted as a measure of module membership. It is this value which will be interested with respect to which genes are coexpressed with a marker.
+
+\end{document}

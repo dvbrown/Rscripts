@@ -163,7 +163,7 @@ prom1C = prom1CorrPval$cor
 prom1Cpower = prom1C^2
 
 prom1P = prom1CorrPval$p
-prom1FDR = p.adjust(pP, method='fdr')
+prom1FDR = p.adjust(prom1P, method='fdr')
 
 # par(mfrow=c(2,1))
 # hist(prom1Cpower, main='Prom1 correlations', breaks='FD', xlab='Weighted correlation values')
