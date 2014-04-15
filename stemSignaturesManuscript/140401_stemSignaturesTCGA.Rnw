@@ -149,9 +149,14 @@ abline(0, 1)    # low-level change
 \section*{Methods} % The \section*{} command stops section numbering
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Methods} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
-  \subsection*{How I did this stuff}  
-    \paragraph {Raw data munging}
-The  weighted gene co-expression network analysis package was used within the R environment. The gene expression data was level 3 data that was measured by the TCGA was imported using the broad firehose wget tool. 
+  \subsection*{Raw data munging}  
+    \paragraph {The boring stuff}
+The munging information is located in the supplemental data.
+The  weighted gene co-expression network analysis package was used within the R version 3.0.1 environment. The gene expression data was level 3 data that was measured by the TCGA was imported using the broad firehose wget tool.
+
+  \subsection*{WGCNA parameters}  
+    \paragraph {How and why various thresholds were set}
+A single argument "selectCols = PROM1" was used to compute the set of genes coexpressed with PROM1.
     
 \blindtext
 
