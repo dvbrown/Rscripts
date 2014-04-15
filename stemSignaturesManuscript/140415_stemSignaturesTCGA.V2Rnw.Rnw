@@ -44,8 +44,10 @@
 
 \PaperTitle{In silico investigation of cancer stem markers} % Article title
 
-\Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
+\Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, People, More\textsuperscript{2}
+Mantamadiotis, Theo\textsuperscript{1}} % Authors
 \affiliation{\textsuperscript{1}\textit{Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
+\affiliation{\textsuperscript{2}\textit{Anyone else who helps me along the way, Melbourne, Australia}} % Author affiliation
 \affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
 
 \Keywords{Stem Cell Markers --- Glioblastoma --- Coexpression --- Gene signature} % Keywords - if you don't want any simply remove all the text between the curly brackets
@@ -163,7 +165,7 @@ As the R package for GSEA is not fully mature the analysis was carried out with 
 The PROM1 gene was processed with WGCNA using the Agilent microarray data from the TCGA glioblastoma (figure 2 top).
 
 %----------------------------------This is the code to generate the histogram of CD133 correlated genes-------------------------
-<<cd133_histogram, echo=FALSE, fig.cap='Distribution of cd133 correlated genes', fig.pos='H'>>=
+<<cd133_histogram, echo=FALSE, fig.cap='Distribution of cd133 correlated genes', fig.show='asis', cache=TRUE>>=
 setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
 library(WGCNA)
 load('140415_justTheAgilentData.RData')
@@ -181,15 +183,46 @@ result = t(rbind(prom1C, prom1Cpower, prom1P, prom1FDR))
 colnames(result) = c('correlation', 'weighted_correlation', 'p-value', 'FDR')
 par(mfrow=c(2,2))
 hist(prom1C, main='Prom1 correlations', breaks='FD', xlab='Raw correlation values', cex.main=0.8)
-hist(prom1Cpower, main='Prom1 weighted correlations', breaks='FD', xlab='R squared values')
-hist(prom1P, main='Prom1 p-values', breaks='FD', xlab='Raw p-values')
-hist(prom1FDR, main='Prom1FDR corrected p-values', breaks='FD', xlab='FDR corrected p-values')
+hist(prom1Cpower, main='Prom1 weighted correlations', breaks='FD', xlab='R squared values', cex.main=0.8)
+hist(prom1P, main='Prom1 p-values', breaks='FD', xlab='Raw p-values', cex.main=0.8)
+hist(prom1FDR, main='Prom1FDR corrected p-values', breaks='FD', xlab='FDR corrected p-values', cex.main=0.8)
 par(mfrow=c(1,1))
 qqnorm(result[,1], main='Distrubution of PROM1 correlated genes')
 qqline(result[,1])
 @
-Raising the power to 6 for the weighted network results in no genes being pushed to the right.
-The top genes 1.5 standard deviations away from the mean of the PROM1 correlated genes was then used to generate a squared matrix so that the similarity was calculated (figure 3).
+The cancer genome atlas dataset for GBM was used to interogate the sutie of genes coexpressed with CD133. CD133 being the currently the most accepted marker for glioma stem cells we wished to esatablish the phentoype of the cd133 expressing subpopulation computationally.//
+To this end we identified the most significantly correlated genes with CD133 (PROM1) gene with a cutoff of \textbf {greater than 2 R squared and less than 0.05 FDR corrected p-value} (figure 1). 
+It was established that the correlation datapoints were normally distributed (figure 2).\\
+%------------------------------------------------------------------------------------------------------------------------
+
+%------------------------------------------- Generate a heatmap -------------------------------------------------------------
+<<cd133_heatmap, echo=FALSE, fig.cap='Heatmap of cd133 similar genes', fig.show='asis', cache=TRUE>>=
+library(RColorBrewer)
+# Subset the dataframe with correlation values for those with high correlation and significance
+prom1Cgenes = result[result[,2] > 0.1 & result[,4] < 0.05,]
+
+prom1CgenesNames = row.names(prom1Cgenes)
+
+# Build the network adjacency
+# Use the top correlated genes with PROM1 and measure their correlation with the transcriptome
+adjacencyProm1 = adjacency(datExpr0, 
+                            selectCols = prom1CgenesNames, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
+                            type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
+                            distFnc = "dist", distOptions = "method = 'euclidean'")
+
+# Make the adjacency matrix square
+squareAdjacency = (adjacencyProm1[colnames(adjacencyProm1),])
+
+# Calculate the similarity matrix
+similarity = TOMsimilarity(squareAdjacency, TOMType='unsigned', verbose=0)
+row.names(similarity) = row.names(squareAdjacency)
+colnames(similarity) = row.names(squareAdjacency)
+
+cc = brewer.pal(9, 'YlOrRd')
+heatmap(log10(similarity), main='Most similar genes to CD133 (n = 134)', Rowv=NA, sym=TRUE, col=cc, cexRow=0.5, cexCol=0.5)
+@
+The set of \textbf {134} genes that were significantly coexpressed were subsequently analysed by weighted coexpression analysis to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the network adjacency algorithm.
+The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3).
 
 %----------------------------------------------------------------------------------------
 %    DISCUSSION
@@ -208,9 +241,8 @@ The top genes 1.5 standard deviations away from the mean of the PROM1 correlated
 \section*{Acknowledgements} % The \section*{} command stops section numbering
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Acknowledgements} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
-  \subsection*{My thanking list}  
-    \paragraph {Nice people are listed here}
-Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne Ng for discussions about stem cells and Eric Joo for coffee runs. Also Colonel Sanders made a contribution to my nutrition.
+    \paragraph {Shout out to}
+Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne Ng for discussions about stem cells and Eric Joo for coffee runs. Also Colonel Sanders made a contribution to my nutrition. Prof Paul Waring for paying the bills.
 
 %----------------------------------------------------------------------------------------
 %    References
