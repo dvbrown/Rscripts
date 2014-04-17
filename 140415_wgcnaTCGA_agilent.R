@@ -43,18 +43,38 @@ par(mfrow=c(1,1))
 qqnorm(result[,1], main='Distrubution of PROM1 correlated genes')
 qqline(result[,1])
 
+
+######################################### Visulaise the most correlated genes #####################
+# par(mfrow=c(2,1))
+# plot.default(dat[,'PROM1'], dat[,'PHF15'], ylab='PHF15', xlab='CD133', main='Genes coexpressed with CD133')
+# correlations = lm(dat[,'PHF15'] ~ dat[,'PROM1'])
+# abline(correlations, col='red')
+# summary(correlations)
+# text(locator(1), 'R-squared: 0.2175')
+# 
+# # Visualise the most next correlated gene
+# plot.default(dat[,'PROM1'], dat[,'SOX11'], ylab='SOX11', xlab='CD133', main='Genes coexpressed with CD133')
+# correlations = lm(dat[,'SOX11'] ~ dat[,'PROM1'])
+# abline(correlations, col='red')
+# summary(correlations)
+# text(locator(1), 'R-squared: 0.1768')
+# par(mfrow=c(1,1))
+###########################################################################################################################
+
 ######################################### Build a heatmap of the correlated genes using the square matrix #####################
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 prom1Cgenes = result[result[,2] > 0.1 & result[,4] < 0.05,]
 
-# ALternative method
+# ALternative method that uses the standard deviation of the raw correlation values
 corMean = mean(result[,1])
 corSD = sd(result[,1])
-prom1CgenesV2 = result[abs(result[,1]) > 2*corSD & result[,4] < 0.05,]
+prom1CgenesV2 = result[abs(result[,1]) > 3*corSD & result[,4] < 0.05,]
 
 length(row.names(prom1Cgenes))
 #write.table(prom1Cgenes, './manualCorrelation/140417_prom1CorrelatedGenes.txt', sep='\t')
+length(row.names(prom1CgenesV2))
+#write.table(prom1CgenesV2, './manualCorrelation/140417_prom1CorrelatedGenesUsed3SD.txt', sep='\t')
 
 prom1CgenesNames = row.names(prom1Cgenes)
 prom1CgenesNames
@@ -76,6 +96,7 @@ squareAdjacency = (adjacencyProm1[colnames(adjacencyProm1),])
 similarity = TOMsimilarity(squareAdjacency, TOMType='unsigned', verbose=3)
 row.names(similarity) = row.names(squareAdjacency)
 colnames(similarity) = row.names(squareAdjacency)
+###########################################################################################################################
 
 ######################################### Visulaising the network that was built ##########################################
 
