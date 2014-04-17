@@ -1,7 +1,6 @@
 getwd()
-setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/')
+setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
 library(WGCNA)
-library(RColorBrewer)
 options(stringsAsFactors=F)
 list.files()
 
@@ -48,7 +47,14 @@ qqline(result[,1])
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 prom1Cgenes = result[result[,2] > 0.1 & result[,4] < 0.05,]
+
+# ALternative method
+corMean = mean(result[,1])
+corSD = sd(result[,1])
+prom1CgenesV2 = result[abs(result[,1]) > 2*corSD & result[,4] < 0.05,]
+
 length(row.names(prom1Cgenes))
+#write.table(prom1Cgenes, './manualCorrelation/140417_prom1CorrelatedGenes.txt', sep='\t')
 
 prom1CgenesNames = row.names(prom1Cgenes)
 prom1CgenesNames
@@ -71,34 +77,38 @@ similarity = TOMsimilarity(squareAdjacency, TOMType='unsigned', verbose=3)
 row.names(similarity) = row.names(squareAdjacency)
 colnames(similarity) = row.names(squareAdjacency)
 
-cc = brewer.pal(9, 'YlOrRd')
-#heatmap(log10(squareAdjacency), main='Most adjacent genes to CD133 (n = 134)', Rowv=NA, sym=TRUE)
-heatmap(log10(similarity), main='Most similar genes to CD133 (n = 134)', Rowv=NA, sym=TRUE, col=cc, cexRow=0.5, cexCol=0.5)
-###########################################################################################################################
-
 ######################################### Visulaising the network that was built ##########################################
 
-
+# Calculate dissimilarity
 dissTOM = 1-similarity
-# Call the hierarchical clustering function
-geneTree = flashClust(as.dist(dissTOM), method = "average");
-# Plot the resulting clustering tree (dendrogram)
-plot(geneTree, xlab="", sub="", main = "Gene clustering on TOM-based dissimilarity",
-     labels = FALSE, hang = 0.04);
+
+# Call the hierarchical clustering function. This is the faster implementation of WGCNA version
+geneTree = flashClust(as.dist(dissTOM), method = "average")
 
 #Branches of the dendrogram group together densely interconnected, highly co-expressed genes. Module identifcation amounts to the identification of individual branches
 #There are several methods for branch cutting; our standard method is the Dynamic Tree Cut from the package dynamicTreeCut
 
 # Module identification using dynamic tree cut. This is the most basic method and returns 3 modules when the cutHeight is 0.999 (default 0.99)
-dynamicMods = cutreeDynamic(dendro = geneTree, cutHeight=0.999)
+dynamicMods = cutreeDynamic(dendro = geneTree, cutHeight=0.999, method='tree')
 table(dynamicMods)
 
 # Convert numeric lables into colors
 dynamicColors = labels2colors(dynamicMods)
+
+
+# Transform dissTOM with a power to make moderately strong connections more visible in the heatmap
+plotTOM = plotTOM = dissTOM^6
+# Set diagonal to NA for a nicer plot
+diag(plotTOM) = NA
+
+# Plot the heatmap
+TOMplot(plotTOM, geneTree, dynamicColors, main = "Network heatmap plot of CD133 coexpressed genes") #, terrainColors=FALSE)
+        #,labRow=prom1CgenesNames, ColorsLeft=NA)
+
 table(dynamicColors)
 # Plot the dendrogram and colors underneath
-sizeGrWindow(8,6)
 plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
                     dendroLabels = FALSE, hang = 0.03,
                     addGuide = TRUE, guideHang = 0.05,
                     main = "Gene dendrogram and module colors")
+###########################################################################################################################

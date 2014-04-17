@@ -160,8 +160,8 @@ As the R package for GSEA is not fully mature the analysis was carried out with 
 \section*{RESULTS} % The \section*{} command stops section numbering
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Results} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
-  \subsection*{What I discovered}  
-    \paragraph {Discovering the suite of CD133 coexpressed genes}
+  \subsection*{Discovering the suite of CD133 coexpressed genes}
+    \paragraph {What I discovered}
 The PROM1 gene was processed with WGCNA using the Agilent microarray data from the TCGA glioblastoma (figure 2 top).
 
 %----------------------------------This is the code to generate the histogram of CD133 correlated genes-------------------------
@@ -197,10 +197,8 @@ It was established that the correlation datapoints were normally distributed (fi
 
 %------------------------------------------- Generate a heatmap -------------------------------------------------------------
 <<cd133_heatmap, echo=FALSE, fig.cap='Heatmap of cd133 similar genes', fig.show='asis', cache=TRUE>>=
-library(RColorBrewer)
 # Subset the dataframe with correlation values for those with high correlation and significance
 prom1Cgenes = result[result[,2] > 0.1 & result[,4] < 0.05,]
-
 prom1CgenesNames = row.names(prom1Cgenes)
 
 # Build the network adjacency
@@ -218,11 +216,55 @@ similarity = TOMsimilarity(squareAdjacency, TOMType='unsigned', verbose=0)
 row.names(similarity) = row.names(squareAdjacency)
 colnames(similarity) = row.names(squareAdjacency)
 
-cc = brewer.pal(9, 'YlOrRd')
-heatmap(log10(similarity), main='Most similar genes to CD133 (n = 134)', Rowv=NA, sym=TRUE, col=cc, cexRow=0.5, cexCol=0.5)
+# Visulaising the network that was built
+
+# Calculate dissimilarity
+dissTOM = 1-similarity
+# Transform dissTOM with a power to make moderately strong connections more visible in the heatmap
+plotTOM = plotTOM = dissTOM^6
+# Set diagonal to NA for a nicer plot
+diag(plotTOM) = NA
+
+# Call the hierarchical clustering function. This is the faster implementation of WGCNA version
+geneTree = flashClust(as.dist(dissTOM), method = "average")
+
+#Branches of the dendrogram group together densely interconnected, highly co-expressed genes. Module identifcation amounts to the identification of individual branches
+#There are several methods for branch cutting; our standard method is the Dynamic Tree Cut from the package dynamicTreeCut
+
+# Module identification using dynamic tree cut. This is the most basic method and returns 3 modules when the cutHeight is 0.999 (default 0.99)
+dynamicMods = cutreeDynamic(dendro = geneTree, cutHeight=0.999, method='tree')
+
+# Convert numeric lables into colors
+dynamicColors = labels2colors(dynamicMods)
+
+# Plot the heatmap
+TOMplot(plotTOM, geneTree, dynamicColors, main = "Network heatmap plot of CD133 coexpressed genes")
+
 @
 The set of \textbf {134} genes that were significantly coexpressed were subsequently analysed by weighted coexpression analysis to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the network adjacency algorithm.
 The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3).
+
+%------------------------------------------------------------------------------------------------------------------------
+
+%------------------------------------------- Generate a cluster dendogram -----------------------------------------------
+
+<<cd133_dendogram, echo=FALSE, fig.cap='Dendogram of cd133 similar genes', fig.show='asis', cache=TRUE>>=
+# Plot the dendrogram and colors underneath
+# Convert numeric lables into colors
+plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
+                    dendroLabels = FALSE, hang = 0.03,
+                    addGuide = TRUE, guideHang = 0.05,
+                    main = "Gene dendrogram and module colors")
+@
+%------------------------------------------------------------------------------------------------------------------------
+
+  \subsection*{A network of CD133 coexpressed genes}  
+    \paragraph {Network analysis}
+Use the STRING database to pull some information on the known interactions bwtween the suite of CD133 coexpressed genes. The import the binary interaction matrix into cytoscape and decorate it with information on the correlation values and the p-values. Use the degree sorted layout to give an idea of the hub genes. Be sure to highlight where CD133 is.
+
+  \subsection*{Gene sets enriched for cd133 coexpressed genes}  
+    \paragraph {Functional enrichment of supoosed stem like genes}
+\blindtext
 
 %----------------------------------------------------------------------------------------
 %    DISCUSSION
@@ -289,7 +331,7 @@ As at March 2014 there were 160 cases with available RNA-seq data, compared to 5
 \end{figure}
 
 Therefore the analysis was performed with Agilent as it was congruent with statistical assumptions of normality.
-    \subsection {More definitions of WGCNA}
+    \subsection*{More definitions of WGCNA}
     \paragraph {Copy and pasted from Background of WGCNA}
 Intramodular connectivity measures how connected, or co-expressed, a given gene is with respect to the genes of a particular module. The intramodular connectivity may be interpreted as a measure of module membership. It is this value which will be interested with respect to which genes are coexpressed with a marker.
 
