@@ -30,12 +30,12 @@ extractPosNegReplicates = function(dataFrame) {
     negSummary = c(negMean, negSD)
     posSummary = c(posMean, posSD)
     result = rbind(negSummary, posSummary)
+    result = as.data.frame(result)
+    
     origin = c('negative', 'positive')
     result = cbind(origin, result)
+
     colnames(result) = c('origin', 'mean', 'sd')
-    origin = cbind('negative', 'positive')
-    result = as.data.frame(result)
-    result$mean = as.numeric(result$mean)
     return (result)
 }
 
@@ -127,14 +127,23 @@ tmzSummary3 = extractPosNegReplicates(day3TMZ)
 tmzSummary7 = extractPosNegReplicates(day7TMZ)
 
 tmzSummary3P = ggplot(data=tmzSummary3, aes(x=origin, y=mean, fill=origin)) + 
-    scale_fill_manual(values=c("yellow", "skyblue")) +
+    scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    xlab("Clone") + ylab("Cell number relative to DMSO control") +
-    ggtitle("Comparing temozolomide sensitivty at day 7 by CD133 status") +  # Set title
-    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-tmzSummary3P
+    xlab("") + ylab("Cell number relative to DMSO control") +
+    ggtitle("Effect of temozolomide on subpopulations of GICs at day 3") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
+tmzSummary7P = ggplot(data=tmzSummary7, aes(x=origin, y=mean, fill=origin)) + 
+    scale_fill_manual(values=c("darkcyan", "coral3")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("") + ylab("Cell number relative to DMSO control") +
+    ggtitle("Effect of temozolomide on subpopulations of GICs at day 7") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+tmzSummary7P + annotate("text", x = 25, y = 25, label = "n = 4")
+
+multiplot(tmzSummary3P, tmzSummary7P)
 ####################################################################################################################################
 
 
