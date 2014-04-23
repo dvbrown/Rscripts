@@ -57,6 +57,28 @@ growthPlot7 = ggplot(data=day7Growth[day7Growth$treatment %in% 'growth',],
 
 multiplot(growthPlot3, growthPlot7)
 
+####################################################################################################################################
+
+tmzRaw3 = ggplot(data=day3Growth[day3Growth$treatment %in% 'tmz',], 
+                     aes(x=clone, y=mean, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    xlab("Clone") + ylab("Fluorescent intensity") +
+    ggtitle("Comparing TMZ at day 3 by CD133 status") +  # Set title
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+tmzRaw7 = ggplot(data=day7Growth[day7Growth$treatment %in% 'tmz',], 
+                 aes(x=clone, y=mean, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    xlab("Clone") + ylab("Fluorescent intensity") +
+    ggtitle("Comparing TMZ at day 7 by CD133 status") +  # Set title
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+multiplot(tmzRaw3, tmzRaw7)
+
 ############################################## Calculate the DMSO corrected values #################################################
 day3GrowthMatched = day3Growth[!day3Growth$clone %in% c('030a_pos', '034a_neg', 'blank', 'empty'),]
 day7GrowthMatched = day7Growth[!day7Growth$clone %in% c('030a_pos', '034a_neg', 'blank', 'empty'),]
