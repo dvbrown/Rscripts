@@ -13,6 +13,13 @@ backgroundMeanSD <- function (dataFrame) {
     return (result)
 }
 
+calcDMSOcontrol = function(dataFrame) {
+    vehicle = dataFrame[dataFrame$treatment %in% 'vehicle',]
+    tmz = dataFrame[dataFrame$treatment %in% 'tmz',]
+    tmz$dmsoCorrected = tmz$mean / vehicle$mean
+    return (tmz)
+}
+
 ############################################## Read in the resazurin assay readings ###############################################
 setwd('~/Documents/Cell_biology/proliferation/Resazurin/140417_6clones/analysis/')
 growthD3 = read.delim('140414_day3_linearRep.txt')
@@ -49,6 +56,28 @@ growthPlot7 = ggplot(data=day7Growth[day7Growth$treatment %in% 'growth',],
     theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 multiplot(growthPlot3, growthPlot7)
+
+############################################## Calculate the DMSO corrected values #################################################
+day3GrowthMatched = day3Growth[!day3Growth$clone %in% c('030a_pos', '034a_neg', 'blank', 'empty'),]
+day7GrowthMatched = day7Growth[!day7Growth$clone %in% c('030a_pos', '034a_neg', 'blank', 'empty'),]
+day3TMZ = calcDMSOcontrol(day3GrowthMatched)
+day7TMZ = calcDMSOcontrol(day7GrowthMatched)
+
+tmzPlot3 = ggplot(data=day3TMZ, aes(x=clone, y=dmsoCorrected, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("Clone") + ylab("Cell number relative to DMSO control") +
+    ggtitle("Comparing temozolomide sensitivty at day 3 by CD133 status") +  # Set title
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+tmzPlot7 = ggplot(data=day7TMZ, aes(x=clone, y=dmsoCorrected, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("Clone") + ylab("Cell number relative to DMSO control") +
+    ggtitle("Comparing temozolomide sensitivty at day 7 by CD133 status") +  # Set title
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+multiplot(tmzPlot3, tmzPlot7)
 ####################################################################################################################################
 
 
