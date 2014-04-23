@@ -29,15 +29,26 @@ day3Growth = backgroundMeanSD(growthD3)
 day7Growth = backgroundMeanSD(growthD7)
 
 # Plot the raw results
-rawPlot = ggplot(data=day3Growth[day3Growth$treatment %in% growth,, 
-                   aes(x=clone, y=ddCt, fill=cd133)) + 
+growthPlot3 = ggplot(data=day3Growth[day3Growth$treatment %in% 'growth',], 
+                   aes(x=clone, y=mean, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    scale_fill_hue(name="sample") +      # Set legend title
-    #coord_cartesian(ylim = c(0, 7.5)) +
-    scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 1),1)) + # This modifies the scale of the y axis.
-    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
-    ggtitle("Comapring CD133 status") +  # Set title
-    theme_bw(base_size=20)
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    xlab("Clone") + ylab("Fluorescent intensity") +
+    ggtitle("Comparing proliferation at day 3 by CD133 status") +  # Set title
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+growthPlot7 = ggplot(data=day7Growth[day7Growth$treatment %in% 'growth',], 
+                     aes(x=clone, y=mean, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    xlab("Clone") + ylab("Fluorescent intensity") +
+    ggtitle("Comparing proliferation at day 7 by CD133 status") +  # Set title
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+multiplot(growthPlot3, growthPlot7)
 ####################################################################################################################################
 
 
