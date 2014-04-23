@@ -20,15 +20,34 @@ calcDMSOcontrol = function(dataFrame) {
     return (tmz)
 }
 
+extractPosNegReplicates = function(dataFrame) {
+    neg = dataFrame[dataFrame$cd133 %in% 'neg',c(1,2,3,9)]
+    pos = dataFrame[dataFrame$cd133 %in% 'pos',c(1,2,3,9)]
+    negMean = mean(neg$dmsoCorrected)
+    negSD = sd(neg$dmsoCorrected)
+    posMean = mean(pos$dmsoCorrected)
+    posSD = sd(pos$dmsoCorrected)
+    negSummary = c(negMean, negSD)
+    posSummary = c(posMean, posSD)
+    result = rbind(negSummary, posSummary)
+    origin = c('negative', 'positive')
+    result = cbind(origin, result)
+    colnames(result) = c('origin', 'mean', 'sd')
+    origin = cbind('negative', 'positive')
+    result = as.data.frame(result)
+    result$mean = as.numeric(result$mean)
+    return (result)
+}
+
 ############################################## Read in the resazurin assay readings ###############################################
 setwd('~/Documents/Cell_biology/proliferation/Resazurin/140417_6clones/analysis/')
 growthD3 = read.delim('140414_day3_linearRep.txt')
 growthD7 = read.delim('140417_day7_linearRep.txt')
 
 par(mfrow=c(2,1))
-plot(growthD7$rep1, growthD7$rep2, ylab='replicate 2', xlab='replicate1', main='consistency day7', pch=16)
+plot(growthD7$rep1, growthD7$rep2, ylab='replicate 2', xlab='replicate1', main='Consistency day7', pch=16)
 abline(lm(growthD7$rep1~growthD7$rep2), col='red')
-plot(growthD3$rep1, growthD3$rep2, ylab='replicate 2', xlab='replicate1', main='consistency day3', pch=16)
+plot(growthD3$rep1, growthD3$rep2, ylab='replicate 2', xlab='replicate1', main='Consistency day3', pch=16)
 abline(lm(growthD3$rep1~growthD3$rep2), col='red')
 
 # Subtract background and take mean and SD
@@ -44,7 +63,6 @@ growthPlot3 = ggplot(data=day3Growth[day3Growth$treatment %in% 'growth',],
     xlab("Clone") + ylab("Fluorescent intensity") +
     ggtitle("Comparing proliferation at day 3 by CD133 status") +  # Set title
     theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
 
 growthPlot7 = ggplot(data=day7Growth[day7Growth$treatment %in% 'growth',], 
                      aes(x=clone, y=mean, fill=cd133)) + 
@@ -100,6 +118,23 @@ tmzPlot7 = ggplot(data=day7TMZ, aes(x=clone, y=dmsoCorrected, fill=cd133)) +
     theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 multiplot(tmzPlot3, tmzPlot7)
+
+# multiplot(growthPlot3, growthPlot7, tmzPlot3, tmzPlot7)
+# write.table(day3TMZ, '140423_day3TMZprocessed.txt', sep='\t')
+# write.table(day7TMZ, '140423_day7TMZprocessed.txt', sep='\t')
+############################################## Pool the pos and negs for stats #################################################
+tmzSummary3 = extractPosNegReplicates(day3TMZ)
+tmzSummary7 = extractPosNegReplicates(day7TMZ)
+
+tmzSummary3P = ggplot(data=tmzSummary3, aes(x=origin, y=mean, fill=origin)) + 
+    scale_fill_manual(values=c("yellow", "skyblue")) +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("Clone") + ylab("Cell number relative to DMSO control") +
+    ggtitle("Comparing temozolomide sensitivty at day 7 by CD133 status") +  # Set title
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+tmzSummary3P
+
 ####################################################################################################################################
 
 
