@@ -166,8 +166,8 @@ growthSummary$day = c('day 3', 'day 3', 'day 7', 'day 7')
 
 # growthSummaryP = ggplot(data=growthSummary, aes(x=day, y=average, fill=origin)) + 
 #     scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
-#     geom_errorbar(aes(ymin=average-stdDev, ymax=average+stdDev), width=.2, position=position_dodge(0.9)) +
 #     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+#     geom_errorbar(aes(ymin=average-stdDev, ymax=average+stdDev), width=.2, position=position_dodge(0.9)) +
 #     xlab("measurment day") + ylab("Normalised cell number") +
 #     ggtitle("Growth rate of GIC clones (n = 4)") +  # Set title
 #     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -210,6 +210,8 @@ tmzSummary$day = c('day 3', 'day 3', 'day 7', 'day 7')
 # tmzSummaryP
 
 ####################################################################################################################################
+
+
 
 
 
@@ -313,3 +315,43 @@ invD7NormCDP = ggplot(data=invD7Norm[[2]], aes(x=sample, y=cd133Norm, fill=sampl
 
 multiplot(invD3NormCDP, invD7NormCDP)
 ####################################################################################################################################
+
+invD3M = mean(invD3Norm[[2]]$cd133Norm)
+invD3S = sd(invD3Norm[[2]]$cd133Norm)
+invD7M = mean(invD7Norm[[2]]$cd133Norm)
+invD7S = sd(invD7Norm[[2]]$cd133Norm)
+
+invasionSummary = as.data.frame(rbind(c(invD3M, invD3S), c(invD7M, invD7S), c(1,0), c(1,0)))
+
+invasionSummary$cd133 = c('pos', 'pos', 'neg', 'neg')
+invasionSummary$day = c('day 3', 'day 7', 'day 3', 'day 7')
+colnames(invasionSummary) = c('mean', 'sd', 'cd133', 'day')
+
+invasionSummaryP = ggplot(data=invasionSummary, aes(x=day, y=mean, fill=cd133)) + 
+    scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("") + ylab("Cell number relative to DMSO control") +
+    ggtitle("Effect of temozolomide on subpopulations of GICs") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+invasionSummaryP
+################################################# HAVE NOT MANUALLY CHECKED OUTLIERS YET ####################################################
+
+
+
+
+
+############################################## Read in the ELDA results #################################################
+# Clear memory
+rm(list=ls())
+setwd('~/Documents/Cell_biology/microscopy/ELDA/140417_elda_6clones/')
+data = read.delim('140424_ELDA_output.txt')
+
+eldaRawP = ggplot(data=data, aes(x=Group, y=Estimate, fill=Group)) + 
+    #scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=Lower, ymax=Upper), width=.2, position=position_dodge(0.9)) +
+    xlab("") + ylab("Sphere efficiency") +
+    ggtitle("Raw ELDA data") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+eldaRawP
