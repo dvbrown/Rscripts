@@ -266,9 +266,28 @@ plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
 Use the STRING database to pull some information on the known interactions bwtween the suite of CD133 coexpressed genes. The import the binary interaction matrix into cytoscape and decorate it with information on the correlation values and the p-values. Use the degree sorted layout to give an idea of the hub genes. Be sure to highlight where CD133 is.\\
 This manual network is probably going to be more relevant than the dendogram I have currently in there.
 
+\begin{figure}[ht]
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/networks/131104_imageLegendBold.pdf}
+    \caption{{A dummy figure illustrating network analysis}  }
+    \label{fig:D}
+\end{figure}
+
+%------------------------------------------------------------------------------------------------------------------------
+
   \subsection*{Gene sets enriched for cd133 coexpressed genes}  
     \paragraph {Functional enrichment of supoosed stem like genes}
 \blindtext
+
+\begin{figure}[ht]
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/stemCellSig/130117_signature/130123_collatedFigure.pdf}
+    \caption{{A dummy figure illustrating survival analysis}  }
+    \label{fig:C}
+\end{figure}
+
 
 %------------------------------------------------------------------------------------------------------------------------
 
@@ -277,25 +296,16 @@ This manual network is probably going to be more relevant than the dendogram I h
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_MISMATCH_REPAIR_41.png}
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_OXIDATIVE_PHOSPHORYLATION_81.png}
     \caption{{Top and bottom gene set enriched the CD133 coexpressed genes}  }
-    \label{fig:X}
+    \label{fig:B}
 \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
 
-  \subsection*{Clinical relenvence of CD133 coexpressed genes}  
+  \subsection*{Clinical relevance of CD133 coexpressed genes}  
     \paragraph {The most important part I guess}
     
 Paritition the TCGA data in some fashion using the CD133 signature and look for a survival difference between the high and low.Posssibly a low, medium and high.\\
 Look for overlap with the 4 established subtypes. Look for any enriched mutations (eg IDH1) in the groups that may explain the CD133 phenotype \textbf{stem-like or other}. Also do MGMT and the general epigentic landscape if interesting.
-
-% DUMMY FIGURE
-\begin{figure}[ht]
-   \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/stemCellSig/130117_signature/130123_collatedFigure.pdf}
-    \caption{{A dummy figure illustrating survival analysis}  }
-    \label{fig:X}
-\end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
 
