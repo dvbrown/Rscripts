@@ -251,7 +251,7 @@ The adjacency matrix was transformed into a similarity matrix and a heatmap was 
 
 %------------------------------------------- Generate a cluster dendogram -----------------------------------------------
 
-<<cd133_dendogram, echo=FALSE, fig.cap='Dendogram of cd133 similar genes', fig.show='asis', cache=TRUE>>=
+<<cd133_dendogram, echo=FALSE, fig.cap='Dendogram of cd133 similar genes (prob cut this out)', fig.show='asis', cache=TRUE>>=
 # Plot the dendrogram and colors underneath
 # Convert numeric lables into colors
 plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
@@ -292,7 +292,7 @@ Look for overlap with the 4 established subtypes. Look for any enriched mutation
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source   
-    \includegraphics[page=1, width=.45\textwidth]{/Users/d.brown6/Documents/stemCellSig/130117_signature/130123_collatedFigure.pdf}
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/stemCellSig/130117_signature/130123_collatedFigure.pdf}
     \caption{{A dummy figure illustrating survival analysis}  }
     \label{fig:X}
 \end{figure}
@@ -354,7 +354,7 @@ As at March 2014 there were 160 cases with available RNA-seq data, compared to 5
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Distribution plots of Affymetrix and Agilent %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\begin{figure*}[h]
+\begin{figure*}[h] % The * bit means the figure takes up the whole page
    \centering 
 % Change this plot when you change the data source   
     \includegraphics[page=1, width=.9\textwidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/limmaResults/explorationPlots/140115_gapdhPlots.pdf}
