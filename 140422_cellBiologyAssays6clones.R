@@ -344,14 +344,30 @@ invasionSummaryP
 ############################################## Read in the ELDA results #################################################
 # Clear memory
 rm(list=ls())
+source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 setwd('~/Documents/Cell_biology/microscopy/ELDA/140417_elda_6clones/')
 data = read.delim('140424_ELDA_output.txt')
+data$Patient = c('030a', '030a', '039', '039', '035', '035', '020', '020', '041', '041', '034a')
 
-eldaRawP = ggplot(data=data, aes(x=Group, y=Estimate, fill=Group)) + 
+eldaRawP = ggplot(data=data, aes(x=Group, y=Estimate, fill=Patient)) + 
     #scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     geom_errorbar(aes(ymin=Lower, ymax=Upper), width=.2, position=position_dodge(0.9)) +
     xlab("") + ylab("Sphere efficiency") +
     ggtitle("Raw ELDA data") +  # Set title
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-eldaRawP
+
+percentData = as.data.frame(data[,2:4] ^ -1 *100)
+percentData = cbind(percentData, data$Group)
+percentData$Patient = c('030a', '030a', '039', '039', '035', '035', '020', '020', '041', '041', '034a')
+colnames(percentData) = c('Lower', 'Estimate', 'Upper', 'Clone', 'Patient')
+
+eldaPercent = ggplot(data=percentData, aes(x=Clone, y=Estimate, fill=Patient)) + 
+    #scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=Lower, ymax=Upper), width=.2, position=position_dodge(0.9)) +
+    xlab("") + ylab("Percent sphere formation") +
+    ggtitle("Sphere forming efficiency of GICs") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+multiplot(eldaRawP, eldaPercent)
