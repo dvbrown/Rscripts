@@ -164,15 +164,17 @@ row.names(growthSummary) = c(1,2,3,4)
 growthSummary$origin = c('pos', 'neg', 'pos', 'neg')
 growthSummary$day = c('day 3', 'day 3', 'day 7', 'day 7')
 
-# growthSummaryP = ggplot(data=growthSummary, aes(x=day, y=average, fill=origin)) + 
-#     scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     geom_errorbar(aes(ymin=average-stdDev, ymax=average+stdDev), width=.2, position=position_dodge(0.9)) +
-#     xlab("measurment day") + ylab("Normalised cell number") +
-#     ggtitle("Growth rate of GIC clones (n = 4)") +  # Set title
-#     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# growthSummaryP
+# Calculatae the SE
+growthSummary$stdDev = growthSummary$stdDev / sqrt(length(growthSummary$stdDev))
 
+growthSummaryP = ggplot(data=growthSummary, aes(x=day, y=average, fill=origin)) + 
+    scale_fill_manual(values=c("deepskyblue3", "maroon1")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=average-stdDev, ymax=average+stdDev), width=.2, position=position_dodge(0.9)) +
+    xlab("measurment day") + ylab("Normalised cell number") +
+    ggtitle("Growth rate of GIC clones (n = 4)") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+growthSummaryP
 
 ############################################## Pool the pos and negs for stats #################################################
 tmzSummary3 = extractPosNegReplicates(day3TMZ)
@@ -181,18 +183,19 @@ tmzSummary7 = extractPosNegReplicates(day7TMZ)
 tmzSummary = rbind(tmzSummary3, tmzSummary7)
 tmzSummary$day = c('day 3', 'day 3', 'day 7', 'day 7')
 
+
 # tmzSummary3P = ggplot(data=tmzSummary3, aes(x=origin, y=mean, fill=origin)) + 
 #     scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
-#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
 #     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
 #     xlab("") + ylab("Cell number relative to DMSO control") +
 #     ggtitle("Effect of temozolomide on subpopulations of GICs at day 3") +  # Set title
 #     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 # 
 # tmzSummary7P = ggplot(data=tmzSummary7, aes(x=origin, y=mean, fill=origin)) + 
 #     scale_fill_manual(values=c("darkcyan", "coral3")) +
-#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
 #     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
 #     xlab("") + ylab("Cell number relative to DMSO control") +
 #     ggtitle("Effect of temozolomide on subpopulations of GICs at day 7") +  # Set title
 #     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -200,10 +203,13 @@ tmzSummary$day = c('day 3', 'day 3', 'day 7', 'day 7')
 # 
 # multiplot(tmzSummary3P, tmzSummary7P)
 
+# Calculate SE
+tmzSummary$se = tmzSummary$sd / sqrt(length(tmzSummary$sd))
+
 tmzSummaryP = ggplot(data=tmzSummary, aes(x=day, y=mean, fill=origin)) + 
     scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
     xlab("") + ylab("Cell number relative to DMSO control") +
     ggtitle("Effect of temozolomide on subpopulations of GICs") +  # Set title
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
