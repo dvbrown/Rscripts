@@ -383,14 +383,13 @@ percentData$star[percentData$adjust < .001] <- "***"
 ggplot(percentData, aes(x=Clone, y=Estimate, fill=Patient)) + 
     # Define my own colors
     #scale_fill_manual(values=c("darkorange", "royalblue")) +
-    geom_bar(position=position_dodge(), stat="identity") +
-    geom_errorbar(aes(ymin=Lower, ymax=Upper),
-                  width=.2, position=position_dodge(.9)) +
+    geom_bar(position=position_dodge(), stat="identity", color='black') +
+    geom_errorbar(aes(ymin=Lower, ymax=Upper), width=.2, position=position_dodge(.9)) +
     xlab("Gene") + ylab("Expression normalised to CD133 negative") +
     # scale_fill_hue(name="CD133")+#, Legend label, use darker colors
     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     ggtitle("Expression of genes associated with stemness \nin CD133 sorted cells") +
     scale_y_continuous(breaks=0:20*4) +
     # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
-    geom_text(aes(label=star), colour="black", vjust=-3, size=10) +
-    theme_bw(base_size=20) 
+    geom_text(aes(label=star), colour="black", vjust=-8, size=10) +
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))

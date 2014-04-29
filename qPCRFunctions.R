@@ -150,6 +150,13 @@ summariseStatistics_ddCt <- function (dataFrame, groupVariableA='cd133', gropVar
                 mean = mean(ddCt, na.rm=TRUE),
                 sd   = sd(ddCt, na.rm=TRUE),
                 se   = sd / sqrt(N) )
+    
+    # Add a column with stars describing if a test is significant
+#     percentData$star <- " "
+#     percentData$star[percentData$adjust < .05]  = "*"
+#     percentData$star[percentData$adjust < .01]  <- "**"
+#     percentData$star[percentData$adjust < .001] <- "***"
+    
   return (cData)
 # The dataFrame of input should conform to the type below
 # sample    location  origin  gene  Cp.x    location  Cp meanCP   stdDevCP ddCt    cd133
