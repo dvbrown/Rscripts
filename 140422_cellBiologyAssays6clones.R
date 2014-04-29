@@ -346,7 +346,7 @@ invasionSummaryP
 rm(list=ls())
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 setwd('~/Documents/Cell_biology/microscopy/ELDA/140417_elda_6clones/')
-data = read.delim('140424_ELDA_output.txt')
+data = read.delim('140429_ELDA_output.txt')
 data$Patient = c('030a', '030a', '039', '039', '035', '035', '020', '020', '041', '041', '034a')
 
 eldaRawP = ggplot(data=data, aes(x=Group, y=Estimate, fill=Patient)) + 
@@ -358,9 +358,9 @@ eldaRawP = ggplot(data=data, aes(x=Group, y=Estimate, fill=Patient)) +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 percentData = as.data.frame(data[,2:4] ^ -1 *100)
-percentData = cbind(percentData, data$Group)
+percentData = cbind(percentData, data$Group, data$Test)
 percentData$Patient = c('030a', '030a', '039', '039', '035', '035', '020', '020', '041', '041', '034a')
-colnames(percentData) = c('Lower', 'Estimate', 'Upper', 'Clone', 'Patient')
+colnames(percentData) = c('Lower', 'Estimate', 'Upper', 'Clone', 'Test','Patient')
 
 eldaPercent = ggplot(data=percentData, aes(x=Clone, y=Estimate, fill=Patient)) + 
     #scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
@@ -371,3 +371,26 @@ eldaPercent = ggplot(data=percentData, aes(x=Clone, y=Estimate, fill=Patient)) +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 multiplot(eldaRawP, eldaPercent)
+
+# Adjust for multiple testing
+percentData$adjust = p.adjust(percentData$Test, method='fdr')
+# Add a column with stars describing if a test is significant
+percentData$star <- " "
+percentData$star[percentData$adjust < .05]  = "*"
+percentData$star[percentData$adjust < .01]  <- "**"
+percentData$star[percentData$adjust < .001] <- "***"
+
+ggplot(percentData, aes(x=Clone, y=Estimate, fill=Patient)) + 
+    # Define my own colors
+    #scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(position=position_dodge(), stat="identity") +
+    geom_errorbar(aes(ymin=Lower, ymax=Upper),
+                  width=.2, position=position_dodge(.9)) +
+    xlab("Gene") + ylab("Expression normalised to CD133 negative") +
+    # scale_fill_hue(name="CD133")+#, Legend label, use darker colors
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Expression of genes associated with stemness \nin CD133 sorted cells") +
+    scale_y_continuous(breaks=0:20*4) +
+    # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
+    geom_text(aes(label=star), colour="black", vjust=-3, size=10) +
+    theme_bw(base_size=20) 
