@@ -200,14 +200,14 @@ tmzSummary$day = c('day 3', 'day 3', 'day 7', 'day 7')
 # 
 # multiplot(tmzSummary3P, tmzSummary7P)
 
-# tmzSummaryP = ggplot(data=tmzSummary, aes(x=day, y=mean, fill=origin)) + 
-#     scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
-#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     xlab("") + ylab("Cell number relative to DMSO control") +
-#     ggtitle("Effect of temozolomide on subpopulations of GICs") +  # Set title
-#     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# tmzSummaryP
+tmzSummaryP = ggplot(data=tmzSummary, aes(x=day, y=mean, fill=origin)) + 
+    scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("") + ylab("Cell number relative to DMSO control") +
+    ggtitle("Effect of temozolomide on subpopulations of GICs") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+tmzSummaryP
 
 ####################################################################################################################################
 
@@ -253,8 +253,9 @@ invD7$sample = paste(invD7$clone, invD7$cd133, sep='_')
 invD3Stats = backgroundMeanSD(invD3)
 invD7Stats = backgroundMeanSD(invD7)
 
+# Plot Data
 invD3StatsP = ggplot(data=invD3Stats[!invD3Stats$clone %in% c('030a', '034a'),], aes(x=sample, y=mean, fill=matrix)) + 
-    scale_fill_manual(values=c("darkorange", "royalblue")) +
+    scale_fill_manual(values=c("royalblue", "darkorange")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Surface area of gliomasphere") +
@@ -262,7 +263,7 @@ invD3StatsP = ggplot(data=invD3Stats[!invD3Stats$clone %in% c('030a', '034a'),],
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 invD7StatsP = ggplot(data=invD7Stats[!invD7Stats$clone %in% c('030a', '034a'),], aes(x=sample, y=mean, fill=matrix)) + 
-    scale_fill_manual(values=c("yellow", "skyblue3")) +
+    scale_fill_manual(values=c("skyblue3", "yellow")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Surface area of gliomasphere") +
@@ -275,55 +276,57 @@ multiplot(invD3StatsP, invD7StatsP)
 ############################################## Normalise for no matrix and CD133 #################################################
 
 # Remove the unmatched recurrents
-invD3Stats = invD3Stats[!invD3Stats$clone %in% c('030a', '034a'),]
-invD7Stats = invD7Stats[!invD7Stats$clone %in% c('030a', '034a'),]
+invD3Stats = invD3Stats[!invD3Stats$clone %in% c('030a', '034a', '20'),]
+invD7Stats = invD7Stats[!invD7Stats$clone %in% c('030a', '034a', '20'),]
 
 invD3Norm = normaliseMatrixCD133(invD3Stats)
 invD7Norm = normaliseMatrixCD133(invD7Stats)
 
-invD3NormP = ggplot(data=invD3Norm[[1]], aes(x=sample, y=matNormalised, fill=cd133)) + 
-    scale_fill_manual(values=c("darkorange", "royalblue")) +
+# Plot Data
+invD3NormP = ggplot(data=invD3Norm[[1]], aes(x=sample, y=matNormalised, fill=clone)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue", "forestgreen")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
-    xlab("Clone") + ylab("Surface area of gliomasphere normalised to no matrix") +
-    ggtitle("Invasive ability of GIC clones buy CD133 status at day 3") +  # Set title
+    xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to no matrix") +
+    ggtitle("Invasive ability of GIC clones \nby CD133 status at day 3") +  # Set title
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-invD7NormP = ggplot(data=invD7Norm[[1]], aes(x=sample, y=matNormalised, fill=cd133)) + 
-    scale_fill_manual(values=c("yellow", "skyblue3")) +
+invD7NormP = ggplot(data=invD7Norm[[1]], aes(x=sample, y=matNormalised, fill=clone)) + 
+    scale_fill_manual(values=c("yellow", "skyblue3", "darkseagreen2")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
-    xlab("Clone") + ylab("Surface area of gliomasphere normalised to no matrix") +
-    ggtitle("Invasive ability of GIC clones by CD133 status at day 7") +  # Set title
+    xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to no matrix") +
+    ggtitle("Invasive ability of GIC clones \nby CD133 status at day 7") +  # Set title
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-multiplot(invD3NormP, invD7NormP)
+# multiplot(invD3NormP, invD7NormP)
 
 ############################################## Plot the CD133 normlaised values #################################################
 
 invD3NormCDP = ggplot(data=invD3Norm[[2]], aes(x=sample, y=cd133Norm, fill=sample)) + 
-    scale_fill_manual(values=c("darkorange", "royalblue", 'seagreen', 'plum2')) +
+    scale_fill_manual(values=c("darkorange", "royalblue", 'forestgreen')) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to CD133 negative") +
-    ggtitle("Invasive ability of GIC clones by CD133 status at day 3") +  # Set title
+    ggtitle("Invasive ability of GIC clones \nby CD133 status at day 3") +  # Set title
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 invD7NormCDP = ggplot(data=invD7Norm[[2]], aes(x=sample, y=cd133Norm, fill=sample)) + 
-    scale_fill_manual(values=c("slateblue", "maroon4", 'slategray1', 'palevioletred3')) +
+    scale_fill_manual(values=c("slateblue", "maroon4", 'darkseagreen2')) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to CD133 negative") +
-    ggtitle("Invasive ability of GIC clones by CD133 status at day 7") +  # Set title
+    ggtitle("Invasive ability of GIC clones \nby CD133 status at day 7") +  # Set title
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-multiplot(invD3NormCDP, invD7NormCDP)
+# multiplot(invD3NormCDP, invD7NormCDP)
+# multiplot(invD3NormP, invD7NormP, invD3NormCDP, invD7NormCDP, cols=2)
 ####################################################################################################################################
 
 invD3M = mean(invD3Norm[[2]]$cd133Norm)
-invD3S = sd(invD3Norm[[2]]$cd133Norm)
+invD3S = sd(invD3Norm[[2]]$cd133Norm) / sqrt(3)
 invD7M = mean(invD7Norm[[2]]$cd133Norm)
-invD7S = sd(invD7Norm[[2]]$cd133Norm)
+invD7S = sd(invD7Norm[[2]]$cd133Norm)/ sqrt(3)
 
 invasionSummary = as.data.frame(rbind(c(invD3M, invD3S), c(invD7M, invD7S), c(1,0), c(1,0)))
 
-invasionSummary$cd133 = c('pos', 'pos', 'neg', 'neg')
+invasionSummary$cd133 = c('positive', 'positive', 'negative', 'negative')
 invasionSummary$day = c('day 3', 'day 7', 'day 3', 'day 7')
 colnames(invasionSummary) = c('mean', 'sd', 'cd133', 'day')
 
@@ -335,7 +338,10 @@ invasionSummaryP = ggplot(data=invasionSummary, aes(x=day, y=mean, fill=cd133)) 
     ggtitle("Effect of temozolomide on subpopulations of GICs") +  # Set title
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 invasionSummaryP
+
 ################################################# HAVE NOT MANUALLY CHECKED OUTLIERS YET ####################################################
+
+
 
 
 
@@ -370,7 +376,7 @@ eldaPercent = ggplot(data=percentData, aes(x=Clone, y=Estimate, fill=Patient)) +
     ggtitle("Sphere forming efficiency of GICs") +  # Set title
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-multiplot(eldaRawP, eldaPercent)
+# multiplot(eldaRawP, eldaPercent)
 
 # Adjust for multiple testing
 percentData$adjust = p.adjust(percentData$Test, method='fdr')
@@ -392,7 +398,7 @@ eldaSig = ggplot(percentData, aes(x=Clone, y=Estimate, fill=Patient)) +
         scale_y_continuous(breaks=0:20*4) +
         # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
         geom_text(aes(label=star), colour="black", vjust=-6, size=10) +
-        theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+        theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 ############################################## Summarise ELDA to Pos and Neg CD133 #################################################
 percentData$cd133 = c('neg', 'pos', 'neg', 'pos', 'neg', 'pos', 'neg', 'pos', 'neg', 'pos', 'neg')
@@ -400,9 +406,9 @@ cd133Neg = percentData[percentData$cd133 %in% 'neg',]
 cd133Pos = percentData[percentData$cd133 %in% 'pos',]
 
 cd133NegAv = mean(cd133Neg$Estimate)
-cd133NegSd = sd(cd133Neg$Estimate)
+cd133NegSd = sd(cd133Neg$Estimate) / sqrt(length(cd133Neg$Estimate))
 cd133PosAv = mean(cd133Pos$Estimate)
-cd133PosSd = sd(cd133Pos$Estimate)
+cd133PosSd = sd(cd133Pos$Estimate) / sqrt(length(cd133Pos$Estimate))
 
 cd133 = as.data.frame(rbind(c(cd133NegAv, cd133NegSd), c(cd133PosAv, cd133PosSd)))
 cd133$cd133 = c('negative', 'positive')
@@ -419,6 +425,8 @@ eldaSumm = ggplot(cd133, aes(x=cd133, y=V1, fill=cd133)) +
         scale_y_continuous(breaks=0:20*4) +
         # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
         #geom_text(aes(label=star), colour="black", vjust=-6, size=10) +
-        theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+        theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-multiplot(eldaSumm, eldaSig)
+# multiplot(eldaSumm, eldaSig)
+
+# multiplot(eldaSumm, eldaSig, eldaRawP, eldaPercent, cols=2)
