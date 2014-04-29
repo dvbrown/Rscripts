@@ -380,16 +380,45 @@ percentData$star[percentData$adjust < .05]  = "*"
 percentData$star[percentData$adjust < .01]  <- "**"
 percentData$star[percentData$adjust < .001] <- "***"
 
-ggplot(percentData, aes(x=Clone, y=Estimate, fill=Patient)) + 
-    # Define my own colors
-    #scale_fill_manual(values=c("darkorange", "royalblue")) +
-    geom_bar(position=position_dodge(), stat="identity", color='black') +
-    geom_errorbar(aes(ymin=Lower, ymax=Upper), width=.2, position=position_dodge(.9)) +
-    xlab("Gene") + ylab("Expression normalised to CD133 negative") +
-    # scale_fill_hue(name="CD133")+#, Legend label, use darker colors
-    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-    ggtitle("Expression of genes associated with stemness \nin CD133 sorted cells") +
-    scale_y_continuous(breaks=0:20*4) +
-    # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
-    geom_text(aes(label=star), colour="black", vjust=-8, size=10) +
-    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+eldaSig = ggplot(percentData, aes(x=Clone, y=Estimate, fill=Patient)) + 
+        # Define my own colors
+        #scale_fill_manual(values=c("darkorange", "royalblue")) +
+        geom_bar(position=position_dodge(), stat="identity", color='black') +
+        geom_errorbar(aes(ymin=Lower, ymax=Upper), width=.2, position=position_dodge(.9)) +
+        xlab("Clone") + ylab("Percent sphere formation") +
+        # scale_fill_hue(name="CD133")+#, Legend label, use darker colors
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+        ggtitle("Sphere forming efficiency of GICs at day 7") +
+        scale_y_continuous(breaks=0:20*4) +
+        # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
+        geom_text(aes(label=star), colour="black", vjust=-6, size=10) +
+        theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+############################################## Summarise ELDA to Pos and Neg CD133 #################################################
+percentData$cd133 = c('neg', 'pos', 'neg', 'pos', 'neg', 'pos', 'neg', 'pos', 'neg', 'pos', 'neg')
+cd133Neg = percentData[percentData$cd133 %in% 'neg',]
+cd133Pos = percentData[percentData$cd133 %in% 'pos',]
+
+cd133NegAv = mean(cd133Neg$Estimate)
+cd133NegSd = sd(cd133Neg$Estimate)
+cd133PosAv = mean(cd133Pos$Estimate)
+cd133PosSd = sd(cd133Pos$Estimate)
+
+cd133 = as.data.frame(rbind(c(cd133NegAv, cd133NegSd), c(cd133PosAv, cd133PosSd)))
+cd133$cd133 = c('negative', 'positive')
+
+eldaSumm = ggplot(cd133, aes(x=cd133, y=V1, fill=cd133)) + 
+        # Define my own colors
+        scale_fill_manual(values=c("firebrick1", "mediumseagreen")) +
+        geom_bar(position=position_dodge(), stat="identity", color='black') +
+        geom_errorbar(aes(ymin=V1-V2, ymax=V1+V2), width=.2, position=position_dodge(.9)) +
+        xlab("CD133 status") + ylab("Percent sphere formation") +
+        # scale_fill_hue(name="CD133")+#, Legend label, use darker colors
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+        ggtitle("Sphere forming efficiency of GICs at day 7") +
+        scale_y_continuous(breaks=0:20*4) +
+        # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
+        #geom_text(aes(label=star), colour="black", vjust=-6, size=10) +
+        theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+multiplot(eldaSumm, eldaSig)
