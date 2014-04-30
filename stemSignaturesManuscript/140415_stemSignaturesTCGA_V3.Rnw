@@ -39,10 +39,14 @@
 %    ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\JournalInfo{Nature Communications (10.015) Plos Comp Bio (5.515) or similar biologyish journal} % Journal information
-\Archive{Original/ methodological article using public data} % Additional notes (e.g. copyright, DOI, review/research article)
+\JournalInfo{Nature Genetics (IF = 35.209)\\ Nature Communications (10.015)\\ 
+Molecular Systems Biology (11.3)\\ Plos Comp Bio (5.515)\\ 
+Bioinformatics (5.3)\\ BMC Bioinformatics (3.03)\\
+or similar journal} % Journal information
 
-\PaperTitle{In silico investigation of cancer stem markers for flow cytometry in Glioblastoma Multiforme} % Article title
+\Archive{Analytical study} % Additional notes (e.g. copyright, DOI, review/research article)
+
+\PaperTitle{In silico comparison of cancer stem markers in Glioblastoma Multiforme} % Article title
 
 \Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, People, More\textsuperscript{2}
 Mantamadiotis, Theo\textsuperscript{1}} % Authors
@@ -57,10 +61,20 @@ Mantamadiotis, Theo\textsuperscript{1}} % Authors
 %	ABSTRACT
 %----------------------------------------------------------------------------------------
 
-\Abstract{I will attempt to publish a quick and dirty bioinformatics paper that examines the clinical relevence of the proposed cancer stem markers. This article
-will primarily focus on glioblastoma multiforme but I may throw in Breast and colorectal cancer if it is potentially interesting. I will compare the derivation of a cancer stem cell signature de novo from the data itself based on coexpression. 
-I will compare this to signatures from the the literature and also known pathways. I will use this signature topredict survival and the examine if a marker defines a particular subtype. 
-Maybe pad it out at the end with some qRT-PCR, but I will need primary tissue from somewhere!}
+\Abstract{
+The field of stem cell biology including cancer stem cells has relied on the use of robust markers that indicate the state of maturity of individual cells. These markers are typically interogated using antibodies targeting the extra-cellular protein product or dyes that act as surrogates of the marker in question.
+Examples include CD133, Integrin $\alpha$-6 and ALDH1.
+Some of the low experimental reproducibilty that has been observed in studies of stem cell biology can be attributed to the choice of marker or markers used to identify or isolate the hypothetical stem cell population by antibody based methods.\\
+
+We have conducted an analysis of the Cancer Genome Atlas Glioblastoma Multiforme (GBM) dataset to compare several genetic markers that have been associated with the Glioblastoma stem cell (GSC) phenotype. 
+Validation was carried out by both subsampling and comparison with smaller scale experiments that performed gene expression studies after fluorescence activated cell sorting (FACS).\\
+
+Weighted correlation network analysis (WGCNA) was used to determine the suite of genes that are coexpressed with candidate putative stem cell markers. Gene set enrichment and network analysis was performed to identify gene ontogenies and pathways that are enriched by the coexpression modules. 
+Several markers will be compared for the enrichment of stem-like phenotypes \textit{in silico}.
+The coexpression modules corresponding to the putatitive stem cell markers will be used as gene expression signatures and will be intergrated with molecular and clinical information such as GBM subtype, MGMT methylation, G-CIMP status and overall survival.\\
+
+The conclusions derived from this study will provide insight into the phenotypic properties exhibited by cells expressing candidate stem cell markers and may be able to assist in the choice of marker or markers for future characterization of Glioblastoma stem cells.  The approach described in this article is applicable to alternate normal or cancer stem cell types and biomarkers.\\
+}
 
 \begin{document}
 <<setup, include=FALSE, cache=FALSE>>=
