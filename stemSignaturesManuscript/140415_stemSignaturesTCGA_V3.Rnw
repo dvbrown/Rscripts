@@ -63,7 +63,7 @@ I will compare this to signatures from the the literature and also known pathway
 Maybe pad it out at the end with some qRT-PCR, but I will need primary tissue from somewhere!}
 
 \begin{document}
-<<setup, include=FALSE, cache=TRUE>>=
+<<setup, include=FALSE, cache=FALSE>>=
 library(knitr)
 library(affy)
 library(limma)

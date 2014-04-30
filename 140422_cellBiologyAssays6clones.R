@@ -60,46 +60,46 @@ day3Growth = backgroundMeanSD(growthD3)
 day7Growth = backgroundMeanSD(growthD7)
 
 # Plot the raw results
-# growthPlot3 = ggplot(data=day3Growth[day3Growth$treatment %in% 'growth',], 
-#                    aes(x=clone, y=mean, fill=cd133)) + 
-#     scale_fill_manual(values=c("darkorange", "royalblue")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
-#     xlab("Clone") + ylab("Fluorescent intensity") +
-#     ggtitle("Comparing proliferation at day 3 by CD133 status") +  # Set title
-#     theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# 
-# growthPlot7 = ggplot(data=day7Growth[day7Growth$treatment %in% 'growth',], 
-#                      aes(x=clone, y=mean, fill=cd133)) + 
-#     scale_fill_manual(values=c("darkorange", "royalblue")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
-#     xlab("Clone") + ylab("Fluorescent intensity") +
-#     ggtitle("Comparing proliferation at day 7 by CD133 status") +  # Set title
-#     theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# 
+growthPlot3 = ggplot(data=day3Growth[day3Growth$treatment %in% 'growth',], 
+                   aes(x=clone, y=mean, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    xlab("Clone") + ylab("Fluorescent intensity") +
+    ggtitle("Comparing proliferation at day 3 by \nCD133 status") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+ 
+growthPlot7 = ggplot(data=day7Growth[day7Growth$treatment %in% 'growth',], 
+                     aes(x=clone, y=mean, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    xlab("Clone") + ylab("Fluorescent intensity") +
+    ggtitle("Comparing proliferation at day 7 \nby CD133 status") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 # multiplot(growthPlot3, growthPlot7)
 
-####################################################################################################################################
+###################################################################################################################################
 
-# tmzRaw3 = ggplot(data=day3Growth[day3Growth$treatment %in% 'tmz',], 
-#                      aes(x=clone, y=mean, fill=cd133)) + 
-#     scale_fill_manual(values=c("darkorange", "royalblue")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
-#     xlab("Clone") + ylab("Fluorescent intensity") +
-#     ggtitle("Comparing TMZ at day 3 by CD133 status") +  # Set title
-#     theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# 
-# tmzRaw7 = ggplot(data=day7Growth[day7Growth$treatment %in% 'tmz',], 
-#                  aes(x=clone, y=mean, fill=cd133)) + 
-#     scale_fill_manual(values=c("darkorange", "royalblue")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
-#     xlab("Clone") + ylab("Fluorescent intensity") +
-#     ggtitle("Comparing TMZ at day 7 by CD133 status") +  # Set title
-#     theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# 
+tmzRaw3 = ggplot(data=day3Growth[day3Growth$treatment %in% 'tmz',], 
+                     aes(x=clone, y=mean, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    xlab("Clone") + ylab("Fluorescent intensity") +
+    ggtitle("Comparing TMZ at day 3 by \nCD133 status") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+tmzRaw7 = ggplot(data=day7Growth[day7Growth$treatment %in% 'tmz',], 
+                 aes(x=clone, y=mean, fill=cd133)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    xlab("Clone") + ylab("Fluorescent intensity") +
+    ggtitle("Comparing TMZ at day 7 by \nCD133 status") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 # multiplot(tmzRaw3, tmzRaw7)
 
 ############################################## Calculate the DMSO corrected values #################################################
@@ -107,24 +107,24 @@ day3GrowthMatched = day3Growth[!day3Growth$clone %in% c('030a_pos', '034a_neg', 
 day7GrowthMatched = day7Growth[!day7Growth$clone %in% c('030a_pos', '034a_neg', 'blank', 'empty'),]
 day3TMZ = calcDMSOcontrol(day3GrowthMatched)
 day7TMZ = calcDMSOcontrol(day7GrowthMatched)
-
-# tmzPlot3 = ggplot(data=day3TMZ, aes(x=clone, y=dmsoCorrected, fill=cd133)) + 
-#     scale_fill_manual(values=c("darkorange", "royalblue")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     xlab("Clone") + ylab("Cell number relative to DMSO control") +
-#     ggtitle("Comparing temozolomide sensitivty at day 3 by CD133 status") +  # Set title
-#     theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 # 
-# tmzPlot7 = ggplot(data=day7TMZ, aes(x=clone, y=dmsoCorrected, fill=cd133)) + 
-#     scale_fill_manual(values=c("darkorange", "royalblue")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     xlab("Clone") + ylab("Cell number relative to DMSO control") +
-#     ggtitle("Comparing temozolomide sensitivty at day 7 by CD133 status") +  # Set title
-#     theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# 
-# multiplot(tmzPlot3, tmzPlot7)
+tmzPlot3 = ggplot(data=day3TMZ, aes(x=clone, y=dmsoCorrected, fill=cd133)) + 
+    scale_fill_manual(values=c("gold", "chartreuse4")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("Clone") + ylab("Cell number relative to \nDMSO control") +
+    ggtitle("Comparing temozolomide sensitivty at day 3 by \nCD133 status") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-# multiplot(growthPlot3, growthPlot7, tmzPlot3, tmzPlot7)
+tmzPlot7 = ggplot(data=day7TMZ, aes(x=clone, y=dmsoCorrected, fill=cd133)) + 
+    scale_fill_manual(values=c("gold", "chartreuse4")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("Clone") + ylab("Cell number relative to \nDMSO control") +
+    ggtitle("Comparing temozolomide sensitivty at day 7 by \nCD133 status") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+multiplot(tmzPlot3, tmzPlot7)
+
+multiplot(growthPlot3, growthPlot7, tmzPlot3, tmzPlot7, cols=2)
 # write.table(day3TMZ, '140423_day3TMZprocessed.txt', sep='\t')
 # write.table(day7TMZ, '140423_day7TMZprocessed.txt', sep='\t')
 
@@ -133,20 +133,20 @@ day7TMZ = calcDMSOcontrol(day7GrowthMatched)
 day3GrowthNorm = calcProlifNormalised(day3GrowthMatched[day3GrowthMatched$treatment %in% 'growth',])
 day7GrowthNorm = calcProlifNormalised(day7GrowthMatched[day7GrowthMatched$treatment %in% 'growth',])
 
-# day3GrowthNormP = ggplot(data=day3GrowthNorm, aes(x=clone, y=negNormalised, fill=clone)) + 
-#     scale_fill_manual(values=c("darkorange", "royalblue","cyan","magenta")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     xlab("Clone") + ylab("Cell number relative to matched CD133 negative") +
-#     ggtitle("Comparing proliferation of CD133 cells at day 3") +  # Set title
-#     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# 
-# day7GrowthNormP = ggplot(data=day7GrowthNorm, aes(x=clone, y=negNormalised, fill=clone)) + 
-#     scale_fill_manual(values=c("darkorange", "royalblue","cyan","magenta")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     xlab("Clone") + ylab("Cell number relative to matched CD133 negative") +
-#     ggtitle("Comparing proliferation of CD133 cells at day 7") +  # Set title
-#     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# 
+day3GrowthNormP = ggplot(data=day3GrowthNorm, aes(x=clone, y=negNormalised, fill=clone)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue","cyan","magenta")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("Clone") + ylab("Cell number relative to matched CD133 negative") +
+    ggtitle("Comparing proliferation of CD133 cells at day 3") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+day7GrowthNormP = ggplot(data=day7GrowthNorm, aes(x=clone, y=negNormalised, fill=clone)) + 
+    scale_fill_manual(values=c("darkorange", "royalblue","cyan","magenta")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("Clone") + ylab("Cell number relative to matched CD133 negative") +
+    ggtitle("Comparing proliferation of CD133 cells at day 7") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 # multiplot(day3GrowthNormP, day7GrowthNormP)
 
 # Summarise data 
@@ -173,7 +173,7 @@ growthSummaryP = ggplot(data=growthSummary, aes(x=day, y=average, fill=origin)) 
     geom_errorbar(aes(ymin=average-stdDev, ymax=average+stdDev), width=.2, position=position_dodge(0.9)) +
     xlab("measurment day") + ylab("Normalised cell number") +
     ggtitle("Growth rate of GIC clones (n = 4)") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 growthSummaryP
 
 ############################################## Pool the pos and negs for stats #################################################
@@ -183,39 +183,49 @@ tmzSummary7 = extractPosNegReplicates(day7TMZ)
 tmzSummary = rbind(tmzSummary3, tmzSummary7)
 tmzSummary$day = c('day 3', 'day 3', 'day 7', 'day 7')
 
+tmzSummary3P = ggplot(data=tmzSummary3, aes(x=origin, y=mean, fill=origin)) + 
+    scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    xlab("") + ylab("Cell number relative to DMSO control") +
+    ggtitle("Effect of temozolomide on subpopulations of GICs at day 3") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-# tmzSummary3P = ggplot(data=tmzSummary3, aes(x=origin, y=mean, fill=origin)) + 
-#     scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
-#     xlab("") + ylab("Cell number relative to DMSO control") +
-#     ggtitle("Effect of temozolomide on subpopulations of GICs at day 3") +  # Set title
-#     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# 
-# tmzSummary7P = ggplot(data=tmzSummary7, aes(x=origin, y=mean, fill=origin)) + 
-#     scale_fill_manual(values=c("darkcyan", "coral3")) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
-#     xlab("") + ylab("Cell number relative to DMSO control") +
-#     ggtitle("Effect of temozolomide on subpopulations of GICs at day 7") +  # Set title
-#     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-# tmzSummary7P + annotate("text", x = 25, y = 25, label = "n = 4")
-# 
-# multiplot(tmzSummary3P, tmzSummary7P)
+tmzSummary7P = ggplot(data=tmzSummary7, aes(x=origin, y=mean, fill=origin)) + 
+    scale_fill_manual(values=c("darkcyan", "coral3")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0)) +
+    xlab("") + ylab("Cell number relative to DMSO control") +
+    ggtitle("Effect of temozolomide on subpopulations of GICs at day 7") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+tmzSummary7P + annotate("text", x = 25, y = 25, label = "n = 4")
+
+multiplot(tmzSummary3P, tmzSummary7P)
 
 # Calculate SE
 tmzSummary$se = tmzSummary$sd / sqrt(length(tmzSummary$sd))
 
 tmzSummaryP = ggplot(data=tmzSummary, aes(x=day, y=mean, fill=origin)) + 
-    scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
+    scale_fill_manual(values=c("skyblue3", "gold3")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
-    xlab("") + ylab("Cell number relative to DMSO control") +
-    ggtitle("Effect of temozolomide on subpopulations of GICs") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    xlab("Date of measurement") + ylab("Cell number relative to DMSO control") +
+    scale_y_continuous(breaks = round(seq(0, 1.5, by = 0.25), 2)) +  # round(seq(min, max, by = scales), sigFig))
+    ggtitle("Effect of temozolomide on CD133 subpopulations of GICs") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 tmzSummaryP
 
+# Plot both summaries
+# multiplot(tmzSummaryP, growthSummaryP)
 ####################################################################################################################################
+
+
+
+
+
+
+
+
 
 
 
@@ -294,14 +304,14 @@ invD3NormP = ggplot(data=invD3Norm[[1]], aes(x=sample, y=matNormalised, fill=clo
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to no matrix") +
     ggtitle("Invasive ability of GIC clones \nby CD133 status at day 3") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 invD7NormP = ggplot(data=invD7Norm[[1]], aes(x=sample, y=matNormalised, fill=clone)) + 
     scale_fill_manual(values=c("yellow", "skyblue3", "darkseagreen2")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to no matrix") +
     ggtitle("Invasive ability of GIC clones \nby CD133 status at day 7") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 # multiplot(invD3NormP, invD7NormP)
 
@@ -312,17 +322,17 @@ invD3NormCDP = ggplot(data=invD3Norm[[2]], aes(x=sample, y=cd133Norm, fill=sampl
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to CD133 negative") +
     ggtitle("Invasive ability of GIC clones \nby CD133 status at day 3") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 invD7NormCDP = ggplot(data=invD7Norm[[2]], aes(x=sample, y=cd133Norm, fill=sample)) + 
     scale_fill_manual(values=c("slateblue", "maroon4", 'darkseagreen2')) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to CD133 negative") +
     ggtitle("Invasive ability of GIC clones \nby CD133 status at day 7") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 # multiplot(invD3NormCDP, invD7NormCDP)
-# multiplot(invD3NormP, invD7NormP, invD3NormCDP, invD7NormCDP, cols=2)
+multiplot(invD3NormP, invD7NormP, invD3NormCDP, invD7NormCDP, cols=2)
 ####################################################################################################################################
 
 invD3M = mean(invD3Norm[[2]]$cd133Norm)
@@ -337,12 +347,12 @@ invasionSummary$day = c('day 3', 'day 7', 'day 3', 'day 7')
 colnames(invasionSummary) = c('mean', 'sd', 'cd133', 'day')
 
 invasionSummaryP = ggplot(data=invasionSummary, aes(x=day, y=mean, fill=cd133)) + 
-    scale_fill_manual(values=c("aquamarine1", "darkgoldenrod1")) +
+    scale_fill_manual(values=c("forestgreen", "firebrick")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
-    xlab("") + ylab("Cell number relative to DMSO control") +
-    ggtitle("Effect of temozolomide on subpopulations of GICs") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.3, position=position_dodge(0.9)) +
+    xlab("Date of measurement") + ylab("Surface area relative \nto no matrix control") +
+    ggtitle("Invasive potential of CD133 \nsubpopulations of GICs") +  # Set title
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 invasionSummaryP
 
 ################################################# HAVE NOT MANUALLY CHECKED OUTLIERS YET ####################################################
@@ -367,7 +377,7 @@ eldaRawP = ggplot(data=data, aes(x=Group, y=Estimate, fill=Patient)) +
     geom_errorbar(aes(ymin=Lower, ymax=Upper), width=.2, position=position_dodge(0.9)) +
     xlab("") + ylab("Sphere efficiency") +
     ggtitle("Raw ELDA data") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 percentData = as.data.frame(data[,2:4] ^ -1 *100)
 percentData = cbind(percentData, data$Group, data$Test)
@@ -380,7 +390,7 @@ eldaPercent = ggplot(data=percentData, aes(x=Clone, y=Estimate, fill=Patient)) +
     geom_errorbar(aes(ymin=Lower, ymax=Upper), width=.2, position=position_dodge(0.9)) +
     xlab("") + ylab("Percent sphere formation") +
     ggtitle("Sphere forming efficiency of GICs") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_bw(14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 # multiplot(eldaRawP, eldaPercent)
 
@@ -403,8 +413,8 @@ eldaSig = ggplot(percentData, aes(x=Clone, y=Estimate, fill=Patient)) +
         ggtitle("Sphere forming efficiency of GICs at day 7") +
         scale_y_continuous(breaks=0:20*4) +
         # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
-        geom_text(aes(label=star), colour="black", vjust=-6, size=10) +
-        theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+        geom_text(aes(label=star), colour="black", vjust=-1, size=10) +
+        theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 ############################################## Summarise ELDA to Pos and Neg CD133 #################################################
 percentData$cd133 = c('neg', 'pos', 'neg', 'pos', 'neg', 'pos', 'neg', 'pos', 'neg', 'pos', 'neg')
@@ -431,8 +441,8 @@ eldaSumm = ggplot(cd133, aes(x=cd133, y=V1, fill=cd133)) +
         scale_y_continuous(breaks=0:20*4) +
         # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
         #geom_text(aes(label=star), colour="black", vjust=-6, size=10) +
-        theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+        theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 # multiplot(eldaSumm, eldaSig)
 
-# multiplot(eldaSumm, eldaSig, eldaRawP, eldaPercent, cols=2)
+multiplot(eldaSumm, eldaSig, eldaRawP, eldaPercent, cols=2)
