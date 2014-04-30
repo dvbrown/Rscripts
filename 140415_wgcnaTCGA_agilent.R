@@ -5,12 +5,12 @@ options(stringsAsFactors=F)
 list.files()
 
 #################################### Data input and clustering visualisations ##############################################
-data = read.delim('140110_agilentNoNulls.txt')
+data = read.delim('../140110_agilentNoNulls.txt')
 
 # We now transpose the expression data for further analysis.
 datExpr0 = as.data.frame(t(data))
 dat = as.matrix(datExpr0)
-save.image('140415_justTheAgilentData.RData')
+# save.image('140415_justTheAgilentData.RData')
 ########################################################## Standard correlations ###############################################
 load('140415_justTheAgilentData.RData')
 
@@ -88,6 +88,7 @@ adjacencyProm1 = adjacency(datExpr0,
 
 # Make the adjacency matrix square
 squareAdjacency = (adjacencyProm1[colnames(adjacencyProm1),])
+# write.table(squareAdjacency, '140430_squareAdjacencyMatrix.txt', sep='\t')
 
 #To minimize effects of noise and spurious associations, we transform the adjacency into Topological Overlap Matrix,
 #and calculate the corresponding dissimilarity:
@@ -96,6 +97,7 @@ squareAdjacency = (adjacencyProm1[colnames(adjacencyProm1),])
 similarity = TOMsimilarity(squareAdjacency, TOMType='unsigned', verbose=3)
 row.names(similarity) = row.names(squareAdjacency)
 colnames(similarity) = row.names(squareAdjacency)
+# write.table(similarity, '140430_similarSquareMatrix.txt', sep='\t')
 ###########################################################################################################################
 
 ######################################### Visulaising the network that was built ##########################################

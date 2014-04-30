@@ -62,7 +62,7 @@ Mantamadiotis, Theo\textsuperscript{1}} % Authors
 %----------------------------------------------------------------------------------------
 
 \Abstract{
-The field of stem cell biology including cancer stem cells has relied on the use of robust markers that indicate the state of maturity of individual cells. These markers are typically interogated using antibodies targeting the extra-cellular protein product or dyes that act as surrogates of the marker in question.
+The field of stem cell biology, including cancer stem cells, has relied on the use of robust markers that indicate the state of maturity of the cell. These markers are typically interogated using antibodies targeting the extra-cellular protein product or dyes that act as surrogates of the marker in question.
 Examples include CD133, Integrin $\alpha$-6 and ALDH1.
 Some of the low experimental reproducibilty that has been observed in studies of stem cell biology can be attributed to the choice of marker or markers used to identify or isolate the hypothetical stem cell population by antibody based methods.\\
 
