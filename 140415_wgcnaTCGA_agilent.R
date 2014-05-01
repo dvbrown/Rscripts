@@ -5,13 +5,16 @@ options(stringsAsFactors=F)
 list.files()
 
 #################################### Data input and clustering visualisations ##############################################
-data = read.delim('../140110_agilentNoNulls.txt')
 
-# We now transpose the expression data for further analysis.
-datExpr0 = as.data.frame(t(data))
-dat = as.matrix(datExpr0)
+# data = read.delim('../140110_agilentNoNulls.txt')
+# 
+# # We now transpose the expression data for further analysis.
+# datExpr0 = as.data.frame(t(data))
+# dat = as.matrix(datExpr0)
 # save.image('140415_justTheAgilentData.RData')
+
 ########################################################## Standard correlations ###############################################
+
 load('140415_justTheAgilentData.RData')
 
 # Calculate the correlation between PROM1 expression and all the genes in TCGA GBM
@@ -33,16 +36,27 @@ result = t(rbind(prom1C, prom1Cpower, prom1P, prom1FDR))
 colnames(result) = c('correlation', 'weighted_correlation', 'p-value', 'FDR')
 #write.table(result, './wgcna/140415_standardCorrelation.txt', sep='\t')
 
-par(mfrow=c(2,2))
-hist(prom1C, main='Prom1 correlations', breaks='FD', xlab='Raw correlation values')
-hist(prom1Cpower, main='Prom1 weighted correlations', breaks='FD', xlab='R squared values')
-hist(prom1P, main='Prom1 p-values', breaks='FD', xlab='Raw p-values')
-hist(prom1FDR, main='Prom1FDR corrected p-values', breaks='FD', xlab='FDR corrected p-values')
-par(mfrow=c(1,1))
+# par(mfrow=c(2,2))
+# hist(prom1C, main='Prom1 correlations', breaks='FD', xlab='Raw correlation values')
+# hist(prom1Cpower, main='Prom1 weighted correlations', breaks='FD', xlab='R squared values')
+# hist(prom1P, main='Prom1 p-values', breaks='FD', xlab='Raw p-values')
+# hist(prom1FDR, main='Prom1FDR corrected p-values', breaks='FD', xlab='FDR corrected p-values')
+# par(mfrow=c(1,1))
+# 
+# qqnorm(result[,1], main='Distrubution of PROM1 correlated genes')
+# qqline(result[,1])
 
-qqnorm(result[,1], main='Distrubution of PROM1 correlated genes')
-qqline(result[,1])
+######################################### Subsample the data matrix to validate #####################
 
+##########################################  THIS DOESNT WORK YET ######################################### 
+
+# Look up http://www.pmc.ucsc.edu/~mclapham/Rtips/resampling.htm
+
+
+head(sample(dat))
+# bootstrap resampling -- only if length(x) > 1 !
+subDat = sample(dat, replace = TRUE, size=10)
+x = corAndPvalue(x=subDat[,'PROM1'], y=dat)
 
 ######################################### Visulaise the most correlated genes #####################
 # par(mfrow=c(2,1))

@@ -293,10 +293,17 @@ multiplot(invD3StatsP, invD7StatsP)
 
 # Remove the unmatched recurrents
 invD3Stats = invD3Stats[!invD3Stats$clone %in% c('030a', '034a', '20'),]
-invD7Stats = invD7Stats[!invD7Stats$clone %in% c('030a', '034a', '20'),]
+# invD7Stats = invD7Stats[!invD7Stats$clone %in% c('030a', '034a'),] For heatMap
+invD7Stats = invD7Stats[!invD7Stats$clone %in% c('030a', '034a', '020'),]
 
 invD3Norm = normaliseMatrixCD133(invD3Stats)
 invD7Norm = normaliseMatrixCD133(invD7Stats)
+
+# noMatrix = invD7Stats[invD7Stats$matrix %in%  FALSE,] This part is to calculate 020 neg for the heatmap
+# noMatrix = noMatrix[c(1:7),]
+# matrix = invD7Stats[invD7Stats$matrix %in% TRUE,]
+# matrix$matNormalised = matrix$mean / noMatrix$mean
+# matrix$matNormalisedSD = matrix$sd / noMatrix$sd
 
 # Plot Data
 invD3NormP = ggplot(data=invD3Norm[[1]], aes(x=sample, y=matNormalised, fill=clone)) + 
