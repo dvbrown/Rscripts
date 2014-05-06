@@ -85,7 +85,6 @@ ddCTcalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKeepingG
   # Calculate ddCt
   ddCtNotSquared = dCt - referenceSample_dCt
   ddCt = 2^ddCtNotSquared
-  
   return (ddCt)
 }
 

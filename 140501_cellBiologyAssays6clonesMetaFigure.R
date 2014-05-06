@@ -37,16 +37,26 @@ row.names(heatDataT) = c('Proliferation', 'Sphere formation', 'TMZ resistance', 
 corrdist = function(x) as.dist(1-cor(t(x)))
 cc = brewer.pal(9, 'YlOrRd')
 
-pdf('140501_heatMap.pdf', paper='a4')
+#pdf('140501_heatMap.pdf', paper='a4')
 heatmap(heatDataT, col=cc, margins=c(8,5),cexRow=1.2, main='Summary of phenotypic properties of GIC panel', 
              xlab='Patient clones by CD133 status', ylab='', Rowv=NA)
-dev.off()
+#dev.off()
 
 # I think clone 039 was swapped around FACS so rename it
 heatDataT2 = heatDataT
 colnames(heatDataT2) = c('020 -', '020 +', '035 -', '035 +', '039 +', '039 -','041 -', '041 +')
 
-pdf('140501_heatMapSwap039.pdf', paper='a4')
+#pdf('140501_heatMapSwap039.pdf', paper='a4')
 heatmap(heatDataT2, col=cc, margins=c(8,5),cexRow=1.2, main='If I swapped the #039 CD133 label', 
         xlab='Patient clones by CD133 status', ylab='', Rowv=NA)
-dev.off()
+#dev.off()
+
+###################################### Now do the qPCR data ######################################
+qPCR = read.delim('~/Documents/RNAdata/qPCRexpt/140331_cd133s/140505_matrix_dCT.txt', row.names=1)
+colnames(qPCR) = c('011 -', '011 +', '030a -', '030a +', '035 -', '035 +', '041 -', '041 +', '020 -', '020 +', '030 -', '030 +')
+qPCR = as.matrix(qPCR)
+
+#pdf('140505_qPCR_heatMap.pdf', paper='a4')
+heatmap(qPCR, col=cc, margins=c(8,5),cexRow=1.2, main='Summary of gene expression of GIC panel', 
+        xlab='Patient clones by CD133 status', ylab='Gene', Rowv=NA, scale='row')
+#dev.off()
