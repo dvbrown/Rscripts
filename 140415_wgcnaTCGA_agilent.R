@@ -1,6 +1,7 @@
 getwd()
 setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
 library(WGCNA)
+source('/Users/d.brown6/Documents/Rscripts/140508_coexpressionFunctions.R')
 options(stringsAsFactors=F)
 list.files()
 
@@ -98,7 +99,7 @@ prom1Cgenes = result[result[,2] > 0.1 & result[,4] < 0.05,]
 # ALternative method that uses the standard deviation of the raw correlation values
 corMean = mean(result[,1])
 corSD = sd(result[,1])
-prom1CgenesV2 = result[abs(result[,1]) > 3*corSD & result[,4] < 0.05,]
+prom1CgenesV2 = result[abs(result[,1]) > 2*sd(result[,1]) & result[,4] < 0.05,]
 
 length(row.names(prom1Cgenes))
 #write.table(prom1Cgenes, './manualCorrelation/140417_prom1CorrelatedGenes.txt', sep='\t')
@@ -166,3 +167,15 @@ plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
 ###########################################################################################################################
 
 ############################################# Do CD44 coexpression ################################################
+
+cd44 = correlateGeneWithGEM(dat, 'CD44')
+
+par(mfrow=c(2,2))
+hist(cd44[,1], main='CD44 correlations', breaks='FD', xlab='Weighted correlation values')
+hist(cd44[,2], main='CD44 coefficient of determination', breaks='FD', xlab='Weighted correlation values')
+hist(cd44[,4], main='CD44 p-values', breaks='FD', xlab='FDR corrected p-values')
+par(mfrow=c(1,1))
+
+# Subset the dataframe with correlation values for those with high correlation and significance
+cd44genes = cd44[cd44[,2] > 0.1 & cd44[,4] < 0.05,]
+cd44genes = cd44[abs(cd44[,1]) > 2*sd(cd44[,1]) & cd44[,4] < 0.05,]
