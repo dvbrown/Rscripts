@@ -23,8 +23,8 @@
 \setlength{\columnsep}{0.55cm} % Distance between the two columns of text
 \setlength{\fboxrule}{0.75pt} % Width of the border around the abstract
 
-\definecolor{color1}{RGB}{0,0,153} % Color of the article title and sections
-\definecolor{color2}{RGB}{204,102,0} % Color of the boxes behind the abstract and headings
+\definecolor{color1}{RGB}{0,100,0} % Color of the article title and sections
+\definecolor{color2}{RGB}{238,238,0}% Color of the boxes behind the abstract and headings
 
 \newlength{\tocsep} 
 \setlength\tocsep{1.5pc} % Sets the indentation of the sections in the table of contents
@@ -39,7 +39,7 @@
 %    ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\JournalInfo{BMC Cancer 2014, 14:189\\
+\JournalInfo{BMC Cancer 2014, (IF = 14:189)\\
 Stem Cells (7.7)\\ Stem Cell Research  (4.76)\\ 
 European Journal of Cancer (IF = 5.0)\\ 
 Genome Medicine (3.40) \\
@@ -55,7 +55,7 @@ Ng, Wayne\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\te
 Lonie, Andrew\textsuperscript{3}, Morokoff, Andrew\textsuperscript{2}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
 
 \affiliation{\textsuperscript{1}\textit{Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
-\affiliation{\textsuperscript{2}\textit{Department of Surgery, University of Melbourne, Melbourne, Australia}} % Author affiliation
+\affiliation{\textsuperscript{2}\textit{Department of Surgery, Royal Melbourne Hospital Melbourne, Australia}} % Author affiliation
 \affiliation{\textsuperscript{3}\textit{Victorian Life Sciences Computational Initiative, Melbourne, Australia}} % Author affiliation
 \affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
 
@@ -148,23 +148,31 @@ By raising the absolute value of the correlation to a power \math{\beta > 1} % C
 \section*{Methods} % The \section*{} command stops section numbering
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Methods} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
-  \subsection*{Raw data munging}  
-    \paragraph {The boring stuff}
-The munging information is located in the supplemental data.
-The  weighted gene co-expression network analysis package was used within the R version 3.0.1 environment. The gene expression data was level 3 data that was measured by the TCGA was imported using the broad firehose wget tool. The Agilent array data was selected for various reasons (Supplemenatary).
+  \subsection*{Cell Culture}  
+    \paragraph {Culture of Glioma stem cells}
+\blindtext
 
-  \subsection*{WGCNA parameters}  
-    \paragraph {How and why various thresholds were set}
-Firstly the gene expression matrix was measured for correlation by the WGCNA function \textbf{corAndPvalue}. The following parameters were selected as the cuttoff for determining the significantly coexpressed genes with CD133 \textbf{...}.\\
-The vector of these gene names was then used to build the network of coexpressed genes using the manual module construction method.
+  \subsection*{Flow cytometry}  
+    \paragraph {The important part of gating}
+\blindtext vector of these gene names was then used to build the network of coexpressed genes using the manual module construction method.
     
-  \subsection*{Gene set enrichment of coexpressed genes}  
-    \paragraph {How the enrichments were done}
-As the R package for GSEA is not fully mature the analysis was carried out with the java based GUI. Preranked mode
+  \subsection*{Functional assays}  
+    \paragraph {Proliferation curve}\\
+    \paragraph {Limiting dilution (ELDA)}\\
+    \paragraph {Temozolomide sensitivity}\\
+    \paragraph {Invasion}\\
 
-  \subsection*{Survival analysis}  
-    \paragraph {The method used to interogate the gene signatures with clinical parameteres.}
-Single sample (ss) GSEA is probably the most common choice. I could also use the Coleman et al gene signature score approach. Either way I present this using Kaplan Myier curves.
+
+  \subsection*{Library preparation and RNA sequencing}  
+     \paragraph {RNA-seq libraries}\\
+\blindtext
+    
+  \subsection*{Bioinformatic analysis} 
+    \paragraph {Preprocessing}\\
+    \paragraph {Differential expression testing}\\
+    \paragraph {Subtype classification}\\
+    \paragraph {Gene signature and survival analysis}\\
+\blindtext
 
 %----------------------------------------------------------------------------------------
 %    RESULTS
