@@ -194,7 +194,7 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source   
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/proliferation/Resazurin/140417_6clones/analysis/plots/140430_cd133ColaltedSummary.pdf}
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/proliferation/Resazurin/140417_6clones/analysis/plots/140430_cd133CollatedSummary.pdf}
     \caption{{CD133 cells grow slightly faster and are slightly more temozolomide sensitive} }
     \label{fig:Resazurin}
 \end{figure}
@@ -225,8 +225,11 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
     
 \begin{figure}[ht]
    \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf
+% Change this plot when you change the data source  
+    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/140203_facsBatch/140203_summaries.pdf}
+    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/networks/131104_imageLegendBold.pdf}
+    \includegraphics[page=1, width=.65\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf}
+    
     \caption{{CD133 cells grow slightly faster and are slightly more temozolomide sensitive} }
     \label{fig:Resazurin}
 \end{figure}
