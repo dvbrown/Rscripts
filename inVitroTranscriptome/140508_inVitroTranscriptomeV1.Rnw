@@ -213,7 +213,7 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
     \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_invasionSummarisedCD133.pdf}
 
     \caption{{Not much consistency in invasion assay} }
-    \label{fig:Resazurin}
+    \label{fig:Transcriptome}
 \end{figure}
 
 
@@ -226,9 +226,9 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source  
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/140203_facsBatch/140203_summaries.pdf}
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/networks/131104_imageLegendBold.pdf}
-    \includegraphics[page=1, width=.65\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/140203_facsBatch/140203_summaries.pdf}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/networks/131104_imageLegendBold.pdf}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf}
     
     \caption{{CD133 cells grow slightly faster and are slightly more temozolomide sensitive} }
     \label{fig:Resazurin}
@@ -236,7 +236,35 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 
 %------------------------------------------------------------------------------------------------------------------------
 
-  
+  \subsection*{Comparison of in vitro and in vivo CD133 signature}  
+    \paragraph {There are likely to be completley different}
+\blindtext
+\begin{figure}[ht]
+   \centering 
+% Change this plot when you change the data source  
+
+    \includegraphics[page=1, width=.65\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/graphs/131023_volcano.pdf}
+    
+    \caption{{The transcriptome of in vitro and in vivo signatures are very different} }
+    \label{fig:inVivo}
+\end{figure}
+
+    \paragraph{I will only compare CD133 ositive GSCs. I will save the CD44 comparison to anopther short paper}
+
+%------------------------------------------------------------------------------------------------------------------------
+
+  \subsection*{Gene signature and survival analysis}  
+    \paragraph {Hopefully there are some differences are}
+\blindtext
+
+\begin{figure}[ht]
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/stemCellSig/130117_signature/130123_collatedFigure.pdf}
+    \caption{{A dummy figure illustrating survival analysis}  }
+    \label{fig:Survival}
+\end{figure}
+
 %------------------------------------------------------------------------------------------------------------------------
 
 
