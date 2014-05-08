@@ -164,3 +164,5 @@ plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
                     addGuide = TRUE, guideHang = 0.05,
                     main = "Gene dendrogram and module colors")
 ###########################################################################################################################
+
+############################################# Do CD44 coexpression ################################################
