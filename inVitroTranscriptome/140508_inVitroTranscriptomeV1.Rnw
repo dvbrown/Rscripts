@@ -206,8 +206,8 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source   
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/140417_day7/c12.tif}
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/140417_day7/analysis/c12.tif}
+   % \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/140417_day7/c12.tif}
+    % \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/140417_day7/analysis/c12.tif}
     
     \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_summary.pdf}
     \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_invasionSummarisedCD133.pdf}
@@ -219,28 +219,24 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 
 %------------------------------------------------------------------------------------------------------------------------
 
-\begin{figure}[ht] \centering 
+  \subsection *{Comparing the transcriptome of CD133 negative and positive cells}
+    \paragraph {The in vitro assays that compare CD133 - and CD133 +}
+\blindtext
+    
+\begin{figure}[ht]
+   \centering 
 % Change this plot when you change the data source   
-    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_MISMATCH_REPAIR_41.png}
-    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_OXIDATIVE_PHOSPHORYLATION_81.png}
-    \caption{{Top and bottom gene set enriched the CD133 coexpressed genes}  }
-    \label{fig:B}
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf
+    \caption{{CD133 cells grow slightly faster and are slightly more temozolomide sensitive} }
+    \label{fig:Resazurin}
 \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
 
-  \subsection*{Clinical relevance of CD133 coexpressed genes}  
-    \paragraph {The most important part I guess}
-    
-Paritition the TCGA data in some fashion using the CD133 signature and look for a survival difference between the high and low.Posssibly a low, medium and high.\\
-Look for overlap with the 4 established subtypes. Look for any enriched mutations (eg IDH1) in the groups that may explain the CD133 phenotype \textbf{stem-like or other}. Also do MGMT and the general epigentic landscape if interesting.
-
+  
 %------------------------------------------------------------------------------------------------------------------------
 
-  \subsection*{Comparison of commonly used stem cell markers}  
-    \paragraph {The most contraversial part for wet lab scientists}
-    
-\blindtext
+
 
 %----------------------------------------------------------------------------------------
 %    DISCUSSION
@@ -250,7 +246,7 @@ Look for overlap with the 4 established subtypes. Look for any enriched mutation
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Discussion} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
   \subsection*{I will wildy speculate on my results here}  
     \paragraph {Say something clever here}
-\blindtext
+\lipsum
 
 
 %----------------------------------------------------------------------------------------
