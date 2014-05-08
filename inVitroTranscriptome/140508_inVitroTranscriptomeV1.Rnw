@@ -210,7 +210,7 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
     \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/140417_day7/analysis/c12.tif}
     
     \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_summary.pdf}
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_invasionSummarisedCD133.pdf}
+    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_invasionSummarisedCD133.pdf}
 
     \caption{{Not much consistency in invasion assay} }
     \label{fig:Resazurin}
