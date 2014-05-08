@@ -39,9 +39,11 @@
 %    ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\JournalInfo{Nature Genetics (IF = 35.209)\\ Nature Communications (10.015)\\ 
-Molecular Systems Biology (11.3)\\ Plos Comp Bio (5.515)\\ 
-Bioinformatics (5.3)\\ BMC Bioinformatics (3.03)\\
+\JournalInfo{BMC Cancer 2014, 14:189\\
+Stem Cells (7.7)\\ Stem Cell Research  (4.76)\\ 
+European Journal of Cancer (IF = 5.0)\\ 
+Genome Medicine (3.40) \\
+Journal of Neuro-Oncology (3.12)\\ 
 or similar journal} % Journal information
 
 \Archive{Original article} % Additional notes (e.g. copyright, DOI, review/research article)
@@ -65,25 +67,14 @@ Lonie, Andrew\textsuperscript{3}, Morokoff, Andrew\textsuperscript{2}, Mantamadi
 %----------------------------------------------------------------------------------------
 
 \Abstract{
-The field of stem cell biology, including cancer stem cells, has relied on the use of robust markers that indicate the state of maturity of the cell. These markers are typically interogated using antibodies targeting the extra-cellular protein product or dyes that act as surrogates of the marker in question.
-Examples include CD133, Integrin $\alpha$-6 and ALDH1.
-Some of the low experimental reproducibilty that has been observed in studies of stem cell biology can be attributed to the choice of marker or markers used to identify or isolate the hypothetical stem cell population by antibody based methods.\\
+Glioblastoma multiforme (GBM) is an aggressive cancer of the brain with a median survival of 14 months. The cancer genome atlas was unable to resolve survival based on measurements from the tumour bulk. GBM has been shown to be maintained by a subpopulation of cells termed glioma-initiating cells (GICs). It may be these cells that are responsible for differences in survival.\\
 
-We have conducted an analysis of the Cancer Genome Atlas Glioblastoma Multiforme (GBM) dataset to compare several genetic markers that have been associated with the Glioblastoma stem cell (GSC) phenotype. 
-Validation was carried out by both subsampling and comparison with smaller scale experiments that performed gene expression studies after fluorescence activated cell sorting (FACS).\\
-
-Weighted correlation network analysis (WGCNA) was used to determine the suite of genes that are coexpressed with candidate putative stem cell markers. Gene set enrichment and network analysis was performed to identify gene ontogenies and pathways that are enriched by the coexpression modules. 
-Several markers will be compared for the enrichment of stem-like phenotypes \textit{in silico}.
-The coexpression modules corresponding to the putatitive stem cell markers will be used as gene expression signatures and will be intergrated with molecular and clinical information such as GBM subtype, MGMT methylation, G-CIMP status and overall survival.\\
-
-The conclusions derived from this study will provide insight into the phenotypic properties exhibited by cells expressing candidate stem cell markers and may be able to assist in the choice of marker or markers for future characterization of Glioblastoma stem cells.  The approach described in this article is applicable to alternate normal or cancer stem cell types and biomarkers.\\
+The stem cell marker CD133 was used to isolate GICs by flow cytometry and the phenotypic properties of CD133+ and CD133- cells were compared by cellular and genome-wide methods. The transcriptome of a panel of human GIC samples was measured by RNA-seq to compare groups that differ by survival. The REST pathway was enriched in GICs obtained from short survivors and will be validated functionally.
 }
 
 \begin{document}
 <<setup, include=FALSE, cache=FALSE>>=
 library(knitr)
-library(affy)
-library(limma)
 options(replace.assign=TRUE,width=50)
 opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center', fig.width=5, fig.height=5, fig.show='hold', cache=TRUE, par=TRUE)
 knit_hooks$set(par=function(before, options, envir){
@@ -186,34 +177,7 @@ Single sample (ss) GSEA is probably the most common choice. I could also use the
 The PROM1 gene was processed with WGCNA using the Agilent microarray data from the TCGA glioblastoma (figure 2 top). This sections describes the pattern of coexpressed genes and outlines the overall approach.
 
 %----------------------------------This is the code to generate the histogram of CD133 correlated genes-------------------------
-<<cd133_histogram, echo=FALSE, fig.cap='Distribution of cd133 correlated genes', fig.show='asis', cache=TRUE>>=
-setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
-library(WGCNA)
-load('140415_justTheAgilentData.RData')
 
-# Calculate the correlation between PROM1 expression and all the genes in TCGA GBM
-prom1CorrPval = corAndPvalue(x=datExpr0[,'PROM1'], y=dat)
-
-#Extract the correlation and p-value from the returned list
-prom1C = prom1CorrPval$cor
-prom1Cpower = prom1C^2
-
-prom1P = prom1CorrPval$p
-prom1FDR = p.adjust(prom1P, method='fdr')
-result = t(rbind(prom1C, prom1Cpower, prom1P, prom1FDR))
-colnames(result) = c('correlation', 'weighted_correlation', 'p-value', 'FDR')
-par(mfrow=c(2,2))
-hist(prom1C, main='Prom1 correlations', breaks='FD', xlab='Raw correlation values', cex.main=0.8)
-hist(prom1Cpower, main='Prom1 weighted correlations', breaks='FD', xlab='R squared values', cex.main=0.8)
-hist(prom1P, main='Prom1 p-values', breaks='FD', xlab='Raw p-values', cex.main=0.8)
-hist(prom1FDR, main='Prom1FDR corrected p-values', breaks='FD', xlab='FDR corrected p-values', cex.main=0.8)
-par(mfrow=c(1,1))
-qqnorm(result[,1], main='Distrubution of PROM1 correlated genes')
-qqline(result[,1])
-@
-The cancer genome atlas dataset for GBM was used to interogate the sutie of genes coexpressed with CD133. CD133 being the currently the most accepted marker for glioma stem cells we wished to esatablish the phentoype of the cd133 expressing subpopulation computationally.//
-To this end we identified the most significantly correlated genes with CD133 (PROM1) gene with a cutoff of \textbf {greater than 2 R squared and less than 0.05 FDR corrected p-value} (figure 1). 
-It was established that the correlation datapoints were normally distributed (figure 2).\\
 %------------------------------------------------------------------------------------------------------------------------
 
 %------------------------------------------- Generate a heatmap -------------------------------------------------------------
@@ -269,14 +233,7 @@ The adjacency matrix was transformed into a similarity matrix and a heatmap was 
 
 %------------------------------------------- Generate a cluster dendogram -----------------------------------------------
 
-<<cd133_dendogram, echo=FALSE, fig.cap='Dendogram of cd133 similar genes (prob cut this out)', fig.show='asis', cache=TRUE>>=
-# Plot the dendrogram and colors underneath
-# Convert numeric lables into colors
-plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05,
-                    main = "Gene dendrogram and module colors")
-@
+
 %------------------------------------------------------------------------------------------------------------------------
 
   \subsection*{A network of CD133 coexpressed genes}  
@@ -366,41 +323,5 @@ Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne 
 %----------------------------------------------------------------------------------------
 %    Supplementary Data
 %----------------------------------------------------------------------------------------
-\newpage % Put the supplementary on a new page
-\section*{Supplementary Data} % The \section*{} command stops section numbering
-\addcontentsline{toc}{section}{\hspace*{-\tocsep}Supplementary data} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
-  \subsection*{Aquisition and preparation of gene expression data ie data munging}  
- 
-    \paragraph {TCGA GBM data} 
-The level 3 data was aquired using the broad firehose data with the following command: 
-    % You gotta escape the underscore _ with a backslash
-\textbf{firehose\_get -b -o MAF Agilent U133A clinical stddata 2013\_12\_10 GBM}. This includes clinical, affymetrix and agilent data. The clinical data was reformatted for R using the python script \textbf{meltTCGAGenefiles.py}. The agilent data, which was originally in 2 parts 
-was formatted using the script  \textbf{meltTCGAGenefile.py}. The TCGA uses the keyword "null" when describing empty values. This was changed to "NA" using the script \textbf{changeEmpties2NA.py}.
-
-    \paragraph {Deciding whether to use RNA-seq, Affymetrix or Agilent data} 
-As at March 2014 there were 160 cases with available RNA-seq data, compared to 540 for Affymetrix and Agilent. There for the sake of statistical power, the microarray platforms were preferred. Comaparing the properties of the data showed the Agilent data had a more normal distribution.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Distribution plots of Affymetrix and Agilent %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{figure*}[h] % The * bit means the figure takes up the whole page
-   \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.9\textwidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/limmaResults/explorationPlots/140115_gapdhPlots.pdf}
-    \caption{{Distribution of the GAPDH gene in the Agilent and Affymetrix level 3 normalised TCGA GBM data.}  }
-    \label{fig:S1}
-\end{figure*}
-
-\begin{figure*}[h]
-   \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.9\textwidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/limmaResults/explorationPlots/140115_patientCentricPlots.pdf}
-    \caption{{Distribution of the the probe intensities on Affymetirx and Agilent data for the first patient.}  }
-    \label{fig:S2}
-\end{figure*}
-
-Therefore the analysis was performed with Agilent as it was congruent with statistical assumptions of normality.
-    \subsection*{More definitions of WGCNA}
-    \paragraph {Copy and pasted from Background of WGCNA}
-Intramodular connectivity measures how connected, or co-expressed, a given gene is with respect to the genes of a particular module. The intramodular connectivity may be interpreted as a measure of module membership. It is this value which will be interested with respect to which genes are coexpressed with a marker.
 
 \end{document}
