@@ -43,3 +43,4 @@ makeSquareCoexpressionMatrix <- function (geneCorrelationMatrix, geneExpressionM
   squareMatrix = (longMatrix[colnames(longMatrix),])
   return(squareMatrix)
 }
+makeSquareCoexpressionMatrix(cd133, dat)

@@ -23,8 +23,8 @@
 \setlength{\columnsep}{0.55cm} % Distance between the two columns of text
 \setlength{\fboxrule}{0.75pt} % Width of the border around the abstract
 
-\definecolor{color1}{RGB}{0,100,0} % Color of the article title and sections
-\definecolor{color2}{RGB}{238,238,0}% Color of the boxes behind the abstract and headings
+\definecolor{color1}{RGB}{139,0,0}% Color of the article title and sections
+\definecolor{color2}{RGB}{0,205, 205}% Color of the boxes behind the abstract and headings
 
 \newlength{\tocsep} 
 \setlength\tocsep{1.5pc} % Sets the indentation of the sections in the table of contents
@@ -48,19 +48,19 @@ or similar journal} % Journal information
 
 \Archive{Original article} % Additional notes (e.g. copyright, DOI, review/research article)
 
-\PaperTitle{Functional and genome wide examination of the CD133 marker in Glioblastoma Multiforme Stem Cells} % Article title
+\PaperTitle{Invasive margins and tumour core of GBM have different transcriptonal profiles and expression of cancer stem cell markers} % Article title
 
-\Authors{Brown, Daniel V\textsuperscript{1}*, Nicole Kountouri\textsuperscript{2}, D'Abaco, Giovanna\textsuperscript{2}, 
-Ng, Wayne\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Hollande, Fred\textsuperscript{3}, Drummond, Kate\textsuperscript{2}
-Lonie, Andrew\textsuperscript{3}, Morokoff, Andrew\textsuperscript{2}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
+\Authors{Brown, Daniel V\textsuperscript{1}*, Ng, Wayne\textsuperscript{2}, Amiridis, Stephanie\textsuperscript{2}, 
+Nicole Kountouri\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Hollande, Fred\textsuperscript{3}, Drummond, Kate\textsuperscript{2},
+Lonie, Andrew\textsuperscript{4}, Morokoff, Andrew\textsuperscript{2}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
 
-\affiliation{\textsuperscript{1}\textit{Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
-\affiliation{\textsuperscript{2}\textit{Department of Surgery, Royal Melbourne Hospital Melbourne, Australia}} % Author affiliation
+\affiliation{\textsuperscript{1}\textit{Cancer Signalling laboratory, Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
+\affiliation{\textsuperscript{2}\textit{Department of Surgery, Royal Melbourne Hospital, Melbourne, Australia}} % Author affiliation
 \affiliation{\textsuperscript{3}\textit{Molecular Mechanisms of Tumour Progression, Department of Pathology, Australia}}
-\affiliation{\textsuperscript{3}\textit{Victorian Life Sciences Computational Initiative, Melbourne, Australia}} % Author affiliation
+\affiliation{\textsuperscript{4}\textit{Victorian Life Sciences Computational Initiative, Melbourne, Australia}} % Author affiliation
 \affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
 
-\Keywords{Cancer Stem Cells --- Glioblastoma --- CD133 --- Transcriptome} % Keywords - if you don't want any simply remove all the text between the curly brackets
+\Keywords{Cancer Stem Cells --- Glioblastoma --- Invasion --- Xenograft} % Keywords - if you don't want any simply remove all the text between the curly brackets
 \newcommand{\keywordname}{Keywords} % Defines the keywords heading name
 
 %----------------------------------------------------------------------------------------
@@ -68,9 +68,16 @@ Lonie, Andrew\textsuperscript{3}, Morokoff, Andrew\textsuperscript{2}, Mantamadi
 %----------------------------------------------------------------------------------------
 
 \Abstract{
-Glioblastoma multiforme (GBM) is an aggressive cancer of the brain with a median survival of 14 months. The cancer genome atlas was unable to resolve survival based on measurements from the tumour bulk. GBM has been shown to be maintained by a subpopulation of cells termed glioma-initiating cells (GICs). It may be these cells that are responsible for differences in survival.\\
+Glioblastoma multiforme (GBM) is an aggressive cancer of the brain with a median survival of 14 months. This has been ascribed to the the difficulty of surgical resection due to the invasive nature of GBM. GBM has been shown to be maintained by a subpopulation of cells termed glioma-initiating cells (GICs). It may be these cells that are responsible for invasive potential of high grade gliomas.\\
 
-The stem cell marker CD133 was used to isolate GICs by flow cytometry and the phenotypic properties of CD133+ and CD133- cells were compared by cellular and genome-wide methods. The transcriptome of a panel of human GIC samples was measured by RNA-seq to compare groups that differ by survival. The REST pathway was enriched in GICs obtained from short survivors and will be validated functionally.
+An orthotopic model of GIC driven GBM was used to examine the transcriptome of cells at the core of the tumour and the tumour margins.
+The xenograft derived cells were also sorted by flow cytometry (FACS) for the putative stem cell markers CD133 and CD44.\\
+
+All 4 permutations of the CSC cells sorted by FACS were compared by RNA-seq. Differential gene expression testing, exon usage and clustering were performed to resolve which genetic signature the CSC markers define \emph{in vivo}.\\
+
+My hypothesis is that the tumour margins will express CD44, the hypoxic core will express CD133 and neither will be a marker of stemness. CD44 will mark migration/ invasion and CD133 will mark proliferating/ transit amplifying cells. Potentially the double positive cells will be cancer stem cells\\
+
+This paper reveals novel insights into the tumour margin vs core transcriptome and the difference between CD44 and CD133 cells \emph{in vivo}. If I can get some primary tumour slides and stain them for CD133 and CD44 it will push the article into the next echelon of journals.
 }
 
 \begin{document}

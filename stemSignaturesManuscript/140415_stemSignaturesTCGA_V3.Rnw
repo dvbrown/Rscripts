@@ -48,10 +48,10 @@ or similar journal} % Journal information
 
 \PaperTitle{In silico comparison of cancer stem markers in Glioblastoma Multiforme} % Article title
 
-\Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, People, More\textsuperscript{2}
+\Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, Inuyoe, Michael?\textsuperscript{2}
 Mantamadiotis, Theo\textsuperscript{1}} % Authors
-\affiliation{\textsuperscript{1}\textit{Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
-\affiliation{\textsuperscript{2}\textit{Anyone else who helps me along the way, Melbourne, Australia}} % Author affiliation
+\affiliation{\textsuperscript{1}\textit{Cancer Signalling laboratory, Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
+\affiliation{\textsuperscript{2}\textit{Medical Systems Biology laboratory, Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
 \affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
 
 \Keywords{Stem Cell Markers --- Glioblastoma --- Coexpression --- Gene signature} % Keywords - if you don't want any simply remove all the text between the curly brackets
