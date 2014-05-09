@@ -39,10 +39,10 @@
 %    ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\JournalInfo{Nature Genetics (IF = 35.209)\\ Nature Communications (10.015)\\ 
+\JournalInfo{ Nature Communications (10.015)\\ 
 Molecular Systems Biology (11.3)\\ Plos Comp Bio (5.515)\\ 
 Bioinformatics (5.3)\\ BMC Bioinformatics (3.03)\\
-or similar journal} % Journal information
+or similar SYSTEMS BIOLOGY journal} % Journal information
 
 \Archive{Analytical study} % Additional notes (e.g. copyright, DOI, review/research article)
 

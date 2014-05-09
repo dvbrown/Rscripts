@@ -39,24 +39,24 @@
 %    ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\JournalInfo{BMC Cancer 2014, (IF = 14:189)\\
-Stem Cells (7.7)\\ Stem Cell Research  (4.76)\\ 
-European Journal of Cancer (IF = 5.0)\\ 
-Genome Medicine (3.40) \\
-Journal of Neuro-Oncology (3.12)\\ 
-or similar journal} % Journal information
+\JournalInfo{The Journal of Pathology, (IF = 7.58)\\
+European Journal of Cancer (5.06)\\ Molecular Cancer (5.13)\\ 
+Cancer Research (8.650) \\
+Neuro-Oncology (6.180)\\
+
+or similar \\TRANSLATIONAL RESEARCH journal} % Journal information
 
 \Archive{Original article} % Additional notes (e.g. copyright, DOI, review/research article)
 
-\PaperTitle{Invasive margins and tumour core of GBM have different transcriptonal profiles and expression of cancer stem cell markers} % Article title
+\PaperTitle{Invasive margins and tumour core of Glioblastoma Multiforme differ in expression of cancer stem cell markers and have different transcriptonal profiles} % Article title
 
 \Authors{Brown, Daniel V\textsuperscript{1}*, Ng, Wayne\textsuperscript{2}, Amiridis, Stephanie\textsuperscript{2}, 
-Nicole Kountouri\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Hollande, Fred\textsuperscript{3}, Drummond, Kate\textsuperscript{2},
+Kountouri, Nicole\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Hollande, Fred\textsuperscript{3}, Drummond, Kate\textsuperscript{2},
 Lonie, Andrew\textsuperscript{4}, Morokoff, Andrew\textsuperscript{2}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
 
 \affiliation{\textsuperscript{1}\textit{Cancer Signalling laboratory, Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
 \affiliation{\textsuperscript{2}\textit{Department of Surgery, Royal Melbourne Hospital, Melbourne, Australia}} % Author affiliation
-\affiliation{\textsuperscript{3}\textit{Molecular Mechanisms of Tumour Progression, Department of Pathology, Australia}}
+\affiliation{\textsuperscript{3}\textit{Molecular Mechanisms of Tumour Progression, Department of Pathology, Melbourne, Australia}}
 \affiliation{\textsuperscript{4}\textit{Victorian Life Sciences Computational Initiative, Melbourne, Australia}} % Author affiliation
 \affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
 
@@ -71,13 +71,12 @@ Lonie, Andrew\textsuperscript{4}, Morokoff, Andrew\textsuperscript{2}, Mantamadi
 Glioblastoma multiforme (GBM) is an aggressive cancer of the brain with a median survival of 14 months. This has been ascribed to the the difficulty of surgical resection due to the invasive nature of GBM. GBM has been shown to be maintained by a subpopulation of cells termed glioma-initiating cells (GICs). It may be these cells that are responsible for invasive potential of high grade gliomas.\\
 
 An orthotopic model of GIC driven GBM was used to examine the transcriptome of cells at the core of the tumour and the tumour margins.
-The xenograft derived cells were also sorted by flow cytometry (FACS) for the putative stem cell markers CD133 and CD44.\\
-
+The xenograft derived cells were also sorted by flow cytometry (FACS) for the putative stem cell markers CD133 and CD44.
 All 4 permutations of the CSC cells sorted by FACS were compared by RNA-seq. Differential gene expression testing, exon usage and clustering were performed to resolve which genetic signature the CSC markers define \emph{in vivo}.\\
 
 My hypothesis is that the tumour margins will express CD44, the hypoxic core will express CD133 and neither will be a marker of stemness. CD44 will mark migration/ invasion and CD133 will mark proliferating/ transit amplifying cells. Potentially the double positive cells will be cancer stem cells\\
 
-This paper reveals novel insights into the tumour margin vs core transcriptome and the difference between CD44 and CD133 cells \emph{in vivo}. If I can get some primary tumour slides and stain them for CD133 and CD44 it will push the article into the next echelon of journals.
+This paper reveals novel insights into the signalling pathways that drive the tumour margin and tumour core and the difference between the phenotype of CD44 and CD133 expressing cells \emph{in vivo}. If I can get some primary tumour slides and stain them for CD133 and CD44 it will push this article into the next echelon of journals.
 }
 
 \begin{document}
@@ -110,25 +109,13 @@ if (before && options$fig.show!='none') par(mar=c(4,4,.1,.1),cex.lab=.95,cex.axi
   
 Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the central nervous system. These diverse morphological features have made diagnosis of GBM difficult (1). Molecular profiling of GBM tumours has revealed that similar to other tumours such as breast and ovarian cancer (2,3), GBM is not a single disease but consists of several distinct malignancies. Although GBM is a relatively rare type of cancer it has a 5 year survival of less than 5\% rendering it one of the most lethal types of tumours. Age is the most important risk factor for GBM, with incidence showing a 4th power relationship with age, indicative of a gradual accumulation of oncogenic mutations over time (7).
 
-\subsection*{Some info on cancer stem cell theory}  
-    \paragraph {Why CD133 is not a good marker}
-GICs were initially characterised by expression of the stem cell marker CD133 (PROM1) and were able to form tumours from 100 cells in immune deficient NOD-SCID mice (41). 
-CD133 or prominin-1 was originally described as being an epitope enriched in a hybridoma screen against CD34 isolated haemopoetic progenitors (42). 
-The marker was later shown to be expressed by neural progenitor cells from human fetal brains (43). There are a number of limitations of the CD133 marker for glioma initiating cells. The protein itself is a 115-kDa membrane-associated glycoprotein with no known molecular function, conserved in humans, mice, worms and flies (44). 
-The two major commercial antibodies target different glycoslyated regions of the protein, the precise locations of which are currently unknown. (45). CD133 undergoes mRNA splicing, generating at least 28 isoforms (46), contributing to the variation in detection by antibodies.\\
-However CD133- cells are able to form tumours when 10 spheroids were orthotopically implanted into rat brains. The resulting tumours contained a small fraction of CD133+ cells (48).
-Without a molecular marker to separate CD133- stem cells from non-stem cells it is difficult to examine the properties of this cell type. A variety of other stem cell markers have been trialed such as the adhesion molecules CD44, Integrin-alpha6, CD15 and the multiple-drug resistance protein ABCG2 but have not found wide spread use (45).\\
-\textbf{Expand this intro section to discuss the other markers}
+\subsection*{Some info on invasion and its link to cancer stem cells}  
+    \paragraph {Link EMT to CSC and associated markers}
+\blindtext
 
-  \paragraph {Predictive significance of a stemness signature}
-The clinical significance of CD133 and other stem cell markers are controversial. Immunohistochemistry does not show a statistically significant association of CD133 or CD15 positivity on survival (59). This is in contrast to studies at the mRNA level demonstrating that CD133 (PROM1) expression is a significant negative prognostic factor for both progression-free and overall survival in GBM (60).\\ 
-
-  \paragraph {Phenotypes associated with GSCs}
-Discuss contraversey and lack of reproducibility of some the phenotypic properties of GSCs.
-
-\subsection*{Literature on studies which compare markers}  
-    \paragraph {Studies that I am comparing myself to}
-Pollard, Smith, Yan, Lottaz, Lopez etc.
+\subsection*{The limitations of in vitro and subcutaneous models}  
+    \paragraph {Comment on how my in vitro paper is garbage}
+\blindtext
     
 %----------------------------------------------------------------------------------------
 %    METHODS
@@ -137,19 +124,19 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Methods} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
   \subsection*{Cell Culture}  
-    \paragraph {Culture of Glioma stem cells}
+    \paragraph {Culture of Glioma stem cells} a\\
+\blindtext
+
+  \subsection*{Orthotopic model of CSC driven GBM}  
+    \paragraph {Cite Wayne's paper} a\\
 \blindtext
 
   \subsection*{Flow cytometry}  
-    \paragraph {The important part of gating}
-\blindtext vector of these gene names was then used to build the network of coexpressed genes using the manual module construction method.
+    \paragraph {The important part of gating} a\\
+\blindtext 
     
-  \subsection*{Functional assays}  
-    \paragraph {Proliferation curve} a\\
-    \paragraph {Limiting dilution (ELDA)} a\\
-    \paragraph {Temozolomide sensitivity} a\\
-    \paragraph {Invasion} a\\
-
+  \subsection*{Immunohistochemistry}  
+  \paragraph {How I solved the difficult problem of optimising CD133 \& CD44 IHC} a\\
 
   \subsection*{Library preparation and RNA sequencing}  
      \paragraph {RNA-seq libraries} a\\
@@ -170,8 +157,10 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Results} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
 
-  \subsection*{Isolation and characterisation of GSCs}
-    \paragraph {Isolation and distribution of CD133 marker}
+  \subsection*{Validation of the orthotopic model}
+    \paragraph {Survival curves on the 5 clones that Wayne, Steph and myself prepared} a\\
+    \paragraph {Flow cytometry comparisons of CD133 and CD44} a\\
+    \paragraph {IHC of stem, differentiation markers at tumour core and margin} a\\
 \blindtext
 
 \begin{figure}[ht]
@@ -185,52 +174,10 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 
 %------------------------------------------------------------------------------------------------------------------------
 
-  \subsection *{Characterisation of the phenotypic properties of GSCs}
+  \subsection *{Comparing the transcriptome of the tumour margin and tumour core}
     \paragraph {The in vitro assays that compare CD133 - and CD133 +}
 \blindtext
 
-\begin{figure}[ht]
-   \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/ELDA/140417_elda_6clones/plots/mostMultiplePlot.pdf}
-    \caption{{A slight but non-significant enrichment of sphere forming potential} }
-    \label{fig:ELDA}
-\end{figure}
-
-%------------------------------------------------------------------------------------------------------------------------
-
-\begin{figure}[ht]
-   \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/proliferation/Resazurin/140417_6clones/analysis/plots/140430_cd133CollatedSummary.pdf}
-    \caption{{CD133 cells grow slightly faster and are slightly more temozolomide sensitive} }
-    \label{fig:Resazurin}
-\end{figure}
-
-%------------------------------------------------------------------------------------------------------------------------
-
-\blindtext
-
-\begin{figure}[ht]
-   \centering 
-% Change this plot when you change the data source   
-   % \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/140417_day7/c12.tif}
-    % \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/140417_day7/analysis/c12.tif}
-    
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_summary.pdf}
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_invasionSummarisedCD133.pdf}
-
-    \caption{{Not much consistency in invasion assay} }
-    \label{fig:Transcriptome}
-\end{figure}
-
-
-%------------------------------------------------------------------------------------------------------------------------
-
-  \subsection *{Comparing the transcriptome of CD133 negative and positive cells}
-    \paragraph {The in vitro assays that compare CD133 - and CD133 +}
-\blindtext
-    
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source  
@@ -238,31 +185,53 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/networks/131104_imageLegendBold.pdf}
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf}
     
-    \caption{{CD133 cells grow slightly faster and are slightly more temozolomide sensitive} }
-    \label{fig:Resazurin}
+    \caption{{The suite of genes that are differentially expressed between core and margin} }
+    \label{fig:marginCore}
+\end{figure}
+
+
+%------------------------------------------------------------------------------------------------------------------------
+
+  \subsection*{Comparison of the transcrioptome of the CD133 and CD44 cells}  
+    \paragraph {Do I separate the margin and core for FACS?}
+\blindtext
+
+\begin{figure}[ht]
+   \centering 
+% Change this plot when you change the data source  
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/140203_facsBatch/140203_summaries.pdf}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/networks/131104_imageLegendBold.pdf}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf}
+    
+    \caption{{The suite of genes that are differentially expressed between core and margin} }
+    \label{fig:CD133_CD44}
 \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
 
-  \subsection*{Comparison of in vitro and in vivo CD133 signature}  
-    \paragraph {There are likely to be completley different}
+  \subsection*{Characteristics of the mutations before and after engraftment in mouse}  
+    \paragraph {If the lab wants to spend the money on the TruSeq Cancer Amplicon}
 \blindtext
+
+%------------------------------------------------------------------------------------------------------------------------
+
+  \subsection*{Pattern of CD133 and CD44 in human samples}  
+    \paragraph {Provided I can get some sections and also if I can get the antibodies to work well}
+\blindtext
+
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source  
-
-    \includegraphics[page=1, width=.65\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/graphs/131023_volcano.pdf}
-    
-    \caption{{The transcriptome of in vitro and in vivo signatures are very different} }
-    \label{fig:inVivo}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/ELDA/140226_2ndyearReviewSummary/140226_2ndYearSummary.pdf}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/ELDA/140226_2ndyearReviewSummary/140227_percentPrimaryRecurrent.pdf}
+    \caption{{Pattern of CD133 and CD44 in humans and associated quantification} }
+    \label{fig:IHC}
 \end{figure}
-
-    \paragraph{I will only compare CD133 ositive GSCs. I will save the CD44 comparison to anopther short paper}
 
 %------------------------------------------------------------------------------------------------------------------------
 
   \subsection*{Gene signature and survival analysis}  
-    \paragraph {Hopefully there are some differences are}
+    \paragraph {Use the TCGA data to examine how relevant the signatures I have discovered are}
 \blindtext
 
 \begin{figure}[ht]

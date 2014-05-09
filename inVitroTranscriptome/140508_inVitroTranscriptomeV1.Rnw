@@ -39,16 +39,15 @@
 %    ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\JournalInfo{BMC Cancer 2014, (IF = 14:189)\\
-Stem Cells (7.7)\\ Stem Cell Research  (4.76)\\ 
+\JournalInfo{Stem Cells (7.7)\\ Stem Cell Research  (4.76)\\ 
 European Journal of Cancer (IF = 5.0)\\ 
 Genome Medicine (3.40) \\
 Journal of Neuro-Oncology (3.12)\\ 
-or similar journal} % Journal information
+or similar STEM CELL journal} % Journal information
 
 \Archive{Original article} % Additional notes (e.g. copyright, DOI, review/research article)
 
-\PaperTitle{Functional and genome wide examination of the CD133 marker in Glioblastoma Multiforme Stem Cells} % Article title
+\PaperTitle{Functional and genome wide examination of the cancer stem cell marker CD133 in Glioblastoma Multiforme stem cells} % Article title
 
 \Authors{Brown, Daniel V\textsuperscript{1}*, Nicole Kountouri\textsuperscript{2}, D'Abaco, Giovanna\textsuperscript{2}, 
 Ng, Wayne\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Hollande, Fred\textsuperscript{3}, Drummond, Kate\textsuperscript{2}
@@ -56,7 +55,7 @@ Lonie, Andrew\textsuperscript{3}, Morokoff, Andrew\textsuperscript{2}, Mantamadi
 
 \affiliation{\textsuperscript{1}\textit{Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
 \affiliation{\textsuperscript{2}\textit{Department of Surgery, Royal Melbourne Hospital Melbourne, Australia}} % Author affiliation
-\affiliation{\textsuperscript{3}\textit{Molecular Mechanisms of Tumour Progression, Department of Pathology, Australia}}
+\affiliation{\textsuperscript{3}\textit{Molecular Mechanisms of Tumour Progression, Department of Pathology, Melbourne, Australia}}
 \affiliation{\textsuperscript{3}\textit{Victorian Life Sciences Computational Initiative, Melbourne, Australia}} % Author affiliation
 \affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
 
@@ -232,7 +231,7 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf}
     
     \caption{{CD133 cells grow slightly faster and are slightly more temozolomide sensitive} }
-    \label{fig:Resazurin}
+    \label{fig:inVitro}
 \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
@@ -250,7 +249,7 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
     \label{fig:inVivo}
 \end{figure}
 
-    \paragraph{I will only compare CD133 ositive GSCs. I will save the CD44 comparison to anopther short paper}
+    \paragraph{I will only compare CD133 positive GSCs. I will save the CD44 comparison to anopther short paper}
 
 %------------------------------------------------------------------------------------------------------------------------
 
