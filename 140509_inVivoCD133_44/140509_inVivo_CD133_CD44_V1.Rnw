@@ -73,9 +73,10 @@ Glioblastoma multiforme (GBM) is an aggressive cancer of the brain with a median
 
 An orthotopic model of GIC driven GBM was used to examine the transcriptome of cells sorted by flow cytometry (FACS) for the putative stem cell markers CD133 and CD44.
 The xenograft derived cells at the core of the tumour and the tumour margins were also compared and contrasted with the sorted cells.
-All 4 permutations of the CSC cells sorted by FACS were compared by RNA-seq. Differential gene expression testing, exon usage and clustering were performed to resolve which transcriptional signature the CSC markers define \emph{in vivo} and were related to the tumour core and margin signature.\\
+All 4 permutations of the CSC cells sorted by FACS were compared by RNA-seq. Differential gene expression testing, exon usage and clustering were performed to resolve which transcriptional signature the CSC markers define \emph{in vivo} and were related to the tumour core and margin signature.
+There is evidence that CD133 and CD44 expressing cells are genetically distinct so it may be worth doing the TruSeq cancer panel.\\
 
-My hypothesis is that the tumour margins will express CD44, the peri-hypoxic core will express CD133 and neither will be a marker of stemness. CD44 will mark migration/ invasion and CD133 will mark proliferating/ transit amplifying cells. Potentially the double positive cells will be cancer stem cells\\
+My hypothesis is that the tumour margins will express CD44, the peri-hypoxic core will express CD133 and neither will be a marker of stemness. CD44 will mark migration/ invasion and CD133 will mark proliferating/ transit amplifying cells. Potentially the double positive cells will be cancer stem cells.\\
 
 This paper reveals novel insights into the signalling pathways that drive the tumour margin and tumour core and the difference between the phenotype of CD44 and CD133 expressing cells \emph{in vivo}. If I can get some primary tumour slides and stain them for CD133 and CD44 it will push this article into the next echelon of journals.
 }

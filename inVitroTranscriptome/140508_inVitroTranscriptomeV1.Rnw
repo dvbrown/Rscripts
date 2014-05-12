@@ -51,12 +51,12 @@ or similar \\ STEM CELL journal} % Journal information
 
 \Authors{Brown, Daniel V\textsuperscript{1}*, Kountouri, Nicole\textsuperscript{2}, D'Abaco, Giovanna\textsuperscript{2}, 
 Ng, Wayne\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Hollande, Fred\textsuperscript{3}, Drummond, Kate\textsuperscript{2}
-Lonie, Andrew\textsuperscript{3}, Morokoff, Andrew\textsuperscript{2}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
+Lonie, Andrew\textsuperscript{4}, Morokoff, Andrew\textsuperscript{2}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
 
 \affiliation{\textsuperscript{1}\textit{Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
 \affiliation{\textsuperscript{2}\textit{Department of Surgery, Royal Melbourne Hospital Melbourne, Australia}} % Author affiliation
 \affiliation{\textsuperscript{3}\textit{Molecular Mechanisms of Tumour Progression, Department of Pathology, Melbourne, Australia}}
-\affiliation{\textsuperscript{3}\textit{Victorian Life Sciences Computational Initiative, Melbourne, Australia}} % Author affiliation
+\affiliation{\textsuperscript{4}\textit{Victorian Life Sciences Computational Initiative, Melbourne, Australia}} % Author affiliation
 \affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
 
 \Keywords{Cancer Stem Cells --- Glioblastoma --- CD133 --- Transcriptome} % Keywords - if you don't want any simply remove all the text between the curly brackets

@@ -46,7 +46,7 @@ or similar \\ SYSTEMS BIOLOGY journal} % Journal information
 
 \Archive{Analytical study} % Additional notes (e.g. copyright, DOI, review/research article)
 
-\PaperTitle{In silico comparison of cancer stem markers in Glioblastoma Multiforme} % Article title
+\PaperTitle{In silico comparison of cancer stem markers in Glioblastoma Multiforme by gene coexpression analysis} % Article title
 
 \Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, Inouye, Michael\textsuperscript{2},
 Mantamadiotis, Theo\textsuperscript{1}} % Authors
