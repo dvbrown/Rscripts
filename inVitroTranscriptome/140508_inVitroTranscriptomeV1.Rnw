@@ -39,17 +39,17 @@
 %    ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\JournalInfo{Stem Cells (7.7)\\ Stem Cell Research  (4.76)\\ 
-European Journal of Cancer (IF = 5.0)\\ 
+\JournalInfo{Stem Cells (IF = 7.7)\\ Stem Cell Research  (4.76)\\ 
+European Journal of Cancer (5.0)\\ 
 Genome Medicine (3.40) \\
 Journal of Neuro-Oncology (3.12)\\ 
-or similar STEM CELL journal} % Journal information
+or similar \\ STEM CELL journal} % Journal information
 
 \Archive{Original article} % Additional notes (e.g. copyright, DOI, review/research article)
 
 \PaperTitle{Functional and genome wide examination of the cancer stem cell marker CD133 in Glioblastoma Multiforme stem cells} % Article title
 
-\Authors{Brown, Daniel V\textsuperscript{1}*, Nicole Kountouri\textsuperscript{2}, D'Abaco, Giovanna\textsuperscript{2}, 
+\Authors{Brown, Daniel V\textsuperscript{1}*, Kountouri, Nicole\textsuperscript{2}, D'Abaco, Giovanna\textsuperscript{2}, 
 Ng, Wayne\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Hollande, Fred\textsuperscript{3}, Drummond, Kate\textsuperscript{2}
 Lonie, Andrew\textsuperscript{3}, Morokoff, Andrew\textsuperscript{2}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
 
@@ -69,7 +69,11 @@ Lonie, Andrew\textsuperscript{3}, Morokoff, Andrew\textsuperscript{2}, Mantamadi
 \Abstract{
 Glioblastoma multiforme (GBM) is an aggressive cancer of the brain with a median survival of 14 months. The cancer genome atlas was unable to resolve survival based on measurements from the tumour bulk. GBM has been shown to be maintained by a subpopulation of cells termed glioma-initiating cells (GICs). It may be these cells that are responsible for differences in survival.\\
 
-The stem cell marker CD133 was used to isolate GICs by flow cytometry and the phenotypic properties of CD133+ and CD133- cells were compared by cellular and genome-wide methods. The transcriptome of a panel of human GIC samples was measured by RNA-seq to compare groups that differ by survival. The REST pathway was enriched in GICs obtained from short survivors and will be validated functionally.
+The stem cell marker CD133 was used to isolate GICs by flow cytometry and the phenotypic properties of CD133+ and CD133- cells were compared by cellular and genome-wide methods. The CD133+ positive cells had greater repopulation potentailm proliferated more quickly and were more sensitive to temozolomide. However the CD133- cells were more invasive. The magnitute of these differences were small however.\\
+
+The CD133+ cells overexpressed gene x and y and downregulated gene y compread to CD133- cells. Gene set enrichment analysis suggested a more blah blah blah phenotype, which collaborated the phenotypic data. CD133- overexpressed genes a and b and downregulated gene c which also confirmed the in vitro data. However comparison of GICs grown in vivo revealed a vastly different transcriptional landscape with CD133 expressing cells in this context being more stem like in phenotype.\\
+
+This study lacks novelty as all experiments have been performed before. However there has not been an article that combines phenotypic, in vitro and in vivo experiments together. Our conclusion of the relevence of the in vitro model is also different, as we believe it is a good model to study GICs but not the heterogenity of the tumour bulk.
 }
 
 \begin{document}

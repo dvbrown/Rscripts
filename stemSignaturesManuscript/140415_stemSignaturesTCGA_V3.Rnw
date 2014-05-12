@@ -39,16 +39,16 @@
 %    ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\JournalInfo{ Nature Communications (10.015)\\ 
-Molecular Systems Biology (11.3)\\ Plos Comp Bio (5.515)\\ 
-Bioinformatics (5.3)\\ BMC Bioinformatics (3.03)\\
-or similar SYSTEMS BIOLOGY journal} % Journal information
+\JournalInfo{ Molecular Systems Biology (11.3)\\ 
+Nature Communications (10.015)\\ Plos Comp Bio (5.515)\\ 
+Bioinformatics (5.3)\\ FEBS Journal(4.25)\\ BMC Bioinformatics (3.03)\\
+or similar \\ SYSTEMS BIOLOGY journal} % Journal information
 
 \Archive{Analytical study} % Additional notes (e.g. copyright, DOI, review/research article)
 
 \PaperTitle{In silico comparison of cancer stem markers in Glioblastoma Multiforme} % Article title
 
-\Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, Inuyoe, Michael?\textsuperscript{2}
+\Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, Inouye, Michael\textsuperscript{2},
 Mantamadiotis, Theo\textsuperscript{1}} % Authors
 \affiliation{\textsuperscript{1}\textit{Cancer Signalling laboratory, Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
 \affiliation{\textsuperscript{2}\textit{Medical Systems Biology laboratory, Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
@@ -73,7 +73,7 @@ Weighted correlation network analysis (WGCNA) was used to determine the suite of
 Several markers will be compared for the enrichment of stem-like phenotypes \textit{in silico}.
 The coexpression modules corresponding to the putatitive stem cell markers will be used as gene expression signatures and will be intergrated with molecular and clinical information such as GBM subtype, MGMT methylation, G-CIMP status and overall survival.\\
 
-The conclusions derived from this study will provide insight into the phenotypic properties exhibited by cells expressing candidate stem cell markers and may be able to assist in the choice of marker or markers for future characterization of Glioblastoma stem cells.  The approach described in this article is applicable to alternate normal or cancer stem cell types and biomarkers.\\
+This analytical approach is novel and \textbf{may} provide insight into the phenotypic properties exhibited by cells expressing candidate stem cell markers and may be able to assist in the choice of marker or markers for future characterization of Glioblastoma stem cells.  The approach described in this article is applicable to alternate normal or cancer stem cell types and biomarkers.\\
 }
 
 \begin{document}

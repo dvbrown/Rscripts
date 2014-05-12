@@ -39,28 +39,29 @@
 %    ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\JournalInfo{The Journal of Pathology, (IF = 7.58)\\
-European Journal of Cancer (5.06)\\ Molecular Cancer (5.13)\\ 
-Cancer Research (8.650) \\
-Neuro-Oncology (6.180)\\
+\JournalInfo{Science Translational Medicine (IF = 10.76) \\ Cancer Research (8.650) \\ 
+The Journal of Pathology, (7.58)\\ Neuro-Oncology (6.180)\\
+Molecular Cancer (5.13)\\ European Journal of Cancer (5.06)\\
 
 or similar \\TRANSLATIONAL RESEARCH journal} % Journal information
 
 \Archive{Original article} % Additional notes (e.g. copyright, DOI, review/research article)
 
-\PaperTitle{Invasive margins and tumour core of Glioblastoma Multiforme differ in expression of cancer stem cell markers and have different transcriptonal profiles} % Article title
+\PaperTitle{CD133 and CD44 expressing subpopulations of Glioblastoma Multiforme predominate in different tumour locations and have distinct transcriptonal profiles} % Article title
 
 \Authors{Brown, Daniel V\textsuperscript{1}*, Ng, Wayne\textsuperscript{2}, Amiridis, Stephanie\textsuperscript{2}, 
-Kountouri, Nicole\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Hollande, Fred\textsuperscript{3}, Drummond, Kate\textsuperscript{2},
-Lonie, Andrew\textsuperscript{4}, Morokoff, Andrew\textsuperscript{2}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
+Kountouri, Nicole\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Christie, Michael\textsuperscript{3},
+Hollande, Fred\textsuperscript{4}, Drummond, Kate\textsuperscript{2},
+Lonie, Andrew\textsuperscript{5}, Morokoff, Andrew\textsuperscript{2}, Mantamadiotis, Theo\textsuperscript{1}} % Authors
 
 \affiliation{\textsuperscript{1}\textit{Cancer Signalling laboratory, Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
 \affiliation{\textsuperscript{2}\textit{Department of Surgery, Royal Melbourne Hospital, Melbourne, Australia}} % Author affiliation
-\affiliation{\textsuperscript{3}\textit{Molecular Mechanisms of Tumour Progression, Department of Pathology, Melbourne, Australia}}
-\affiliation{\textsuperscript{4}\textit{Victorian Life Sciences Computational Initiative, Melbourne, Australia}} % Author affiliation
+\affiliation{\textsuperscript{1}\textit{Cancer Diagnostics laboratory, Department of Pathology, University of Melbourne, Melbourne, Australia}}
+\affiliation{\textsuperscript{4}\textit{Molecular Mechanisms of Tumour Progression, Department of Pathology, Melbourne, Australia}}
+\affiliation{\textsuperscript{5}\textit{Victorian Life Sciences Computational Initiative, Melbourne, Australia}} % Author affiliation
 \affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
 
-\Keywords{Cancer Stem Cells --- Glioblastoma --- Invasion --- Xenograft} % Keywords - if you don't want any simply remove all the text between the curly brackets
+\Keywords{Glioblastoma --- Cancer Stem Cells --- Invasion --- Xenograft --- Orthotopic model} % Keywords - if you don't want any simply remove all the text between the curly brackets
 \newcommand{\keywordname}{Keywords} % Defines the keywords heading name
 
 %----------------------------------------------------------------------------------------
@@ -70,11 +71,11 @@ Lonie, Andrew\textsuperscript{4}, Morokoff, Andrew\textsuperscript{2}, Mantamadi
 \Abstract{
 Glioblastoma multiforme (GBM) is an aggressive cancer of the brain with a median survival of 14 months. This has been ascribed to the the difficulty of surgical resection due to the invasive nature of GBM. GBM has been shown to be maintained by a subpopulation of cells termed glioma-initiating cells (GICs). It may be these cells that are responsible for invasive potential of high grade gliomas.\\
 
-An orthotopic model of GIC driven GBM was used to examine the transcriptome of cells at the core of the tumour and the tumour margins.
-The xenograft derived cells were also sorted by flow cytometry (FACS) for the putative stem cell markers CD133 and CD44.
-All 4 permutations of the CSC cells sorted by FACS were compared by RNA-seq. Differential gene expression testing, exon usage and clustering were performed to resolve which genetic signature the CSC markers define \emph{in vivo}.\\
+An orthotopic model of GIC driven GBM was used to examine the transcriptome of cells sorted by flow cytometry (FACS) for the putative stem cell markers CD133 and CD44.
+The xenograft derived cells at the core of the tumour and the tumour margins were also compared and contrasted with the sorted cells.
+All 4 permutations of the CSC cells sorted by FACS were compared by RNA-seq. Differential gene expression testing, exon usage and clustering were performed to resolve which transcriptional signature the CSC markers define \emph{in vivo} and were related to the tumour core and margin signature.\\
 
-My hypothesis is that the tumour margins will express CD44, the hypoxic core will express CD133 and neither will be a marker of stemness. CD44 will mark migration/ invasion and CD133 will mark proliferating/ transit amplifying cells. Potentially the double positive cells will be cancer stem cells\\
+My hypothesis is that the tumour margins will express CD44, the peri-hypoxic core will express CD133 and neither will be a marker of stemness. CD44 will mark migration/ invasion and CD133 will mark proliferating/ transit amplifying cells. Potentially the double positive cells will be cancer stem cells\\
 
 This paper reveals novel insights into the signalling pathways that drive the tumour margin and tumour core and the difference between the phenotype of CD44 and CD133 expressing cells \emph{in vivo}. If I can get some primary tumour slides and stain them for CD133 and CD44 it will push this article into the next echelon of journals.
 }
@@ -215,7 +216,7 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
 
 %------------------------------------------------------------------------------------------------------------------------
 
-  \subsection*{Pattern of CD133 and CD44 in human samples}  
+  \subsection*{Pattern of CD133 and CD44 expression in human samples}  
     \paragraph {Provided I can get some sections and also if I can get the antibodies to work well}
 \blindtext
 
@@ -253,7 +254,7 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Discussion} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
   \subsection*{I will wildy speculate on my results here}  
-    \paragraph {Say something clever here}
+    \paragraph {Say something clever here about the translational potential of my work}
 \lipsum
 
 
