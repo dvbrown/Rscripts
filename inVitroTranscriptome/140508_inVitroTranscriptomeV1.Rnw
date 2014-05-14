@@ -39,15 +39,14 @@
 %    ARTICLE INFORMATION
 %----------------------------------------------------------------------------------------
 
-\JournalInfo{Stem Cells (IF = 7.7)\\ Stem Cell Research  (4.76)\\ 
-European Journal of Cancer (5.0)\\ 
-Genome Medicine (3.40) \\
+\JournalInfo{Stem Cells (IF = 7.7)\\ European Journal of Cancer (5.0)\\ 
+Stem Cell Research  (4.76)\\ Genome Medicine (3.40) \\
 Journal of Neuro-Oncology (3.12)\\ 
 or similar \\ STEM CELL journal} % Journal information
 
 \Archive{Original article} % Additional notes (e.g. copyright, DOI, review/research article)
 
-\PaperTitle{Functional and genome wide examination of the cancer stem cell marker CD133 in Glioblastoma Multiforme stem cells} % Article title
+\PaperTitle{Functional and genome wide examination of the cancer stem cell marker CD133 \emph{and CD44?} in Glioblastoma Multiforme stem cells} % Article title
 
 \Authors{Brown, Daniel V\textsuperscript{1}*, Kountouri, Nicole\textsuperscript{2}, D'Abaco, Giovanna\textsuperscript{2}, 
 Ng, Wayne\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Hollande, Fred\textsuperscript{3}, Drummond, Kate\textsuperscript{2}

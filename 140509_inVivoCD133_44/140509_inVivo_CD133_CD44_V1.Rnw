@@ -73,7 +73,7 @@ Glioblastoma multiforme (GBM) is an aggressive cancer of the brain with a median
 
 An orthotopic model of GIC driven GBM was used to examine the transcriptome of cells sorted by flow cytometry (FACS) for the putative stem cell markers CD133 and CD44.
 The xenograft derived cells at the core of the tumour and the tumour margins were also compared and contrasted with the sorted cells.
-All 4 permutations of the CSC cells sorted by FACS were compared by RNA-seq. Differential gene expression testing, exon usage and clustering were performed to resolve which transcriptional signature the CSC markers define \emph{in vivo} and were related to the tumour core and margin signature.
+All 4 permutations of the CSC cells sorted by FACS were characterised by RNA-seq. Differential gene expression testing, exon usage and clustering were performed to resolve which transcriptional signature the CSC markers define \emph{in vivo} and were related to the tumour core and margin signature by means of clustering and associated machine learning algorithms.
 There is evidence that CD133 and CD44 expressing cells are genetically distinct so it may be worth doing the TruSeq cancer panel.\\
 
 My hypothesis is that the tumour margins will express CD44, the peri-hypoxic core will express CD133 and neither will be a marker of stemness. CD44 will mark migration/ invasion and CD133 will mark proliferating/ transit amplifying cells. Potentially the double positive cells will be cancer stem cells.\\
@@ -168,8 +168,8 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source   
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/facsData/140301_clone035_controlsAnnotatedV2.png}\\
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/facsData/140301_differentPatients.png}
+    \includegraphics[page=1, width=.55\linewidth]{/Users/d.brown6/Documents/facsData/flowJo/analysis/140513_tripleStain/controls.pdf}\\
+    \includegraphics[page=1, width=.55\linewidth]{/Users/d.brown6/Documents/facsData/flowJo/analysis/140513_tripleStain/samples.pdf}
     \caption{ {How the GSCs were FACS sorted and the basis of the comparisons I use} }
     \label{fig:FACS}
 \end{figure}
