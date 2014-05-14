@@ -72,7 +72,7 @@ The stem cell marker CD133 was used to isolate GICs by flow cytometry and the ph
 
 The CD133+ cells overexpressed gene x and y and downregulated gene y compread to CD133- cells. Gene set enrichment analysis suggested a more blah blah blah phenotype, which collaborated the phenotypic data. CD133- overexpressed genes a and b and downregulated gene c which also confirmed the in vitro data. However comparison of GICs grown in vivo revealed a vastly different transcriptional landscape with CD133 expressing cells in this context being more stem like in phenotype.\\
 
-This study lacks novelty as all experiments have been performed before. However there has not been an article that combines phenotypic, in vitro and in vivo experiments together. Our conclusion of the relevence of the in vitro model is also different, as we believe it is a good model to study GICs but not the heterogenity of the tumour bulk.
+This study lacks novelty as all experiments have been performed before. However there has not been an article that combines phenotypic, in vitro and in vivo experiments together. Our conclusion of the relevence of the in vitro model is also different, as "we believe it is a good model to study GICs but not the heterogenity of the tumour bulk". {\small  Maybe we can end the paper with phenotypic charactersation of the CD44/ CD133 single and double populations, rounded out with some qPCR data. The conclusion in this instance will be "more than 1 marker is required to define cancer stem cells in GBM"}.\\
 }
 
 \begin{document}

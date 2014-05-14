@@ -207,7 +207,7 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
     
     \caption{{The suite of genes that are differentially expressed between tumour core and margin} }
     \label{fig:CD133_CD44}
-\end{figure}
+ \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
 
@@ -228,7 +228,7 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/ELDA/140226_2ndyearReviewSummary/140227_percentPrimaryRecurrent.pdf}
     \caption{{Pattern of CD133 and CD44 in humans and associated quantification} }
     \label{fig:IHC}
-\end{figure}
+ \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
 
@@ -242,7 +242,7 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
     \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/stemCellSig/130117_signature/130123_collatedFigure.pdf}
     \caption{{A dummy figure illustrating survival analysis}  }
     \label{fig:Survival}
-\end{figure}
+ \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
 
