@@ -161,7 +161,7 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
 
   \subsection*{Validation of the orthotopic model}
     \paragraph {Survival curves on the 5 clones that Wayne, Steph and myself prepared} a\\
-    \paragraph {Flow cytometry comparisons of CD133 and CD44} a\\
+    \paragraph {Flow cytometry comparisons of CD133 and CD44} \blindtext \\
     \paragraph {IHC of stem, differentiation markers at tumour core and margin} a\\
 \blindtext
 
@@ -170,14 +170,14 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
 % Change this plot when you change the data source   
     \includegraphics[page=1, width=.55\linewidth]{/Users/d.brown6/Documents/facsData/flowJo/analysis/140513_tripleStain/controls.pdf}\\
     \includegraphics[page=1, width=.55\linewidth]{/Users/d.brown6/Documents/facsData/flowJo/analysis/140513_tripleStain/samples.pdf}
-    \caption{ {How the GSCs were FACS sorted and the basis of the comparisons I use} }
+    \caption{ {How the GSCs were FACS sorted on CD133 and CD44 and the basis of the comparisons I use} }
     \label{fig:FACS}
 \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
 
-  \subsection *{Comparing the transcriptome of the tumour margin and tumour core}
-    \paragraph {The in vitro assays that compare CD133 - and CD133 +}
+  \subsection *{Comparing the transcriptome of the CD133, CD44 populations}
+    \paragraph {RNA-seq of the 4 permuations of the FACS sorted samples and the tumour margin and core.}
 \blindtext
 
 \begin{figure}[ht]
@@ -187,15 +187,15 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/networks/131104_imageLegendBold.pdf}
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf}
     
-    \caption{{The suite of genes that are differentially expressed between core and margin} }
+    \caption{{The suite of genes that are differentially expressed between CD133 and CD44} }
     \label{fig:marginCore}
 \end{figure}
 
 
 %------------------------------------------------------------------------------------------------------------------------
 
-  \subsection*{Comparison of the transcrioptome of the CD133 and CD44 cells}  
-    \paragraph {Do I separate the margin and core for FACS?}
+  \subsection*{Comparison of the transcriptome of the tumour margin and core}  
+    \paragraph {Dependent on getting a resonable amount of material to RNA-seq the tumour margin that is free of mouse tissue contamination.}
 \blindtext
 
 \begin{figure}[ht]
@@ -205,7 +205,7 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/networks/131104_imageLegendBold.pdf}
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf}
     
-    \caption{{The suite of genes that are differentially expressed between core and margin} }
+    \caption{{The suite of genes that are differentially expressed between tumour core and margin} }
     \label{fig:CD133_CD44}
 \end{figure}
 
@@ -233,7 +233,7 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
 %------------------------------------------------------------------------------------------------------------------------
 
   \subsection*{Gene signature and survival analysis}  
-    \paragraph {Use the TCGA data to examine how relevant the signatures I have discovered are}
+    \paragraph {Use the TCGA data to examine how relevant the signatures I have discovered are to predict survival}
 \blindtext
 
 \begin{figure}[ht]
@@ -266,7 +266,7 @@ Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the cent
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Acknowledgements} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
     \paragraph {Shout out to}
-Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne Ng for discussions about stem cells and Eric Joo for coffee runs. Also Colonel Sanders made a contribution to my nutrition. Prof Paul Waring for paying the bills.
+Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne Ng for discussions about stem cells. Apprieciation to House of cards, Dr Daxx and Haymarket for caffinated sustenance.
 
 %----------------------------------------------------------------------------------------
 %    References

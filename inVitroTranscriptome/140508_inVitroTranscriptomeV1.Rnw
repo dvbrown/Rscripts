@@ -46,7 +46,7 @@ or similar \\ STEM CELL journal} % Journal information
 
 \Archive{Original article} % Additional notes (e.g. copyright, DOI, review/research article)
 
-\PaperTitle{Functional and genome wide examination of the cancer stem cell marker CD133 \emph{and CD44?} in Glioblastoma Multiforme stem cells} % Article title
+\PaperTitle{Functional and genome wide examination of the cancer stem cell marker CD133 {\small \emph{and CD44?}} in Glioblastoma Multiforme stem cells} % Article title
 
 \Authors{Brown, Daniel V\textsuperscript{1}*, Kountouri, Nicole\textsuperscript{2}, D'Abaco, Giovanna\textsuperscript{2}, 
 Ng, Wayne\textsuperscript{2}, Daniel, Paul M\textsuperscript{1}, Filiz, Gulay\textsuperscript{1}, Hollande, Fred\textsuperscript{3}, Drummond, Kate\textsuperscript{2}
@@ -187,7 +187,7 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source   
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/ELDA/140417_elda_6clones/plots/mostMultiplePlot.pdf}
+    \includegraphics[page=1, width=.65\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/ELDA/140417_elda_6clones/plots/mostMultiplePlot.pdf}
     \caption{{A slight but non-significant enrichment of sphere forming potential} }
     \label{fig:ELDA}
 \end{figure}
@@ -197,7 +197,7 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source   
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/proliferation/Resazurin/140417_6clones/analysis/plots/140430_cd133CollatedSummary.pdf}
+    \includegraphics[page=1, width=.65\linewidth]{/Users/d.brown6/Documents/Cell_biology/proliferation/Resazurin/140417_6clones/analysis/plots/140430_cd133CollatedSummary.pdf}
     \caption{{CD133 cells grow slightly faster and are slightly more temozolomide sensitive} }
     \label{fig:Resazurin}
 \end{figure}
@@ -212,8 +212,8 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
    % \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/140417_day7/c12.tif}
     % \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/140417_day7/analysis/c12.tif}
     
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_summary.pdf}
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_invasionSummarisedCD133.pdf}
+    \includegraphics[page=1, width=.65\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_summary.pdf}
+    \includegraphics[page=1, width=.65\linewidth]{/Users/d.brown6/Documents/Cell_biology/microscopy/invasion/140414_invasion/plots/140430_invasionSummarisedCD133.pdf}
 
     \caption{{Not much consistency in invasion assay} }
     \label{fig:Transcriptome}
@@ -233,7 +233,7 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/networks/131104_imageLegendBold.pdf}
     \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/GSEA/original/131025_nonSignificantNatureGenes.pdf}
     
-    \caption{{CD133 cells grow slightly faster and are slightly more temozolomide sensitive} }
+    \caption{{Genes differentially expressed between CD133 positive and CD133 negative cells and associated gene set enrichments} }
     \label{fig:inVitro}
 \end{figure}
 
@@ -246,7 +246,7 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
    \centering 
 % Change this plot when you change the data source  
 
-    \includegraphics[page=1, width=.65\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/graphs/131023_volcano.pdf}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/graphs/131023_volcano.pdf}
     
     \caption{{The transcriptome of in vitro and in vivo signatures are very different} }
     \label{fig:inVivo}
@@ -263,14 +263,26 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source   
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/stemCellSig/130117_signature/130123_collatedFigure.pdf}
-    \caption{{A dummy figure illustrating survival analysis}  }
+    \includegraphics[page=1, width=.55\linewidth]{/Users/d.brown6/Documents/stemCellSig/130117_signature/130123_collatedFigure.pdf}
+    \caption{{The \emph{in vitro} signature compared to the \emph{in vivo} signature using the TCGA data. Comparing which is more relevant.}  }
     \label{fig:Survival}
 \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
 
+  \subsection*{The CD133/ CD44 double positive population is more enriched for stemlike/ invasive properties}  
+    \paragraph {Pad this out with some qPCR also, markers based on the RNA-seq on CD133}
+\blindtext
+    
+\begin{figure}[ht]
+   \centering 
 
+    \includegraphics[page=1, width=.55\linewidth]{/Users/d.brown6/Documents/Cell_biology/metaFigure/140501_fig/collationHeatMap/140501_heatMap.pdf} \\
+    \includegraphics[page=1, width=.55\linewidth]{/Users/d.brown6/Documents/RNAdata/qPCRexpt/140331_cd133s/analysis/140403_ddCtSamplePositives.pdf}
+    
+    \caption{{The \emph{in vitro} properties of the CD133/ CD44 single and double positive populations} }
+    \label{fig:CD44}
+\end{figure}
 
 %----------------------------------------------------------------------------------------
 %    DISCUSSION
@@ -290,8 +302,7 @@ Pollard, Smith, Yan, Lottaz, Lopez etc.
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Acknowledgements} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
     \paragraph {Shout out to}
-Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne Ng for discussions about stem cells and Eric Joo for coffee runs. Also Colonel Sanders made a contribution to my nutrition. Prof Paul Waring for paying the bills.
-
+Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne Ng for discussions about stem cells. Apprieciation to House of cards, Dr Daxx and Haymarket for caffinated sustenance.
 %----------------------------------------------------------------------------------------
 %    References
 %----------------------------------------------------------------------------------------
