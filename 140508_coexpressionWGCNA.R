@@ -14,7 +14,14 @@ plotCoexpression(cd133, 'CD133')
 cd133genes = cd133[abs(cd133[,1]) > 2*sd(cd133[,1]) & cd133[,4] < 0.05,] # Use twice the standard deviation and significantly correlated
 cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
 
+cd133Dissim = makeDissimilarity(cd133Square)
 
+# Make a heatmap and store the colors of the idenitfied submodules
+cd133Color = buildHeatMap(cd133Dissim, 'CD133')
+# Make MDS plot
+par(mfrow=c(1,1))
+cmd1 = cmdscale((cd133Dissim), 3)
+plot(cmd1, col=cd133Color, main = 'MDS plot of CD133 coexpressed genes', xlab='Most variation', ylab='Second most variation')
 
 ######################################## CD44 coexpressed Genes ################################################
 cd44 = correlateGeneWithGEM(dat, 'CD44')
@@ -23,4 +30,13 @@ plotCoexpression(cd44, 'CD44')
 # Subset the dataframe with correlation values for those with high correlation and significance
 #cd44genes = cd44[cd44[,2] > 0.1 & cd44[,4] < 0.05,]
 cd44genes = cd44[abs(cd44[,1]) > 2*sd(cd44[,1]) & cd44[,4] < 0.05,] # Use twice the standard deviation and significantly correlated
-cd144Square = makeSquareCoexpressionMatrix(cd44genes, dat)
+cd44Square = makeSquareCoexpressionMatrix(cd44genes, dat)
+
+cd44Dissim = makeDissimilarity(cd44Square)
+
+# Make a heatmap and store the colors of the idenitfied submodules
+cd44Color = buildHeatMap(cd44Dissim, 'CD44')
+# Make MDS plot
+par(mfrow=c(1,1))
+cmd1 = cmdscale((cd44Dissim), 3)
+plot.new(cmd1, col=cd44Color, main = 'MDS plot of CD44 coexpressed genes', xlab='Most variation', ylab='Second most variation')

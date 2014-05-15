@@ -43,3 +43,35 @@ makeSquareCoexpressionMatrix <- function (geneCorrelationMatrix, geneExpressionM
   squareMatrix = (longMatrix[colnames(longMatrix),])
   return(squareMatrix)
 }
+
+makeDissimilarity <- function (squareMatrix) {
+  # Take the square adjacency matrix and return the dissimilarity matrix. This increases the magnitude of the contrasts
+  # Calculate the topological overlap matrix
+  similarity = TOMsimilarity(squareMatrix, TOMType='unsigned', verbose=3)
+  row.names(similarity) = row.names(squareMatrix)
+  colnames(similarity) = row.names(squareMatrix)
+  # Calculate dissimilarity matrix
+  dissTOM = 1-similarity
+  return (dissTOM)
+}
+
+buildHeatMap <- function (dissimilarityMatrix, gene='PROM1') {
+  # There are several methods for branch cutting; our standard method is the Dynamic Tree Cut from the package dynamicTreeCut
+  # Module identification using dynamic tree cut. This is the most basic method and returns 3 modules when the cutHeight is 0.999 (default 0.99)
+    
+  geneTree = flashClust(as.dist(dissimilarityMatrix), method = "average")
+  dynamicMods = cutreeDynamic(dendro = geneTree, cutHeight=0.999, method='tree')
+  table(dynamicMods)
+  # Convert numeric lables into colors
+  dynamicColors = labels2colors(dynamicMods)
+  
+  # Transform dissTOM with a power to make moderately strong connections more visible in the heatmap
+  plotTOM = dissimilarityMatrix^6
+  # Set diagonal to NA for a nicer plot
+  diag(plotTOM) = NA
+  title = paste("Network heatmap plot of", gene, "coexpressed genes")
+  # Plot the heatmap
+  TOMplot(plotTOM, geneTree, dynamicColors, main = title) #, terrainColors=FALSE)
+  #,labRow=prom1CgenesNames, ColorsLeft=NA)
+  return (dynamicColors)
+}
