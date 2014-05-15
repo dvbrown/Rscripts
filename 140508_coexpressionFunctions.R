@@ -100,15 +100,16 @@ modGenes = row.names(dissimilarityMatrix)[inModule]
 modTOM = dissimilarityMatrix[inModule, inModule]
 dimnames(modTOM) = list(modGenes, modGenes)
 
-modGeneIDs =getBM(filters="hgnc_symbol", 
-            attributes=c("ensembl_gene_id", 'entrezgene'),
-            values= dimnames(modTOM),
-            mart= mart)
+# modGeneIDs =getBM(filters="hgnc_symbol", 
+#             attributes=c("ensembl_gene_id", 'entrezgene',"description", "hgnc_symbol"),
+#             values= dimnames(modTOM),
+#             mart= mart)
 
-#Export the network into edge and node list files for cytoscape
+# Export the network into edge and node list files for cytoscape
 cyt = exportNetworkToCytoscape(modTOM, edgeFile=paste(gene, "_CytoEdge", ".txt",sep=""),
                                 nodeFile=paste(gene, "_CytoNode", ".txt",sep=""),
-                               weighted=TRUE, threshold=0.02, nodeNames=modGenes, altNodeNames=modGeneIDs[,'ensembl_gene_id'],
+                               weighted=TRUE, threshold=0.02, nodeNames=modGenes, altNodeNames=NA,#modGeneIDs[,'ensembl_gene_id'],
                                nodeAttr = moduleColors[inModule])
+
 return (cyt)
 }
