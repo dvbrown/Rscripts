@@ -32,7 +32,7 @@ plotCoexpression <- function (geneCorrelationMatrix, gene) {
 
 makeSquareCoexpressionMatrix <- function (geneCorrelationMatrix, geneExpressionMatrix) {
   # Returns a square adjacency matrix containing the module of genes highly coexpression with the gene of interest
-    geneNames = row.names(geneCorrelationMatrix)
+  geneNames = row.names(geneCorrelationMatrix)
   # Build the network adjacency
   # Use the top correlated genes with PROM1 and measure their correlation with the transcriptome
   longMatrix = adjacency(geneExpressionMatrix,  selectCols = geneNames, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
@@ -43,4 +43,3 @@ makeSquareCoexpressionMatrix <- function (geneCorrelationMatrix, geneExpressionM
   squareMatrix = (longMatrix[colnames(longMatrix),])
   return(squareMatrix)
 }
-makeSquareCoexpressionMatrix(cd133, dat)
