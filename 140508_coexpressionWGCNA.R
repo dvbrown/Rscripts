@@ -6,6 +6,7 @@ options(stringsAsFactors=F)
 list.files()
 
 load('140415_justTheAgilentData.RData')
+setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/')
 
 ######################################## CD133 coexpressed Genes ################################################
 cd133 = correlateGeneWithGEM(dat, 'PROM1')
@@ -21,8 +22,8 @@ cd133Color = buildHeatMap(cd133Dissim, 'CD133')
 # Make MDS plot
 makeMDS(cd133Dissim, cd133Color, 'CD133')
 
-cd133_cytoscapeInput = cytoScapeInput(cd133Dissim, cd133Color)
-
+# Export to cytoscape
+cd133_cytoscape = cytoScapeInput(cd133Dissim, cd133Color, 'CD133')
 
 ######################################## CD44 coexpressed Genes ################################################
 cd44 = correlateGeneWithGEM(dat, 'CD44')
@@ -39,3 +40,5 @@ cd44Dissim = makeDissimilarity(cd44Square)
 cd44Color = buildHeatMap(cd44Dissim, 'CD44')
 # Make MDS plot
 makeMDS(cd44Dissim, cd44Color, 'CD44')
+
+cd44_cytoscape = cytoScapeInput(cd44Dissim, cd44Color, 'CD44')

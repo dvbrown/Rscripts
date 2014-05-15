@@ -1,4 +1,7 @@
 library(WGCNA)
+library(biomaRt)
+
+mart<- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
 
 correlateGeneWithGEM <- function (geneExpressionMatrix = dat, gene='PROM1') {
   # Calculate the correlation between PROM1 expression and all the genes in TCGA GBM
@@ -83,7 +86,7 @@ makeMDS <- function (dissimilarityMatrix, moduleColors, gene='CD133') {
   plot(cmd1, col=moduleColors, main = paste('MDS plot of', gene, 'coexpressed genes'), xlab='Most variation', ylab='Second most variation')
 }
 
-cytoScapeInput <- function (dissimilarityMatrix, moduleColors) {
+cytoScapeInput <- function (dissimilarityMatrix, moduleColors, gene="PROM1") {
 # The following R code allow one to specify connection strenghts input to cytoscape
 # Select modules based on some measure
 modules = c("blue", "brown")
@@ -91,23 +94,21 @@ modules = c("blue", "brown")
 inModule = is.finite(match(moduleColors, moduleColors))
 #modProbes = probes[inModule]
 #match1 = match[modProbes, GeneAnnotation$substanceBXH]
-modGenes = row.names(dissimilarityMatrix)#[inModule]
+modGenes = row.names(dissimilarityMatrix)[inModule]
 
 # Select the corresponding topological overlap
-modTOM = dissimilarityMatrix#[inModule, inModule]
+modTOM = dissimilarityMatrix[inModule, inModule]
 dimnames(modTOM) = list(modGenes, modGenes)
 
-# Export the network into edge and node list files for cytoscape
-# cyt = exportNetworkToCytoscape(modTOM, edgeFile=paste("CytoEdge", paste(modules, collapse="-"), ".txt",sep=""),
-#                                 nodeFile=paste("CytoNode", paste(modules, collapse="-"), ".txt",sep=""),
-#                                weighted=TRUE, threshold=0.02, nodeNames=modGenes, altNodeNames=modGenes,
-#                                nodeAttr = moduleColors[inModule])
+modGeneIDs =getBM(filters="hgnc_symbol", 
+            attributes=c("ensembl_gene_id", 'entrezgene'),
+            values= dimnames(modTOM),
+            mart= mart)
 
-cyt = exportNetworkToCytoscape(dissimilarityMatrix, edgeFile=paste("CytoEdge", paste(dissimilarityMatrix, collapse="-"), ".txt",sep=""),
-                               nodeFile=paste("CytoNode", paste(dissimilarityMatrix, collapse="-"), ".txt",sep=""),
-                               weighted=TRUE, threshold=0.02, nodeNames=modGenes, altNodeNames=modGenes,
-                               nodeAttr = moduleColors)#[inModule])
+#Export the network into edge and node list files for cytoscape
+cyt = exportNetworkToCytoscape(modTOM, edgeFile=paste(gene, "_CytoEdge", ".txt",sep=""),
+                                nodeFile=paste(gene, "_CytoNode", ".txt",sep=""),
+                               weighted=TRUE, threshold=0.02, nodeNames=modGenes, altNodeNames=modGeneIDs[,'ensembl_gene_id'],
+                               nodeAttr = moduleColors[inModule])
 return (cyt)
 }
-
-cd133_cytoscape = cytoScapeInput(cd133Dissim, cd133Color)
