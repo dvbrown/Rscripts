@@ -21,6 +21,9 @@ cd133Color = buildHeatMap(cd133Dissim, 'CD133')
 # Make MDS plot
 makeMDS(cd133Dissim, cd133Color, 'CD133')
 
+cd133_cytoscapeInput = cytoScapeInput(cd133Dissim, cd133Color)
+
+
 ######################################## CD44 coexpressed Genes ################################################
 cd44 = correlateGeneWithGEM(dat, 'CD44')
 plotCoexpression(cd44, 'CD44')

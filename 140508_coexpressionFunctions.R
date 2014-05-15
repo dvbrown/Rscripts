@@ -88,20 +88,26 @@ cytoScapeInput <- function (dissimilarityMatrix, moduleColors) {
 # Select modules based on some measure
 modules = c("blue", "brown")
 # Select module probes
-inModule = is.finite(match(moduleColors, modules))
+inModule = is.finite(match(moduleColors, moduleColors))
 #modProbes = probes[inModule]
 #match1 = match[modProbes, GeneAnnotation$substanceBXH]
-modGenes = row.names(dissimilarityMatrix)[match1]
+modGenes = row.names(dissimilarityMatrix)#[inModule]
 
 # Select the corresponding topological overlap
-modTOM = TOM[inModule, inModule]
+modTOM = dissimilarityMatrix#[inModule, inModule]
 dimnames(modTOM) = list(modGenes, modGenes)
 
 # Export the network into edge and node list files for cytoscape
-cyt = exportNetworkToCytoscape(modTOM, edgeFile=paste("CytoEdge", paste(modules, collapse="-"), ".txt",sep=""),
-                                nodeFile=paste("CytoNode", paste(modules, collapse="-"), ".txt",sep=""),
-                               weighted=TRUE, threshold=0.02, nodeNames=modProbes, altNodeNames=modGenes,
-                               nodeAttr = moduleColors[inModule])
+# cyt = exportNetworkToCytoscape(modTOM, edgeFile=paste("CytoEdge", paste(modules, collapse="-"), ".txt",sep=""),
+#                                 nodeFile=paste("CytoNode", paste(modules, collapse="-"), ".txt",sep=""),
+#                                weighted=TRUE, threshold=0.02, nodeNames=modGenes, altNodeNames=modGenes,
+#                                nodeAttr = moduleColors[inModule])
+
+cyt = exportNetworkToCytoscape(dissimilarityMatrix, edgeFile=paste("CytoEdge", paste(dissimilarityMatrix, collapse="-"), ".txt",sep=""),
+                               nodeFile=paste("CytoNode", paste(dissimilarityMatrix, collapse="-"), ".txt",sep=""),
+                               weighted=TRUE, threshold=0.02, nodeNames=modGenes, altNodeNames=modGenes,
+                               nodeAttr = moduleColors)#[inModule])
 return (cyt)
 }
-cytoScapeInput(cd133Dissim, cd133Color)
+
+cd133_cytoscape = cytoScapeInput(cd133Dissim, cd133Color)
