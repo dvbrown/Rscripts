@@ -75,3 +75,33 @@ buildHeatMap <- function (dissimilarityMatrix, gene='PROM1') {
   #,labRow=prom1CgenesNames, ColorsLeft=NA)
   return (dynamicColors)
 }
+
+makeMDS <- function (dissimilarityMatrix, moduleColors, gene='CD133') {
+  # Make MDS plot using the dissimilarity matrix and the module colors from flash clustering
+  par(mfrow=c(1,1))
+  cmd1 = cmdscale((dissimilarityMatrix), 3)
+  plot(cmd1, col=moduleColors, main = paste('MDS plot of', gene, 'coexpressed genes'), xlab='Most variation', ylab='Second most variation')
+}
+
+cytoScapeInput <- function (dissimilarityMatrix, moduleColors) {
+# The following R code allow one to specify connection strenghts input to cytoscape
+# Select modules based on some measure
+modules = c("blue", "brown")
+# Select module probes
+inModule = is.finite(match(moduleColors, modules))
+#modProbes = probes[inModule]
+#match1 = match[modProbes, GeneAnnotation$substanceBXH]
+modGenes = row.names(dissimilarityMatrix)[match1]
+
+# Select the corresponding topological overlap
+modTOM = TOM[inModule, inModule]
+dimnames(modTOM) = list(modGenes, modGenes)
+
+# Export the network into edge and node list files for cytoscape
+cyt = exportNetworkToCytoscape(modTOM, edgeFile=paste("CytoEdge", paste(modules, collapse="-"), ".txt",sep=""),
+                                nodeFile=paste("CytoNode", paste(modules, collapse="-"), ".txt",sep=""),
+                               weighted=TRUE, threshold=0.02, nodeNames=modProbes, altNodeNames=modGenes,
+                               nodeAttr = moduleColors[inModule])
+return (cyt)
+}
+cytoScapeInput(cd133Dissim, cd133Color)

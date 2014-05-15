@@ -19,9 +19,7 @@ cd133Dissim = makeDissimilarity(cd133Square)
 # Make a heatmap and store the colors of the idenitfied submodules
 cd133Color = buildHeatMap(cd133Dissim, 'CD133')
 # Make MDS plot
-par(mfrow=c(1,1))
-cmd1 = cmdscale((cd133Dissim), 3)
-plot(cmd1, col=cd133Color, main = 'MDS plot of CD133 coexpressed genes', xlab='Most variation', ylab='Second most variation')
+makeMDS(cd133Dissim, cd133Color, 'CD133')
 
 ######################################## CD44 coexpressed Genes ################################################
 cd44 = correlateGeneWithGEM(dat, 'CD44')
@@ -37,6 +35,4 @@ cd44Dissim = makeDissimilarity(cd44Square)
 # Make a heatmap and store the colors of the idenitfied submodules
 cd44Color = buildHeatMap(cd44Dissim, 'CD44')
 # Make MDS plot
-par(mfrow=c(1,1))
-cmd1 = cmdscale((cd44Dissim), 3)
-plot.new(cmd1, col=cd44Color, main = 'MDS plot of CD44 coexpressed genes', xlab='Most variation', ylab='Second most variation')
+makeMDS(cd44Dissim, cd44Color, 'CD44')
