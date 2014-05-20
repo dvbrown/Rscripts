@@ -184,100 +184,53 @@ Single sample (ss) GSEA is probably the most common choice. I could also use the
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Results} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
   \subsection*{Discovering the suite of CD133 coexpressed genes}
     \paragraph {What I discovered}
-The PROM1 gene was processed with WGCNA using the Agilent microarray data from the TCGA glioblastoma (figure 2 top). This sections describes the pattern of coexpressed genes and outlines the overall approach.
+The PROM1 gene was processed with WGCNA using the Agilent microarray data from the TCGA glioblastoma (see supplemental for why Agilent was selected). This sections describes the pattern of coexpressed genes and outlines the overall approach.
 
-%----------------------------------This is the code to generate the histogram of CD133 correlated genes-------------------------
+%---------------------------------------------------------------------------------------------------------------------
 <<cd133_histogram, echo=FALSE, fig.cap='Distribution of cd133 correlated genes', fig.show='asis', cache=TRUE>>=
+# Insert some code here
+getwd()
 setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
 library(WGCNA)
+source('/Users/d.brown6/Documents/Rscripts/140508_coexpressionFunctions.R')
+options(stringsAsFactors=F)
+list.files()
+
 load('140415_justTheAgilentData.RData')
+setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/')
 
-# Calculate the correlation between PROM1 expression and all the genes in TCGA GBM
-prom1CorrPval = corAndPvalue(x=datExpr0[,'PROM1'], y=dat)
+######################################## CD133 coexpressed Genes ################################################
+cd133 = correlateGeneWithGEM(dat, 'PROM1')
+plotCoexpression(cd133, 'CD133')
 
-#Extract the correlation and p-value from the returned list
-prom1C = prom1CorrPval$cor
-prom1Cpower = prom1C^2
-
-prom1P = prom1CorrPval$p
-prom1FDR = p.adjust(prom1P, method='fdr')
-result = t(rbind(prom1C, prom1Cpower, prom1P, prom1FDR))
-colnames(result) = c('correlation', 'weighted_correlation', 'p-value', 'FDR')
-par(mfrow=c(2,2))
-hist(prom1C, main='Prom1 correlations', breaks='FD', xlab='Raw correlation values', cex.main=0.8)
-hist(prom1Cpower, main='Prom1 weighted correlations', breaks='FD', xlab='R squared values', cex.main=0.8)
-hist(prom1P, main='Prom1 p-values', breaks='FD', xlab='Raw p-values', cex.main=0.8)
-hist(prom1FDR, main='Prom1FDR corrected p-values', breaks='FD', xlab='FDR corrected p-values', cex.main=0.8)
-par(mfrow=c(1,1))
-qqnorm(result[,1], main='Distrubution of PROM1 correlated genes')
-qqline(result[,1])
 @
 The cancer genome atlas dataset for GBM was used to interogate the sutie of genes coexpressed with CD133. CD133 being the currently the most accepted marker for glioma stem cells we wished to esatablish the phentoype of the cd133 expressing subpopulation computationally.//
-To this end we identified the most significantly correlated genes with CD133 (PROM1) gene with a cutoff of \textbf {greater than 2 R squared and less than 0.05 FDR corrected p-value} (figure 1). 
-It was established that the correlation datapoints were normally distributed (figure 2).\\
+To this end we identified the most significantly correlated genes with CD133 (PROM1) gene with a cutoff of \textbf {greater than 2 standard deviations from the mean and less than 0.05 FDR corrected p-value} (figure 1). It was established that the correlation datapoints were normally distributed (figure 2).\\
+
+The most critical parameter was the cutoff used to build the model of coexpressed genes. \textbf {write some more stuffs here}.
+
 %------------------------------------------------------------------------------------------------------------------------
 
 %------------------------------------------- Generate a heatmap -------------------------------------------------------------
 <<cd133_heatmap, echo=FALSE, fig.cap='Heatmap of cd133 similar genes', fig.show='asis', cache=TRUE>>=
-# Subset the dataframe with correlation values for those with high correlation and significance
-prom1Cgenes = result[result[,2] > 0.1 & result[,4] < 0.05,]
-prom1CgenesNames = row.names(prom1Cgenes)
+# Generate the CUTOFF for the coexpressed genes to build the network
+cd133genes = cd133[abs(cd133[,1]) > 2*sd(cd133[,1]) & cd133[,4] < 0.05,] # Use twice the standard deviation and significantly correlated
 
-# Build the network adjacency
-# Use the top correlated genes with PROM1 and measure their correlation with the transcriptome
-adjacencyProm1 = adjacency(datExpr0, 
-                            selectCols = prom1CgenesNames, #for correlation networks only (see below); can be used to select genes whose adjacencies will be calculated. Should be either a numeric vector giving the indices of the genes to be used, or a boolean vector indicating which genes are to be used.
-                            type = "unsigned", power = 6, corFnc = "cor", #corOptions = "use = 'p'",
-                            distFnc = "dist", distOptions = "method = 'euclidean'")
+cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
 
-# Make the adjacency matrix square
-squareAdjacency = (adjacencyProm1[colnames(adjacencyProm1),])
+cd133Dissim = makeDissimilarity(cd133Square)
 
-# Calculate the similarity matrix
-similarity = TOMsimilarity(squareAdjacency, TOMType='unsigned', verbose=0)
-row.names(similarity) = row.names(squareAdjacency)
-colnames(similarity) = row.names(squareAdjacency)
-
-# Visulaising the network that was built
-
-# Calculate dissimilarity
-dissTOM = 1-similarity
-# Transform dissTOM with a power to make moderately strong connections more visible in the heatmap
-plotTOM = plotTOM = dissTOM^6
-# Set diagonal to NA for a nicer plot
-diag(plotTOM) = NA
-
-# Call the hierarchical clustering function. This is the faster implementation of WGCNA version
-geneTree = flashClust(as.dist(dissTOM), method = "average")
-
-#Branches of the dendrogram group together densely interconnected, highly co-expressed genes. Module identifcation amounts to the identification of individual branches
-#There are several methods for branch cutting; our standard method is the Dynamic Tree Cut from the package dynamicTreeCut
-
-# Module identification using dynamic tree cut. This is the most basic method and returns 3 modules when the cutHeight is 0.999 (default 0.99)
-dynamicMods = cutreeDynamic(dendro = geneTree, cutHeight=0.999, method='tree')
-
-# Convert numeric lables into colors
-dynamicColors = labels2colors(dynamicMods)
-
-# Plot the heatmap
-TOMplot(plotTOM, geneTree, dynamicColors, main = "Network heatmap plot of CD133 coexpressed genes")
-
+# Make a heatmap and store the colors of the idenitfied submodules
+cd133Color = buildHeatMap(cd133Dissim, 'CD133')
+# Make MDS plot
+#pdf('cd133_MDS.pdf', paper='a4')
+makeMDS(cd133Dissim, cd133Color, 'CD133')
+#dev.off()
 @
-The set of \textbf {134} genes that were significantly coexpressed were subsequently analysed by weighted coexpression analysis to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the network adjacency algorithm.
+
+The set of \textbf {approx 600} genes that were significantly coexpressed were subsequently analysed by weighted coexpression analysis to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the network adjacency algorithm.
 The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3).
 
-%------------------------------------------------------------------------------------------------------------------------
-
-%------------------------------------------- Generate a cluster dendogram -----------------------------------------------
-
-<<cd133_dendogram, echo=FALSE, fig.cap='Dendogram of cd133 similar genes (prob cut this out)', fig.show='asis', cache=TRUE>>=
-# Plot the dendrogram and colors underneath
-# Convert numeric lables into colors
-plotDendroAndColors(geneTree, dynamicColors, "Dynamic Tree Cut",
-                    dendroLabels = FALSE, hang = 0.03,
-                    addGuide = TRUE, guideHang = 0.05,
-                    main = "Gene dendrogram and module colors")
-@
 %------------------------------------------------------------------------------------------------------------------------
 
   \subsection*{A network of CD133 coexpressed genes}  
@@ -296,8 +249,9 @@ This manual network is probably going to be more relevant than the dendogram I h
 %------------------------------------------------------------------------------------------------------------------------
 
   \subsection*{Gene sets enriched for cd133 coexpressed genes}  
-    \paragraph {Functional enrichment of supoosed stem like genes}
-\blindtext
+    \paragraph {Functional enrichment of apparently stem like genes - This is real}
+
+Using the Pearson correlation coefficient gave no significant pathways enriched in \textbf{CD133}. It did give some interesting ones in \textbf{CD44} including Integrin, Firbinolysis and NF-k B pathways. Using the correlation value itself (signed) gave mitotic prophase, DNA replication and cell cycle for \textbf{CD133}. I have doubts about the robustness of the correlation value. However trying to raise the correlation value to the power of 6 (as WGCNA does) only gives ethanol oxidation as the significant value. It seems like 
 
 \begin{figure}[ht]
    \centering 

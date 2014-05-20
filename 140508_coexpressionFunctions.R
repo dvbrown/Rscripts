@@ -1,7 +1,7 @@
 library(WGCNA)
-library(biomaRt)
+#library(biomaRt)
 
-mart<- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
+#mart<- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
 
 correlateGeneWithGEM <- function (geneExpressionMatrix = dat, gene='PROM1') {
   # Calculate the correlation between PROM1 expression and all the genes in TCGA GBM
@@ -88,9 +88,7 @@ makeMDS <- function (dissimilarityMatrix, moduleColors, gene='CD133') {
 
 cytoScapeInput <- function (dissimilarityMatrix, moduleColors, gene="PROM1") {
 # The following R code allow one to specify connection strenghts input to cytoscape
-# Select modules based on some measure
-modules = c("blue", "brown")
-# Select module probes
+# Select all module probes
 inModule = is.finite(match(moduleColors, moduleColors))
 #modProbes = probes[inModule]
 #match1 = match[modProbes, GeneAnnotation$substanceBXH]
@@ -100,6 +98,7 @@ modGenes = row.names(dissimilarityMatrix)[inModule]
 modTOM = dissimilarityMatrix[inModule, inModule]
 dimnames(modTOM) = list(modGenes, modGenes)
 
+# The retreival of gene IDs doesn't work as there are many to one mappings
 # modGeneIDs =getBM(filters="hgnc_symbol", 
 #             attributes=c("ensembl_gene_id", 'entrezgene',"description", "hgnc_symbol"),
 #             values= dimnames(modTOM),
