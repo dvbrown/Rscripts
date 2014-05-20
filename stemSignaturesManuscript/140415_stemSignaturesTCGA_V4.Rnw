@@ -236,7 +236,7 @@ The adjacency matrix was transformed into a similarity matrix and a heatmap was 
   \subsection*{A network of CD133 coexpressed genes}  
     \paragraph {Network analysis}
 Use the STRING database to pull some information on the known interactions bwtween the suite of CD133 coexpressed genes. The import the binary interaction matrix into cytoscape and decorate it with information on the correlation values and the p-values. Use the degree sorted layout to give an idea of the hub genes. Be sure to highlight where CD133 is.\\
-This manual network is probably going to be more relevant than the dendogram I have currently in there.
+Next step is to map correlation to the network to figure out positively and negatively correlated genes.
 
 \begin{figure}[ht]
    \centering 

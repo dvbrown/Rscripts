@@ -29,7 +29,7 @@ makeMDS(cd133Dissim, cd133Color, 'CD133')
 #dev.off()
 
 # Export to cytoscape
-#cd133_cytoscape = cytoScapeInput(1-cd133Dissim, cd133Color, 'CD133')
+cd133_cytoscape = cytoScapeInput(1-cd133Dissim, cd133Color,coexpressedShortList=cd133genes, 'CD133')
 #cd133_cytoscape1 = cd133_cytoscape[[2]]
 
 ######################################## CD44 coexpressed Genes ################################################
@@ -52,4 +52,4 @@ cd44Color = buildHeatMap(cd44Dissim, 'CD44')
 makeMDS(cd44Dissim, cd44Color, 'CD44')
 #dev.off()
 
-cd44_cytoscape = cytoScapeInput(1-cd44Dissim, cd44Color, 'CD44')
+cd44_cytoscape = cytoScapeInput(1-cd44Dissim, cd44Color, coexpressedShortList=cd44genes, 'CD44')

@@ -86,8 +86,9 @@ makeMDS <- function (dissimilarityMatrix, moduleColors, gene='CD133') {
   plot(cmd1, col=moduleColors, main = paste('MDS plot of', gene, 'coexpressed genes'), xlab='Most variation', ylab='Second most variation')
 }
 
-cytoScapeInput <- function (dissimilarityMatrix, moduleColors, gene="PROM1") {
-# The following R code allow one to specify connection strenghts input to cytoscape
+cytoScapeInput <- function (dissimilarityMatrix, moduleColors, coexpressedShortList, gene="PROM1") {
+# The following R code allow one to specify connection strenghts input to cytoscape.
+# CoexpressedShortList is the dataframe which subset the full coexpression data and contains raw correlation values
 # Select all module probes
 inModule = is.finite(match(moduleColors, moduleColors))
 #modProbes = probes[inModule]
@@ -108,7 +109,8 @@ dimnames(modTOM) = list(modGenes, modGenes)
 cyt = exportNetworkToCytoscape(modTOM, edgeFile=paste(gene, "_CytoEdge", ".txt",sep=""),
                                 nodeFile=paste(gene, "_CytoNode", ".txt",sep=""),
                                weighted=TRUE, threshold=0.02, nodeNames=modGenes, altNodeNames=NA,#modGeneIDs[,'ensembl_gene_id'],
-                               nodeAttr = moduleColors[inModule])
+                               nodeAttr = coexpressedShortList[,'correlation'])
+                                   #c(moduleColors[inModule], coexpressedShortList[,'correlation'], coexpressedShortList[,'FDR']))
 
 return (cyt)
 }
