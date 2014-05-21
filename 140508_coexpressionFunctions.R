@@ -114,26 +114,24 @@ cyt = exportNetworkToCytoscape(modTOM, edgeFile=paste(gene, "_CytoEdge", ".txt",
 return (cyt)
 }
 
-subsample10times <- function (# Insert some arguments) {
+subsample10times <- function (geneExpressionMatrix=dat, gene="PROM1", iterations=10) {
 #Subsample the data matrix to validate
-    
   boot_subsample <- function(x, subsample_size) {
-      #' @param x the data matrix
-      #' @param subsample_size the number of observations (rows) to select at random from x.
-      #' @return a random subsample of the data matrix, x.
+# A function to subset the gene expression matrix with replacement. Use the same number of cases
+      #' x the data matrix
+      #' subsample_size the number of observations (rows) to select at random from x.
+      #' a random subsample of the data matrix, x.
          y = x[sample(x = seq_len(nrow(x)), size = subsample_size, replace=TRUE), ]
          return (y)
   }
   
-  subSamplePatientsForCorr <- function (geneExpressionMatrix=dat, gene='PROM1') {
+  subSamplePatientsForCorr <- function (expressionMatrix=dat, marker='PROM1') {
+# A wrapper for the correlateGeneWithGEM function that returns only the correlation value
     subDat = boot_subsample(geneExpressionMatrix, length(row.names(geneExpressionMatrix)))
     subsamplingCorr = correlateGeneWithGEM(subDat, gene)
-    #plotCoexpression(subsamplingCorr, "CD133")
-    # Subset the dataframe with correlation values for those with high correlation and significance
-    #subSampledProm1Genes = subsamplingCorr[abs(subsamplingCorr[,1]) > 2*sd(subsamplingCorr[,1]) & subsamplingCorr[,4] < 0.05,]
-    return (subsamplingCorr[,1]) #(cbind(result, subsamplingCorr[,1]))
+    return (subsamplingCorr[,1])
   }
-  
-  result = replicate(10, subSamplePatientsForCorr(dat, 'PROM1'), simplify="array")
+# Execute the functions with replacate the number of times specified by iterations  
+  result = replicate(iterations, subSamplePatientsForCorr(geneExpressionMatrix, gene), simplify="array")
   return (result)
 }
