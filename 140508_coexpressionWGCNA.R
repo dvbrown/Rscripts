@@ -11,10 +11,24 @@ setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GB
 ######################################## CD133 coexpressed Genes ################################################
 cd133 = correlateGeneWithGEM(dat, 'PROM1')
 #write.table(cd133, './results/140520_cd133Coexpression.txt', row.names=T, sep='\t')
-#write.table(abs(cd133), './results/140520_cd133CoexpressionAbs.txt', row.names=T, sep='\t')
-
-
 plotCoexpression(cd133, 'CD133')
+
+# subsample and return summary statistics
+cd133SubsamplesCorr = subsample10times(dat, "PROM1", 10, "correlation")
+cd133SubsamplesFDR = subsample10times(dat, "PROM1", 10, "FDR")
+
+par(mfrow=c(2,2))
+hist(apply(cd133SubsamplesCorr, 1, coVar), breaks='FD', main="Coefficent of variation in correlation scores across 10 subsamples", 
+     xlab="% CV", col="orange", xlim=c(-1000,1000))
+hist(apply(cd133SubsamplesCorr, 1, sd), breaks='FD', main="Variation in correlation scores across 10 subsamples", 
+     xlab="Standard deviation", col="blue")
+hist(apply(cd133SubsamplesFDR, 1, sd), breaks='FD', main="Variation in FDR scores across 10 subsamples", 
+     xlab="standard deviation of FDR", col="forestgreen")
+boxplot(cd133SubsamplesCorr, main="Distribution of correlation scores across 10 subsamples", col=rainbow(10), xlab="Subsample", ylab="Correlation")
+par(mfrow=c(1,1))
+
+cd133Subsamples1 = cd133Subsamples
+cd133Subsamples1$stDev = as.vector(apply(cd133Subsamples, 1, sd))
 
 cd133genes = cd133[abs(cd133[,1]) > 2*sd(cd133[,1]) & cd133[,4] < 0.05,] # Use twice the standard deviation and significantly correlated
 cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)

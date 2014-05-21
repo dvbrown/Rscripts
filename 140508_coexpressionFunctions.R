@@ -3,6 +3,12 @@ library(WGCNA)
 
 #mart<- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
 
+
+coVar <- function(x) {
+    result = 100*(sd(x) / mean(x))
+    return (result)
+}
+
 correlateGeneWithGEM <- function (geneExpressionMatrix = dat, gene='PROM1') {
   # Calculate the correlation between PROM1 expression and all the genes in TCGA GBM
   # The geneExpressionMatrix should be a numeric matrix with genes as columns as rows and patients as rows
@@ -114,7 +120,7 @@ cyt = exportNetworkToCytoscape(modTOM, edgeFile=paste(gene, "_CytoEdge", ".txt",
 return (cyt)
 }
 
-subsample10times <- function (geneExpressionMatrix=dat, gene="PROM1", iterations=10) {
+subsample10times <- function (geneExpressionMatrix=dat, gene="PROM1", iterations=10, statistic="correlation") {
 #Subsample the data matrix to validate
   boot_subsample <- function(x, subsample_size) {
 # A function to subset the gene expression matrix with replacement. Use the same number of cases
@@ -129,7 +135,7 @@ subsample10times <- function (geneExpressionMatrix=dat, gene="PROM1", iterations
 # A wrapper for the correlateGeneWithGEM function that returns only the correlation value
     subDat = boot_subsample(geneExpressionMatrix, length(row.names(geneExpressionMatrix)))
     subsamplingCorr = correlateGeneWithGEM(subDat, gene)
-    return (subsamplingCorr[,1])
+    return (subsamplingCorr[,statistic])
   }
 # Execute the functions with replacate the number of times specified by iterations  
   result = replicate(iterations, subSamplePatientsForCorr(geneExpressionMatrix, gene), simplify="array")

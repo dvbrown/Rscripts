@@ -210,6 +210,8 @@ To this end we identified the most significantly correlated genes with CD133 (PR
 
 The most critical parameter was the cutoff used to build the model of coexpressed genes. \textbf {write some more stuffs here}.
 
+WRITE UP THE SUBSAMPLING analysis
+
 %------------------------------------------------------------------------------------------------------------------------
 
 %------------------------------------------- Generate a heatmap -------------------------------------------------------------
