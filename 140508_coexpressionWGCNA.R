@@ -30,7 +30,6 @@ makeMDS(cd133Dissim, cd133Color, 'CD133')
 
 # Export to cytoscape
 cd133_cytoscape = cytoScapeInput(1-cd133Dissim, cd133Color,coexpressedShortList=cd133genes, 'CD133')
-#cd133_cytoscape1 = cd133_cytoscape[[2]]
 
 ######################################## CD44 coexpressed Genes ################################################
 cd44 = correlateGeneWithGEM(dat, 'CD44')

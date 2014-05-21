@@ -242,9 +242,10 @@ Next step is to map correlation to the network to figure out positively and nega
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source   
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/networks/131104_imageLegendBold.pdf}
-    \caption{{A dummy figure illustrating network analysis}  }
-    \label{fig:D}
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/public-datasets/stddata_2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/networks/CD133_CytoNodeV2.png}
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/public-datasets/stddata_2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/networks/CD44_CytoNode.png}
+    \caption{{The network obtained from coexpression of CD133 (top) and CD44 (bottom)}  }
+    \label{fig:network}
 \end{figure}
 
 %------------------------------------------------------------------------------------------------------------------------
