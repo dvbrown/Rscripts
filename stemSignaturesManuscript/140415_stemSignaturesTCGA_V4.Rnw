@@ -190,14 +190,12 @@ The PROM1 gene was processed with WGCNA using the Agilent microarray data from t
 %---------------------------------------------------------------------------------------------------------------------
 <<cd133_histogram, echo=FALSE, fig.cap='Distribution of cd133 correlated genes', fig.show='asis', cache=TRUE>>=
 # Insert some code here
-getwd()
 setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
 library(WGCNA)
 source('/Users/d.brown6/Documents/Rscripts/140508_coexpressionFunctions.R')
 options(stringsAsFactors=F)
-list.files()
 
-load('140415_justTheAgilentData.RData')
+load('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/140415_justTheAgilentData.RData')
 setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/')
 
 ######################################## CD133 coexpressed Genes ################################################
@@ -208,18 +206,17 @@ plotCoexpression(cd133, 'CD133')
 The cancer genome atlas dataset for GBM was used to interogate the sutie of genes coexpressed with CD133. CD133 being the currently the most accepted marker for glioma stem cells we wished to esatablish the phentoype of the cd133 expressing subpopulation computationally.//
 To this end we identified the most significantly correlated genes with CD133 (PROM1) gene with a cutoff of \textbf {greater than 2 standard deviations from the mean and less than 0.05 FDR corrected p-value} (figure 1). It was established that the correlation datapoints were normally distributed (figure 2).\\
 
-The most critical parameter was the cutoff used to build the model of coexpressed genes. A cutoff of 2 plus or minus standard deviations and a FDR less than 0.05 was used to obtain the list of genes that are significantly coexpressed with the markers of interest. This is about 600 genes for any marker. 
+The most critical parameter was the cutoff used to identify the coexpressed genes. A cutoff of 2 plus or minus standard deviations and a FDR less than 0.05 was used to obtain the list of genes that are significantly coexpressed with the markers of interest. This is about 600 genes for any marker. 
 The consequence of this is the top genes are roughly the same number but the magnitude of them are different. In the case of CD44 the correlation values are much higher than for CD133.
 
 %------------------------------------------------------------------------------------------------------------------------
 
 %------------------------------------------- Generate a heatmap -------------------------------------------------------------
-<<cd133_heatmap, echo=FALSE, fig.cap='Heatmap of cd133 similar genes', fig.show='asis', cache=TRUE>>=
+<<cd133_heatmap, echo=FALSE, fig.cap='Identifying the suite of CD133 coexpressed genes. (Top) heatmap of the coexpressed CD133 module. (Bottom) the level of variation in the submodules', fig.show='asis', cache=TRUE>>=
 # Generate the CUTOFF for the coexpressed genes to build the network
 cd133genes = cd133[abs(cd133[,1]) > 2*sd(cd133[,1]) & cd133[,4] < 0.05,] # Use twice the standard deviation and significantly correlated
 
 cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
-
 cd133Dissim = makeDissimilarity(cd133Square)
 
 # Make a heatmap and store the colors of the idenitfied submodules
@@ -243,8 +240,8 @@ Next step is to map correlation to the network to figure out positively and nega
 \begin{figure}[ht]
    \centering 
 % Change this plot when you change the data source   
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/public-datasets/stddata_2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/networks/CD133_CytoNodeV2.png}
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/public-datasets/stddata_2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/networks/CD44_CytoNode.png}
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/networks/CD133_CytoNodeV2.png}
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/networks/CD44_CytoNode.png}
     \caption{{The network obtained from coexpression of CD133 (top) and CD44 (bottom)}  }
     \label{fig:network}
 \end{figure}

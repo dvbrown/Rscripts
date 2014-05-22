@@ -152,11 +152,6 @@ cutoffCoxpression = function(subSampledCorrMat, subSampledFDRMat) {
 
 }
 
-cd133SubsamplesCorr1 = cd133SubsamplesCorr
-head(cd133SubsamplesCorr1)
-apply(cd133SubsamplesCorr1, 2, cutoffCoxpression, cd133SubsamplesFDR)
-
-
 plotResampling = function(resamplingCorrMatrix, resamplingFDRMatrix, originalCoexpressionMatrix, gene="CD133") {
     # Plot resampling metrics
     par(mfrow=c(2,2))
