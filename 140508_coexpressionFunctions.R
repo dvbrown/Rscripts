@@ -141,3 +141,28 @@ subsample10times <- function (geneExpressionMatrix=dat, gene="PROM1", iterations
   result = replicate(iterations, subSamplePatientsForCorr(geneExpressionMatrix, gene), simplify="array")
   return (result)
 }
+
+
+cutoffCoxpression = function(subSampledCorrMat_vec, subSampledFDRMat_vec) {
+    # A function that makes the cutoff so it can passed to apply
+    result = subSampledCorrMat_vec[subSampledCorrMat_vec[abs
+                                                         (subSampledCorrMat_vec) > 2*sd(subSampledCorrMat_vec) & 
+                                                             subSampledFDRMat_vec < 0.05,] # Use twice the standard deviation and significantly correlated
+
+}
+
+cd133SubsamplesCorr1 = cd133SubsamplesCorr
+head(cd133SubsamplesCorr1)
+
+
+
+# Plot resampling metrics
+par(mfrow=c(2,2))
+hist(apply(cd133SubsamplesCorr, 1, coVar), breaks='FD', main="Coefficent of variation in correlation scores across 10 subsamples", 
+     xlab="% CV", col="orange", xlim=c(-1000,1000))
+hist(apply(cd133SubsamplesCorr, 1, sd), breaks='FD', main="Variation in correlation scores across 10 subsamples", 
+     xlab="Standard deviation", col="blue")
+hist(apply(cd133SubsamplesFDR, 1, sd), breaks='FD', main="Variation in FDR scores across 10 subsamples", 
+     xlab="standard deviation of FDR", col="forestgreen")
+boxplot(cd133SubsamplesCorr, main="Distribution of correlation scores across 10 subsamples", col=rainbow(10), xlab="Subsample", ylab="Correlation")
+par(mfrow=c(1,1))
