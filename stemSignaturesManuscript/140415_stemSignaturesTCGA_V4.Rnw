@@ -77,7 +77,7 @@ This analytical approach is novel and \textbf{may} provide insight into the phen
 }
 
 \begin{document}
-<<setup, include=FALSE, cache=FALSE>>=
+<<setup, include=FALSE, cache=FALSE, echo=FALSE>>=
 library(knitr)
 library(affy)
 library(limma)
@@ -208,9 +208,8 @@ plotCoexpression(cd133, 'CD133')
 The cancer genome atlas dataset for GBM was used to interogate the sutie of genes coexpressed with CD133. CD133 being the currently the most accepted marker for glioma stem cells we wished to esatablish the phentoype of the cd133 expressing subpopulation computationally.//
 To this end we identified the most significantly correlated genes with CD133 (PROM1) gene with a cutoff of \textbf {greater than 2 standard deviations from the mean and less than 0.05 FDR corrected p-value} (figure 1). It was established that the correlation datapoints were normally distributed (figure 2).\\
 
-The most critical parameter was the cutoff used to build the model of coexpressed genes. \textbf {write some more stuffs here}.
-
-WRITE UP THE SUBSAMPLING analysis
+The most critical parameter was the cutoff used to build the model of coexpressed genes. A cutoff of 2 plus or minus standard deviations and a FDR less than 0.05 was used to obtain the list of genes that are significantly coexpressed with the markers of interest. This is about 600 genes for any marker. 
+The consequence of this is the top genes are roughly the same number but the magnitude of them are different. In the case of CD44 the correlation values are much higher than for CD133.
 
 %------------------------------------------------------------------------------------------------------------------------
 
