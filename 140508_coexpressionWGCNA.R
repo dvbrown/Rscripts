@@ -14,8 +14,9 @@ cd133 = correlateGeneWithGEM(dat, 'PROM1')
 plotCoexpression(cd133, 'CD133')
 
 # subsample and return summary statistics
-cd133SubsamplesCorr = subsample10times(dat, "PROM1", 10, "correlation")
-cd133SubsamplesFDR = subsample10times(dat, "PROM1", 10, "FDR")
+cd133SubsamplesCorr = subsample10times(dat, "PROM1", 100, "correlation")
+cd133SubsamplesFDR = subsample10times(dat, "PROM1", 100, "FDR")
+plotResampling(cd133SubsamplesCorr, cd133SubsamplesFDR, cd133, "PROM1")
 
 cd133genes = cd133[abs(cd133[,1]) > 2*sd(cd133[,1]) & cd133[,4] < 0.05,] # Use twice the standard deviation and significantly correlated
 cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
