@@ -143,14 +143,14 @@ subsample10times <- function (geneExpressionMatrix=dat, gene="PROM1", iterations
 }
 
 
-cutoffCoxpression = function(subSampledCorrMat, subSampledFDRMat) {
-    # A function that makes the cutoff so it can passed to apply
-    result = subSampledCorrMat_vec[subSampledCorrMat_vec[abs
-                                                         (subSampledCorrMat_vec) > 2*sd(subSampledCorrMat_vec) & 
-                                                             subSampledFDRMat_vec < 0.05,]] # Use twice the standard deviation and significantly correlated
-    return (length(row.names(result)))
-
-}
+# cutoffCoxpression = function(subSampledCorrMat, subSampledFDRMat) {
+#     # A function that makes the cutoff so it can passed to apply
+#     result = subSampledCorrMat_vec[subSampledCorrMat_vec[abs
+#                                                          (subSampledCorrMat_vec) > 2*sd(subSampledCorrMat_vec) & 
+#                                                              subSampledFDRMat_vec < 0.05,]] # Use twice the standard deviation and significantly correlated
+#     return (length(row.names(result)))
+# 
+# }
 
 plotResampling = function(resamplingCorrMatrix, resamplingFDRMatrix, originalCoexpressionMatrix, gene="CD133") {
     # Plot resampling metrics

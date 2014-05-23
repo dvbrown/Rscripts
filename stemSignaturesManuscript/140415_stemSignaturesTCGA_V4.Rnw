@@ -167,11 +167,14 @@ The vector of these gene names was then used to build the network of coexpressed
   \subsection*{Rendering the network in cytoscape}  
     \paragraph {Making a pretty ridiculogram}
 Cytoscape 3.1.0 was used in the analyses. The WGCNA function exportNetworkToCytoscape was used to export the data into a text file amenable to import by cytoscape. The data was read in using "Import network from file hot button" using the edge file. To get the colors to appear the "Import file from file hot button" was used. The node file was read in as a node attribute. In the Style panel of the gui the node color was set using a pass through mapper. The degree sorted layout was used to generate the connectivity measure. This was then used as a continuous mapper to node size. Next prefuse force directed layout was used to make it look pretty. The power used to raise the algorithm was changed in settings. A filter was applied on degreee connectivity to make the network less busy.\\
-This filter was \emph{weighted score} 0.125 < 1. Weighted is the measure of network adjacency. Invert selection was used and then edges were hidden. After this nodes that were connected by the edges left over were selected. The invert selection to hidden features were used to trim the network.
+This filter was \emph{weighted score} 0.125 < 1. Weighted is the measure of network adjacency. Invert selection was used and then edges were hidden. After this nodes that were connected by the edges left over were selected. The invert selection to hidden features were used to trim the network. The force directed layout was used to visualise the network topology with network adjacency used to weight the layout algorithm.
 
   \subsection*{Gene set enrichment of coexpressed genes}  
     \paragraph {How the enrichments were done}
-As the R package for GSEA is not fully mature the analysis was carried out with the java based GUI. Preranked mode
+Gene set enrichment analysis was carried out with the java based GUI. 
+Preranked mode was used with the correlation values of the entire dataset used as input. C2: Canonical Pathways (KEGG, reactome etc) database (4722 gene sets) from MolSigDB was used as the database to interrogate enriched pathways. Gene set permutation was used to measure the significance of the findings.\\
+
+The Pearson correlation coefficient, and correlation raised to the power of 6 (as the WGCNA algorithm uses to weight the network) did not give any significant results. I can probably sell this choice as motivated by small, coordinated changes contributing to the phenotypes observed.\\
 
   \subsection*{Survival analysis}  
     \paragraph {The method used to interogate the gene signatures with clinical parameteres.}
@@ -231,14 +234,14 @@ makeMDS(cd133Dissim, cd133Color, 'CD133')
 The set of \textbf {approx 600} genes that were significantly coexpressed were subsequently analysed by weighted coexpression analysis to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the network adjacency algorithm. The biological interpretation of this is that the core module decribes the gene expression signature of the genes isolated by sorted for the CD133 marker.\\
 
 The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3). The heatmap shows that there are 4 main submodules (the darker red color) as indicated by the colored legend on the dendogram. An MDS plot plot was used to resolve the levels of variation in the data. The largest module colored dark blue was the least variable across the 594 samples in the TCGA as its variation is encapsulated by the second MDS dimension. 
-{\emph I should actually present a table of these "core" CD133 coexpressed genes either in the main body or the suplemental of the paper.
+{\emph I should probably present a table of these "core" CD133 coexpressed genes either in the main body or the suplemental of the paper.
 
 %------------------------------------------------------------------------------------------------------------------------
 
   \subsection*{A network of CD133 coexpressed genes}  
     \paragraph {Network analysis}
     
-The core coexpression module of CD133 and CD44 was used to build a data driven network.
+The core coexpression module of CD133 and CD44 {\emph and whatever markers I decide to add} was used to build a data driven network to get a visual impression of the topology of the network (figure 4). The majority of genes are positively coexpressed with CD133 and CD44. The sub-modules are more separated in CD133 compared to CD44. The overall connectivity of the netwok is greater in CD133 copared to CD44. \textbf {I must set the same mapping quantites to actually make these comparisons accurate. Check out my "style.xml file"}. I can also quantify the connectivity measures in cytoscape and present them as a bargraph or something.
 
 \begin{figure}[ht]
    \centering 
@@ -254,7 +257,9 @@ The core coexpression module of CD133 and CD44 was used to build a data driven n
   \subsection*{Gene sets enriched for cd133 coexpressed genes}  
     \paragraph {Functional enrichment of apparently stem like genes - This is real}
 
-Using the Pearson correlation coefficient gave no significant pathways enriched in \textbf{CD133}. It did give some interesting ones in \textbf{CD44} including Integrin, Firbinolysis and NF-k B pathways. Using the correlation value itself (signed) gave mitotic prophase, DNA replication and cell cycle for \textbf{CD133}. I have doubts about the robustness of the correlation value. However trying to raise the correlation value to the power of 6 (as WGCNA does) only gives ethanol oxidation as the significant value. It seems like 
+Using the Pearson correlation coefficient gave no significant pathways enriched in \textbf{CD133}. It did give some interesting ones in \textbf{CD44} including Integrin, Firbinolysis and NF-k B pathways. Using the correlation value itself (signed) gave mitotic prophase, DNA replication and cell cycle for \textbf{CD133}. Oxidative phosphorylation was enriched in the negatively correlating genes with CD133.\\
+
+Also present this as a table or a cytoscape network.
 
 \begin{figure}[ht]
    \centering 
