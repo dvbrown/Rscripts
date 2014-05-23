@@ -167,7 +167,7 @@ The vector of these gene names was then used to build the network of coexpressed
   \subsection*{Rendering the network in cytoscape}  
     \paragraph {Making a pretty ridiculogram}
 Cytoscape 3.1.0 was used in the analyses. The WGCNA function exportNetworkToCytoscape was used to export the data into a text file amenable to import by cytoscape. The data was read in using "Import network from file hot button" using the edge file. To get the colors to appear the "Import file from file hot button" was used. The node file was read in as a node attribute. In the Style panel of the gui the node color was set using a pass through mapper. The degree sorted layout was used to generate the connectivity measure. This was then used as a continuous mapper to node size. Next prefuse force directed layout was used to make it look pretty. The power used to raise the algorithm was changed in settings. A filter was applied on degreee connectivity to make the network less busy.\\
-This filter was \emph{weighted} 0.125 < 1. Weighted is the measure of network adjacency. Invert selection was used and then edges were hidden. After this nodes that were connected by the edges left over were selected. The invert selection to hidden features were used to trim the netwrk.
+This filter was \emph{weighted score} 0.125 < 1. Weighted is the measure of network adjacency. Invert selection was used and then edges were hidden. After this nodes that were connected by the edges left over were selected. The invert selection to hidden features were used to trim the network.
 
   \subsection*{Gene set enrichment of coexpressed genes}  
     \paragraph {How the enrichments were done}
@@ -185,7 +185,7 @@ Single sample (ss) GSEA is probably the most common choice. I could also use the
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Results} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
   \subsection*{Discovering the suite of CD133 coexpressed genes}
     \paragraph {What I discovered}
-The PROM1 gene was processed with WGCNA using the Agilent microarray data from the TCGA glioblastoma (see supplemental for why Agilent was selected). This sections describes the pattern of coexpressed genes and outlines the overall approach.
+The PROM1 gene was processed with WGCNA using the Agilent microarray data from the TCGA glioblastoma (see supplemental for why Agilent was selected).
 
 %---------------------------------------------------------------------------------------------------------------------
 <<cd133_histogram, echo=FALSE, fig.cap='Distribution of cd133 correlated genes', fig.show='asis', cache=TRUE>>=
@@ -203,11 +203,12 @@ cd133 = correlateGeneWithGEM(dat, 'PROM1')
 plotCoexpression(cd133, 'CD133')
 
 @
-The cancer genome atlas dataset for GBM was used to interogate the sutie of genes coexpressed with CD133. CD133 being the currently the most accepted marker for glioma stem cells we wished to esatablish the phentoype of the cd133 expressing subpopulation computationally.//
-To this end we identified the most significantly correlated genes with CD133 (PROM1) gene with a cutoff of \textbf {greater than 2 standard deviations from the mean and less than 0.05 FDR corrected p-value} (figure 1). It was established that the correlation datapoints were normally distributed (figure 2).\\
+The cancer genome atlas dataset for GBM was used to interogate the suite of genes coexpressed with CD133. As CD133 is the currently the most accepted marker for glioma stem cells we wished to esatablish the phentoype of the cd133 expressing subpopulation computationally.\\
+To this end we identified the most significantly correlated genes with CD133 (PROM1) gene with a cutoff of \textbf {greater than 2 standard deviations from the mean and less than 0.05 FDR corrected p-value} (figure 1). It was established that the correlation between datapoints were normally distributed (figure 2). The validity of the method was proved by repeated sampling (bootstrapping) and plotting the distribution of the population parameters. \textbf{Appendix X and supplemental methods}.\\
 
-The most critical parameter was the cutoff used to identify the coexpressed genes. A cutoff of 2 plus or minus standard deviations and a FDR less than 0.05 was used to obtain the list of genes that are significantly coexpressed with the markers of interest. This is about 600 genes for any marker. 
-The consequence of this is the top genes are roughly the same number but the magnitude of them are different. In the case of CD44 the correlation values are much higher than for CD133.
+The consequence of this is the top genes (ie the top 5\%) are roughly the same number but the magnitude of their correlation are different. In the case of CD44 the correlation values are much higher than for CD133. This list of genes was then analysed with the Weighted Gene Coexpression analayis algorithm (WGCNA) to identify how coexpressed these genes are with each other and if a core module of CD133 coexpressed genes exists. {\emph I also performed the analysis with a short list for the purposes of runtime}. 
+
+
 
 %------------------------------------------------------------------------------------------------------------------------
 
@@ -228,7 +229,7 @@ makeMDS(cd133Dissim, cd133Color, 'CD133')
 @
 
 The set of \textbf {approx 600} genes that were significantly coexpressed were subsequently analysed by weighted coexpression analysis to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the network adjacency algorithm.
-The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3).
+The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3). The heatmap shows that there are 4 main submodules (the darker red color) as indicated by the colored legend on the dendogram. An MDS plot plot was used to resolve the levels of variation in the data. The largest module colored dark blue was the least variable across the 594 samples in the TCGA. {\emph I should actually present a table of these "core" CD133 coexpressed genes.
 
 %------------------------------------------------------------------------------------------------------------------------
 
@@ -357,5 +358,13 @@ Therefore the analysis was performed with Agilent as it was congruent with stati
     \subsection*{More definitions of WGCNA}
     \paragraph {Copy and pasted from Background of WGCNA}
 Intramodular connectivity measures how connected, or co-expressed, a given gene is with respect to the genes of a particular module. The intramodular connectivity may be interpreted as a measure of module membership. It is this value which will be interested with respect to which genes are coexpressed with a marker.
+
+\begin{figure*}[h]
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.9\textwidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/140522_cd133Subsampling.pdf}
+    \caption{{Distribution of the bootstrapped CD133 correlated genes. The actual data is indicated by the red line}  }
+    \label{fig:S3}
+\end{figure*}
 
 \end{document}
