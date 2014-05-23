@@ -76,7 +76,7 @@ buildHeatMap <- function (dissimilarityMatrix, gene='PROM1') {
   # Transform dissTOM with a power to make moderately strong connections more visible in the heatmap
   plotTOM = dissimilarityMatrix^6
   # Set diagonal to NA for a nicer plot
-  diag(plotTOM) = NA
+  #diag(plotTOM) = NA
   title = paste("Network heatmap plot of", gene, "coexpressed genes")
   # Plot the heatmap
   TOMplot(plotTOM, geneTree, dynamicColors, main = title) #, terrainColors=FALSE)
