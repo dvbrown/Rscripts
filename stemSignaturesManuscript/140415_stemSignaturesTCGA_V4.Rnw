@@ -198,7 +198,7 @@ library(WGCNA)
 source('/Users/d.brown6/Documents/Rscripts/140508_coexpressionFunctions.R')
 options(stringsAsFactors=F)
 
-load('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/140415_justTheAgilentData.RData')
+dat = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/140526_agilentDedupPatients.txt", row.names=1)
 setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/')
 
 ######################################## CD133 coexpressed Genes ################################################
