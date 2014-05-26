@@ -18,7 +18,9 @@ plotCoexpression(cd133, 'CD133')
 # plotResampling(cd133SubsamplesCorr, cd133SubsamplesFDR, cd133, "PROM1")
 # rm(cd133SubsamplesCorr, cd133SubsamplesFDR)
 
-cd133genes = cd133[(cd133[,1]) > 3*sd(cd133[,1]) & cd133[,4] < 0.05,] # Use twice the standard deviation and significantly correlated
+# Use twice the standard deviation and significantly correlated
+cd133genes = cd133[(cd133[,1]) > 3*sd(cd133[,1]) & cd133[,4] < 0.05,]
+write.table(cd133genes, './140527_cd133Cutoff.txt', sep='\t')
 cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
 
 cd133Dissim = makeDissimilarity(cd133Square)
@@ -40,10 +42,11 @@ cd44 = correlateGeneWithGEM(dat, 'CD44')
 plotCoexpression(cd44, 'CD44')
 
 # Subset the dataframe with correlation values for those with high correlation and significance
-#cd44genes = cd44[cd44[,2] > 0.1 & cd44[,4] < 0.05,]
-cd44genes = cd44[cd44[,1] > 3*sd(cd44[,1]) & cd44[,4] < 0.05,] # Use twice the standard deviation and significantly correlated
-cd44Square = makeSquareCoexpressionMatrix(cd44genes, dat)
+# Use twice the standard deviation and significantly correlated
+cd44genes = cd44[cd44[,1] > 3*sd(cd44[,1]) & cd44[,4] < 0.05,]
+write.table(cd44genes, './140527_cd44Cutoff.txt', sep='\t')
 
+cd44Square = makeSquareCoexpressionMatrix(cd44genes, dat)
 cd44Dissim = makeDissimilarity(cd44Square)
 
 # Make a heatmap and store the colors of the idenitfied submodules

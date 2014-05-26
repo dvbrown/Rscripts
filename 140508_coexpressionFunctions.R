@@ -155,6 +155,7 @@ subsample10times <- function (geneExpressionMatrix=dat, gene="PROM1", iterations
 plotResampling = function(resamplingCorrMatrix, resamplingFDRMatrix, originalCoexpressionMatrix, gene="CD133") {
     # Plot resampling metrics
     par(mfrow=c(2,2))
+    
     hist(apply(resamplingCorrMatrix, 2, sd), breaks='FD', main=paste("Variation in correlation scores \nacross 10 subsamples for", gene), 
         xlab="Standard deviation", col="blue")
     # Add line that signifies real data
