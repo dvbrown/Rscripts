@@ -138,7 +138,7 @@ Flow cytometry is a classical technique in cell biology to isolate and study sub
 \subsection*{Literature on studies which compare markers}  
     \paragraph {Studies that I am trying to copy}
     
-Some of the important references are \textbf {Mesenchymal glioma stem cells are maintained by activated glycolytic metabolism involving aldehyde dehydrogenase 1A3}. This article states that proneural GSCs express mainly CD133 whereas mesenchymal GSCs express mainly CD44. There is also overlap with ALDH1 and CD44.
+Some of the important references are \textbf {Mesenchymal glioma stem cells are maintained by activated glycolytic metabolism involving aldehyde dehydrogenase 1A3}. This article states that proneural GSCs express mainly CD133 whereas mesenchymal GSCs express mainly CD44. There is also overlap with ALDH1 and CD44. Some other markers include CD15 and CD24 look up Patchinson 2007 Stem Cells for these refs.
     
 \subsection*{Some info on weighted coexpression analysis}  
     \paragraph {Some stuff}
