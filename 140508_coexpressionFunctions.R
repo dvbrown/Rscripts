@@ -76,7 +76,7 @@ buildHeatMap <- function (dissimilarityMatrix, gene='PROM1') {
   # Transform dissTOM with a power to make moderately strong connections more visible in the heatmap
   plotTOM = dissimilarityMatrix^6
   # Set diagonal to NA for a nicer plot
-  #diag(plotTOM) = NA
+  diag(plotTOM) = NA
   title = paste("Network heatmap plot of", gene, "coexpressed genes")
   # Plot the heatmap
   TOMplot(plotTOM, geneTree, dynamicColors, main = title) #, terrainColors=FALSE)
@@ -88,7 +88,7 @@ makeMDS <- function (dissimilarityMatrix, moduleColors, gene='CD133') {
   # Make MDS plot using the dissimilarity matrix and the module colors from flash clustering
   par(mfrow=c(1,1))
   cmd1 = cmdscale((dissimilarityMatrix), 3)
-  plot(cmd1, col=moduleColors, main = paste('MDS plot of', gene, 'coexpressed genes'), xlab='Most variation', ylab='Second most variation')
+  plot(cmd1, col="darkblue", main = paste('MDS plot of', gene, 'coexpressed genes'), xlab='Most variation', ylab='Second most variation')
 }
 
 cytoScapeInput <- function (dissimilarityMatrix, moduleColors, coexpressedShortList, gene="PROM1") {
