@@ -156,17 +156,19 @@ plotResampling = function(resamplingCorrMatrix, resamplingFDRMatrix, originalCoe
     # Plot resampling metrics
     par(mfrow=c(2,2))
     
+    # Plot the distributions of the standard deviations and add the actual data
     hist(apply(resamplingCorrMatrix, 2, sd), breaks='FD', main=paste("Variation in correlation scores \nacross 10 subsamples for", gene), 
         xlab="Standard deviation", col="blue")
     # Add line that signifies real data
     abline(v=sd(originalCoexpressionMatrix[,1]), col='red')
 
+    # Plot the distributions of the FDR and add the actual data
     hist(apply(resamplingFDRMatrix, 2, mean), breaks='FD', main=paste("Variation in FDR scores \nacross 10 subsamples", gene),
         xlab="Mean of FDR", col="forestgreen")
     # Add line that signifies real data
     abline(v=mean(originalCoexpressionMatrix[,4]), col='red')
     
-    # Add box that signifies real data
+    # Plot the distribution of the data by boxplot and add actual data
     boxColor = c(rep_len("blue", ncol(cd133SubsamplesCorr)), "red")
     boxplot(cbind(resamplingCorrMatrix, originalCoexpressionMatrix[,1]), main=paste("Distribution of correlation scores \nacross 10 subsamples for", gene), 
             col=boxColor, xlab="Subsample", ylab="Correlation")
