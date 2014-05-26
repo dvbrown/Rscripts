@@ -41,7 +41,7 @@ plotCoexpression(cd44, 'CD44')
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 #cd44genes = cd44[cd44[,2] > 0.1 & cd44[,4] < 0.05,]
-cd44genes = cd44[(cd44[,1]) > 3*sd(cd44[,1]) & cd44[,4] < 0.05,] # Use twice the standard deviation and significantly correlated
+cd44genes = cd44[cd44[,1] > 3*sd(cd44[,1]) & cd44[,4] < 0.05,] # Use twice the standard deviation and significantly correlated
 cd44Square = makeSquareCoexpressionMatrix(cd44genes, dat)
 
 cd44Dissim = makeDissimilarity(cd44Square)
@@ -56,6 +56,5 @@ makeMDS(cd44Dissim, cd44Color, 'CD44')
 cd44_cytoscape = cytoScapeInput(1-cd44Dissim, cd44Color, coexpressedShortList=cd44genes, 'CD44')
 
 ######################################## CD133 CD44 double positive ################################################
-doublePos = intersect(row.names(cd133genes), row.names(cd44genes))
 
 doublePos = corAndPvalue(x=dat[,c("PROM1", "CD44")], y=dat)
