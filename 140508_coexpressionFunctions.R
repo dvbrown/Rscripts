@@ -174,3 +174,4 @@ plotResampling = function(resamplingCorrMatrix, resamplingFDRMatrix, originalCoe
             col=boxColor, xlab="Subsample", ylab="Correlation")
     par(mfrow=c(1,1))
 }
+

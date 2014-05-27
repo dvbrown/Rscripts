@@ -19,7 +19,7 @@ plotCoexpression(cd133, 'CD133')
 # rm(cd133SubsamplesCorr, cd133SubsamplesFDR)
 
 # Use twice the standard deviation and significantly correlated
-cd133genes = cd133[(cd133[,1]) > 3*sd(cd133[,1]) & cd133[,4] < 0.05,]
+cd133genes = cd133[(cd133[,1]) > 2*sd(cd133[,1]) & cd133[,4] < 0.05,]
 write.table(cd133genes, './140527_cd133Cutoff.txt', sep='\t')
 cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
 
@@ -43,7 +43,7 @@ plotCoexpression(cd44, 'CD44')
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 # Use twice the standard deviation and significantly correlated
-cd44genes = cd44[cd44[,1] > 3*sd(cd44[,1]) & cd44[,4] < 0.05,]
+cd44genes = cd44[cd44[,1] > 2*sd(cd44[,1]) & cd44[,4] < 0.05,]
 write.table(cd44genes, './140527_cd44Cutoff.txt', sep='\t')
 
 cd44Square = makeSquareCoexpressionMatrix(cd44genes, dat)
