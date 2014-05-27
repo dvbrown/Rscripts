@@ -1,4 +1,5 @@
 library(WGCNA)
+library(gplot)
 #library(biomaRt)
 
 #mart<- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
@@ -64,25 +65,31 @@ makeDissimilarity <- function (squareMatrix) {
 }
 
 buildHeatMap <- function (dissimilarityMatrix, gene='PROM1') {
-  # There are several methods for branch cutting; our standard method is the Dynamic Tree Cut from the package dynamicTreeCut
-  # Module identification using dynamic tree cut. This is the most basic method and returns 3 modules when the cutHeight is 0.999 (default 0.99)
+#   # There are several methods for branch cutting; our standard method is the Dynamic Tree Cut from the package dynamicTreeCut
+#   # Module identification using dynamic tree cut. This is the most basic method and returns 3 modules when the cutHeight is 0.999 (default 0.99)
+#     
+#   geneTree = flashClust(as.dist(dissimilarityMatrix), method = "average")
+#   dynamicMods = cutreeDynamic(dendro = geneTree, cutHeight=0.999, method='tree')
+#   table(dynamicMods)
+#   # Convert numeric lables into colors
+#   dynamicColors = labels2colors(dynamicMods)
+#   
+#   # Transform dissTOM with a power to make moderately strong connections more visible in the heatmap
+#   plotTOM = dissimilarityMatrix^6
+#   # Set diagonal to NA for a nicer plot
+#   diag(plotTOM) = NA
+#   title = paste("Network heatmap plot of", gene, "coexpressed genes")
+#   # Plot the heatmap
+#   TOMplot(plotTOM, geneTree, dynamicColors, main = title) #, terrainColors=FALSE)
+#   #,labRow=prom1CgenesNames, ColorsLeft=NA)
+#   return (dynamicColors)
+
     
-  geneTree = flashClust(as.dist(dissimilarityMatrix), method = "average")
-  dynamicMods = cutreeDynamic(dendro = geneTree, cutHeight=0.999, method='tree')
-  table(dynamicMods)
-  # Convert numeric lables into colors
-  dynamicColors = labels2colors(dynamicMods)
-  
-  # Transform dissTOM with a power to make moderately strong connections more visible in the heatmap
-  plotTOM = dissimilarityMatrix^6
-  # Set diagonal to NA for a nicer plot
-  diag(plotTOM) = NA
-  title = paste("Network heatmap plot of", gene, "coexpressed genes")
-  # Plot the heatmap
-  TOMplot(plotTOM, geneTree, dynamicColors, main = title) #, terrainColors=FALSE)
-  #,labRow=prom1CgenesNames, ColorsLeft=NA)
-  return (dynamicColors)
+    heatmap.2(dissimilarityMatrix, cexRow=1.5, main=paste("Coexpression module of ", gene, "gene"), 
+              Colv=verhaakSubtype$colours, keysize=1, trace="none", density.info="none", 
+              dendrogram="both", xlab="Samples", labCol=NA, offsetRow=c(1,1), margins=c(2,7))
 }
+buildHeatMap(cd133Dissim, 'CD133')
 
 makeMDS <- function (dissimilarityMatrix, moduleColors, gene='CD133') {
   # Make MDS plot using the dissimilarity matrix and the module colors from flash clustering
