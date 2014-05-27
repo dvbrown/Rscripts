@@ -44,3 +44,11 @@ length(cd133Subtype)
 length(cd44Subtype)
 
 ############################################## Examine the Verhaak molecular subtypes #############################################
+clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
+
+matched = intersect(row.names(clinical), colnames(rnaseq))
+
+clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status",
+                   "G_CIMP_STATUS","GeneExp_Subtype", "X_EVENT","days_to_tumor_progression", "gender")]
+
+boundData = merge.data.frame(clin, result1)
