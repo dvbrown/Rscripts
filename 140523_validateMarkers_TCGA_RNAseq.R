@@ -2,6 +2,19 @@
 library(GSVA)
 library(gplots)
 library(RColorBrewer)
+source("~/Documents/Rscripts/120704-sortDataFrame.R")
+
+bindGeneExprClinical <- function (clinicalData, subtypedGeneExpression) {
+    # Merges clinical and FACS marker subtyped gene expression information and annotate a color based on Verhaak subtype
+    boundData = merge.data.frame(clinicalData, subtypedGeneExpression, by.x="row.names", by.y="row.names")
+    verhaakSubtype = boundData[,c("CD133","CD44", "GeneExp_Subtype")]
+    verhaakSubtype$colours = "black"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "red"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Neural"] = "green"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Classical"] = "blue"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Mesenchymal"] = "orange"
+    return (verhaakSubtype)
+}
 
 ############################################# IO ##################################################################
 setwd('~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/')
@@ -51,4 +64,18 @@ matched = intersect(row.names(clinical), colnames(rnaseq))
 clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status",
                    "G_CIMP_STATUS","GeneExp_Subtype", "X_EVENT","days_to_tumor_progression", "gender")]
 
-boundData = merge.data.frame(clin, result1)
+verhaakSubtype = bindGeneExprClinical(clin, result1)
+verhaakSubtype = sort.dataframe(verhaakSubtype, 4)
+
+subTypeHeat = cbind(verhaakSubtype$CD133, verhaakSubtype$CD44)
+write.table(subTypeHeat, "output.txt", sep='\t')
+subTypeHeat = read.delim("output.txt", row.names=1)
+subTypeHeat = as.matrix(subTypeHeat)
+
+heatmap.2(t(subTypeHeat), cexRow=1.5, main="ssGSEA FACS markers based on Subtype", Colv=verhaakSubtype$colours,
+          keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="none", ColSideColors=verhaakSubtype$colours,
+          labRow=c("CD133", "CD44"), xlab="Samples", labCol=NA, offsetRow=c(1,1), margins=c(2,7))
+
+heatmap.2(t(subTypeHeat), cexRow=2, main="ssGSEA FACS markers based on Subtype", #Colv=verhaakSubtype$colours,
+          keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="column", ColSideColors=verhaakSubtype$colours,
+          labRow=c("CD133", "CD44"), xlab="Samples", labCol=NA, offsetRow=c(1,1))
