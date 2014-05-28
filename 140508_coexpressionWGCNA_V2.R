@@ -20,7 +20,7 @@ plotCoexpression(cd133, 'CD133')
 
 # Use twice the standard deviation and significantly correlated
 cd133genes = cd133[(cd133[,1]) > 2*sd(cd133[,1]) & cd133[,4] < 0.05,]
-write.table(cd133genes, './140527_cd133Cutoff.txt', sep='\t')
+# write.table(cd133genes, './140527_cd133Cutoff.txt', sep='\t')
 cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
 
 cd133Dissim = makeDissimilarity(cd133Square)
