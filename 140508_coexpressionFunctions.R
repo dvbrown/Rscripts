@@ -2,7 +2,6 @@ library(WGCNA)
 
 #mart<- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
 
-
 coVar <- function(x) {
     result = 100*(sd(x) / mean(x))
     return (abs(result))
@@ -74,11 +73,15 @@ buildTOMHeatMap <- function (geneExpressionMatrix=dat, adjacencySquareMatrix, ge
                        networkType="unsigned", power=4, main=paste("Topology overlap matrix\nof ", gene, "mRNA")) 
 }
 
-makeMDS <- function (dissimilarityMatrix, moduleColors, gene='CD133') {
+makeMDS <- function (dissimilarityMatrix, gene='CD133') {
   # Make MDS plot using the dissimilarity matrix and the module colors from flash clustering
-  par(mfrow=c(1,1))
   cmd1 = cmdscale((dissimilarityMatrix), 3)
-  plot(cmd1, col="darkblue", main = paste('MDS plot of', gene, 'coexpressed genes'), xlab='Most variation', ylab='Second most variation')
+  geneTree = flashClust(as.dist(dissimilarityMatrix), method = "average")
+  dynamicMods = cutreeDynamic(dendro = geneTree, cutHeight=0.99, method='tree')
+  table(dynamicMods)
+  # Convert numeric lables into colors
+  dynamicColors = labels2colors(dynamicMods)
+  plot(cmd1, col=dynamicColors, main = paste('MDS plot of', gene, 'coexpressed genes'), xlab='Most variation', ylab='Second most variation')
 }
 
 cytoScapeInput <- function (dissimilarityMatrix, #moduleColors, 
