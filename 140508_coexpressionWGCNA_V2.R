@@ -25,15 +25,23 @@ cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
 
 cd133Dissim = makeDissimilarity(cd133Square)
 
-# Make a heatmap and store the colors of the idenitfied submodules
-cd133Color = buildHeatMap(cd133Dissim, 'CD133')
+# Make a heatmap
+pdf(file="cd133_corr_HeatMap.pdf", paper="a4")
+buildCorrelationHeatMap(dat, cd133Dissim, 'CD133')
+dev.off()
+
+pdf(file="cd133_tom_HeatMap.pdf", paper="a4")
+buildTOMHeatMap(dat, cd133Dissim, "CD133")
+dev.off()
+
 # Make MDS plot
 #pdf('cd133_MDS.pdf', paper='a4')
-makeMDS(cd133Dissim, cd133Color, 'CD133')
+moduleCol = flashClust(as.dist(cd133Dissim))
+makeMDS(cd133Dissim, moduleCol, 'CD133')
 #dev.off()
 
 # Export to cytoscape
-cd133_cytoscape = cytoScapeInput(1-cd133Dissim, cd133Color,coexpressedShortList=cd133genes, 'CD133')
+cd133_cytoscape = cytoScapeInput(1-cd133Dissim,coexpressedShortList=cd133genes, 'CD133')
 
 ######################################## CD44 coexpressed Genes ################################################
 cd44 = correlateGeneWithGEM(dat, 'CD44')
