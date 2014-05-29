@@ -1,7 +1,6 @@
 # Classify the RNA-seq TCGA samples provide they are different patients than Agilent
 library(GSVA)
 library(gplots)
-library(ggplot2)
 library(RColorBrewer)
 source("~/Documents/Rscripts/120704-sortDataFrame.R")
 
@@ -9,6 +8,7 @@ bindGeneExprClinical <- function (clinicalData, subtypedGeneExpression, signatur
     # Merges clinical and FACS marker subtyped gene expression information and annotate a color based on Verhaak subtype
     # signatures is a character vector of the signature names
     boundData = merge.data.frame(clinicalData, subtypedGeneExpression, by.x="row.names", by.y="row.names")
+    row.names(boundData) = row.names(clinicalData)
     verhaakSubtype = boundData[,c(signatures, "GeneExp_Subtype")]
     verhaakSubtype$colours = "black"
     verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "red"
@@ -22,6 +22,7 @@ bindGeneExprCIMPClinical <- function (clinicalData, subtypedGeneExpression, sign
     # Merges clinical and FACS marker subtyped gene expression information and annotate a color based on Verhaak subtype
     # signatures is a character vector of the signature names
     boundData = merge.data.frame(clinicalData, subtypedGeneExpression, by.x="row.names", by.y="row.names")
+    row.names(boundData) = row.names(clinicalData)
     verhaakSubtype = boundData[,c(signatures, "GeneExp_Subtype", "G_CIMP_STATUS")]
     verhaakSubtype$colours = "black"
     verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "red"
@@ -156,6 +157,7 @@ fisher.test(contingency)
 # Add the G-CIMP annotation
 verhaakSubtype = bindGeneExprCIMPClinical(clin, result, c("CD133", "CD44"))
 verhaakSubtype = sort.dataframe(verhaakSubtype, 'G_CIMP_STATUS')
+# write.table(verhaakSubtype, "./survival/140529_verhaakSubtypeCD133_scores", sep='\t')
 
 # # The damn datatypes are not correct. Dump and read in object from file
 # write.table(verhaakSubtype, "output.txt", sep='\t')
@@ -174,24 +176,3 @@ heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures
           Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
           ColSideColors=as.character(verhaakSubtypeAll$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5))
-
-############################################## Segment the subtypes into CD133 CD44 and indetermiant #############################################
-# Add the G-CIMP annotation
-verhaakSubtype = bindGeneExprCIMPClinical(clin, result, c("CD133", "CD44"))
-verhaakSubtype = sort.dataframe(verhaakSubtype, 'G_CIMP_STATUS')
-verhaakSubtypeCall = verhaakSubtype
-
-# Make an object to plot density gram
-lattPlot = data.frame(as.numeric(c(verhaakSubtype[,"CD133"], verhaakSubtype[,"CD44"])), 
-                      c(rep("CD133", nrow(verhaakSubtypeCall)), rep("CD44", nrow(verhaakSubtypeCall))))
-colnames(lattPlot) = c('value', "signature")
-
-ggplot(lattPlot, aes(value, fill = signature)) + geom_density(alpha = 0.2) +
-    xlab("Signature score") + ylab("Density") + # Set axis labels
-    ggtitle("Distribution of CD133 and \nCD44 signature scores") +  # Set title
-    coord_cartesian(xlim = c(-1, 1)) + theme_bw(base_size=20) + geom_vline(xintercept=-0.125, colour="red") # The 0.125 is where I will call indeterminate
-
-# Now call the subtypes
-lattPlot$subtype = ifelse(verhaakSubtype[,"CD133"] > verhaakSubtype[,"CD44"], "CD133", "CD44")
-lattPlot$subtype[lattPlot$value < -0.125] ="intermediate"
-lattPlot = sort.dataframe(lattPlot, "subtype")
