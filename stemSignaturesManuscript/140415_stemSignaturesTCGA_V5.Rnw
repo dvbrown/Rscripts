@@ -214,7 +214,7 @@ To this end we identified the most significantly correlated genes with CD133 (PR
 
 It was established that the correlation values of the dataset were normally distributed (figure 2). The validity of the method was proved by repeated sampling (bootstrapping) and plotting the distribution of the population parameters. \textbf{Appendix X and supplemental methods (bootstrap to 1000 in the final paper)}. The bootstrapping procedure confirms that it is not a small subset of patients that is contributing to the coexpression signature.\\
 
-The consequence of this is the top 2.5\% of genes are roughly the same number across markers but the magnitude of their correlation strengths are different. In the case of CD44 the correlation values are much higher than for CD133. This list of genes was then analysed with the Weighted Gene Coexpression analayis algorithm (WGCNA) to identify how coexpressed these genes are with each other and if a core module of CD133 coexpressed genes exists. 
+The consequence of this is the top 2.5\% of genes are roughly the same number across markers but the magnitude of their correlation strengths are different. In the case of CD44 the correlation values are much higher than for CD133 \textbf {supplemental?}. This list of genes was then analysed with the Weighted Gene Coexpression analayis algorithm (WGCNA) to identify how coexpressed these genes are with each other and if a core module of CD133 coexpressed genes exists. 
 
 %-----------------------------------------------------------------------------------------------------------------
 
@@ -236,10 +236,25 @@ moduleCol = flashClust(as.dist(cd133Dissim))
 makeMDS(cd133Dissim, 'CD133')
 @
 
-The set of \textbf {approx 600} genes that were significantly coexpressed were subsequently analysed by weighted coexpression analysis to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the network adjacency algorithm. The biological interpretation of this is that the core module decribes the gene expression signature of the genes isolated by sorted for the CD133 marker.\\
+The set of \textbf {approx 600} genes that were significantly coexpressed were subsequently analysedfor network adjacency to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the WCGNA algorithm. The biological interpretation of this is that the core module decribes the gene expression signature of the genes isolated by sorted for the CD133 marker.\\
 
-The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3). The heatmap shows that there are 4 main submodules (the darker red color) as indicated by the colored legend on the dendogram. An MDS plot plot was used to resolve the levels of variation in the data. The largest module colored dark blue was the least variable across the 594 samples in the TCGA as its variation is encapsulated by the second MDS dimension. 
+The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3). The heatmap and associated MDS plot (figure 4) illustrates 3 major modules. The largest module colored dark blue was the least variable across the 594 samples in the TCGA as its variation is encapsulated by the second MDS dimension. 
 {\emph I should probably present a table of these "core" CD133 coexpressed genes either in the main body or the suplemental of the paper.
+
+%------------------------------------------------------------------------------------------------------------------------
+
+
+  \subsection*{Comparison of commonly used stem cell markers}  
+    \paragraph {The most contraversial part for wet lab scientists}
+    
+\begin{figure}[ht] \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140528_moreMarkersEdit.pdf}
+    \caption{{A heatmap that examines overlap between molecular subtypes and FACS markers}  }
+    \label{fig:Overlaps}
+\end{figure}
+
+\blindtext
 
 %------------------------------------------------------------------------------------------------------------------------
 
@@ -292,20 +307,6 @@ Also present this as a table or a cytoscape network.
     
 Paritition the TCGA data in some fashion using the CD133 signature and look for a survival difference between the high and low.Posssibly a low, medium and high.\\
 Look for overlap with the 4 established subtypes. Look for any enriched mutations (eg IDH1) in the groups that may explain the CD133 phenotype \textbf{stem-like or other}. Also do MGMT and the general epigentic landscape if interesting.
-
-%------------------------------------------------------------------------------------------------------------------------
-
-  \subsection*{Comparison of commonly used stem cell markers}  
-    \paragraph {The most contraversial part for wet lab scientists}
-    
-\begin{figure}[ht] \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140528_moreMarkersEdit.pdf}
-    \caption{{A heatmap that examines overlap between molecular subtypes and FACS markers}  }
-    \label{fig:Overlaps}
-\end{figure}
-
-\blindtext
 
 %----------------------------------------------------------------------------------------
 %    DISCUSSION
