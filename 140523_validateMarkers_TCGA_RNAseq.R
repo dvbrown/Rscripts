@@ -35,6 +35,7 @@ bindGeneExprCIMPClinical <- function (clinicalData, subtypedGeneExpression, sign
 setwd('~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/')
 rnaseq = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/genomicMatrix", row.names=1)
 # agilent = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/140526_agilentDedupPatients.txt", row.names=1)
+tcgaSigs = read.delim('~/Documents/public-datasets/TCGA/classficationSignature/131022_danFixedTCGAsignature.txt')
 
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
 
@@ -51,14 +52,14 @@ myPalette <- colorRampPalette(c("green", "black", "red"))(n = 1000)
 rnaseqM = as.matrix(rnaseq)
 sigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig))
 
-################################################# Test for enrichement #################################################
+################################################# Test for enrichment #################################################
 
 # Using ssGSEA heavily biases for CD44 subtype. Whereas for  GSVA the subtypes are more balanced
 result = gsva(rnaseqM, sigs,  rnaseq=F, verbose=T, parallel.sz=1)
 result = t(result$es.obs)
 
 # Compare ssGSEA
-# result = gsva(rnaseqM, sigs,  rnaseq=F, verbose=T, parallel.sz=1, method="ssGSEA")
+# result = gsva(rnaseqM, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1, method="ssgsea")
 # result = t(result)
 
 par(mfrow=c(2,1))
@@ -72,17 +73,7 @@ par(mfrow=c(1,1))
 heatmap.2(result, Colv=NA, cexRow=0.5, cexCol=0.9, main="ssGSEA FACS markers", 
           keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row")
 
-############################################## Call the subtype #############################################
-result1 = result[[2]]
-subtype = ifelse(result[,1] > result[,2], "CD133", "CD44")
-result1 = cbind(result, subtype)
-
-cd133Subtype = result1[result1[,3] %in% "CD133",]
-cd44Subtype = result1[result1[,3] %in% "CD44",]
-length(cd133Subtype)
-length(cd44Subtype)
-
-############################################## Examine the Verhaak molecular subtypes #############################################
+############################################## Examine the Verhaak molecular subtypes for CD133 and CD44 #############################################
 # Extract the clinical data for the RNAseq patients
 matched = intersect(row.names(clinical), colnames(rnaseq))
 # Subset clinical data for intersect
@@ -103,6 +94,22 @@ subTypeHeat = as.matrix(verhaakSubtype[,c("CD133","CD44")])
 heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype", Colv=verhaakSubtype$colours,
           keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="none", ColSideColors=as.character(verhaakSubtype$colours),
           labRow=c("CD133", "CD44"), xlab="Samples", labCol=NA, offsetRow=c(1,1), margins=c(2,7))
+
+
+
+
+############################################## Call the subtype as either Cd133 or CD44 #############################################
+subtype = ifelse(verhaakSubtype[,"CD133"] > verhaakSubtype[,"CD44"], "CD133", "CD44")
+verhaakFACSSubtype = cbind(verhaakSubtype, subtype)
+
+# Subset only the proneural and Mesenchymal cases
+verhaakFACSSubtype = verhaakFACSSubtype[verhaakFACSSubtype$GeneExp_Subtyp %in% "Proneural" | verhaakFACSSubtype$GeneExp_Subtyp %in% "Mesenchymal",]
+verhaakFACSSubtype = droplevels(verhaakFACSSubtype)
+
+# Build a contingency table
+contingency = table(verhaakFACSSubtype[,c("GeneExp_Subtype", "subtype")])
+fisher.test(contingency)
+
 
 ############################################## Heatmap all signatures with Verhaak molecular subtypes #############################################
 bigSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15" = row.names(cd15),
@@ -130,17 +137,21 @@ heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures
           offsetRow=c(1,1), margins=c(2,7.5))
 
 ####################################### Heatmap all signatures with Verhaak molecular subtypes and G-CIMP #############################################
-verhaakSubtype = bindGeneExprCIMPClinical(clin, bigResult, signatures)
-verhaakSubtype = sort.dataframe(verhaakSubtype, 'colours')
+verhaakSubtypeAll = bindGeneExprCIMPClinical(clin, bigResult, signatures)
+verhaakSubtypeAll = sort.dataframe(verhaakSubtypeAll, 'colours')
 
 # The damn datatypes are not correct. Dump and read in object from file
-write.table(verhaakSubtype, "output.txt", sep='\t')
-verhaakSubtype = read.delim("output.txt", row.names=1)
+write.table(verhaakSubtypeAll, "output.txt", sep='\t')
+verhaakSubtypeAll = read.delim("output.txt", row.names=1)
 
-subTypeHeat = as.matrix(verhaakSubtype[,signatures])
+subTypeHeat = as.matrix(verhaakSubtypeAll[,signatures])
 
 # Make heat map with Veerhaak subtype
 heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype and G-CIMP", 
-          Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
-          ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
+          Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(verhaakSubtypeAll$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5))
+
+####################################### Measure enrichment of Proneural and Mesenchymal with CD133 and CD44 #############################################
+head(cd133Subtype)
+
