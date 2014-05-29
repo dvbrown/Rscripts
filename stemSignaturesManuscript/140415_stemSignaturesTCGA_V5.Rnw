@@ -81,6 +81,12 @@ This analytical approach is novel and \textbf{may} provide insight into the phen
 library(knitr)
 library(affy)
 library(limma)
+library(GSVA)
+library(gplots)
+library(RColorBrewer)
+library(ggplot2)
+library(survival)
+source("~/Documents/Rscripts/120704-sortDataFrame.R")
 options(replace.assign=TRUE,width=50)
 opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center', fig.width=5, fig.height=5, fig.show='hold', cache=TRUE, par=TRUE)
 knit_hooks$set(par=function(before, options, envir){
@@ -247,18 +253,76 @@ The adjacency matrix was transformed into a similarity matrix and a heatmap was 
   \subsection*{Comparison of commonly used stem cell markers}  
     \paragraph {The most contraversial part for wet lab scientists}
     
-\begin{figure}[ht] \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140528_moreMarkersEdit.pdf}
-    \caption{{A heatmap that examines overlap between molecular subtypes and FACS markers}  }
-    \label{fig:Overlaps}
-\end{figure}
+<<bigSignatureComparison, echo=FALSE, fig.cap='Heatmap that compares different FACS markers', fig.show='asis', cache=FALSE>>=
+bindGeneExprClinical <- function (clinicalData, subtypedGeneExpression, signatures) {
+    # Merges clinical and FACS marker subtyped gene expression information and annotate a color based on Verhaak subtype
+    # signatures is a character vector of the signature names
+    boundData = merge.data.frame(clinicalData, subtypedGeneExpression, by.x="row.names", by.y="row.names")
+    row.names(boundData) = row.names(clinicalData)
+    verhaakSubtype = boundData[,c(signatures, "GeneExp_Subtype")]
+    verhaakSubtype$colours = "black"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "red"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Neural"] = "green"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Classical"] = "blue"
+    verhaakSubtype$colours[boundData$GeneExp_Subtype == "Mesenchymal"] = "orange"
+    return (verhaakSubtype)
+}
+setwd('~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/')
+rnaseq = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/genomicMatrix", row.names=1)
+tcgaSigs = read.delim('~/Documents/public-datasets/TCGA/classficationSignature/131022_danFixedTCGAsignature.txt')
 
+clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
+
+cd133Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140527_cd133Cutoff.txt", row.names=1)
+cd44Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140527_cd44Cutoff.txt", row.names=1)
+cd15 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/CD15/140528_cd15Cutoff.txt", row.names=1)
+aldh1 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ALDH1/140528_ALDH1Cutoff.txt", row.names=1)
+itag6 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ITGA6//140528_ITGA6Cutoff.txt", row.names=1)
+l1cam = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/L1CAM/140528_L1CAMCutoff.txt", row.names=1)
+
+myPalette <- colorRampPalette(c("green", "black", "red"))(n = 1000)
+
+############################################# Mung data into form for GSVA #############################################
+rnaseqM = as.matrix(rnaseq)
+bigSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15" = row.names(cd15),
+               "ALDH1"=row.names(aldh1), "ITGA6"=row.names(itag6), "L1CAM"=row.names(l1cam))
+
+# Extract the clinical data for the RNAseq patients
+matched = intersect(row.names(clinical), colnames(rnaseq))
+# Subset clinical data for intersect
+clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status",
+                           "G_CIMP_STATUS","GeneExp_Subtype", "X_EVENT","days_to_tumor_progression", "gender")]
+
+############################################## Heatmap all signatures with Verhaak molecular subtypes #############################################
+
+# Using ssGSEA heavily biases for CD44 subtype. Whereas for  GSVA the subtypes are more balanced
+bigResult = gsva(rnaseqM, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
+bigResult = t(bigResult$es.obs)
+
+# Merge RNAseq - FACs data and clinicial data. Add Verhaak subtype
+signatures = names(bigSigs)
+verhaakSubtype = bindGeneExprClinical(clin, bigResult, signatures)
+verhaakSubtype = sort.dataframe(verhaakSubtype, 'colours')
+
+# The damn datatypes are not correct. Dump and read in object from file
+write.table(verhaakSubtype, "./output.txt", sep='\t')
+verhaakSubtype = read.delim("./output.txt", row.names=1)
+
+subTypeHeat = as.matrix(verhaakSubtype[,signatures])
+
+# Make heat map with Veerhaak subtype
+heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype", 
+          Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5))
+
+
+@
 \blindtext
 
 %------------------------------------------------------------------------------------------------------------------------
 
-  \subsection*{A network of CD133 coexpressed genes}  
+  \subsection*{A network of CD133 and CD44 coexpressed genes}  
     \paragraph {Network analysis}
     
 The core coexpression module of CD133 and CD44 {\emph and whatever markers I decide to add} was used to build a data driven network to get a visual impression of the topology of the network (figure 4). The majority of genes are positively coexpressed with CD133 and CD44. The sub-modules are more separated in CD133 compared to CD44. The overall connectivity of the netwok is greater in CD133 copared to CD44. \textbf {I must set the same mapping quantites to actually make these comparisons accurate. Check out my "style.xml file"}. I can also quantify the connectivity measures in cytoscape and present them as a bargraph or something.
@@ -307,6 +371,59 @@ Also present this as a table or a cytoscape network.
     
 Paritition the TCGA data in some fashion using the CD133 signature and look for a survival difference between the high and low.Posssibly a low, medium and high.\\
 Look for overlap with the 4 established subtypes. Look for any enriched mutations (eg IDH1) in the groups that may explain the CD133 phenotype \textbf{stem-like or other}. Also do MGMT and the general epigentic landscape if interesting.
+
+<<DistribCD133_CD44, echo=FALSE, fig.cap='Where I set my cuttoff for subtyping', fig.show='asis', cache=TRUE>>=
+setwd("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/")
+verhaakSubtypeCall = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140529_verhaakSubtypeCD133_scores", row.names=1)
+clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
+
+# Extract the clinical data for the RNAseq patients
+matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
+# Subset clinical data for intersect
+clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender")]
+
+############################################## Segment the subtypes into CD133 CD44 and indetermiant #############################################
+
+# Make an object to plot density gram
+lattPlot = data.frame(as.numeric(c(verhaakSubtypeCall[,"CD133"], verhaakSubtypeCall[,"CD44"])), 
+                      c(rep("CD133", nrow(verhaakSubtypeCall)), rep("CD44", nrow(verhaakSubtypeCall))))
+colnames(lattPlot) = c('value', "signature")
+
+ggplot(lattPlot, aes(value, fill = signature)) + geom_density(alpha = 0.2) +
+    xlab("Signature score") + ylab("Density") + # Set axis labels
+    ggtitle("Distribution of CD133 and \nCD44 signature scores") +  # Set title
+    coord_cartesian(xlim = c(-1, 1)) + theme_bw(base_size=20) + geom_vline(xintercept=-0.125, colour="red") # The 0.125 is where I will call indeterminate
+
+@
+\blindtext
+
+<<KaplanMyerCurves, echo=FALSE, fig.cap='KM curves that should be cooked to show something', fig.show='asis', cache=FALSE>>=
+# Now call the subtypes
+verhaakSubtypeCall$subtype = ""
+verhaakSubtypeCall$subtype = ifelse(verhaakSubtypeCall[,"CD133"] > verhaakSubtypeCall[,"CD44"], "CD133", "CD44")
+verhaakSubtypeCall$subtype[verhaakSubtypeCall$CD133 < -0.125 & verhaakSubtypeCall$CD44 < 0] = "intermediate"
+verhaakSubtypeCall = sort.dataframe(verhaakSubtypeCall, "subtype")
+
+############################################## bind the clinical and subtyping info together #############################################
+boundData = merge.data.frame(clin, verhaakSubtypeCall, by.x="row.names", by.y="row.names")
+boundData = sort.dataframe(boundData, "subtype")
+boundData$subtype = as.factor(boundData$subtype)
+############################################# Analysing the data for survival ##################################
+
+#generate the survival object and plot a Kaplan-Meier
+data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
+sur.fit = survfit(data.surv~boundData$subtype)
+
+plot(sur.fit, main='FACS marker coexpression signature in \nGlioblastoma multiforme by RNAseq',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue','green'),xlim=c(0,750), cex=1.75)
+
+legend('topright', c('CD133', 'CD44', 'Intermediate'), 
+       col=c("red",'blue','green'),lwd=1, cex=0.9, bty='n', xjust=0.5, yjust=0.5)
+
+#test for a difference between curves
+test = survdiff(data.surv~boundData$subtype, subset=!boundData$subtype %in% "intermediate")
+@
+\blindtext
 
 %----------------------------------------------------------------------------------------
 %    DISCUSSION
