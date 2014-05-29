@@ -52,8 +52,8 @@ plotCoexpression(cd44, 'CD44')
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 # Use twice the standard deviation and significantly correlated
-cd44genes = cd44[cd44[,1] > 2*sd(cd44[,1]) & cd44[,4] < 0.05,]
-write.table(cd44genes, './140527_cd44Cutoff.txt', sep='\t')
+cd44genes = cd44[cd44[,1] > 3*sd(cd44[,1]) & cd44[,4] < 0.05,]
+write.table(cd44genes, './140529_cd44Cutoff.txt', sep='\t')
 
 cd44Square = makeSquareCoexpressionMatrix(cd44genes, dat)
 cd44Dissim = makeDissimilarity(cd44Square)
@@ -76,14 +76,14 @@ rm(cd44, cd44genes)
 ######################################## CD15 coexpressed Genes ################################################
 setwd('/Users/d.brown6/Documents/public-datasets/cancerBrowser/deDupAgilent/results/CD15')
 cd15 = correlateGeneWithGEM(dat, 'FUT4')
-write.table(cd15, './140528_cd15Coexpression.txt', row.names=T, sep='\t')
+write.table(cd15, './140529_cd15Coexpression.txt', row.names=T, sep='\t')
 
 plotCoexpression(cd15, 'CD15')
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 # Use twice the standard deviation and significantly correlated
-cd15genes = cd15[cd15[,1] > 2*sd(cd15[,1]) & cd15[,4] < 0.05,]
-write.table(cd15genes, './140528_cd15Cutoff.txt', sep='\t')
+cd15genes = cd15[cd15[,1] > 3*sd(cd15[,1]) & cd15[,4] < 0.05,]
+write.table(cd15genes, './140529_cd15Cutoff.txt', sep='\t')
 
 cd15Square = makeSquareCoexpressionMatrix(cd15genes, dat)
 cd15Dissim = makeDissimilarity(cd15Square)
@@ -109,14 +109,14 @@ rm(cd15, cd15genes)
 setwd('/Users/d.brown6/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ITGA6/')
 
 ITGA6 = correlateGeneWithGEM(dat, 'ITGA6')
-write.table(ITGA6, './140528_ITGA6Coexpression.txt', row.names=T, sep='\t')
+write.table(ITGA6, './140529_ITGA6Coexpression.txt', row.names=T, sep='\t')
 
 plotCoexpression(ITGA6, 'ITGA6')
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 # Use twice the standard deviation and significantly correlated
-ITGA6genes = ITGA6[ITGA6[,1] > 2*sd(ITGA6[,1]) & ITGA6[,4] < 0.05,]
-write.table(ITGA6genes, './140528_ITGA6Cutoff.txt', sep='\t')
+ITGA6genes = ITGA6[ITGA6[,1] > 3*sd(ITGA6[,1]) & ITGA6[,4] < 0.05,]
+write.table(ITGA6genes, './140529_ITGA6Cutoff.txt', sep='\t')
 
 ITGA6Square = makeSquareCoexpressionMatrix(ITGA6genes, dat)
 ITGA6Dissim = makeDissimilarity(ITGA6Square)
@@ -141,14 +141,14 @@ rm(ITGA6, ITGA6genes)
 setwd('/Users/d.brown6/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ALDH1/')
 
 ALDH1 = correlateGeneWithGEM(dat, 'ALDH1A1')
-write.table(ALDH1, './140528_ALDH1Coexpression.txt', row.names=T, sep='\t')
+write.table(ALDH1, './140529_ALDH1Coexpression.txt', row.names=T, sep='\t')
 
 plotCoexpression(ALDH1, 'ALDH1')
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 # Use twice the standard deviation and significantly correlated
-ALDH1genes = ALDH1[ALDH1[,1] > 2*sd(ALDH1[,1]) & ALDH1[,4] < 0.05,]
-write.table(ALDH1genes, './140528_ALDH1Cutoff.txt', sep='\t')
+ALDH1genes = ALDH1[ALDH1[,1] > 3*sd(ALDH1[,1]) & ALDH1[,4] < 0.05,]
+write.table(ALDH1genes, './140529_ALDH1Cutoff.txt', sep='\t')
 
 ALDH1Square = makeSquareCoexpressionMatrix(ALDH1genes, dat)
 ALDH1Dissim = makeDissimilarity(ALDH1Square)
@@ -173,14 +173,14 @@ rm(ALDH1, ALDH1genes)
 setwd('/Users/d.brown6/Documents/public-datasets/cancerBrowser/deDupAgilent/results/L1CAM/')
 
 L1CAM = correlateGeneWithGEM(dat, 'L1CAM')
-write.table(L1CAM, './140528_L1CAMCoexpression.txt', row.names=T, sep='\t')
+write.table(L1CAM, './140529_L1CAMCoexpression.txt', row.names=T, sep='\t')
 
 plotCoexpression(L1CAM, 'L1CAM')
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 # Use twice the standard deviation and significantly correlated
-L1CAMgenes = L1CAM[L1CAM[,1] > 2*sd(L1CAM[,1]) & L1CAM[,4] < 0.05,]
-write.table(L1CAMgenes, './140528_L1CAMCutoff.txt', sep='\t')
+L1CAMgenes = L1CAM[L1CAM[,1] > 3*sd(L1CAM[,1]) & L1CAM[,4] < 0.05,]
+write.table(L1CAMgenes, './140529_L1CAMCutoff.txt', sep='\t')
 
 L1CAMSquare = makeSquareCoexpressionMatrix(L1CAMgenes, dat)
 L1CAMDissim = makeDissimilarity(L1CAMSquare)

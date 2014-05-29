@@ -39,12 +39,12 @@ tcgaSigs = read.delim('~/Documents/public-datasets/TCGA/classficationSignature/1
 
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
 
-cd133Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140527_cd133Cutoff.txt", row.names=1)
-cd44Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140527_cd44Cutoff.txt", row.names=1)
-cd15 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/CD15/140528_cd15Cutoff.txt", row.names=1)
-aldh1 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ALDH1/140528_ALDH1Cutoff.txt", row.names=1)
-itag6 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ITGA6//140528_ITGA6Cutoff.txt", row.names=1)
-l1cam = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/L1CAM/140528_L1CAMCutoff.txt", row.names=1)
+cd133Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140529_cd133Cutoff.txt", row.names=1)
+cd44Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140529_cd44Cutoff.txt", row.names=1)
+cd15 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/CD15/140529_cd15Cutoff.txt", row.names=1)
+aldh1 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ALDH1/140529_ALDH1Cutoff.txt", row.names=1)
+itag6 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ITGA6//140529_ITGA6Cutoff.txt", row.names=1)
+l1cam = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/L1CAM/140529_L1CAMCutoff.txt", row.names=1)
 
 myPalette <- colorRampPalette(c("green", "black", "red"))(n = 1000)
 
@@ -151,7 +151,4 @@ heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures
           Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
           ColSideColors=as.character(verhaakSubtypeAll$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5))
-
-####################################### Measure enrichment of Proneural and Mesenchymal with CD133 and CD44 #############################################
-head(cd133Subtype)
 
