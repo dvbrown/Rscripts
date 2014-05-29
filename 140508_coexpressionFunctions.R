@@ -1,8 +1,6 @@
 library(WGCNA)
-#library(biomaRt)
 
 #mart<- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
-
 
 coVar <- function(x) {
     result = 100*(sd(x) / mean(x))
@@ -63,45 +61,40 @@ makeDissimilarity <- function (squareMatrix) {
   return (dissTOM)
 }
 
-buildHeatMap <- function (dissimilarityMatrix, gene='PROM1') {
-  # There are several methods for branch cutting; our standard method is the Dynamic Tree Cut from the package dynamicTreeCut
-  # Module identification using dynamic tree cut. This is the most basic method and returns 3 modules when the cutHeight is 0.999 (default 0.99)
-    
+buildCorrelationHeatMap <- function (geneExpressionMatrix=dat, adjacencySquareMatrix, gene='PROM1') {
+    gene2plot = row.names(adjacencySquareMatrix)
+    plotNetworkHeatmap(geneExpressionMatrix, plotGenes=gene2plot, useTOM=FALSE, 
+                       networkType="signed", power=1, main=paste("Correlations of ", gene, "mRNA"))
+}
+
+buildTOMHeatMap <- function (geneExpressionMatrix=dat, adjacencySquareMatrix, gene='PROM1') {
+    gene2plot = row.names(adjacencySquareMatrix)
+    plotNetworkHeatmap(geneExpressionMatrix, plotGenes=gene2plot, useTOM=TRUE, 
+                       networkType="unsigned", power=4, main=paste("Topology overlap matrix\nof ", gene, "mRNA")) 
+}
+
+makeMDS <- function (dissimilarityMatrix, gene='CD133') {
+  # Make MDS plot using the dissimilarity matrix and the module colors from flash clustering
+  cmd1 = cmdscale((dissimilarityMatrix), 3)
   geneTree = flashClust(as.dist(dissimilarityMatrix), method = "average")
-  dynamicMods = cutreeDynamic(dendro = geneTree, cutHeight=0.999, method='tree')
+  dynamicMods = cutreeDynamic(dendro = geneTree, cutHeight=0.99, method='tree')
   table(dynamicMods)
   # Convert numeric lables into colors
   dynamicColors = labels2colors(dynamicMods)
-  
-  # Transform dissTOM with a power to make moderately strong connections more visible in the heatmap
-  plotTOM = dissimilarityMatrix^6
-  # Set diagonal to NA for a nicer plot
-  #diag(plotTOM) = NA
-  title = paste("Network heatmap plot of", gene, "coexpressed genes")
-  # Plot the heatmap
-  TOMplot(plotTOM, geneTree, dynamicColors, main = title) #, terrainColors=FALSE)
-  #,labRow=prom1CgenesNames, ColorsLeft=NA)
-  return (dynamicColors)
+  plot(cmd1, col=dynamicColors, main = paste('MDS plot of', gene, 'coexpressed genes'), xlab='Most variation', ylab='Second most variation')
 }
 
-makeMDS <- function (dissimilarityMatrix, moduleColors, gene='CD133') {
-  # Make MDS plot using the dissimilarity matrix and the module colors from flash clustering
-  par(mfrow=c(1,1))
-  cmd1 = cmdscale((dissimilarityMatrix), 3)
-  plot(cmd1, col=moduleColors, main = paste('MDS plot of', gene, 'coexpressed genes'), xlab='Most variation', ylab='Second most variation')
-}
-
-cytoScapeInput <- function (dissimilarityMatrix, moduleColors, coexpressedShortList, gene="PROM1") {
+cytoScapeInput <- function (dissimilarityMatrix, #moduleColors, 
+                            coexpressedShortList, gene="PROM1") {
 # The following R code allow one to specify connection strenghts input to cytoscape.
 # CoexpressedShortList is the dataframe which subset the full coexpression data and contains raw correlation values
 # Select all module probes
-inModule = is.finite(match(moduleColors, moduleColors))
-#modProbes = probes[inModule]
-#match1 = match[modProbes, GeneAnnotation$substanceBXH]
-modGenes = row.names(dissimilarityMatrix)[inModule]
+
+#inModule = is.finite(match(moduleColors, moduleColors))
+modGenes = row.names(dissimilarityMatrix)#[inModule]
 
 # Select the corresponding topological overlap
-modTOM = dissimilarityMatrix[inModule, inModule]
+modTOM = dissimilarityMatrix#[inModule, inModule]
 dimnames(modTOM) = list(modGenes, modGenes)
 
 # The retreival of gene IDs doesn't work as there are many to one mappings
@@ -116,7 +109,6 @@ cyt = exportNetworkToCytoscape(modTOM, edgeFile=paste(gene, "_CytoEdge", ".txt",
                                weighted=TRUE, threshold=0.02, nodeNames=modGenes, altNodeNames=NA,#modGeneIDs[,'ensembl_gene_id'],
                                nodeAttr = coexpressedShortList[,'correlation'])
                                    #c(moduleColors[inModule], coexpressedShortList[,'correlation'], coexpressedShortList[,'FDR']))
-
 return (cyt)
 }
 
@@ -142,30 +134,23 @@ subsample10times <- function (geneExpressionMatrix=dat, gene="PROM1", iterations
   return (result)
 }
 
-
-# cutoffCoxpression = function(subSampledCorrMat, subSampledFDRMat) {
-#     # A function that makes the cutoff so it can passed to apply
-#     result = subSampledCorrMat_vec[subSampledCorrMat_vec[abs
-#                                                          (subSampledCorrMat_vec) > 2*sd(subSampledCorrMat_vec) & 
-#                                                              subSampledFDRMat_vec < 0.05,]] # Use twice the standard deviation and significantly correlated
-#     return (length(row.names(result)))
-# 
-# }
-
 plotResampling = function(resamplingCorrMatrix, resamplingFDRMatrix, originalCoexpressionMatrix, gene="CD133") {
     # Plot resampling metrics
     par(mfrow=c(2,2))
+    
+    # Plot the distributions of the standard deviations and add the actual data
     hist(apply(resamplingCorrMatrix, 2, sd), breaks='FD', main=paste("Variation in correlation scores \nacross 10 subsamples for", gene), 
         xlab="Standard deviation", col="blue")
     # Add line that signifies real data
     abline(v=sd(originalCoexpressionMatrix[,1]), col='red')
 
+    # Plot the distributions of the FDR and add the actual data
     hist(apply(resamplingFDRMatrix, 2, mean), breaks='FD', main=paste("Variation in FDR scores \nacross 10 subsamples", gene),
         xlab="Mean of FDR", col="forestgreen")
     # Add line that signifies real data
     abline(v=mean(originalCoexpressionMatrix[,4]), col='red')
     
-    # Add box that signifies real data
+    # Plot the distribution of the data by boxplot and add actual data
     boxColor = c(rep_len("blue", ncol(cd133SubsamplesCorr)), "red")
     boxplot(cbind(resamplingCorrMatrix, originalCoexpressionMatrix[,1]), main=paste("Distribution of correlation scores \nacross 10 subsamples for", gene), 
             col=boxColor, xlab="Subsample", ylab="Correlation")

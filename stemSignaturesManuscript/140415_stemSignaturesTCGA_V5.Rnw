@@ -1,0 +1,389 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Stylish Article
+% LaTeX Template
+% Version 1.0 (31/1/13)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Mathias Legrand (legrand.mathias@gmail.com)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%    PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[fleqn,10pt]{SelfArx} % Document font size and equations flushed left
+
+\setlength{\columnsep}{0.55cm} % Distance between the two columns of text
+\setlength{\fboxrule}{0.75pt} % Width of the border around the abstract
+
+\definecolor{color1}{RGB}{0,0,153} % Color of the article title and sections
+\definecolor{color2}{RGB}{204,102,0} % Color of the boxes behind the abstract and headings
+
+\newlength{\tocsep} 
+\setlength\tocsep{1.5pc} % Sets the indentation of the sections in the table of contents
+\setcounter{tocdepth}{3} % Show only three levels in the table of contents section: sections, subsections and subsubsections
+
+\usepackage{lipsum} % Required to insert dummy text
+\usepackage[english]{babel} %more dumb text
+\usepackage{blindtext}
+\usepackage{pdfpages}
+
+%----------------------------------------------------------------------------------------
+%    ARTICLE INFORMATION
+%----------------------------------------------------------------------------------------
+
+\JournalInfo{ Molecular Systems Biology (11.3)\\ 
+Nature Communications (10.015)\\ Plos Comp Bio (5.515)\\ 
+Bioinformatics (5.3)\\ FEBS Journal(4.25)\\ BMC Bioinformatics (3.03)\\
+or similar \\ SYSTEMS BIOLOGY journal} % Journal information
+
+\Archive{Analytical study} % Additional notes (e.g. copyright, DOI, review/research article)
+
+\PaperTitle{In silico comparison of cancer stem markers in Glioblastoma Multiforme by gene coexpression analysis} % Article title
+
+\Authors{Brown, Daniel V\textsuperscript{1}*,  Daniel, Paul M\textsuperscript{1}, Inouye, Michael\textsuperscript{2},
+Mantamadiotis, Theo\textsuperscript{1}} % Authors
+\affiliation{\textsuperscript{1}\textit{Cancer Signalling laboratory, Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
+\affiliation{\textsuperscript{2}\textit{Medical Systems Biology laboratory, Department of Pathology, University of Melbourne, Melbourne, Australia}} % Author affiliation
+\affiliation{*\textbf{Corresponding author}: dvbrown@student.unimelb.edu.au} % Corresponding author
+
+\Keywords{Stem Cell Markers --- Glioblastoma --- Coexpression --- Gene signature} % Keywords - if you don't want any simply remove all the text between the curly brackets
+\newcommand{\keywordname}{Keywords} % Defines the keywords heading name
+
+%----------------------------------------------------------------------------------------
+%	ABSTRACT
+%----------------------------------------------------------------------------------------
+
+\Abstract{
+The field of stem cell biology, including cancer stem cells, has relied on the use of robust markers that indicate the state of maturity of the cell. These markers are typically interogated using antibodies targeting the extra-cellular protein product or dyes that act as surrogates of the marker in question.
+Examples include CD133, Integrin $\alpha$-6 and ALDH1.
+Some of the low experimental reproducibilty that has been observed in studies of stem cell biology can be attributed to the choice of marker or markers used to identify or isolate the hypothetical stem cell population by antibody based methods.\\
+
+We have conducted an analysis of the Cancer Genome Atlas Glioblastoma Multiforme (GBM) dataset to compare several genetic markers that have been associated with the Glioblastoma stem cell (GSC) phenotype. 
+Validation was carried out by both subsampling and comparison with smaller scale experiments that performed gene expression studies after fluorescence activated cell sorting (FACS).\\
+
+Weighted correlation network analysis (WGCNA) was used to determine the suite of genes that are coexpressed with candidate putative stem cell markers. Gene set enrichment and network analysis was performed to identify gene ontogenies and pathways that are enriched by the coexpression modules. 
+Several markers will be compared for the enrichment of stem-like phenotypes \textit{in silico}.
+The coexpression modules corresponding to the putatitive stem cell markers will be used as gene expression signatures and will be intergrated with molecular and clinical information such as GBM subtype, MGMT methylation, G-CIMP status and overall survival.\\
+
+This analytical approach is novel and \textbf{may} provide insight into the phenotypic properties exhibited by cells expressing candidate stem cell markers and may be able to assist in the choice of marker or markers for future characterization of Glioblastoma stem cells.  The approach described in this article is applicable to alternate normal or cancer stem cell types and biomarkers.\\
+}
+
+\begin{document}
+<<setup, include=FALSE, cache=FALSE, echo=FALSE>>=
+library(knitr)
+library(affy)
+library(limma)
+options(replace.assign=TRUE,width=50)
+opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center', fig.width=5, fig.height=5, fig.show='hold', cache=TRUE, par=TRUE)
+knit_hooks$set(par=function(before, options, envir){
+if (before && options$fig.show!='none') par(mar=c(4,4,.1,.1),cex.lab=.95,cex.axis=.9,mgp=c(2,.7,0),tcl=-.3)
+}, crop=hook_pdfcrop)
+@
+%\SweaveOpts{concordance=TRUE}
+%This says that figures should be resized so that they fit the full width of the text.
+
+\flushbottom % Makes all text pages the same height
+
+\maketitle % Print the title and abstract box
+
+\tableofcontents % Print the contents section
+
+% \thispagestyle{empty} % Removes page numbering from the first page
+
+%----------------------------------------------------------------------------------------
+%    INTRODUCTION
+%----------------------------------------------------------------------------------------
+\section*{Introduction} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Introduction} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{Some stats on prevalence and mortality}
+  
+Glioblastoma multiforme (GBM) is an aggressive, heterogeneous tumour of the central nervous system. These diverse morphological features have made diagnosis of GBM difficult (1). Molecular profiling of GBM tumours has revealed that similar to other tumours such as breast and ovarian cancer (2,3), GBM is not a single disease but consists of several distinct malignancies. Although GBM is a relatively rare type of cancer it has a 5 year survival of less than 5\% rendering it one of the most lethal types of tumours. Age is the most important risk factor for GBM, with incidence showing a 4th power relationship with age, indicative of a gradual accumulation of oncogenic mutations over time (7).
+
+    \subsection*{Molecular Sub-classification of GBM}
+
+Quantification of GBM gene expression by microarray combined with unsupervised machine learning techniques was able to differentiate between glioblastoma multiforme, low grade astrocytoma and oligodendrogliomas (13). Within the GBM set further clustering could separate 3 distinct groups of tumours (1,14).
+These 3 groups were found to resemble specific stages in neuronal development. The proneural subtype resembled a differentiated neural cell type and displayed the best prognosis. Conversely the mesenchymal subtype resembled a primitive cell type and had the shortest survival (2,3,14).\\
+Better update this with both Verhaak and Johnson 2014.\\
+Genomic profiling of GBM has been performed by multiple laboratories with consistent segregation of proneural and mesenchymal subtypes. However differences occur in the number and molecular properties of subtypes that lie between the two extreme phenotypes (5,14,16-18).
+
+ %   \paragraph {Predictive significance of a stemness signature}
+    
+% The clinical significance of CD133 and other stem cell markers are controversial. Immunohistochemistry does not show a statistically significant association of CD133 or CD15 positivity on survival (59). This is in contrast to studies at the mRNA level demonstrating that CD133 (PROM1) expression is a significant negative prognostic factor for both progression-free and overall survival in GBM (60).\\ 
+
+\subsection*{Some info on cancer stem cell theory}  
+    \paragraph {Why CD133 is not a good marker}
+
+GICs were initially characterised by expression of the stem cell marker CD133 (PROM1) and were able to form tumours from 100 cells in immune deficient NOD-SCID mice (41). 
+CD133 or prominin-1 was originally described as being an epitope enriched in a hybridoma screen against CD34 isolated haemopoetic progenitors (42). 
+The marker was later shown to be expressed by neural progenitor cells from human fetal brains (43). There are a number of limitations of the CD133 marker for glioma initiating cells. The protein itself is a 115-kDa membrane-associated glycoprotein with no known molecular function, conserved in humans, mice, worms and flies (44). 
+The two major commercial antibodies target different glycoslyated regions of the protein, the precise locations of which are currently unknown. (45). CD133 undergoes mRNA splicing, generating at least 28 isoforms (46), contributing to the variation in detection by antibodies.\\
+However CD133- cells are able to form tumours when 10 spheroids were orthotopically implanted into rat brains. The resulting tumours contained a small fraction of CD133+ cells (48).
+Without a molecular marker to separate CD133- stem cells from non-stem cells it is difficult to examine the properties of this cell type. A variety of other stem cell markers have been trialed such as the adhesion molecules CD44, Integrin-alpha6, CD15 and the multiple-drug resistance protein ABCG2 but have not found wide spread use (45).\\
+\textbf{Expand this intro section to discuss the other markers}
+
+\subsection*{Some info FACS and the use of markers to isolate subpopulations}  
+
+Flow cytometry is a classical technique in cell biology to isolate and study subpopulations. It relies on a robust extracellular marker and previous characteristisation of the propperties of the cells isolated by the markers.\\
+\textbf{Expand this section on literature demonstrating the use of FACS and stem cell markers.}
+
+\subsection*{Literature on studies which compare markers}  
+    \paragraph {Studies that I am trying to copy}
+    
+Some of the important references are \textbf {Mesenchymal glioma stem cells are maintained by activated glycolytic metabolism involving aldehyde dehydrogenase 1A3}. This article states that proneural GSCs express mainly CD133 whereas mesenchymal GSCs express mainly CD44. There is also overlap with ALDH1 and CD44. Some other markers include CD15 and CD24 look up Patchinson 2007 Stem Cells for these refs.
+    
+\subsection*{Some info on weighted coexpression analysis}  
+    \paragraph {Some stuff}
+Some of the important references are \textbf {WGCNA: an R package for weighted correlation network analysis}.
+Instead of relating thousands of genes to a microarray sample trait, it focuses on the relationship between a few (typically less than 10) modules and the sample trait. 
+Modules are constructed from the expression data by using hierarchical clustering.\\
+By raising the absolute value of the correlation to a power \math{\beta > 1} % Check this line
+ $ (soft thresholding), the weighted gene co-expression network construction emphasizes high correlations at the expense of low correlations.
+
+%----------------------------------------------------------------------------------------
+%    METHODS
+%----------------------------------------------------------------------------------------
+\section*{Methods} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Methods} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{Raw data munging}  
+    \paragraph {The boring stuff}
+The munging information is located in the supplemental data.
+The  weighted gene co-expression network analysis package was used within the R version 3.0.1 environment. The gene expression data was level 3 data that was measured by the TCGA was imported using the broad firehose wget tool. The Agilent array data was selected for various reasons (Supplemenatary).
+
+  \subsection*{WGCNA parameters}  
+    \paragraph {How and why various thresholds were set}
+Firstly the gene expression matrix was measured for correlation by the WGCNA function \textbf{corAndPvalue}. The following parameters were selected as the cuttoff for determining the significantly coexpressed genes with CD133 \textbf{...}.\\
+The vector of these gene names was then used to build the network of coexpressed genes using the manual module construction method.
+
+  \subsection*{Rendering the network in cytoscape}  
+    \paragraph {Making a pretty ridiculogram}
+Cytoscape 3.1.0 was used in the analyses. The WGCNA function exportNetworkToCytoscape was used to export the data into a text file amenable to import by cytoscape. The data was read in using "Import network from file hot button" using the edge file. To get the colors to appear the "Import file from file hot button" was used. The node file was read in as a node attribute. In the Style panel of the gui the node color was set using a pass through mapper. The degree sorted layout was used to generate the connectivity measure. This was then used as a continuous mapper to node size. Next prefuse force directed layout was used to make it look pretty. The power used to raise the algorithm was changed in settings. A filter was applied on degreee connectivity to make the network less busy.\\
+This filter was \emph{weighted score} 0.125 < 1. Weighted is the measure of network adjacency. Invert selection was used and then edges were hidden. After this nodes that were connected by the edges left over were selected. The invert selection to hidden features were used to trim the network. The force directed layout was used to visualise the network topology with network adjacency used to weight the layout algorithm.
+\textbf {update this section as I now have changed}
+
+  \subsection*{Gene set enrichment of coexpressed genes}  
+    \paragraph {How the enrichments were done}
+Gene set enrichment analysis was carried out with the java based GUI. 
+Preranked mode was used with the correlation values of the entire dataset used as input. C2: Canonical Pathways (KEGG, reactome etc) database (4722 gene sets) from MolSigDB was used as the database to interrogate enriched pathways. Gene set permutation was used to measure the significance of the findings.\\
+
+The Pearson correlation coefficient, and correlation raised to the power of 6 (as the WGCNA algorithm uses to weight the network) did not give any significant results. I can probably sell this choice as motivated by small, coordinated changes contributing to the phenotypes observed.\\
+
+  \subsection*{Survival analysis}  
+    \paragraph {The method used to interogate the gene signatures with clinical parameteres.}
+Single sample (ss) GSEA is probably the most common choice. I could also use the Coleman et al gene signature score approach. Either way I present this using Kaplan Myier curves.
+
+%----------------------------------------------------------------------------------------
+%    RESULTS
+%----------------------------------------------------------------------------------------
+\section*{RESULTS} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Results} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{Discovering the suite of CD133 coexpressed genes}
+    \paragraph {A targeted approach to identify coexpressed genes}
+The PROM1 gene was processed with WGCNA using the Agilent microarray data from the TCGA glioblastoma (see supplemental for why Agilent was selected).
+
+%---------------------------------------------------------------------------------------------------------------------
+<<cd133_histogram, echo=FALSE, fig.cap='Distribution of cd133 correlated genes', fig.show='asis', cache=TRUE>>=
+# Insert some code here
+setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
+library(WGCNA)
+source('/Users/d.brown6/Documents/Rscripts/140508_coexpressionFunctions.R')
+options(stringsAsFactors=F)
+
+dat = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/140526_agilentDedupPatients.txt", row.names=1)
+setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/')
+
+######################################## CD133 coexpressed Genes ################################################
+cd133 = correlateGeneWithGEM(dat, 'PROM1')
+plotCoexpression(cd133, 'CD133')
+
+@
+The cancer genome atlas dataset for GBM was used to interogate the suite of genes coexpressed with CD133. As CD133 is the currently the most accepted marker for glioma stem cells we wished to resolve the phentoype of the CD133 expressing subpopulation computationally.\\
+
+  \paragraph {Validation of the parameters used to select coexpressed genes}
+To this end we identified the most significantly correlated genes with CD133 (PROM1) gene with a cutoff of \textbf {greater than 2 standard deviations from the mean and less than 0.05 FDR corrected p-value} (figure 1). Only postively correlated genes were considered as we are simulating the population that is enriched for the expression of a marker. If we include anti-correlated genes then it will be difficult to distingush genes that are expressed in the CD133 low population.\\
+
+It was established that the correlation values of the dataset were normally distributed (figure 2). The validity of the method was proved by repeated sampling (bootstrapping) and plotting the distribution of the population parameters. \textbf{Appendix X and supplemental methods (bootstrap to 1000 in the final paper)}. The bootstrapping procedure confirms that it is not a small subset of patients that is contributing to the coexpression signature.\\
+
+The consequence of this is the top 2.5\% of genes are roughly the same number across markers but the magnitude of their correlation strengths are different. In the case of CD44 the correlation values are much higher than for CD133. This list of genes was then analysed with the Weighted Gene Coexpression analayis algorithm (WGCNA) to identify how coexpressed these genes are with each other and if a core module of CD133 coexpressed genes exists. 
+
+%-----------------------------------------------------------------------------------------------------------------
+
+%------------------------------------------- Generate a heatmap -------------------------------------------------------------
+<<cd133_heatmap, echo=FALSE, fig.cap='Identifying the suite of CD133 coexpressed genes. (Top) heatmap of the coexpressed CD133 module. (Bottom) the level of variation in the submodules', fig.show='asis', cache=TRUE>>=
+
+# Generate the CUTOFF for the coexpressed genes to build the network
+# Use twice the standard deviation and significantly correlated
+cd133genes = cd133[(cd133[,1]) > 2*sd(cd133[,1]) & cd133[,4] < 0.05,]
+cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
+cd133Dissim = makeDissimilarity(cd133Square)
+
+buildCorrelationHeatMap(dat, cd133Dissim, 'CD133')
+
+buildTOMHeatMap(dat, cd133Dissim, "CD133")
+
+# Make MDS plot
+moduleCol = flashClust(as.dist(cd133Dissim))
+makeMDS(cd133Dissim, 'CD133')
+@
+
+The set of \textbf {approx 600} genes that were significantly coexpressed were subsequently analysed by weighted coexpression analysis to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the network adjacency algorithm. The biological interpretation of this is that the core module decribes the gene expression signature of the genes isolated by sorted for the CD133 marker.\\
+
+The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3). The heatmap shows that there are 4 main submodules (the darker red color) as indicated by the colored legend on the dendogram. An MDS plot plot was used to resolve the levels of variation in the data. The largest module colored dark blue was the least variable across the 594 samples in the TCGA as its variation is encapsulated by the second MDS dimension. 
+{\emph I should probably present a table of these "core" CD133 coexpressed genes either in the main body or the suplemental of the paper.
+
+%------------------------------------------------------------------------------------------------------------------------
+
+  \subsection*{A network of CD133 coexpressed genes}  
+    \paragraph {Network analysis}
+    
+The core coexpression module of CD133 and CD44 {\emph and whatever markers I decide to add} was used to build a data driven network to get a visual impression of the topology of the network (figure 4). The majority of genes are positively coexpressed with CD133 and CD44. The sub-modules are more separated in CD133 compared to CD44. The overall connectivity of the netwok is greater in CD133 copared to CD44. \textbf {I must set the same mapping quantites to actually make these comparisons accurate. Check out my "style.xml file"}. I can also quantify the connectivity measures in cytoscape and present them as a bargraph or something.
+
+\begin{figure}[ht]
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/networks/CD133_CytoNodeV2.png}
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/networks/CD44_CytoNode.png}
+    \caption{{The network obtained from coexpression of CD133 (top) and CD44 (bottom). The color represents the correlation coefficient and the edge thickness is the network adjacency}  }
+    \label{fig:network}
+\end{figure}
+
+%------------------------------------------------------------------------------------------------------------------------
+
+  \subsection*{Gene sets enriched for cd133 coexpressed genes}  
+    \paragraph {Functional enrichment of apparently stem like genes - This is real}
+
+Using the Pearson correlation coefficient gave no significant pathways enriched in \textbf{CD133}. It did give some interesting ones in \textbf{CD44} including Integrin, Firbinolysis and NF-k B pathways. Using the correlation value itself (signed) gave mitotic prophase, DNA replication and cell cycle for \textbf{CD133}. Oxidative phosphorylation was enriched in the negatively correlating genes with CD133.\\
+
+Also present this as a table or a cytoscape network.
+
+\begin{figure}[ht]
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/stemCellSig/130117_signature/130123_collatedFigure.pdf}
+    \caption{{A dummy figure illustrating survival analysis}  }
+    \label{fig:C}
+\end{figure}
+
+
+%------------------------------------------------------------------------------------------------------------------------
+
+\begin{figure}[ht] \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_MISMATCH_REPAIR_41.png}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_OXIDATIVE_PHOSPHORYLATION_81.png}
+    \caption{{Top and bottom gene set enriched the CD133 coexpressed genes}  }
+    \label{fig:B}
+\end{figure}
+
+%------------------------------------------------------------------------------------------------------------------------
+
+  \subsection*{Clinical relevance of CD133 coexpressed genes}  
+    \paragraph {The most important part I guess}
+    
+Paritition the TCGA data in some fashion using the CD133 signature and look for a survival difference between the high and low.Posssibly a low, medium and high.\\
+Look for overlap with the 4 established subtypes. Look for any enriched mutations (eg IDH1) in the groups that may explain the CD133 phenotype \textbf{stem-like or other}. Also do MGMT and the general epigentic landscape if interesting.
+
+%------------------------------------------------------------------------------------------------------------------------
+
+  \subsection*{Comparison of commonly used stem cell markers}  
+    \paragraph {The most contraversial part for wet lab scientists}
+    
+\begin{figure}[ht] \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.75\linewidth]{/Users/d.brown6/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140528_moreMarkersEdit.pdf}
+    \caption{{A heatmap that examines overlap between molecular subtypes and FACS markers}  }
+    \label{fig:Overlaps}
+\end{figure}
+
+\blindtext
+
+%----------------------------------------------------------------------------------------
+%    DISCUSSION
+%----------------------------------------------------------------------------------------
+\section*{Discussion} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Discussion} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{I will wildy speculate on my results here}  
+    \paragraph {Say something clever here}
+\blindtext
+
+
+%----------------------------------------------------------------------------------------
+%    ACKNOWLEDGEMENTS
+%----------------------------------------------------------------------------------------
+\section*{Acknowledgements} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Acknowledgements} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+    \paragraph {Shout out to}
+Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne Ng for discussions about stem cells and Eric Joo for coffee runs. Also Colonel Sanders made a contribution to my nutrition. Prof Paul Waring for paying the bills.
+
+%----------------------------------------------------------------------------------------
+%    References
+%----------------------------------------------------------------------------------------
+\section*{References} % The \section*{} command stops section numbering
+
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}References} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{This will be empty}  
+    \paragraph {Use Papers2 for this part}
+\blindtext
+
+
+%----------------------------------------------------------------------------------------
+%    Supplementary Data
+%----------------------------------------------------------------------------------------
+\newpage % Put the supplementary on a new page
+\section*{Supplementary Data} % The \section*{} command stops section numbering
+\addcontentsline{toc}{section}{\hspace*{-\tocsep}Supplementary data} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
+  \subsection*{Aquisition and preparation of gene expression data ie data munging}  
+ 
+    \paragraph {TCGA GBM data} 
+The level 3 data was aquired using the broad firehose data with the following command: 
+    % You gotta escape the underscore _ with a backslash
+\textbf{firehose\_get -b -o MAF Agilent U133A clinical stddata 2013\_12\_10 GBM}. This includes clinical, affymetrix and agilent data. The clinical data was reformatted for R using the python script \textbf{meltTCGAGenefiles.py}. The agilent data, which was originally in 2 parts 
+was formatted using the script  \textbf{meltTCGAGenefile.py}. The TCGA uses the keyword "null" when describing empty values. This was changed to "NA" using the script \textbf{changeEmpties2NA.py}.
+
+    \paragraph {Deciding whether to use RNA-seq, Affymetrix or Agilent data} 
+As at March 2014 there were 160 cases with available RNA-seq data, compared to 540 for Affymetrix and Agilent. There for the sake of statistical power, the microarray platforms were preferred. Comaparing the properties of the data showed the Agilent data had a more normal distribution.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Distribution plots of Affymetrix and Agilent %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure*}[h] % The * bit means the figure takes up the whole page
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.9\textwidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/limmaResults/explorationPlots/140115_gapdhPlots.pdf}
+    \caption{{Distribution of the GAPDH gene in the Agilent and Affymetrix level 3 normalised TCGA GBM data.}  }
+    \label{fig:S1}
+\end{figure*}
+
+\begin{figure*}[h]
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.9\textwidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/limmaResults/explorationPlots/140115_patientCentricPlots.pdf}
+    \caption{{Distribution of the the probe intensities on Affymetirx and Agilent data for the first patient.}  }
+    \label{fig:S2}
+\end{figure*}
+
+Therefore the analysis was performed with Agilent as it was congruent with statistical assumptions of normality.
+    \subsection*{More definitions of WGCNA}
+    \paragraph {Copy and pasted from Background of WGCNA}
+Intramodular connectivity measures how connected, or co-expressed, a given gene is with respect to the genes of a particular module. The intramodular connectivity may be interpreted as a measure of module membership. It is this value which will be interested with respect to which genes are coexpressed with a marker.
+
+\begin{figure*}[h]
+   \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.9\textwidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/140522_cd133Subsampling.pdf}
+    \caption{{Distribution of the bootstrapped CD133 correlated genes. The actual data is indicated by the red line}  }
+    \label{fig:S3}
+\end{figure*}
+
+\end{document}
