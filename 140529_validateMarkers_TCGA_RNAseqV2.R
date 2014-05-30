@@ -90,6 +90,7 @@ verhaakSubtypeAll = sort.dataframe(verhaakSubtypeAll, 'colours')
 
 # The damn datatypes are not correct. Dump and read in object from file
 write.table(verhaakSubtypeAll, "output.txt", sep='\t')
+# write.table(verhaakSubtypeAll, "./survival/140530_liberalSignatureScores2SD.txt", sep='\t')
 verhaakSubtypeAll = read.delim("output.txt", row.names=1)
 
 subTypeHeat = as.matrix(verhaakSubtypeAll[,signatures])
