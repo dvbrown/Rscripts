@@ -8,6 +8,7 @@ callMarkerSubtype <- function (signatureScore, CD133cutoff, CD44cutoff) {
     # Takes a dataframe containing the signature scores and adds a new column that calls FACS marker subtype
     signatureScore$subtype = ""
     signatureScore$subtype = ifelse(signatureScore[,"CD133"] > signatureScore[,"CD44"], "CD133", "CD44")
+    # Not having and intermediate case is also better for the Kaplan Myer curve
     #signatureScore$subtype[signatureScore[,"CD133"] < -CD133cutoff & signatureScore[,"CD44"] < CD44cutoff] = "intermediate"
     signatureScore = sort.dataframe(signatureScore, "subtype")
     signatureScore$subtype = as.factor(signatureScore$subtype)
@@ -16,6 +17,8 @@ callMarkerSubtype <- function (signatureScore, CD133cutoff, CD44cutoff) {
 
 # verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140529_verhaakSubtypeCD133_scores", row.names=1)
 verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140530_liberalSignatureScores2SD.txt", row.names=1)
+# The liberal signature score is more significant. Not having and intermediate case is also better
+
 verhaakSignature = verhaakSignature[,c("CD133","CD44","GeneExp_Subtype","G_CIMP_STATUS")]
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
 
@@ -55,21 +58,18 @@ data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
 sur.fit = survfit(data.surv~subtype, boundData)
 
 plot(sur.fit, main='FACS marker coexpression signature in \nGlioblastoma multiforme by RNAseq',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue','green'),xlim=c(0,750), cex=1.75, conf.int=F)
+     col=c("red",'blue'),#'green'),
+     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
 
-legend('topright', c('CD133', 'CD44', 'Intermediate'), 
-       col=c("red",'blue','green'),lwd=1, cex=0.9, bty='n', xjust=0.5, yjust=0.5)
+legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
+       col=c("red",'blue'),#'green'),
+       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+
 summary(data.surv)
 #test for a difference between curves
-test = survdiff(data.surv~boundData$subtype, subset=!boundData$subtype %in% "intermediate")
+test = survdiff(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
 test
-# text(locator(1),labels='p=0.071', cex=1) #add the p-value to the graph
-
-
-
-
-
-
+text(locator(1),labels='p=0.0151', cex=1) #add the p-value to the graph
 
 
 
@@ -81,18 +81,20 @@ boundDataSub = boundData[boundData$G_CIMP_STATUS == "NON G-CIMP",]
 data.surv = Surv(boundDataSub$CDE_survival_time, event=boundDataSub$X_EVENT)
 sur.fit = survfit(data.surv~boundDataSub$subtype)
 
-plot(sur.fit, main='FACS marker coexpression signature in \nGlioblastoma multiforme by RNAseq (no G-CIMP)',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue','green'),xlim=c(0,750), cex=1.75)
+plot(sur.fit, main='FACS marker coexpression signature in Glioblastoma \nmultiforme by RNAseq no (G-CIMP)',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),#'green'),
+     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
 
-legend('topright', c('CD133', 'CD44', 'Intermediate'), 
-       col=c("red",'blue','green'),lwd=1, cex=0.9, bty='n', xjust=0.5, yjust=0.5)
+legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
+       col=c("red",'blue'),#'green'),
+       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 summary(data.surv)
 
 #test for a difference between curves
 test = survdiff(data.surv~boundDataSub$subtype, subset=!boundDataSub$subtype %in% "intermediate")
 test
-text(locator(1),labels='p=0.31', cex=1) #add the p-value to the graph
+text(locator(1),labels='p=0.152', cex=1) #add the p-value to the graph
 
 ############################################# Survival curve for subtype ##################################
 #generate the survival object and plot a Kaplan-Meier
