@@ -4,7 +4,17 @@ library(survival)
 source("~/Documents/Rscripts/120704-sortDataFrame.R")
 setwd("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/")
 
-verhaakSubtypeCall = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140529_verhaakSubtypeCD133_scores", row.names=1)
+callMarkerSubtype <- function (signatureScore, CD133cutoff, CD44cutoff) {
+    # Takes a dataframe containing the signature scores and adds a new column that calls FACS marker subtype
+    signatureScore$subtype = ""
+    signatureScore$subtype = ifelse(signatureScore[,"CD133"] > signatureScore[,"CD44"], "CD133", "CD44")
+    signatureScore$subtype[signatureScore$CD133 < -CD133cutoff & signatureScore$CD44 < CD133cutoff] = "intermediate"
+    signatureScore = sort.dataframe(signatureScore, "subtype")
+    signatureScore$subtype = as.factor(signatureScore$subtype)
+    return (signatureScore)
+}
+
+verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140529_verhaakSubtypeCD133_scores", row.names=1)
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
 
 # Extract the clinical data for the RNAseq patients
@@ -24,11 +34,7 @@ ggplot(lattPlot, aes(value, fill = signature)) + geom_density(alpha = 0.2) +
     ggtitle("Distribution of CD133 and \nCD44 signature scores") +  # Set title
     coord_cartesian(xlim = c(-1, 1)) + theme_bw(base_size=20) + geom_vline(xintercept=-0.125, colour="red") # The 0.125 is where I will call indeterminate
 
-# Now call the subtypes
-verhaakSubtypeCall$subtype = ""
-verhaakSubtypeCall$subtype = ifelse(verhaakSubtypeCall[,"CD133"] > verhaakSubtypeCall[,"CD44"], "CD133", "CD44")
-verhaakSubtypeCall$subtype[verhaakSubtypeCall$CD133 < -0.125 & verhaakSubtypeCall$CD44 < 0] = "intermediate"
-verhaakSubtypeCall = sort.dataframe(verhaakSubtypeCall, "subtype")
+verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, -0.125, 0)
 
 ############################################## bind the clinical and subtyping info together #############################################
 boundData = merge.data.frame(clin, verhaakSubtypeCall, by.x="row.names", by.y="row.names")
@@ -51,7 +57,7 @@ summary(data.surv)
 #test for a difference between curves
 test = survdiff(data.surv~boundData$subtype, subset=!boundData$subtype %in% "intermediate")
 test
-text(locator(1),labels='p=0.071', cex=1) #add the p-value to the graph
+# text(locator(1),labels='p=0.071', cex=1) #add the p-value to the graph
 
 ############################################# Remove the G-CIMP cases and retest ##################################
 boundDataSub = boundData[boundData$G_CIMP_STATUS == "NON G-CIMP",]

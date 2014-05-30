@@ -242,16 +242,39 @@ moduleCol = flashClust(as.dist(cd133Dissim))
 makeMDS(cd133Dissim, 'CD133')
 @
 
-The set of \textbf {approx 600} genes that were significantly coexpressed were subsequently analysedfor network adjacency to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the WCGNA algorithm. The biological interpretation of this is that the core module decribes the gene expression signature of the genes isolated by sorted for the CD133 marker.\\
+The set of \textbf {approx 600} genes that were significantly coexpressed were subsequently analysed for network adjacency to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the WCGNA algorithm. The biological interpretation of this is that the core module decribes the gene expression signature of the genes isolated by sorted for the CD133 marker.\\
 
-The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3). The heatmap and associated MDS plot (figure 4) illustrates 3 major modules. The largest module colored dark blue was the least variable across the 594 samples in the TCGA as its variation is encapsulated by the second MDS dimension. 
+The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3). The heatmap and associated MDS plot (figure 4) illustrates 3 major modules. There appears to be 2 major modules illustrated by the spokes eminating from the centre of the plot. The other smaller modules do not capture much of the variation of the dataset.
+
 {\emph I should probably present a table of these "core" CD133 coexpressed genes either in the main body or the suplemental of the paper.
 
 %------------------------------------------------------------------------------------------------------------------------
 
-
   \subsection*{Comparison of commonly used stem cell markers}  
     \paragraph {The most contraversial part for wet lab scientists}
+    
+Although CD133 is currently the most popular stem cell marker used for GSC we interogatted the coexpression modules of the several markers listed in \textbf {table X} to examine their molecular profiles and predictive power. Unfortunatley I could not use CD24 as a marker as the probe is not present on the Agilent 244k V2 array.
+ 
+    \paragraph {Functional enrichment of the putative stem cell markers}
+    
+Using the Pearson correlation coefficient gave no significant pathways enriched in \textbf{CD133}. It did give some interesting ones in \textbf{CD44} including Integrin, Firbinolysis and NF-k B pathways. Using the correlation value itself (signed) gave mitotic prophase, DNA replication and cell cycle for \textbf{CD133}. Oxidative phosphorylation was enriched in the negatively correlating genes with CD133.\\
+
+Also present this as a table or a cytoscape network.
+
+%------------------------------------------------------------- GSEA plots -----------------------------------------------------------
+
+\begin{figure}[ht] \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_MISMATCH_REPAIR_41.png}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_OXIDATIVE_PHOSPHORYLATION_81.png}
+    \caption{{Top and bottom gene set enriched the CD133 coexpressed genes}}
+    \label{fig:B}
+\end{figure}
+
+
+The representive image for Gene set enrichment of CD133 is displayed in figure X. A table listing GSEA results for several of the top markers is represented in table Y. From this we can make the conclusion that CD133 marks DNA repair and maybe transit amplfying cells and CD44 marks invasive and migrating cells.\\
+I still need to do GSEA on the other markers.
+
     
 <<bigSignatureComparison, echo=FALSE, fig.cap='Heatmap that compares different FACS markers', fig.show='asis', cache=FALSE>>=
 bindGeneExprClinical <- function (clinicalData, subtypedGeneExpression, signatures) {
@@ -318,7 +341,8 @@ heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures
 
 
 @
-\blindtext
+
+From this heatmap we can see that CD133 nicley matches up with the Proneural subtype and that CD44 nicley matches up with the CD44 subtype. If we do a Fisher's exact test on the contingency table we observe a really small p-value. I have yet to run a Chi-sq test on the full dataset. L1CAM and CD15 nicley match the pattern of CD133 and CD44 respectivley. The other markers do not really overlap with a particular subtype.
 
 %------------------------------------------------------------------------------------------------------------------------
 
@@ -338,38 +362,10 @@ The core coexpression module of CD133 and CD44 {\emph and whatever markers I dec
 
 %------------------------------------------------------------------------------------------------------------------------
 
-  \subsection*{Gene sets enriched for cd133 coexpressed genes}  
-    \paragraph {Functional enrichment of apparently stem like genes - This is real}
-
-Using the Pearson correlation coefficient gave no significant pathways enriched in \textbf{CD133}. It did give some interesting ones in \textbf{CD44} including Integrin, Firbinolysis and NF-k B pathways. Using the correlation value itself (signed) gave mitotic prophase, DNA replication and cell cycle for \textbf{CD133}. Oxidative phosphorylation was enriched in the negatively correlating genes with CD133.\\
-
-Also present this as a table or a cytoscape network.
-
-\begin{figure}[ht]
-   \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.95\linewidth]{/Users/d.brown6/Documents/stemCellSig/130117_signature/130123_collatedFigure.pdf}
-    \caption{{A dummy figure illustrating survival analysis}  }
-    \label{fig:C}
-\end{figure}
-
-
-%------------------------------------------------------------------------------------------------------------------------
-
-\begin{figure}[ht] \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_MISMATCH_REPAIR_41.png}
-    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_OXIDATIVE_PHOSPHORYLATION_81.png}
-    \caption{{Top and bottom gene set enriched the CD133 coexpressed genes}  }
-    \label{fig:B}
-\end{figure}
-
-%------------------------------------------------------------------------------------------------------------------------
-
   \subsection*{Clinical relevance of CD133 coexpressed genes}  
     \paragraph {The most important part I guess}
     
-Paritition the TCGA data in some fashion using the CD133 signature and look for a survival difference between the high and low.Posssibly a low, medium and high.\\
+Paritition the TCGA data in some fashion using the CD133 signature and look for a survival difference between the high and low. Posssibly a low, medium and high.\\
 Look for overlap with the 4 established subtypes. Look for any enriched mutations (eg IDH1) in the groups that may explain the CD133 phenotype \textbf{stem-like or other}. Also do MGMT and the general epigentic landscape if interesting.
 
 <<DistribCD133_CD44, echo=FALSE, fig.cap='Where I set my cuttoff for subtyping', fig.show='asis', cache=TRUE>>=
