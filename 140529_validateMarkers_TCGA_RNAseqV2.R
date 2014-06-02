@@ -3,35 +3,7 @@ library(GSVA)
 library(gplots)
 library(RColorBrewer)
 source("~/Documents/Rscripts/120704-sortDataFrame.R")
-
-bindGeneExprClinical <- function (clinicalData, subtypedGeneExpression, signatures) {
-    # Merges clinical and FACS marker subtyped gene expression information and annotate a color based on Verhaak subtype
-    # signatures is a character vector of the signature names
-    boundData = merge.data.frame(clinicalData, subtypedGeneExpression, by.x="row.names", by.y="row.names")
-    row.names(boundData) = row.names(clinicalData)
-    verhaakSubtype = boundData[,c(signatures, "GeneExp_Subtype")]
-    verhaakSubtype$colours = "black"
-    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "red"
-    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Neural"] = "green"
-    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Classical"] = "blue"
-    verhaakSubtype$colours[boundData$GeneExp_Subtype == "Mesenchymal"] = "orange"
-    return (verhaakSubtype)
-}
-
-bindGeneExprCIMPClinical <- function (clinicalData, subtypedGeneExpression, signatures) {
-    # Merges clinical and FACS marker subtyped gene expression information and annotate a color based on Verhaak subtype
-    # signatures is a character vector of the signature names
-    boundData = merge.data.frame(clinicalData, subtypedGeneExpression, by.x="row.names", by.y="row.names")
-    row.names(boundData) = row.names(clinicalData)
-    verhaakSubtype = boundData[,c(signatures, "GeneExp_Subtype", "G_CIMP_STATUS")]
-    verhaakSubtype$colours = "black"
-    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "red"
-    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Neural"] = "green"
-    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Classical"] = "blue"
-    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Mesenchymal"] = "orange"
-    verhaakSubtype$colours[verhaakSubtype$G_CIMP_STATUS == "G-CIMP"] = "pink"
-    return (verhaakSubtype)
-}
+source("~/Documents/Rscripts/140508_coexpressionFunctions.R")
 
 ############################################# IO ##################################################################
 setwd('~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/')

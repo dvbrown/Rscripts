@@ -2,18 +2,8 @@ library(ggplot2)
 library(survival)
 
 source("~/Documents/Rscripts/120704-sortDataFrame.R")
+source("~/Documents/Rscripts/140508_coexpressionFunctions.R")
 setwd("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/")
-
-callMarkerSubtype <- function (signatureScore, CD133cutoff, CD44cutoff) {
-    # Takes a dataframe containing the signature scores and adds a new column that calls FACS marker subtype
-    signatureScore$subtype = ""
-    signatureScore$subtype = ifelse(signatureScore[,"CD133"] > signatureScore[,"CD44"], "CD133", "CD44")
-    # Not having and intermediate case is also better for the Kaplan Myer curve
-    #signatureScore$subtype[signatureScore[,"CD133"] < -CD133cutoff & signatureScore[,"CD44"] < CD44cutoff] = "intermediate"
-    signatureScore = sort.dataframe(signatureScore, "subtype")
-    signatureScore$subtype = as.factor(signatureScore$subtype)
-    return (signatureScore)
-}
 
 # verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140529_verhaakSubtypeCD133_scores", row.names=1)
 verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140530_liberalSignatureScores2SD.txt", row.names=1)

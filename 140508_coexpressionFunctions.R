@@ -156,3 +156,43 @@ plotResampling = function(resamplingCorrMatrix, resamplingFDRMatrix, originalCoe
             col=boxColor, xlab="Subsample", ylab="Correlation")
     par(mfrow=c(1,1))
 }
+
+bindGeneExprClinical <- function (clinicalData, subtypedGeneExpression, signatures) {
+    # Merges clinical and FACS marker subtyped gene expression information and annotate a color based on Verhaak subtype
+    # signatures is a character vector of the signature names
+    boundData = merge.data.frame(clinicalData, subtypedGeneExpression, by.x="row.names", by.y="row.names")
+    row.names(boundData) = row.names(clinicalData)
+    verhaakSubtype = boundData[,c(signatures, "GeneExp_Subtype")]
+    verhaakSubtype$colours = "black"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "red"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Neural"] = "green"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Classical"] = "blue"
+    verhaakSubtype$colours[boundData$GeneExp_Subtype == "Mesenchymal"] = "orange"
+    return (verhaakSubtype)
+}
+
+bindGeneExprCIMPClinical <- function (clinicalData, subtypedGeneExpression, signatures) {
+    # Merges clinical and FACS marker subtyped gene expression information and annotate a color based on Verhaak subtype
+    # signatures is a character vector of the signature names
+    boundData = merge.data.frame(clinicalData, subtypedGeneExpression, by.x="row.names", by.y="row.names")
+    row.names(boundData) = row.names(clinicalData)
+    verhaakSubtype = boundData[,c(signatures, "GeneExp_Subtype", "G_CIMP_STATUS")]
+    verhaakSubtype$colours = "black"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "red"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Neural"] = "green"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Classical"] = "blue"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Mesenchymal"] = "orange"
+    verhaakSubtype$colours[verhaakSubtype$G_CIMP_STATUS == "G-CIMP"] = "pink"
+    return (verhaakSubtype)
+}
+
+callMarkerSubtype <- function (signatureScore, CD133cutoff, CD44cutoff) {
+    # Takes a dataframe containing the signature scores and adds a new column that calls FACS marker subtype
+    signatureScore$subtype = ""
+    signatureScore$subtype = ifelse(signatureScore[,"CD133"] > signatureScore[,"CD44"], "CD133", "CD44")
+    # Not having and intermediate case is also better for the Kaplan Myer curve
+    #signatureScore$subtype[signatureScore[,"CD133"] < -CD133cutoff & signatureScore[,"CD44"] < CD44cutoff] = "intermediate"
+    signatureScore = sort.dataframe(signatureScore, "subtype")
+    signatureScore$subtype = as.factor(signatureScore$subtype)
+    return (signatureScore)
+}
