@@ -1,5 +1,6 @@
 library(ggplot2)
 library(survival)
+library(coin)
 
 source("~/Documents/Rscripts/120704-sortDataFrame.R")
 source("~/Documents/Rscripts/140508_coexpressionFunctions.R")
@@ -57,7 +58,7 @@ legend('topright', c('CD133', 'CD44'),# 'Intermediate'),
 
 summary(data.surv)
 #test for a difference between curves
-test = survdiff(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
+test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
 test
 text(locator(1),labels='p=0.0151', cex=1) #add the p-value to the graph
 
@@ -82,7 +83,7 @@ legend('topright', c('CD133', 'CD44'),# 'Intermediate'),
 summary(data.surv)
 
 #test for a difference between curves
-test = survdiff(data.surv~boundDataSub$subtype, subset=!boundDataSub$subtype %in% "intermediate")
+test = surv_test(data.surv~boundDataSub$subtype, subset=!boundDataSub$subtype %in% "intermediate")
 test
 text(locator(1),labels='p=0.152', cex=1) #add the p-value to the graph
 
@@ -102,7 +103,7 @@ legend('topright', c('Proneural', 'Neural', 'Mesenchymal',"Classical"),
        col=c("red",'green','orange', "blue"),lwd=1, cex=0.9, bty='n', xjust=0.5, yjust=0.5)
 summary(data.surv)
 #test for a difference between curves
-test = survdiff(data.surv~boundDataSub$GeneExp_Subtype, subset=boundDataSub$GeneExp_Subtype %in% c("Proneural", "Mesenchymal"))
+test = surv_test(data.surv~boundDataSub$GeneExp_Subtype, subset=boundDataSub$GeneExp_Subtype %in% c("Proneural", "Mesenchymal"))
 test
 
 
@@ -159,9 +160,9 @@ legend('topright', c('CD133', 'CD44'),# 'Intermediate'),
 
 summary(data.surv)
 #test for a difference between curves
-test = survdiff(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
+test = surv_test(data.surv~subtype, boundData)#, subset=!boundData$subtype %in% "intermediate")
 test
-text(locator(1),labels='p=0.591', cex=1) #add the p-value to the graph
+# text(locator(1),labels='p=0.591', cex=1) #add the p-value to the graph
 
 
 ############################################# Survival curve for subtype ##################################
@@ -180,5 +181,5 @@ legend('topright', c('Proneural', 'Neural', 'Mesenchymal',"Classical"),
        col=c("red",'green','orange', "blue"),lwd=1, cex=0.9, bty='n', xjust=0.5, yjust=0.5)
 summary(data.surv)
 #test for a difference between curves
-test = survdiff(data.surv~boundDataSub$GeneExp_Subtype, subset=boundDataSub$GeneExp_Subtype %in% c("Proneural", "Mesenchymal"))
+test = surv_test(data.surv~boundDataSub$GeneExp_Subtype, subset=boundDataSub$GeneExp_Subtype %in% c("Proneural", "Mesenchymal"))
 test
