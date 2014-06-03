@@ -8,7 +8,7 @@ source("~/Documents/Rscripts/140508_coexpressionFunctions.R")
 ############################################# IO ##################################################################
 setwd('~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/')
 rnaseq = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/genomicMatrix", row.names=1)
-agilent = read.delim('~/Documents/public-datasets/cancerBrowser/deDupAgilent/140526_agilentDedupPatients.txt', row.names=1)
+# agilent = read.delim('~/Documents/public-datasets/cancerBrowser/deDupAgilent/140526_agilentDedupPatients.txt', row.names=1)
 tcgaSigs = read.delim('~/Documents/public-datasets/TCGA/classficationSignature/131022_danFixedTCGAsignature.txt')
 
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
@@ -161,7 +161,7 @@ agilentM[is.na(agilentM)] <- 0
 bigSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15" = row.names(cd15),
                "ALDH1"=row.names(aldh1), "ITGA6"=row.names(itag6), "L1CAM"=row.names(l1cam))
 
-# Extract the clinical data for the RNAseq patients
+# Extract the clinical data for the Agilent patients
 matched = intersect(row.names(clinical), colnames(agilentM))
 # Subset clinical data for intersect
 clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status",
@@ -171,13 +171,15 @@ clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status",
 bigResult = gsva(agilentM, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
 bigResult = t(bigResult$es.obs)
 
-# Merge RNAseq - FACs data and clinicial data. Add Verhaak subtype
+# Merge Agilent - FACs data and clinicial data. Add Verhaak subtype
 signatures = names(bigSigs)
-verhaakSubtype = bindGeneExprClinical(clin, bigResult, signatures)
+verhaakSubtype = bindGeneExprCIMPClinical(clin, bigResult, signatures)
 verhaakSubtype = sort.dataframe(verhaakSubtype, 'colours')
 
 # The damn datatypes are not correct. Dump and read in object from file
 write.table(verhaakSubtype, "output.txt", sep='\t')
+# write.table(verhaakSubtype, "./survival/140603_verhaakSubtypeAgilent.txt", sep='\t')
+
 verhaakSubtype = read.delim("output.txt", row.names=1)
 
 subTypeHeat = as.matrix(verhaakSubtype[,signatures])
@@ -185,5 +187,5 @@ subTypeHeat = as.matrix(verhaakSubtype[,signatures])
 # Make heat map with Veerhaak subtype
 heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype", 
           Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
-          ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
-          offsetRow=c(1,1), margins=c(2,7.5))
+          ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Aglent samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
