@@ -112,16 +112,6 @@ test
 
 
 ############################################# Test the Agilent dataset ##################################
-callMarkerSubtype <- function (signatureScore, CD133cutoff, CD44cutoff) {
-    # Takes a dataframe containing the signature scores and adds a new column that calls FACS marker subtype
-    signatureScore$subtype = ""
-    signatureScore$subtype = ifelse(signatureScore[,"CD133"] > signatureScore[,"CD44"], "CD133", "CD44")
-    # Not having and intermediate case is also better for the Kaplan Myer curve
-    signatureScore$subtype[signatureScore[,"CD133"] < -CD133cutoff & signatureScore[,"CD44"] < CD44cutoff] = "intermediate"
-    signatureScore = sort.dataframe(signatureScore, "subtype")
-    signatureScore$subtype = as.factor(signatureScore$subtype)
-    return (signatureScore)
-}
 
 # The signature derived from Agilent array
 verhaakSigAgi = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140603_verhaakSubtypeAgilent.txt", row.names=1)
