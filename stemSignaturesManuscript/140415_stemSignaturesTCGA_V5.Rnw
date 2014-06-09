@@ -378,7 +378,7 @@ matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
 # Subset clinical data for intersect
 clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender")]
 
-############################################## Segment the subtypes into CD133 CD44 and indetermiant #############################################
+############################################## Segment the subtypes into CD133 and CD44 #############################################
 
 # Make an object to plot density gram
 lattPlot = data.frame(as.numeric(c(verhaakSubtypeCall[,"CD133"], verhaakSubtypeCall[,"CD44"])), 
@@ -400,7 +400,6 @@ verhaakSubtypeCall$subtype = ifelse(verhaakSubtypeCall[,"CD133"] > verhaakSubtyp
 verhaakSubtypeCall$subtype[verhaakSubtypeCall$CD133 < -0.125 & verhaakSubtypeCall$CD44 < 0] = "intermediate"
 verhaakSubtypeCall = sort.dataframe(verhaakSubtypeCall, "subtype")
 
-############################################## bind the clinical and subtyping info together #############################################
 boundData = merge.data.frame(clin, verhaakSubtypeCall, by.x="row.names", by.y="row.names")
 boundData = sort.dataframe(boundData, "subtype")
 boundData$subtype = as.factor(boundData$subtype)

@@ -189,3 +189,58 @@ heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures
           Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
           ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Aglent samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
+
+
+
+
+
+
+############################################# Try the 3SD signature gsva ##################################
+# Classify the RNA-seq TCGA samples provide they are different patients than Agilent
+library(GSVA)
+library(gplots)
+library(RColorBrewer)
+source("~/Documents/Rscripts/120704-sortDataFrame.R")
+source("~/Documents/Rscripts/140508_coexpressionFunctions.R")
+
+tcgaSigs = read.delim('~/Documents/public-datasets/TCGA/classficationSignature/131022_danFixedTCGAsignature.txt')
+
+clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
+
+cd133Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140529_cd133Cutoff.txt", row.names=1)
+cd44Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140529_cd44Cutoff.txt", row.names=1)
+agilent = read.delim('~/Documents/public-datasets/cancerBrowser/deDupAgilent/140526_agilentDedupPatients.txt', row.names=1)
+agilentM = t(as.matrix(agilent))
+# Change NAs to 0 as GSVA doesn't like it
+agilentM[is.na(agilentM)] <- 0
+
+sigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig))
+
+# Extract the clinical data for the RNAseq patients
+matched = intersect(row.names(clinical), colnames(agilentM))
+# Subset clinical data for intersect
+clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status",
+                           "G_CIMP_STATUS","GeneExp_Subtype", "X_EVENT","days_to_tumor_progression", "gender")]
+
+# Call the subtypes with GSVA
+bigResult = gsva(agilentM, sigs,  rnaseq=F, verbose=T, parallel.sz=1, method="ssgsea")
+bigResult = t(bigResult$es.obs)
+
+# Merge Agilent - FACs data and clinicial data. Add Verhaak subtype
+signatures = names(sigs)
+verhaakSubtype = bindGeneExprCIMPClinical(clin, bigResult, signatures)
+verhaakSubtype = sort.dataframe(verhaakSubtype, 'colours')
+
+# The damn datatypes are not correct. Dump and read in object from file
+write.table(verhaakSubtype, "output.txt", sep='\t')
+# write.table(verhaakSubtype, "./survival/140606_verhaakSubtypeAgilent_3sd.txt", sep='\t')
+
+verhaakSubtype = read.delim("output.txt", row.names=1)
+
+subTypeHeat = as.matrix(verhaakSubtype[,signatures])
+
+# Make heat map with Veerhaak subtype
+heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype", 
+          Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Aglent samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")

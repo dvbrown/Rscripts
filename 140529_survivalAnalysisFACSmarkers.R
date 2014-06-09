@@ -31,6 +31,8 @@ ggplot(lattPlot, aes(value, fill = signature)) + geom_density(alpha = 0.2) +
     coord_cartesian(xlim = c(-1, 1)) + theme_bw(base_size=20) + geom_vline(xintercept=0, colour="red") # The 0.125 is where I will call indeterminate
 
 verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, 0, 0)
+verhaakSubtypeCall = signatureScore$subtype = ""
+
 
 ############################################## bind the clinical and subtyping info together #############################################
 boundData = merge.data.frame(clin, verhaakSubtypeCall, by.x="row.names", by.y="row.names")
@@ -60,11 +62,13 @@ summary(data.surv)
 #test for a difference between curves
 test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
 test
-text(locator(1),labels='p=0.0151', cex=1) #add the p-value to the graph
+#text(locator(1),labels='p=0.0151', cex=1) #add the p-value to the graph
 
-
-
-
+# Check the final table
+# write.table(boundData, "./survival/survivalTables/140606_RNAseq_SurvivalBoundData.txt", sep='\t')
+contingency = table(boundData$subtype, boundData$GeneExp_Subtype)
+# Test the null hypothesis that the all events in the set are equally likely (from Chi-X distribution)
+chisq.test(contingency)
 ############################################# Remove the G-CIMP cases and retest ##################################
 boundDataSub = boundData[boundData$G_CIMP_STATUS == "NON G-CIMP",]
 
@@ -113,15 +117,17 @@ test
 
 
 ############################################# Test the Agilent dataset ##################################
-
 # The signature derived from Agilent array
 verhaakSigAgi = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140603_verhaakSubtypeAgilent.txt", row.names=1)
+# Try CD133 only
+verhaakSigAgi$subtype = ifelse(verhaakSigAgi[,"CD133"] >0, "CD133_high", "CD133_low")
 
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_G4502A_07_2-2014-05-02/clinical_dataDots.txt", row.names=1)
 
 verhaakSignature = verhaakSigAgi[,c("CD133","CD44")]
 
 verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, 0, 0)
+# verhaakSubtypeCall = verhaakSigAgi
 # Extract the clinical data for the Agilent patients
 matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
 # Subset clinical data for intersect
@@ -164,6 +170,9 @@ test = surv_test(data.surv~subtype, boundData)#, subset=!boundData$subtype %in% 
 test
 # text(locator(1),labels='p=0.591', cex=1) #add the p-value to the graph
 
+# There still appears to be a strong assosciation of the CD133 with Proneural and vice versea. Somehow no survival advantage
+contingency = table(boundData$subtype, boundData$GeneExp_Subtype)
+chisq.test(contingency)
 
 ############################################# Survival curve for subtype ##################################
 # Remove nosubtype cases
@@ -183,3 +192,44 @@ summary(data.surv)
 #test for a difference between curves
 test = surv_test(data.surv~boundDataSub$GeneExp_Subtype, subset=boundDataSub$GeneExp_Subtype %in% c("Proneural", "Mesenchymal"))
 test
+
+
+
+
+
+############################################# Survival curve with Agilent using the 3sd signature ##################################
+verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140606_verhaakSubtypeAgilent_ssGSEA.txt", row.names=1)
+verhaakSignature = verhaakSignature[,c("CD133","CD44","GeneExp_Subtype","G_CIMP_STATUS")]
+clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
+
+# Extract the clinical data for the Agilent patients
+verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, 0, 0)
+matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
+# Subset clinical data for intersect
+clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender")]
+
+
+boundData = merge.data.frame(clin, verhaakSubtypeCall, by.x="row.names", by.y="row.names")
+boundData = sort.dataframe(boundData, "subtype")
+row.names(boundData) = boundData$Row.names
+boundData$subtype = as.factor(boundData$subtype)
+boundData$gender = as.factor(boundData$gender)
+
+#generate the survival object and plot a Kaplan-Meier
+data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
+
+sur.fit = survfit(data.surv~subtype, boundData)
+
+plot(sur.fit, main='FACS marker coexpression signature in \nGlioblastoma multiforme by Agilent',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),#'green'),
+     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
+
+legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
+       col=c("red",'blue'),#'green'),
+       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+
+summary(data.surv)
+#test for a difference between curves
+test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
+test
+text(locator(1),labels='p=0.0151', cex=1) #add the p-value to the graph
