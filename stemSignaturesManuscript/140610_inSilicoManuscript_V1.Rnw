@@ -164,8 +164,8 @@ By raising the absolute value of the correlation to a power \math{\beta > 1} % C
   \subsection*{Input data}  
 The gene expression data was level 3 data that was measured by the TCGA was imported using the UCSC cancer genome browser. The browser in turn obtains its data from Broad firehose. The data was already formatted for easy importing into R. The Agilent array data was selected as this platform has favourable statistical properties (see supplemenatary). The data munging information is located in the supplemental data.
 
-  \subsection*{WGCNA parameters}  
-The  weighted gene co-expression network analysis package was used within the R version 3.0.1 environment. 
+  \subsection*{Software envirnoment}  
+The weighted gene co-expression network analysis package was used within the R version 3.0.1 environment. 
 Firstly the gene expression matrix was measured for correlation by the WGCNA function \textbf{corAndPvalue}. The following parameters were selected as the cuttoff for determining the significantly coexpressed genes with CD133 \textbf{...}.\\
 The vector of these gene names was then used to build the network of coexpressed genes using the manual module construction method.
 
