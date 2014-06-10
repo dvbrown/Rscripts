@@ -161,18 +161,15 @@ By raising the absolute value of the correlation to a power \math{\beta > 1} % C
 \section*{Methods} % The \section*{} command stops section numbering
 
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Methods} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
-  \subsection*{Raw data munging}  
-    \paragraph {The boring stuff}
-The munging information is located in the supplemental data.
-The  weighted gene co-expression network analysis package was used within the R version 3.0.1 environment. The gene expression data was level 3 data that was measured by the TCGA was imported using the broad firehose wget tool. The Agilent array data was selected for various reasons (Supplemenatary).
+  \subsection*{Input data}  
+The gene expression data was level 3 data that was measured by the TCGA was imported using the UCSC cancer genome browser. The browser in turn obtains its data from Broad firehose. The data was already formatted for easy importing into R. The Agilent array data was selected as this platform has favourable statistical properties (see supplemenatary). The data munging information is located in the supplemental data.
 
   \subsection*{WGCNA parameters}  
-    \paragraph {How and why various thresholds were set}
+The  weighted gene co-expression network analysis package was used within the R version 3.0.1 environment. 
 Firstly the gene expression matrix was measured for correlation by the WGCNA function \textbf{corAndPvalue}. The following parameters were selected as the cuttoff for determining the significantly coexpressed genes with CD133 \textbf{...}.\\
 The vector of these gene names was then used to build the network of coexpressed genes using the manual module construction method.
 
   \subsection*{Rendering the network in cytoscape}  
-    \paragraph {Making a pretty ridiculogram}
 Cytoscape 3.1.0 was used in the analyses. The WGCNA function exportNetworkToCytoscape was used to export the data into a text file amenable to import by cytoscape. The data was read in using "Import network from file hot button" using the edge file. To get the colors to appear the "Import file from file hot button" was used. The node file was read in as a node attribute. In the Style panel of the gui the node color was set using a pass through mapper. The degree sorted layout was used to generate the connectivity measure. This was then used as a continuous mapper to node size. Next prefuse force directed layout was used to make it look pretty. The power used to raise the algorithm was changed in settings. A filter was applied on degreee connectivity to make the network less busy.\\
 This filter was \emph{weighted score} 0.125 < 1. Weighted is the measure of network adjacency. Invert selection was used and then edges were hidden. After this nodes that were connected by the edges left over were selected. The invert selection to hidden features were used to trim the network. The force directed layout was used to visualise the network topology with network adjacency used to weight the layout algorithm.
 \textbf {update this section as I now have changed}
@@ -214,7 +211,7 @@ cd133 = correlateGeneWithGEM(dat, 'PROM1')
 plotCoexpression(cd133, 'CD133')
 
 @
-  \paragraph {Coexpression analysis of GSC markers}
+  \subsection* {Coexpression analysis of GSC markers}
 To investigate the biological and clinical significance of several putative cancer stem cell markers in Glioblastoma Multiforme a coexpression analysis was undertaken using the Cancer Genome Atlas dataset.
 
 Pearson correlation of Agilent microarray data with the markers listed in \textbf{Table 1} was performed and genes with a cutoff of {\textit greater than 2 standard deviations from the mean and less than 0.05 FDR corrected p-value} was used to select coexpressed genes of interest. (figure 1).
@@ -226,58 +223,14 @@ The consequence of this approach is the top 2.5\% of genes are roughly the same 
 
 %-----------------------------------------------------------------------------------------------------------------
 
-%------------------------------------------- Generate a heatmap -------------------------------------------------------------
-<<cd133_heatmap, echo=FALSE, fig.cap='Identifying the suite of CD133 coexpressed genes. (Top) heatmap of the coexpressed CD133 module. (Bottom) the level of variation in the submodules', fig.show='asis', cache=TRUE>>=
-
-# Generate the CUTOFF for the coexpressed genes to build the network
-# Use twice the standard deviation and significantly correlated
-cd133genes = cd133[(cd133[,1]) > 2*sd(cd133[,1]) & cd133[,4] < 0.05,]
-cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
-cd133Dissim = makeDissimilarity(cd133Square)
-
-buildCorrelationHeatMap(dat, cd133Dissim, 'CD133')
-
-buildTOMHeatMap(dat, cd133Dissim, "CD133")
-
-# Make MDS plot
-moduleCol = flashClust(as.dist(cd133Dissim))
-makeMDS(cd133Dissim, 'CD133')
-@
-
-The set of \textbf {approx 600} genes that were significantly coexpressed were subsequently analysed for network adjacency to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the WCGNA algorithm. The biological interpretation of this is that the core module decribes the gene expression signature of the genes isolated by sorted for the CD133 marker.\\
-
-The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3). The heatmap and associated MDS plot (figure 4) illustrates 3 major modules. There appears to be 2 major modules illustrated by the spokes eminating from the centre of the plot. The other smaller modules do not capture much of the variation of the dataset.
-
-{\emph I should probably present a table of these "core" CD133 coexpressed genes either in the main body or the suplemental of the paper.
-
-%------------------------------------------------------------------------------------------------------------------------
-
+% Write section about overlap with molecular subtype
   \subsection*{Comparison of commonly used stem cell markers}  
     \paragraph {The most contraversial part for wet lab scientists}
     
 Although CD133 is currently the most popular stem cell marker used for GSC we interogatted the coexpression modules of the several markers listed in \textbf {table X} to examine their molecular profiles and predictive power. Unfortunatley I could not use CD24 as a marker as the probe is not present on the Agilent 244k V2 array.
- 
-    \paragraph {Functional enrichment of the putative stem cell markers}
-    
-Using the Pearson correlation coefficient gave no significant pathways enriched in \textbf{CD133}. It did give some interesting ones in \textbf{CD44} including Integrin, Firbinolysis and NF-k B pathways. Using the correlation value itself (signed) gave mitotic prophase, DNA replication and cell cycle for \textbf{CD133}. Oxidative phosphorylation was enriched in the negatively correlating genes with CD133.\\
+  
+%----------------------------------------------------------------------------------------------------
 
-Also present this as a table or a cytoscape network.
-
-%------------------------------------------------------------- GSEA plots -----------------------------------------------------------
-
-\begin{figure}[ht] \centering 
-% Change this plot when you change the data source   
-    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_MISMATCH_REPAIR_41.png}
-    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_OXIDATIVE_PHOSPHORYLATION_81.png}
-    \caption{{Top and bottom gene set enriched the CD133 coexpressed genes}}
-    \label{fig:B}
-\end{figure}
-
-
-The representive image for Gene set enrichment of CD133 is displayed in figure X. A table listing GSEA results for several of the top markers is represented in table Y. From this we can make the conclusion that CD133 marks DNA repair and maybe transit amplfying cells and CD44 marks invasive and migrating cells.\\
-I still need to do GSEA on the other markers.
-
-    
 <<bigSignatureComparison, echo=FALSE, fig.cap='Heatmap that compares different FACS markers', fig.show='asis', cache=FALSE>>=
 bindGeneExprClinical <- function (clinicalData, subtypedGeneExpression, signatures) {
     # Merges clinical and FACS marker subtyped gene expression information and annotate a color based on Verhaak subtype
@@ -340,9 +293,55 @@ heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures
           Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
           ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5))
-
-
 @
+
+The set of genes that were significantly coexpressed were subsequently analysed for network adjacency to identify the patterns of coexpression. Supplying only a subset of expressed genes also greatly decreased the run time of the WCGNA algorithm. The biological interpretation of this is that the core module decribes the gene expression signature of the genes isolated by sorted for the CD133 marker.\\
+
+The adjacency matrix was transformed into a similarity matrix and a heatmap was generated (figure 3). The heatmap and associated MDS plot (figure 4) illustrates 3 major modules. There appears to be 2 major modules illustrated by the spokes eminating from the centre of the plot. The other smaller modules do not capture much of the variation of the dataset.
+
+{\emph I should probably present a table of these "core" CD133 coexpressed genes either in the main body or the suplemental of the paper.
+
+%------------------------------------------------------------------------------------------------------------------------
+
+\subsection*{Comparing module architecture of CD133 and CD44}
+
+<<cd133_heatmap, echo=FALSE, fig.cap='Identifying the suite of CD133 coexpressed genes. (Top) heatmap of the coexpressed CD133 module. (Bottom) the level of variation in the submodules', fig.show='asis', cache=TRUE>>=
+
+# Generate the CUTOFF for the coexpressed genes to build the network
+# Use twice the standard deviation and significantly correlated
+cd133genes = cd133[(cd133[,1]) > 2*sd(cd133[,1]) & cd133[,4] < 0.05,]
+cd133Square = makeSquareCoexpressionMatrix(cd133genes, dat)
+cd133Dissim = makeDissimilarity(cd133Square)
+
+buildCorrelationHeatMap(dat, cd133Dissim, 'CD133')
+
+buildTOMHeatMap(dat, cd133Dissim, "CD133")
+
+# Make MDS plot
+moduleCol = flashClust(as.dist(cd133Dissim))
+makeMDS(cd133Dissim, 'CD133')
+@
+\blindtext
+
+
+%------------------------------------------------------------- GSEA plots -----------------------------------------------------------
+\subsection* {Functional enrichment of the putative stem cell markers}
+    
+Using the Pearson correlation coefficient gave no significant pathways enriched in \textbf{CD133}. It did give some interesting ones in \textbf{CD44} including Integrin, Firbinolysis and NF-k B pathways. Using the correlation value itself (signed) gave mitotic prophase, DNA replication and cell cycle for \textbf{CD133}. Oxidative phosphorylation was enriched in the negatively correlating genes with CD133.\\
+
+Also present this as a table or a cytoscape network.
+
+\begin{figure}[ht] \centering 
+% Change this plot when you change the data source   
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_MISMATCH_REPAIR_41.png}
+    \includegraphics[page=1, width=.45\linewidth]{/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/manualCorrelation/GSEA/enplot_KEGG_OXIDATIVE_PHOSPHORYLATION_81.png}
+    \caption{{Top and bottom gene set enriched the CD133 coexpressed genes}}
+    \label{fig:B}
+\end{figure}
+
+
+The representive image for Gene set enrichment of CD133 is displayed in figure X. A table listing GSEA results for several of the top markers is represented in table Y. From this we can make the conclusion that CD133 marks DNA repair and maybe transit amplfying cells and CD44 marks invasive and migrating cells.\\
+I still need to do GSEA on the other markers.
 
 From this heatmap we can see that CD133 nicley matches up with the Proneural subtype and that CD44 nicley matches up with the CD44 subtype. If we do a Fisher's exact test on the contingency table we observe a really small p-value. I have yet to run a Chi-sq test on the full dataset. L1CAM and CD15 nicley match the pattern of CD133 and CD44 respectivley. The other markers do not really overlap with a particular subtype.
 
@@ -492,6 +491,8 @@ Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne 
 \blindtext
 
 
+
+
 %----------------------------------------------------------------------------------------
 %    Supplementary Data
 %----------------------------------------------------------------------------------------
@@ -499,15 +500,9 @@ Many thanks to Gulay Filiz for ordering my reagents, Nicole Kountouri and Wayne 
 \section*{Supplementary Data} % The \section*{} command stops section numbering
 \addcontentsline{toc}{section}{\hspace*{-\tocsep}Supplementary data} % Adds this section to the table of contents with negative horizontal space equal to the indent for the numbered sections
   \subsection*{Aquisition and preparation of gene expression data ie data munging}  
- 
-    \paragraph {TCGA GBM data} 
-The level 3 data was aquired using the broad firehose data with the following command: 
-    % You gotta escape the underscore _ with a backslash
-\textbf{firehose\_get -b -o MAF Agilent U133A clinical stddata 2013\_12\_10 GBM}. This includes clinical, affymetrix and agilent data. The clinical data was reformatted for R using the python script \textbf{meltTCGAGenefiles.py}. The agilent data, which was originally in 2 parts 
-was formatted using the script  \textbf{meltTCGAGenefile.py}. The TCGA uses the keyword "null" when describing empty values. This was changed to "NA" using the script \textbf{changeEmpties2NA.py}.
 
     \paragraph {Deciding whether to use RNA-seq, Affymetrix or Agilent data} 
-As at March 2014 there were 160 cases with available RNA-seq data, compared to 540 for Affymetrix and Agilent. There for the sake of statistical power, the microarray platforms were preferred. Comaparing the properties of the data showed the Agilent data had a more normal distribution.
+As at March 2014 there were 160 cases with available RNA-seq data, compared to 540 for Affymetrix and Agilent. There for the sake of statistical power, the microarray platforms were preferred. Comparing the properties of the data showed the Agilent data had a more normal distribution. The RNA-seq data was used as the validation set.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Distribution plots of Affymetrix and Agilent %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
