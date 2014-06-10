@@ -200,7 +200,7 @@ The PROM1 gene was processed with WGCNA using the Agilent microarray data from t
 
 %---------------------------------------------------------------------------------------------------------------------
 <<cd133_histogram, echo=FALSE, fig.cap='Distribution of cd133 correlated genes', fig.show='asis', cache=TRUE>>=
-# Insert some code here
+
 setwd('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/wgcna/')
 library(WGCNA)
 source('/Users/d.brown6/Documents/Rscripts/140508_coexpressionFunctions.R')
@@ -214,14 +214,15 @@ cd133 = correlateGeneWithGEM(dat, 'PROM1')
 plotCoexpression(cd133, 'CD133')
 
 @
-The cancer genome atlas dataset for GBM was used to interogate the suite of genes coexpressed with CD133. As CD133 is the currently the most accepted marker for glioma stem cells we wished to resolve the phentoype of the CD133 expressing subpopulation computationally.\\
+  \paragraph {Coexpression analysis of GSC markers}
+To investigate the biological and clinical significance of several putative cancer stem cell markers in Glioblastoma Multiforme a coexpression analysis was undertaken using the Cancer Genome Atlas dataset.
 
-  \paragraph {Validation of the parameters used to select coexpressed genes}
-To this end we identified the most significantly correlated genes with CD133 (PROM1) gene with a cutoff of \textbf {greater than 2 standard deviations from the mean and less than 0.05 FDR corrected p-value} (figure 1). Only postively correlated genes were considered as we are simulating the population that is enriched for the expression of a marker. If we include anti-correlated genes then it will be difficult to distingush genes that are expressed in the CD133 low population.\\
+Pearson correlation of Agilent microarray data with the markers listed in \textbf{Table 1} was performed and genes with a cutoff of {\textit greater than 2 standard deviations from the mean and less than 0.05 FDR corrected p-value} was used to select coexpressed genes of interest. (figure 1).
+Only postively correlated genes were considered as we are simulating the population that is enriched for the expression of a marker. If we include anti-correlated genes then it will be difficult to distingush from genes that are expressed in the CD133 low population.\\
 
-It was established that the correlation values of the dataset were normally distributed (figure 2). The validity of the method was proved by repeated sampling (bootstrapping) and plotting the distribution of the population parameters. \textbf{Appendix X and supplemental methods (bootstrap to 1000 in the final paper)}. The bootstrapping procedure confirms that it is not a small subset of patients that is contributing to the coexpression signature.\\
+It was established that the correlation values of the dataset were normally distributed \textbf{Figure 2}. The parameters used to identify signifcantly copexpressed genes {\textit standard devation and FDR} was validated by repeated sampling (bootstrapping) \textbf{Supp 1} and supplemental methods {\textit (bootstrap to 1000 in the final paper)}. The bootstrapping procedure confirms that it is not a small subset of patients that is contributing to the coexpression signature.\\
 
-The consequence of this is the top 2.5\% of genes are roughly the same number across markers but the magnitude of their correlation strengths are different. In the case of CD44 the correlation values are much higher than for CD133 \textbf {supplemental?}. This list of genes was then analysed with the Weighted Gene Coexpression analayis algorithm (WGCNA) to identify how coexpressed these genes are with each other and if a core module of CD133 coexpressed genes exists. 
+The consequence of this approach is the top 2.5\% of genes are roughly the same number across markers but the magnitude of their correlation strengths are different. In the case of CD44 the correlation values are much higher than for CD133 \textbf {supplemental?}. This list of genes was then analysed with the Weighted Gene Coexpression analayis algorithm (WGCNA) to identify how coexpressed these genes are with each other and if a core module of CD133 coexpressed genes exists. 
 
 %-----------------------------------------------------------------------------------------------------------------
 
