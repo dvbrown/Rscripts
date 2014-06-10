@@ -369,7 +369,7 @@ The core coexpression module of CD133 and CD44 {\emph and whatever markers I dec
 Paritition the TCGA data in some fashion using the CD133 signature and look for a survival difference between the high and low. Posssibly a low, medium and high.\\
 Look for overlap with the 4 established subtypes. Look for any enriched mutations (eg IDH1) in the groups that may explain the CD133 phenotype \textbf{stem-like or other}. Also do MGMT and the general epigentic landscape if interesting.
 
-<<DistribCD133_CD44, echo=FALSE, fig.cap='Where I set my cuttoff for subtyping', fig.show='asis', cache=TRUE>>=
+<<DistribCD133_CD44, echo=FALSE, fig.cap='Where I set my cuttoff for subtyping', fig.show='asis', cache=FALSE>>=
 setwd("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/")
 verhaakSubtypeCall = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140529_verhaakSubtypeCD133_scores", row.names=1)
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
@@ -417,12 +417,13 @@ legend('topright', c('CD133', 'CD44'),
 
 #test for a difference between curves
 test = survdiff(data.surv~boundData$subtype, subset=!boundData$subtype %in% "intermediate")
+test
 @
 \blindtext
 
 %----------------------------------------------------------------------------------------
 
-<<agilent_survival, echo=FALSE, fig.cap='The Agilent data shows no effect. I used this data to obtain the signature', fig.show='asis', cache=TRUE>>=
+<<agilent_survival, echo=FALSE, fig.cap='The Agilent data shows no effect. I used this data to obtain the signature', fig.show='asis', cache=FALSE>>=
 
 # The signature derived from Agilent array
 verhaakSigAgi = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140603_verhaakSubtypeAgilent.txt", row.names=1)
