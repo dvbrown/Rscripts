@@ -105,4 +105,3 @@ day7GrowthNormP = ggplot(data=day7GrowthNorm, aes(x=ID, y=negNormalised, fill=cl
     ggtitle("Proliferation of CD133/ CD44 cells at day 7") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-############################################## Summarise data by FACS status #################################################

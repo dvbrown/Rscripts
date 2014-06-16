@@ -218,9 +218,9 @@ tmzSummaryP
 # Plot both summaries
 # multiplot(tmzSummaryP, growthSummaryP)
 ####################################################################################################################################
-
-
-
+# 
+# write.table(day7Growth, './results/140414_day7Growth.txt', sep='\t')
+# write.table(day7TMZ, './results/140414_day7TMZ.txt', sep='\t')
 
 
 
