@@ -68,24 +68,26 @@ invD7Norm = normaliseMatrixCD133(invD7Stats)
 matchedCd133 = invD7Norm[[1]][invD7Norm[[1]]$cd133status %in% c('CD133_neg', "CD133_pos"),]
 doubleStain = invD7Norm[[1]][!invD7Norm[[1]]$cd133status %in% c('CD133_neg', "CD133_pos"),]
 
+# write.table(matchedCd133, "140616_matchedCD133Invasion.txt", sep='\t')
+# write.table(doubleStain, "140616_doubleStainInvasion.txt", sep='\t')
 
 # Plot Data
- = ggplot(data=matchedCd133, aes(x=clone, y=mean, fill=cd133status)) + 
+invD7NormP = ggplot(data=matchedCd133, aes(x=clone, y=mean, fill=cd133status)) + 
     scale_fill_manual(values=c("yellow", "skyblue3")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to control") +
     ggtitle("Invasive ability of GIC clones \nby CD133 status") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-invD7NormP
 
- = ggplot(data=doubleStain[!doubleStain$clone %in% "028",], aes(x=clone, y=mean, fill=cd133status)) + 
+
+invD7DoubleStain = ggplot(data=doubleStain[!doubleStain$clone %in% "028",], aes(x=clone, y=mean, fill=cd133status)) + 
     #scale_fill_manual(values=c("firebrick", "skyblue3")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to control") +
     ggtitle("Invasive ability of GIC clones \nby CD44 and CD133 status") +  # Set title
     theme_bw(base_size=16)#+ theme(axis.text.x = element_text(angle = 90, hjust = 1))
-invD7DoubleStain
+
 
 multiplot(invD7StatsP, invD7NormP, invD7DoubleStain, cols=2)

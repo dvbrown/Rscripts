@@ -121,11 +121,11 @@ day7GrowthCD133
 day7TMZNorm = calcProlifNormalised(day7TMZ)
 
 day7TMZNormP = ggplot(data=day7TMZNorm, aes(x=clone, y=mean, fill=populationBias)) + 
-    scale_fill_manual(values=c("springgreen4", "magenta","cyan")) +
+    #scale_fill_manual(values=c("springgreen4", "magenta","cyan")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Cell number relative to matched CD133 negative") +
-    ggtitle("Comparing temozolomide sensitivty at day 7\nby CD133 status") +  # Set title
+    ggtitle("Comparing temozolomide sensitivty at day 7\nby CD44 and CD133 status") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
 
 multiplot(day7GrowthNormP, growthPlot7, tmzPlot7, day7TMZNormP, cols=2)
@@ -224,3 +224,130 @@ eldaSumm = ggplot(eldaCD133, aes(x=cd133, y=V1, fill=cd133)) +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 multiplot(eldaRawP, eldaSig, eldaSumm, eldaPercent, cols=2)
+
+############################################ InvasionAssay ###############################################
+
+# Clear memory
+rm(list=ls())
+
+source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
+setwd('~/Documents/Cell_biology/microscopy/invasion/140615_summary/')
+
+invD7 = read.delim("140615_summary.rep.txt")
+invD7$clone = c('004','004','034','034','020','020','020','004','004','034','034',
+                '035','035','035','035','039','039','039','039','041','041','041','041')
+invD7$clone = as.factor(invD7$clone)
+
+backgroundMeanSD <- function (dataFrame) {
+    # Take the dataframe of raw data take the mean and sd
+    dataFrame$mean = rowMeans(dataFrame[,c(1:3)], na.rm=T)
+    dataFrame$sd = apply(dataFrame[,(1:3)], 1, sd, na.rm=T)
+    return (dataFrame)
+}
+
+normaliseMatrixCD133 = function(dataFrame) {
+    # Normalise Matrix first
+    noMatrix = dataFrame[dataFrame$matrix %in%  FALSE,]
+    matrix = dataFrame[dataFrame$matrix %in% TRUE,]
+    matrix$rep1 = matrix$rep1 / noMatrix$rep1
+    matrix$rep2 = matrix$rep2 / noMatrix$rep2
+    matrix$rep3 = matrix$rep3 / noMatrix$rep3
+    matrix$mean = rowMeans(matrix[,c(1:3)], na.rm=T)
+    matrix$sd = apply(matrix[,c(1:3)], 1, sd, na.rm=T)
+    # Normalise CD133
+    negative = matrix[matrix$cd133 %in% 'CD133_neg',]
+    positive = matrix[matrix$cd133 %in% 'CD133_pos',]
+    positive$rep1 = positive$rep1 / negative$rep1
+    positive$rep2 = positive$rep2 / negative$rep2
+    positive$rep3 = positive$rep3 / negative$rep3
+    positive$mean = rowMeans(positive[,c(1:3)], na.rm=T)
+    positive$sd = apply(positive[,c(1:3)], 1, sd, na.rm=T)
+    # Return both dataframes
+    result = list(matrix, positive)
+    return (result)
+}
+
+normaliseCD133 <- function (dataFrame) {
+    cd133Neg = dataFrame[dataFrame$cd133status %in% 'CD133_neg',]
+    cd133Pos = dataFrame[dataFrame$cd133status %in% 'CD133_pos',]
+    cd133NegAv = mean(cd133Neg$mean)
+    cd133NegSd = sd(cd133Neg$mean) / sqrt(length(cd133Neg$mean))
+    cd133PosAv = mean(cd133Pos$mean)
+    cd133PosSd = sd(cd133Pos$mean) / sqrt(length(cd133Pos$mean))
+    cd133 = as.data.frame(rbind(c(cd133NegAv, cd133NegSd), c(cd133PosAv, cd133PosSd)))
+    cd133$cd133 = c('negative', 'positive')
+    return (cd133)
+}
+
+normaliseMatrixCD133(invD7Stats)
+############################################## Preprocessing #################################################
+
+invD7 = invD7[!invD7$matrix %in% NA,]
+invD7$sample = paste(invD7$clone, invD7$cd133, sep='_')
+
+invD7Stats = backgroundMeanSD(invD7)
+# Remove NAs
+invD7Stats = invD7Stats[!invD7Stats$mean %in% NaN,]
+
+invD7StatsP = ggplot(data=invD7Stats[!invD7Stats$clone %in% c('030a', '034a'),], aes(x=sample, y=mean, fill=matrix)) + 
+    scale_fill_manual(values=c("skyblue3", "yellow")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("Clone") + ylab("Surface area of gliomasphere") +
+    ggtitle("Invasive ability of GIC clones by CD133 status at day 7") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+############################################## Normalise for no matrix and CD133 #################################################
+
+# Remove clone #020
+invD7StatsMatch = invD7Stats[!invD7Stats$clone %in% '020',]
+invD7Norm = normaliseMatrixCD133(invD7StatsMatch)
+
+matchedCd133 = invD7Norm[[1]][invD7Norm[[1]]$cd133status %in% c('CD133_neg', "CD133_pos"),]
+doubleStain = invD7Norm[[1]][!invD7Norm[[1]]$cd133status %in% c('CD133_neg', "CD133_pos"),]
+
+# write.table(matchedCd133, "140616_matchedCD133Invasion.txt", sep='\t')
+# write.table(doubleStain, "140616_doubleStainInvasion.txt", sep='\t')
+
+# Plot Data
+invD7NormP = ggplot(data=matchedCd133, aes(x=clone, y=mean, fill=cd133status)) + 
+    scale_fill_manual(values=c("yellow", "skyblue3")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("Clone") + ylab("Surface area of gliomasphere \nnormalised to control") +
+    ggtitle("Invasive ability of GIC clones \nby CD133 status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+##############################################Plot sphere size (no matrix) #################################################
+sphereSize = invD7Stats[invD7Stats$matrix %in% FALSE,]
+
+sphereSizeP = ggplot(data=sphereSize, aes(x=clone, y=mean, fill=cd133status)) + 
+    scale_fill_manual(values=c("blue", "orange")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("Clone") + ylab("Surface area of gliomasphere") +
+    ggtitle("Sphere proliferation of GICs by CD133 status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+############################################## Stats test and summary #################################################
+
+data = normaliseCD133(matchedCd133)
+
+# Conduct t-test
+t.test(mean ~ cd133status, matchedCd133, paired=T)
+
+invasionSumm = ggplot(data, aes(x=cd133, y=V1, fill=cd133)) + 
+    # Define my own colors
+    scale_fill_manual(values=c("skyblue3", "yellow")) +
+    geom_bar(position=position_dodge(), stat="identity", color='black') +
+    geom_errorbar(aes(ymin=V1-V2, ymax=V1+V2), width=.2, position=position_dodge(.9)) +
+    xlab("CD133 status") + ylab("Invasion relative to control") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggtitle("Invasive ability of GIC clones \nby CD133 status") +
+    scale_y_continuous(breaks=0:20*4) +
+    # Setting vjust to a negative number moves the asterix up a little bit to make the graph prettier
+    annotate("text", label="p = 0.63", x=2, y=9, size =5) + # Annotate the plot with the p-value
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+multiplot(invD7StatsP, invD7NormP, sphereSizeP, invasionSumm, cols=2)
