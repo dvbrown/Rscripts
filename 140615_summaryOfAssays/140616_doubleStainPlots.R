@@ -56,7 +56,26 @@ normaliseCD133 <- function (dataFrame) {
 
 data = read.delim('140614_day7meanSD.txt')
 
-# Subset the data for what stain I used
-dataCD133 = data[data$cd133status %in% c("CD133_neg", "CD133_pos"),]
-dataMatched = dataCD133[!dataCD133$clone %in% c("030a", "034a"),]
+# Subset for double stain
 dataDoubleStain = data[!data$cd133status %in% c("CD133_neg", "CD133_pos"),]
+dataDoubleStain = dataDoubleStain[dataDoubleStain$clone %in% "020",]
+
+
+growthPlot7 = ggplot(data=dataDoubleStain[dataDoubleStain$treatment %in% 'DMSO',], 
+                     aes(x=clone, y=mean, fill=cd133status)) + 
+    #scale_fill_manual(values=c("darkorange", "royalblue")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("Clone") + ylab("Fluorescent intensity") +
+    ggtitle("Proliferation at day 7 \nby CD44 and CD133 status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+day7TMZ = calcDMSOcontrol(dataDoubleStain)
+
+tmzPlot7 = ggplot(data=day7TMZ, aes(x=clone, y=mean, fill=cd133status)) + 
+    #scale_fill_manual(values=c("blue", "yellow")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("Clone") + ylab("Cell number relative to DMSO control") +
+    ggtitle("Comparing temozolomide sensitivty at day 7 \nby CD44 and CD133 status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
