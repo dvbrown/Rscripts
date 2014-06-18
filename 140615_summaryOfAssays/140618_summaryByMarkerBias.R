@@ -1,4 +1,4 @@
-setwd('~/Documents/Cell_biology/proliferation/Resazurin/140614_summary')
+setwd('~/Documents/Cell_biology/proliferation/Resazurin/140614_summary/analysisByMarkerBias/')
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 
 calcDMSOcontrol = function(dataFrame) {
@@ -53,3 +53,13 @@ normaliseCD133 <- function (dataFrame) {
 }
 
 ################################ IO and subsetting ############################################
+resazurin = read.delim('~/Documents/Cell_biology/proliferation/Resazurin/140614_summary/140614_day7meanSD.txt')
+invasion = read.delim('~/Documents/Cell_biology/microscopy/invasion/140615_summary/140617_summary.rep.txt')
+clinical = read.delim('~/Documents/Cell_biology/140617_cloneProgressAssays.txt')
+invasion$clone = c('004','004','004','004','020','020','020','034','034','034',
+                '034','035','035','035','035','039','039','039','039','041','041','041', '039')
+invasion$clone = as.factor(invasion$clone)
+
+# Add the population bias to the data
+resazurinC = merge.data.frame(resazurin, clinical, by.x='clone', by.y='clone')
+invasionC = merge.data.frame(invasion, clinical, by.x='clone', by.y='clone')
