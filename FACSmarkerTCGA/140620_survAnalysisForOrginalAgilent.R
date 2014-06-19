@@ -84,27 +84,34 @@ test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "
 test
 
 
-
-
 ############################################# Make a double negative partition ##################################
-boundData3Group = boundData
-dobNeg = boundData3Group$CD133 < 0 & boundData3Group$CD44 < 0
-boundData3Group$subtype[dobNeg] = as.factor('doubleNegative')
+callMarkerSubtype <- function (signatureScore, CD133cutoff, CD44cutoff) {
+    # Takes a dataframe containing the signature scores and adds a new column that calls FACS marker subtype
+    signatureScore$subtype = ""
+    signatureScore$subtype = ifelse(signatureScore[,"CD133"] > signatureScore[,"CD44"], "CD133", "CD44")
+    # Not having and intermediate case is also better for the Kaplan Myer curve
+    signatureScore$subtype[signatureScore[,"CD133"] < 0 & signatureScore[,"CD44"] < 0] = "doubleNegative"
+    signatureScore = sort.dataframe(signatureScore, "subtype")
+    signatureScore$subtype = as.factor(signatureScore$subtype)
+    return (signatureScore)
+}
+
+boundData3Group = callMarkerSubtype(boundData,0,0)
 
 #generate the survival object and plot a Kaplan-Meier
 data.surv = Surv(boundData3Group$CDE_survival_time, event=boundData3Group$X_EVENT)
 
 sur.fit = survfit(data.surv~subtype, boundData3Group)
 
-plot(sur.fit, main='FACS marker coexpression signature in \nGlioblastoma multiforme by RNAseq',ylab='Survival probability',xlab='survival (days)', 
+plot(sur.fit, main='FACS marker coexpression signature in \nGlioblastoma multiforme by Agilent',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue', 'orange'),#'green'),
      xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
 
-legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
+legend('topright', c('CD133', 'CD44', 'Double Negative'),# 'Intermediate'), 
        col=c("red",'blue', 'orange'),#'green'),
        lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 summary(data.surv)
 #test for a difference between curves
-test = surv_test(data.surv~boundData3Group$subtype, subset=!boundData3Group$subtype %in% NA)
+test = surv_test(data.surv~boundData3Group$subtype, subset=!boundData3Group$subtype %in% 'doubleNegative')
 test
