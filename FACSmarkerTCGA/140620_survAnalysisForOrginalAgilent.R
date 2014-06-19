@@ -88,7 +88,8 @@ test
 
 ############################################# Make a double negative partition ##################################
 boundData3Group = boundData
-boundData3Group$subtype[boundData3Group$CD133 & boundData3Group$CD44 < 0] = 'doubleNegative'
+dobNeg = boundData3Group$CD133 < 0 & boundData3Group$CD44 < 0
+boundData3Group$subtype[dobNeg] = as.factor('doubleNegative')
 
 #generate the survival object and plot a Kaplan-Meier
 data.surv = Surv(boundData3Group$CDE_survival_time, event=boundData3Group$X_EVENT)
@@ -105,5 +106,5 @@ legend('topright', c('CD133', 'CD44'),# 'Intermediate'),
 
 summary(data.surv)
 #test for a difference between curves
-test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
+test = surv_test(data.surv~boundData3Group$subtype, subset=!boundData3Group$subtype %in% NA)
 test
