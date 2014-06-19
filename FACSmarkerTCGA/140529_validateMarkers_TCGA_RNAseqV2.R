@@ -2,8 +2,7 @@
 library(GSVA)
 library(gplots)
 library(RColorBrewer)
-source("~/Documents/Rscripts/120704-sortDataFrame.R")
-source("~/Documents/Rscripts/140508_coexpressionFunctions.R")
+source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
 
 ############################################# IO ##################################################################
 setwd('~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/')
