@@ -31,8 +31,6 @@ ggplot(lattPlot, aes(value, fill = signature)) + geom_density(alpha = 0.2) +
     coord_cartesian(xlim = c(-1, 1)) + theme_bw(base_size=20) + geom_vline(xintercept=0, colour="red") # The 0.125 is where I will call indeterminate
 
 verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, 0, 0)
-verhaakSubtypeCall = signatureScore$subtype = ""
-
 
 ############################################## bind the clinical and subtyping info together #############################################
 boundData = merge.data.frame(clin, verhaakSubtypeCall, by.x="row.names", by.y="row.names")

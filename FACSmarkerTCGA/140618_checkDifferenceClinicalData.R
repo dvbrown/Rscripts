@@ -17,4 +17,22 @@ hist(clinR$CDE_survival_time, breaks='FD', main='RNAseq', xlim=c(0,3000), ylim=c
 hist(clinA$CDE_survival_time, breaks='FD', main="Agilent", xlim=c(0,3000), ylim=c(0,50))
 par(mfrow=c(1,1))
 
+##### Box plot the data frpm RNAseq and microarray ####
+
+par(mfrow=c(2,1))
+boxplot(t(agilentGem[c(1:133)]), main="Agilent", col=rainbow(133))
+boxplot(rnaseqGem[c(1:133)], main="RNAseq", col=rainbow(133))
+par(mfrow=c(1,1))
+
+# Read in the agilent file form Firehose
+originalAgilent = read.delim('~/Documents/public-datasets/firehose/stddata__2013_12_10/GBM//20131210_dataReformatting//dataRearranging/140109_agilent.txt')
+originalAgilentM = originalAgilent[,matchedA]
+data = read.delim('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/140110_agilentNoNulls.txt')
+
+par(mfrow=c(2,1))
+boxplot(originalAgilent[c(1:133)], main="Original Agilent from Firehose", col=rainbow(133))
+boxplot(data[c(1:133)], main="Original Agilent from Firehose no Nulls", col=rainbow(133))
+par(mfrow=c(1,1))
+
+
 ##### Analyse the set of patients measured by both RNAseq and Agilent ####
