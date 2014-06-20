@@ -73,11 +73,59 @@ subTypeHeatRNA = as.matrix(subtypeRNA[,signatures])
 par(mfrow=c(2,1))
 
 heatmap.2(t(subTypeHeatAgilent), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype", 
-          Colv=subTypeHeatAgilent$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
-          ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeatAgilent), xlab="Aglent samples", labCol=NA, 
+          Colv=subtypeAgilent$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(subtypeAgilent$colours), labRow=colnames(subtypeAgilent), xlab="Aglent samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
 
 heatmap.2(t(subTypeHeatRNA), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype", 
-          Colv=subTypeHeatRNA$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
-          ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeatRNA), xlab="Aglent samples", labCol=NA, 
+          Colv=subtypeRNA$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(subtypeRNA$colours), labRow=colnames(subtypeRNA), xlab="RNA samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
+
+subtypeRNACall = callMarkerSubtype(subtypeRNA, 0, 0)
+subtypeAgilentCall = callMarkerSubtype(subtypeAgilent, 0, 0)
+
+############################################## Survival analysis #############################################
+boundDataA = merge.data.frame(clin, subtypeAgilentCall, by.x="row.names", by.y="row.names")
+boundDataA = sort.dataframe(boundDataA, "subtype")
+row.names(boundDataA) = boundDataA$Row.names
+boundDataA$subtype = as.factor(boundDataA$subtype)
+boundDataA$gender = as.factor(boundDataA$gender)
+
+boundDataR = merge.data.frame(clin, subtypeRNACall, by.x="row.names", by.y="row.names")
+boundDataR = sort.dataframe(boundDataR, "subtype")
+row.names(boundDataR) = boundDataR$Row.names
+boundDataR$subtype = as.factor(boundDataR$subtype)
+boundDataR$gender = as.factor(boundDataR$gender)
+
+############################################# Analysing the data for survival ##################################
+
+#generate the survival object and plot a Kaplan-Meier
+survAgilent = Surv(boundDataA$CDE_survival_time, event=boundDataA$X_EVENT)
+survRNA = Surv(boundDataR$CDE_survival_time, event=boundDataR$X_EVENT)
+
+surFitAgilent = survfit(survAgilent~subtype, boundDataA)
+surFitRNA = survfit(survRNA~subtype, boundDataR)
+
+par(mfrow=c(2,1))
+plot(surFitAgilent, main='FACS marker coexpression signature in \nGlioblastoma multiforme Agilent duplicates',
+     ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),#'green'),
+     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
+legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
+       col=c("red",'blue'),#'green'),
+       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+
+plot(surFitRNA, main='FACS marker coexpression signature in \nGlioblastoma multiforme RNAseq duplicates',
+     ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),#'green'),
+     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
+legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
+       col=c("red",'blue'),#'green'),
+       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+
+#test for a difference between curves
+testA = surv_test(survAgilent~boundDataA$subtype)#, subset=!boundData$subtype %in% "intermediate")
+testA
+testR = surv_test(survRNA~boundDataR$subtype)#, subset=!boundData$subtype %in% "intermediate")
+testR
