@@ -5,7 +5,8 @@ source('~/Documents/Rscripts/120704-sortDataFrame.R')
 files = list.files(pattern='*.txt')
 
 colors = c('darkgreen', 'lightgreen','springgreen','cyan', 'blue1', 'lightblue')
-dm = read.csv('designMatrix.csv')
+# Read in new design matrix. Subtype for #011 was called based on CD33 and Sox2 expression
+dm = read.csv('140620_designMatrix.csv')
 f = lapply(files, read.delim, header=FALSE)
 df1 = cbind(f[[1]],f[[2]],f[[3]],f[[4]],f[[5]],f[[6]])
 df = df1[,c(2,4,6,8,10,12)]
@@ -20,7 +21,7 @@ df = df[!noCount,]
 totalCount = colSums(df)
 
 #Build EdgeR objects
-condition = c('long', 'long', 'long', 'short', 'short', 'short')
+condition = dm$markerBias
 counts = DGEList(counts=df, group=condition)
 
 # I remove genes with less than 0.5 cpm in 3 samples. For a library size of 20M this is 10 reads.
@@ -32,46 +33,15 @@ counts = counts[keep,]
 #nomalise, plot MDS
 d = calcNormFactors(counts)
 
-############################################## MDS plots and removing batch effects #########################################
-par(mfrow=c(2,2))
-# Plots according to the biological coefficient of variation
-plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
-       main='MDS plot GIC RNA-seq batch1 original')
-legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
-# 
-facs = removeBatchEffect(cpms, batch=dm$facsSort)
-# Retreive cpms from FACS
-logCpmFacs  = removeBatchEffect(cpmLog, batch=dm$facsSort)
-
-plotMDS(facs, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
-        main='MDS plot GIC RNA-seq batch1 facs sorts')
-
-lib = removeBatchEffect(d, batch=dm$libPrep)
-plotMDS(lib, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
-        main='MDS plot GIC RNA-seq batch1 library prep')
-
-doubleCorrect = removeBatchEffect(d, batch=dm$libPrep, batch2=dm$facsSort)
-plotMDS(doubleCorrect, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
-        main='MDS plot GIC RNA-seq batch1 \nlibrary and FACS correct')
-
-# plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
-#         main='MDS plot GIC RNA-seq batch1', dim.plot=c(2,3))
-# #legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
-# 
-# plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
-#         main='MDS plot GIC RNA-seq batch1', dim.plot=c(3,4))
-# #legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
-# 
-# plotMDS(d, labels=labels, col = c("darkgreen","blue")[factor(condition)], cex=1.25, 
-#         main='MDS plot GIC RNA-seq batch1', dim.plot=c(4,5))
-#legend('topright', legend=c('Long-term','Short-term'), fill=c("darkgreen","blue"), cex=0.33)
-
 ##############################################################################################################################
 
 boxplot(cpm(counts, log=T), main='Normalised counts RNA-seq batch1', ylab='Log2 CPM', col=colors, cex=1.25, las=2)
 
 # Build the design matrix
-design = model.matrix(~ facsSort + age + group, dm)
+# design = model.matrix(~ facsSort + markerBias, dm)
+
+# Try stripping back the design matrix
+design = model.matrix(~  markerBias, dm)
 
 # Estimate dispersion, adjusting for the GLM
 d2 = estimateGLMCommonDisp(d, design, verbose=T)
@@ -80,27 +50,26 @@ d2 = estimateGLMTrendedDisp(d2, design)
 # Empriical Bayes tagwise dispersion
 d2 = estimateGLMTagwiseDisp(d2, design)
 
-# Plot the dispersions. Tagwise vars is blue scatter. NB line is blue. Poisson line is black. Raw variance is maroon
-plotMeanVar(d2, show.tagwise.vars=TRUE, NBline=TRUE, main='Fitted dispersion GIC RNA-seq batch 1')
-legend('topleft', legend=c('Poisson line', 'Neg Binomial line', 'Tagwise disp', 'Raw disp'), fill=c('black', 'steelblue', 'skyblue', 'maroon'), cex=0.8)
+fit <- glmFit(d2, design)
 
+# Contrasts are linear combinations of parameters from the linear model fit.
+contMatrix = makeContrasts(facsMarker="CD133-CD44", CD133neg="CD133-doubleNegative",
+                           CD44neg="CD44-doubleNegative", posMarkerNeg= "CD133+CD44-doubleNegative",levels=dm$markerBias)
 
-plotBCV(d2, main='Biological variation GIC RNA-seq batch 1')
+contMatrix
 
-# Fit the GLM, interested in the group difference
+# Fit the GLM, interested in the markerBias difference
 # Fit the GLM per gene
-f = glmFit(d2, design)
-de = glmLRT(f, coef=4)
+#f = contrasts.fit(d2, contMatrix)
+design
+de = glmLRT(fit, coef=1)
 
 tt = topTags(de, n=nrow(d))
-head(tt$table)
+head(tt$table, 1000)
 summary(decideTestsDGE(de))
 
-# The quasi likihood metod doesn't give any differentially expressed genes
-# fit <- glmQLFTest(d2,design,robust=TRUE,plot=TRUE)
-# t = topTags(fit, n=nrow(d))
-# head(t$table)
-# summary(decideTestsDGE(fit))
+top <- rownames(topTags(de))
+cpm(d)[top,]
 
 # Create a graphical summary, such as an M (log-fold change) versus A (log-average expression) plot
 rn = rownames(tt$table)
