@@ -40,9 +40,9 @@ myPalette <- colorRampPalette(c("blue", "white", "yellow"))(n = 1000)
 # Make heat map with subtype
 heatmap.2(result.corrected, cexRow=1.5, main="Enrichment of Verhaak signatures \n in RNAseq batch 1", 
           keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", Colv=NULL,
-          labCol=colnames(result.corrected), xlab="RNAseq batch 1 raw cpm", labRow=row.names(result.corrected), offsetRow=c(1,1), margins=c(12,7.5))
+          labCol=colnames(result.corrected), xlab="RNAseq batch 1 raw cpm", labRow=row.names(result.corrected), offsetRow=c(1,1), margins=c(15,10))
 
 # Make heat map with subtype
 heatmap.2(result.log, cexRow=1.5, main="Enrichment of Verhaak signatures \n in RNAseq batch 1", 
           keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", Colv=NULL,
-          labCol=colnames(result.log), xlab="RNAseq batch 1 log2 cpm", labRow=row.names(result.log), offsetRow=c(1,1), margins=c(12,7.5))
+          labCol=colnames(result.log), xlab="RNAseq batch 1 log2 cpm", labRow=row.names(result.log), offsetRow=c(1,1), margins=c(15,10))
