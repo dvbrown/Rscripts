@@ -1,4 +1,6 @@
 library(biomaRt)
+library(annotate)
+library(org.Hs.eg.db)
 
 mart<- useDataset("hsapiens_gene_ensembl", useMart("ensembl"))
 
@@ -19,5 +21,21 @@ ensembl_2_geneName <- function(topTable) {
   annResult = annotateIds(topTable)
   topTable$ensembl_id = row.names(topTable)
   result = merge.data.frame(annResult, topTable, by.x='ensembl_gene_id', by.y='ensembl_id')
+  return (result)
+}
+
+#To create a vector converting Ensembl IDs to EntrezIDs we used the following code:
+
+ensembl2officalSymbol <- function (dataFrame, annotation='SYMBOL') {
+    #The select function retriveves data from the Biocondictor annotation packages. The first argument is the database to retrieve data from. 
+    #The second, is which records we want to return, in this case, the records matching the Ensembl IDs in the rnaseq.data dataframe. 
+    #The keytype parameter speces that these are Ensembl IDs and the colsparameter tells select what it is we want to retreve. 
+    # first sort the dataFrame
+    officalSymbol <- select(org.Hs.eg.db, keys = row.names(dataFrame), columns = annotation, # 'cols' can be 'ENTREZID', 'SYMBOL', 'GO' etc retreive using keytypes(org.Hs.eg.db)
+                              keytype = "ENSEMBL")
+    officalSymbol <- officalSymbol[!is.na(officalSymbol), ]
+    officalSymbol <- officalSymbol[!is.na(officalSymbol$SYMBOL), ]
+    officalSymbol <- officalSymbol[!duplicated(officalSymbol$SYMBOL), ]
+    result = merge(dataFrame, officalSymbol, by.x='row.names', by.y='ENSEMBL')
   return (result)
 }
