@@ -3,6 +3,7 @@ library(GSVA)
 library(gplots)
 library(RColorBrewer)
 library(sqldf)
+source('~/Documents/Rscripts/120704-sortDataFrame.R')
 
 setwd('~/Documents/public-datasets/rembrandt/rembrandt_GBM/processedData/')
 db <- dbConnect(SQLite(), dbname="140624_rembrandtGBM.sqlite")
@@ -20,6 +21,10 @@ l1cam = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/resul
 bigSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15" = row.names(cd15),
                "ALDH1"=row.names(aldh1), "ITGA6"=row.names(itag6), "L1CAM"=row.names(l1cam))
 
+verhaakSig = read.delim('~/Documents/public-datasets/TCGA/classficationSignature/131022_danFixedTCGAsignature.txt')
+verSigs = list(verhaakSig$Proneural, verhaakSig$Neural, verhaakSig$Classical, verhaakSig$Mesenchymal)
+names(verSigs) = colnames(verhaakSig)
+
 data = dbReadTable(db, "rembrandtSummarised")
 clinical = dbReadTable(db, "rembrandtClinical", row.names='patient')
 
@@ -29,20 +34,41 @@ colnames(data) = newColnameData
 row.names(data) = data$GeneSymbol
 
 # Into the matrix for GSVA
-dataM = data[,c(2:229)]
+dataM = as.matrix(data[,c(2:229)])
 # Change NAs to 0 as GSVA doesn't like it
 dataM[is.na(dataM)] <- 0
 
 # Subset data for the matches
 matched = intersect(colnames(dataM), row.names(clinical))
-data.match = dataM[matched,]
+data.match = dataM[,matched]
 clin.match = clinical[matched,]
 
 #### Call the subtypes with GSVA ####
-resultRembrandt = gsva(t(data.match), bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
+resultVerhaak = gsva(data.match, verSigs,  rnaseq=F, verbose=T, parallel.sz=1)
+resultVerhaak = t(resultVerhaak$es.obs)
+
+# Write some code to call the verhaak subtype
+resultVerhaakIndex = as.data.frame(resultVerhaak)
+index = max.col(resultVerhaakIndex)
+resultVerhaakIndex = cbind(resultVerhaakIndex, index)
+resultVerhaakIndex$subtype = ""
+resultVerhaakIndex$subtype[resultVerhaakIndex$index == 1] = 'red'
+resultVerhaakIndex$subtype[resultVerhaakIndex$index == 2] = 'green'
+resultVerhaakIndex$subtype[resultVerhaakIndex$index == 3] = 'blue'
+resultVerhaakIndex$subtype[resultVerhaakIndex$index == 4] = 'orange'
+resultVerhaakIndex = sort.dataframe(resultVerhaakIndex, 5, highFirst=F)
+resultVerhaak = as.matrix(resultVerhaakIndex[,c(1:4)])
+
+resultRembrandt = gsva(data.match, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
 resultRembrandt = t(resultRembrandt$es.obs)
 
 #### Make heat map with my subtype ####
-heatmap.2(t(data.match), cexRow=1.5, main="Enrichment of FACS marker signatures in Rembrandt Data", 
-          keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
-          labRow=colnames(data.match), xlab="Samples", labCol=NA, offsetRow=c(1,1), margins=c(2,7.5))
+heatmap.2(t(resultVerhaak), cexRow=1.5, main="Enrichment of FACS marker signatures in Rembrandt Data", 
+          Colv=resultVerhaakIndex$subtype, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(resultVerhaakIndex$subtype), labRow=colnames(resultVerhaakIndex), xlab="Rembrandt samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
+
+heatmap.2(t(resultRembrandt), cexRow=1.5, main="Enrichment of FACS marker signatures in Rembrandt Data", 
+          Colv=resultVerhaakIndex$subtype, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(resultVerhaakIndex$subtype), labRow=colnames(resultRembrandt), xlab="Rembrandt samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
