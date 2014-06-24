@@ -55,3 +55,12 @@ annotateSort = sort.dataframe(annotatedData, 232)
 annotateSort <- annotateSort[!is.na(annotateSort$GeneSymbol), ]
 annotateSort <- annotateSort[!duplicated(annotateSort$GeneSymbol), ]
 head(annotateSort)
+
+dbWriteTable(conn = db, name = "rembrandtSummarised", value = annotateSort, row.names = TRUE)
+
+write.table(annotateSort, './140624_rembrandtGBM_RMAsummarise.txt', sep='\t')
+
+################# Write out the clinical Data ########################## 
+clinicalData = read.csv('~/Documents/public-datasets/rembrandt/REMBRANDT_survivalinmonths.csv')
+dbWriteTable(conn = db, name = "rembrandtClinical", value = clinicalData, row.names = TRUE)
+dbDisconnect(db)
