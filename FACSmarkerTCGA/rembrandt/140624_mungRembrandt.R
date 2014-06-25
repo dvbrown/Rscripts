@@ -64,8 +64,9 @@ dupProbes = annotatedData[duplicated(annotatedData$GeneSymbol), ]
 uniqueProbes = annotatedData[!duplicated(annotatedData$GeneSymbol), ]
 
 dataDup.mean = ddply(annotatedData[,2:230], 'GeneSymbol', numcolwise(mean))
+row.names(dataDup.mean) = dataDup.mean$GeneSymbol
 
-dataDeDup = rbind(dataDup.mean, uniqueProbes[,2:230])
+dbWriteTable(conn = db, name = "rembrandtProbeMean", value = dataDup.mean, row.names = TRUE)
 
 #dbWriteTable(conn = db, name = "rembrandtSummarised", value = annotateSort, row.names = TRUE)
 #write.table(annotateSort, './140624_rembrandtGBM_RMAsummarise.txt', sep='\t')

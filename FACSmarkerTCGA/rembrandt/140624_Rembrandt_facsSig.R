@@ -4,6 +4,7 @@ library(gplots)
 library(RColorBrewer)
 library(sqldf)
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
+source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
 
 setwd('~/Documents/public-datasets/rembrandt/rembrandt_GBM/processedData/')
 db <- dbConnect(SQLite(), dbname="140624_rembrandtGBM.sqlite")
@@ -25,7 +26,11 @@ verhaakSig = read.delim('~/Documents/public-datasets/TCGA/classficationSignature
 verSigs = list(verhaakSig$Proneural, verhaakSig$Neural, verhaakSig$Classical, verhaakSig$Mesenchymal)
 names(verSigs) = colnames(verhaakSig)
 
+# The highest probe
 data = dbReadTable(db, "rembrandtSummarised")
+
+# The mean of probes
+# data = dbReadTable(db, "rembrandtProbeMean")
 clinical = dbReadTable(db, "rembrandtClinical", row.names='patient')
 
 # Need to fix dis
@@ -70,5 +75,11 @@ heatmap.2(t(resultVerhaak), cexRow=1.5, main="Enrichment of FACS marker signatur
 
 heatmap.2(t(resultRembrandt), cexRow=1.5, main="Enrichment of FACS marker signatures in Rembrandt Data", 
           Colv=resultVerhaakIndex$subtype, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
-          ColSideColors=as.character(resultVerhaakIndex$subtype), labRow=colnames(resultRembrandt), xlab="Rembrandt samples", labCol=NA, 
+          ColSideColors=as.character(resultVerhaakIndex$subtype), labRow=colnames(resultRembrandt), xlab="Rembrandt samples probe Mean", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
+
+subtypeRembrandt = callMarkerSubtype(as.data.frame(resultRembrandt), 0, 0)
+subtypeRembrandt = merge(subtypeRembrandt, resultVerhaakIndex, by.x='row.names', by.y='row.names')
+
+# dbWriteTable(conn = db, name = "facsSubtyeRembrandtProbeMean", value = subtypeRembrandt, row.names = TRUE)
+dbWriteTable(conn = db, name = "facsSubtyeRembrandtProbeHighest", value = subtypeRembrandt, row.names = TRUE)
