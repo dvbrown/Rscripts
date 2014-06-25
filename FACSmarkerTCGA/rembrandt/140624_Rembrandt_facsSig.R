@@ -27,19 +27,21 @@ verSigs = list(verhaakSig$Proneural, verhaakSig$Neural, verhaakSig$Classical, ve
 names(verSigs) = colnames(verhaakSig)
 
 # The highest probe
-data = dbReadTable(db, "rembrandtSummarised")
+# data = dbReadTable(db, "rembrandtSummarised", row.names="GeneSymbol")
 
 # The mean of probes
-# data = dbReadTable(db, "rembrandtProbeMean")
+data = dbReadTable(db, "rembrandtProbeMean", row.names="GeneSymbol")
 clinical = dbReadTable(db, "rembrandtClinical", row.names='patient')
 
 # Need to fix dis
 newColnameData = gsub('_U133P2_CEL', '', colnames(data))
 colnames(data) = newColnameData
-row.names(data) = data$GeneSymbol
+
+hist(as.numeric(data['PROM1',]), breaks='Scott')
+hist(as.numeric(data['CD44',]), breaks='Scott')
 
 # Into the matrix for GSVA
-dataM = as.matrix(data[,c(2:229)])
+dataM = as.matrix(data[,c(1:229)])
 # Change NAs to 0 as GSVA doesn't like it
 dataM[is.na(dataM)] <- 0
 

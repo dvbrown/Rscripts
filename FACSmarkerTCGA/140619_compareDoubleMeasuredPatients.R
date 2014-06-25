@@ -19,6 +19,28 @@ agilentGem = read.delim('~/Documents/public-datasets/cancerBrowser/TCGA_GBM_G450
 
 matched = intersect(colnames(rnaseqGem), colnames(agilentGem))
 
+################ Investigate the difference bewtween double measured patients and the rest of Agilent ###################
+doublePatient = clinical[matched,]
+agilentSingle = clinical[!row.names(clinical) %in% matched,]
+
+# Run some tests
+t.test(doublePatient$days_to_death, agilentSingle$days_to_death) # Sig large
+t.test(doublePatient$CDE_DxAge, agilentSingle$CDE_DxAge) # Sig
+t.test(doublePatient$karnofsky_performance_score, agilentSingle$karnofsky_performance_score)
+t.test(doublePatient$CDE_chemo_tmz_days, agilentSingle$CDE_chemo_tmz_days)
+
+singleDate = as.integer(substring(agilentSingle$date_of_initial_pathologic_diagnosis, 1,4))
+doubleDate = as.integer(substring(doublePatient$date_of_initial_pathologic_diagnosis, 1,4))
+wilcox.test(doubleDate, singleDate, conf.int=T)
+median(singleDate, na.rm=T)
+median(doubleDate, na.rm=T)
+
+singleSource = as.integer(substring(row.names(agilentSingle), 6,8))
+doubleSource = as.integer(substring(row.names(doublePatient), 6,8))
+wilcox.test(singleSource, doubleSource, conf.int=F)
+
+################ Mung the GEMs into shape for GSVA #############################
+
 rnaseqGemM = rnaseqGem[,matched]
 agilentGemM = agilentGem[,matched]
 
