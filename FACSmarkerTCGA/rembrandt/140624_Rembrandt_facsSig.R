@@ -66,8 +66,14 @@ resultVerhaakIndex$subtype[resultVerhaakIndex$index == 4] = 'orange'
 resultVerhaakIndex = sort.dataframe(resultVerhaakIndex, 5, highFirst=F)
 resultVerhaak = as.matrix(resultVerhaakIndex[,c(1:4)])
 
-resultRembrandt = gsva(data.match, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
-resultRembrandt = t(resultRembrandt$es.obs)
+# resultRembrandt = gsva(data.match, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
+# resultRembrandt = t(resultRembrandt$es.obs)
+
+# Get the colours of the subtype into the same order for the rembrandt called subtypes IMPORTANT!
+resultRembrandtMerge = merge(resultRembrandt, resultVerhaakIndex[,c(5,6)], by.x='row.names', by.y='row.names')
+row.names(resultRembrandtMerge) = resultRembrandtMerge$Row.names
+resultRembrandtMerge = sort.dataframe(resultRembrandtMerge, 8, highFirst=F)
+resultRembrandt = as.matrix(resultRembrandtMerge[,c(2:7)])
 
 #### Make heat map with my subtype ####
 heatmap.2(t(resultVerhaak), cexRow=1.5, main="Enrichment of FACS marker signatures in Rembrandt Data", 
@@ -75,13 +81,28 @@ heatmap.2(t(resultVerhaak), cexRow=1.5, main="Enrichment of FACS marker signatur
           ColSideColors=as.character(resultVerhaakIndex$subtype), labRow=colnames(resultVerhaakIndex), xlab="Rembrandt samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
 
-heatmap.2(t(resultRembrandt), cexRow=1.5, main="Enrichment of FACS marker signatures in Rembrandt Data", 
-          Colv=resultVerhaakIndex$subtype, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
-          ColSideColors=as.character(resultVerhaakIndex$subtype), labRow=colnames(resultRembrandt), xlab="Rembrandt samples probe Mean", labCol=NA, 
+heatmap.2(t(resultRembrandt), cexRow=1.5, main="Enrichment of FACS marker signatures\nin Rembrandt GBM", 
+          Colv=resultRembrandtMerge$subtype, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(resultRembrandtMerge$subtype), labRow=colnames(resultRembrandt), xlab="Rembrandt samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
 
-subtypeRembrandt = callMarkerSubtype(as.data.frame(resultRembrandt), 0, 0)
-subtypeRembrandt = merge(subtypeRembrandt, resultVerhaakIndex, by.x='row.names', by.y='row.names')
+subtypeRembrandt = callMarkerSubtype(as.data.frame(resultRembrandtMerge[,c(2,3,8,9)]), 0, 0)
+# subtypeRembrandt = merge(subtypeRembrandt, resultVerhaakIndex, by.x='row.names', by.y='row.names')
 
-# dbWriteTable(conn = db, name = "facsSubtyeRembrandtProbeMean", value = subtypeRembrandt, row.names = TRUE)
-dbWriteTable(conn = db, name = "facsSubtyeRembrandtProbeHighest", value = subtypeRembrandt, row.names = TRUE)
+# dbWriteTable(conn = db, name = "facsSubtyeRembrandtProbeMean", value = resultRembrandtMerge, row.names = TRUE)
+# dbWriteTable(conn = db, name = "facsSubtyeRembrandtProbeHighest", value = subtypeRembrandt, row.names = TRUE)
+
+# Build a contingency table and test membership
+subtypeRembrandt$verhaak = ""
+subtypeRembrandt$verhaak[subtypeRembrandt$index == 1] = 'Proneural'
+subtypeRembrandt$verhaak[subtypeRembrandt$index == 2] = 'Neural'
+subtypeRembrandt$verhaak[subtypeRembrandt$index == 3] = 'Classical'
+subtypeRembrandt$verhaak[subtypeRembrandt$index == 4] = 'Mesenchymal'
+
+subtypeRembrandtPM = subtypeRembrandt[subtypeRembrandt$verhaak %in% c('Proneural', 'Mesenchymal'),]
+tab = table(subtypeRembrandtPM$subtype, subtypeRembrandtPM$verhaak)
+fisher.test(tab)
+
+subtypeRembrandtCN = subtypeRembrandt[subtypeRembrandt$verhaak %in% c('Neural', 'Classical'),]
+tab = table(subtypeRembrandtCN$subtype, subtypeRembrandtCN$verhaak)
+fisher.test(tab)
