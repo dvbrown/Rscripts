@@ -7,22 +7,28 @@ library(plyr)
 
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
 setwd('~/Documents/public-datasets/rembrandt/rembrandt_GBM/')
-allFiles = list.files()
+allFiles = list.files(pattern='*.CEL')
 allFiles 
 
-# rawData = ReadAffy('00518392_U133P2.CEL', rm.mask=T, rm.outliers=T)
+#rawData = ReadAffy(rm.mask=T, rm.outliers=T)
 # exprData = exprs(rawData)
 # rmaData = justRMA('00518392_U133P2.CEL')
 
-#rmaData = just.rma(allFiles, rm.outliers=T, rm.mask=T, verbose=T, destructive=T)
-#normalisedData = as.data.frame(exprs(rmaData))
+# rawData = just.rma(filenames=allFiles, verbose=T, destructive=T, normalize=F, background=F)
+# 
+# unNormalisedData = as.data.frame(exprs(rawData))
+# boxRawData = as.data.frame(exprs(rawData[,100:150]))
+# boxplot(boxRawData, col=rainbow(50), main='Rembrandt RMA raw signals', par(las=2))
+# 
+# normalisedData = as.data.frame(exprs(rmaData))
 
 # Open a connection to Test.sqlite database
 setwd('~/Documents/public-datasets/rembrandt/rembrandt_GBM/processedData/')
-db <- dbConnect(SQLite(), dbname="./140624_rembrandtGBM.sqlite")
-# dbWriteTable(conn = db, name = "rembrandtRMA", value = normalisedData, row.names = TRUE)
+db <- dbConnect(SQLite(), dbname="~/Documents/public-datasets/rembrandt/rembrandt_GBM/processedData/140624_rembrandtGBM.sqlite")
+# dbWriteTable(conn = db, name = "rembrandtUnnormalised", value = unNormalisedData, row.names = TRUE)
 # dbDisconnect(db)
-normalisedData = dbReadTable(conn = db, name = "rembrandtRMA", row.names = 'row_names')
+
+#normalisedData = dbReadTable(conn = db, name = "rembrandtRMA", row.names = 'row_names')
 
 boxData = normalisedData[,150:200]
 boxplot(boxData, col=rainbow(50), main='Rembrandt RMA normalised', par(las=2))
@@ -75,3 +81,7 @@ dbWriteTable(conn = db, name = "rembrandtProbeMean", value = dataDup.mean, row.n
 clinicalData = read.csv('~/Documents/public-datasets/rembrandt/REMBRANDT_survivalinmonths.csv')
 dbWriteTable(conn = db, name = "rembrandtClinical", value = clinicalData, row.names = TRUE)
 dbDisconnect(db)
+
+
+################# Test out other normalisation methods #########
+gcRMA = (rawData)
