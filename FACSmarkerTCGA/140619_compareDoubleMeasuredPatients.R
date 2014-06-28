@@ -11,6 +11,9 @@ setwd('~/Documents/public-datasets/cancerBrowser/dedupAgilent/')
 myPalette <- colorRampPalette(c("green", "black", "red"))(n = 1000)
 
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
+# subset the clinical data for only primary GBMs
+clinical = clinical[clinical$histological_type %in% c('Untreated primary (de novo) GBM', 'Glioblastoma Multiforme (GBM)'),]
+
 rnaSeq = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
 rnaseqGem = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/genomicMatrix", row.names=1)
 
@@ -21,21 +24,36 @@ matched = intersect(colnames(rnaseqGem), colnames(agilentGem))
 
 ################ Investigate the difference bewtween double measured patients and the rest of Agilent ###################
 doublePatient = clinical[matched,]
-agilentSingle = clinical[!row.names(clinical) %in% matched,]
+singlePatient = clinical[!row.names(clinical) %in% matched,]
+
+# Bind into a single dataframe
+singlePatient$platform = as.factor('agilent')
+doublePatient$platform = as.factor('rnaSeq')
+compClinical = rbind(singlePatient, doublePatient)
 
 # Run some tests
-t.test(doublePatient$days_to_death, agilentSingle$days_to_death) # Sig large
-t.test(doublePatient$CDE_DxAge, agilentSingle$CDE_DxAge) # Sig
-t.test(doublePatient$karnofsky_performance_score, agilentSingle$karnofsky_performance_score)
-t.test(doublePatient$CDE_chemo_tmz_days, agilentSingle$CDE_chemo_tmz_days)
+t.test(doublePatient$days_to_death, singlePatient$days_to_death) # Sig large
+t.test(doublePatient$CDE_DxAge, singlePatient$CDE_DxAge) # Single patients very slightly older
+t.test(doublePatient$karnofsky_performance_score, singlePatient$karnofsky_performance_score) # N.S
+t.test(doublePatient$CDE_chemo_tmz_days, singlePatient$CDE_chemo_tmz_days) # N.S
 
-singleDate = as.integer(substring(agilentSingle$date_of_initial_pathologic_diagnosis, 1,4))
+# The date that the patients were treated
+singleDate = as.integer(substring(singlePatient$date_of_initial_pathologic_diagnosis, 1,4))
 doubleDate = as.integer(substring(doublePatient$date_of_initial_pathologic_diagnosis, 1,4))
-wilcox.test(doubleDate, singleDate, conf.int=T)
+wilcox.test(doubleDate, singleDate, conf.int=T) # double date were treated 3 years after median
 median(singleDate, na.rm=T)
 median(doubleDate, na.rm=T)
 
-singleSource = as.integer(substring(row.names(agilentSingle), 6,8))
+# The theapry that the patients received. First build a contingency table
+therapy = xtabs(~ CDE_therapy + platform, data=compClinical, exclude="")
+# Chi squared test
+summary(therapy)
+therapy = table(compClinical$CDE_therapy, compClinical$platform, exclude="")
+kruskal.test(list(therapy[,1], therapy[,2]))
+prop.table(therapy[,1], therapy[,2])
+
+# The tissue source site (TS)
+singleSource = as.integer(substring(row.names(singlePatient), 6,8))
 doubleSource = as.integer(substring(row.names(doublePatient), 6,8))
 wilcox.test(singleSource, doubleSource, conf.int=F)
 

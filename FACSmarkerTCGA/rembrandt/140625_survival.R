@@ -1,5 +1,6 @@
 library(survival)
 library(coin)
+library(sqldf)
 setwd('~/Documents/public-datasets/rembrandt/rembrandt_GBM/processedData/survival/')
 source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
 
@@ -8,7 +9,7 @@ callMarkerSubtype = function (signatureScore, CD133cutoff, CD44cutoff) {
     signatureScore$subtype = ""
     signatureScore$subtype = ifelse(signatureScore[,"CD133"] > signatureScore[,"CD44"], "CD133", "CD44")
     # Not having and intermediate case is also better for the Kaplan Myer curve
-    #signatureScore$subtype[signatureScore[,"CD133"] < 0 & signatureScore[,"CD44"] < 0] = "doubleNegative"
+    signatureScore$subtype[signatureScore[,"CD133"] < 0 & signatureScore[,"CD44"] < 0] = "doubleNegative"
     signatureScore = sort.dataframe(signatureScore, "subtype")
     signatureScore$subtype = as.factor(signatureScore$subtype)
     return (signatureScore)
@@ -51,7 +52,7 @@ surFitRembrandt = survfit(survRembrant~subtype, boundData)
 surFitSubtype = survfit(survRembrant~verhaak, boundData)
 
 #### Plot FACS subtype ####
-plot(surFitRembrandt, main='FACS marker coexpression signature in Rembrandt Glioblastoma',
+plot(surFitRembrandt, main='FACS marker coexpression signature in Glioblastoma \nRembrandt dataset',
      ylab='Survival probability',xlab='survival (months)', 
      col=c("red",'blue'),#'green'),
      cex=1.75, conf.int=F, lwd=1.5)
@@ -72,9 +73,9 @@ plot(surFitSubtype, main='Verhaak Signature in Rembrandt Glioblastoma',
 legend('topright', c('Neural', 'Classical', 'Mesenchymal', 'Proneural'), 
        col=c('green', 'blue', 'orange', 'red'), lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
-test = surv_test(survRembrant ~ boundData$subtype_y)#, subset=!boundData$subtype %in% "intermediate")
+test = surv_test(survRembrant ~ boundData$verhaak)#, subset=!boundData$subtype %in% "intermediate")
 test
-#legend(locator(1), legend='p = 0.921')
+#legend(locator(1), legend='p = 0.87')
 
 #### Plot Double Neg ####
 surFitDN = survfit(survRembrant~subtype, boundData)
