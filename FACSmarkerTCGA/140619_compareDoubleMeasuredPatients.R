@@ -71,6 +71,10 @@ summary(molSub)
 gCimp = xtabs(~ G_CIMP_STATUS + platform, data= compClinical, exclude="")
 summary(gCimp)
 
+# Set up multiple fisher tests to investigate clinical parameters
+fisher.test(xtabs(~ CDE_alk_chemoradiation_standard + platform, data=compClinical))
+# More...
+
 ################ Mung the GEMs into shape for GSVA #############################
 
 rnaseqGemM = rnaseqGem[,matched]
