@@ -72,18 +72,21 @@ gCimp = xtabs(~ G_CIMP_STATUS + platform, data= compClinical, exclude="")
 summary(gCimp)
 
 # Set up multiple fisher tests to investigate clinical parameters
+fisher.test(xtabs(~ gender + platform, data=compClinical))# N.S
 fisher.test(xtabs(~ CDE_alk_chemoradiation_standard + platform, data=compClinical))# N.S
-fisher.test(xtabs(~ CDE_chemo_tmz + platform, data=compClinical)) # 0.011
+
+fisher.test(xtabs(~ CDE_chemo_tmz + platform, data=compClinical, exclude = "")) # 0.011
+
 fisher.test(xtabs(~ CDE_chemo_tmz_long + platform, data=compClinical)) # N.S
 fisher.test(xtabs(~ CDE_radiation_standard + platform, data=compClinical)) # N.S
 fisher.test(xtabs(~ CDE_radiation_adjuvant + platform, data=compClinical)) # N.S
 fisher.test(xtabs(~ CDE_radiation_adjuvant_standard + platform, data=compClinical)) # NS
 t.test(CDE_chemo_alk_days ~ platform, data=compClinical) # N.S
 
-fisher.test(xtabs(~ CDE_chemo_adjuvant_tmz + platform, data=compClinical)) # Highly significant    
-fisher.test(xtabs(~ CDE_chemo_adjuvant_alk + platform, data=compClinical)) # almost significant    
-
-
+fisher.test(xtabs(~ pretreatment_history + platform, data=compClinical, exclude = "")) # NS    
+fisher.test(xtabs(~ CDE_chemo_adjuvant_tmz + platform, data=compClinical, exclude = "")) # Highly significant    
+fisher.test(xtabs(~ CDE_chemo_adjuvant_alk + platform, data=compClinical, exclude = "")) # almost significant        
+fisher.test(xtabs(~ additional_surgery_locoregional_procedure + platform, data=compClinical, exclude = "")) # barely significant
 ################ Mung the GEMs into shape for GSVA #############################
 
 rnaseqGemM = rnaseqGem[,matched]
