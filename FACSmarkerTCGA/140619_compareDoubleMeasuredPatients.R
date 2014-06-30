@@ -50,12 +50,26 @@ therapy = xtabs(~ CDE_therapy + platform, data=compClinical, exclude="")
 summary(therapy)
 therapy = table(compClinical$CDE_therapy, compClinical$platform, exclude="")
 kruskal.test(list(therapy[,1], therapy[,2]))
-prop.table(therapy[,1], therapy[,2])
+
+# Construct a totals table for the fisher exact test
+therapyDf = cbind(therapy[,1], therapy[,2])
+therapyDf = cbind(therapyDf, therapyDf[,1] + therapyDf[,2])
+therapyDf = rbind(therapyDf, colSums(therapyDf))
+colnames(therapyDf) = c('singleMeasure', 'doubleMeasure', 'total')
+fisher.test(therapyDf[1,], therapyDf[2,])
 
 # The tissue source site (TS)
 singleSource = as.integer(substring(row.names(singlePatient), 6,8))
 doubleSource = as.integer(substring(row.names(doublePatient), 6,8))
 wilcox.test(singleSource, doubleSource, conf.int=F)
+
+# The molecular subtype is not significant
+molSub = xtabs(~ GeneExp_Subtype + platform, data= compClinical, exclude="")
+summary(molSub)
+
+# G-CIMP is not significant
+gCimp = xtabs(~ G_CIMP_STATUS + platform, data= compClinical, exclude="")
+summary(gCimp)
 
 ################ Mung the GEMs into shape for GSVA #############################
 
