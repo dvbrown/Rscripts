@@ -43,6 +43,8 @@ doubleDate = as.integer(substring(doublePatient$date_of_initial_pathologic_diagn
 wilcox.test(doubleDate, singleDate, conf.int=T) # double date were treated 3 years after median
 median(singleDate, na.rm=T)
 median(doubleDate, na.rm=T)
+range(singleDate, na.rm=T)
+range(doubleDate, na.rm=T)
 
 # The theapry that the patients received. First build a contingency table
 therapy = xtabs(~ CDE_therapy + platform, data=compClinical, exclude="")
