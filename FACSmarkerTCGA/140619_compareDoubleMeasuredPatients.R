@@ -59,7 +59,7 @@ range(singleDate, na.rm=T)
 range(doubleDate, na.rm=T)
 
 # The theapry that the patients received. First build a contingency table
-therapy = xtabs(~ CDE_therapy + platform, data=compClinical, exclude="")
+therapy = xtabs(~ CDE_therapy + platform, data=compClinical, exclude=""))
 # Chi squared test
 summary(therapy)
 therapy = table(compClinical$CDE_therapy, compClinical$platform, exclude="")
@@ -83,8 +83,7 @@ molSub = xtabs(~ GeneExp_Subtype + platform, data= compClinical, exclude="")
 summary(molSub)
 
 # G-CIMP is not significant
-gCimp = xtabs(~ G_CIMP_STATUS + platform, data= compClinical, exclude="")
-summary(gCimp)
+fisher.test(xtabs(~ G_CIMP_STATUS + platform, data= compClinical, exclude=""))
 
 # Set up multiple fisher tests to investigate clinical parameters
 fisher.test(xtabs(~ gender + platform, data=compClinical))# N.S
@@ -102,6 +101,12 @@ fisher.test(xtabs(~ pretreatment_history + platform, data=compClinical, exclude 
 fisher.test(xtabs(~ CDE_chemo_adjuvant_tmz + platform, data=compClinical, exclude = "")) # Highly significant    
 fisher.test(xtabs(~ CDE_chemo_adjuvant_alk + platform, data=compClinical, exclude = "")) # almost significant        
 fisher.test(xtabs(~ additional_surgery_locoregional_procedure + platform, data=compClinical, exclude = "")) # barely significant
+
+# Read in the hand made summary table and compute FDR
+# clinTests = read.delim('~/Documents/public-datasets/cancerBrowser/compareDataSourcePlots/140702_statsTestingClinical_transposed.txt')
+# clinTests$fdr = p.adjust(clinTests$p.value)#, method='fdr')
+# write.table(clinTests, '~/Documents/public-datasets/cancerBrowser/compareDataSourcePlots/140702_statsTestingClinical_fdr.txt', sep='\t', row.names=F)
+
 ################ Mung the GEMs into shape for GSVA #############################
 
 rnaseqGemM = rnaseqGem[,matched]
