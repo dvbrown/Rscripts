@@ -22,6 +22,7 @@ agilentGem = read.delim('~/Documents/public-datasets/cancerBrowser/TCGA_GBM_G450
 
 matched = intersect(colnames(rnaseqGem), colnames(agilentGem))
 
+rm(rnaseqGem, agilentGem)
 ################ Investigate the difference bewtween double measured patients and the rest of Agilent ###################
 doublePatient = clinical[matched,]
 singlePatient = clinical[!row.names(clinical) %in% matched,]
@@ -32,8 +33,19 @@ doublePatient$platform = as.factor('rnaSeq')
 compClinical = rbind(singlePatient, doublePatient)
 
 # Run some tests
-t.test(doublePatient$days_to_death, singlePatient$days_to_death) # Sig large
-t.test(doublePatient$CDE_DxAge, singlePatient$CDE_DxAge) # Single patients very slightly older
+summary(singlePatient$days_to_death)
+summary(doublePatient$days_to_death)
+t.test(days_to_death ~ platform, data=compClinical)
+
+# Measure the missingness of the data
+length(singlePatient$days_to_death[is.na(singlePatient$days_to_death)])
+length(doublePatient$days_to_death[is.na(doublePatient$days_to_death)])
+
+summary(singlePatient$CDE_DxAge)
+summary(doublePatient$CDE_DxAge)
+t.test(CDE_DxAge ~ platform, data=compClinical) # Single patients very slightly older
+
+
 t.test(doublePatient$karnofsky_performance_score, singlePatient$karnofsky_performance_score) # N.S
 t.test(doublePatient$CDE_chemo_tmz_days, singlePatient$CDE_chemo_tmz_days) # N.S
 
@@ -54,6 +66,7 @@ therapy = table(compClinical$CDE_therapy, compClinical$platform, exclude="")
 kruskal.test(list(therapy[,1], therapy[,2]))
 
 # Construct a totals table for the fisher exact test
+fisher.test(xtabs(~ CDE_therapy + platform, data=compClinical, exclude=""))
 therapyDf = cbind(therapy[,1], therapy[,2])
 therapyDf = cbind(therapyDf, therapyDf[,1] + therapyDf[,2])
 therapyDf = rbind(therapyDf, colSums(therapyDf))
