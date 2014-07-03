@@ -66,8 +66,8 @@ resultVerhaakIndex$subtype[resultVerhaakIndex$index == 4] = 'orange'
 resultVerhaakIndex = sort.dataframe(resultVerhaakIndex, 5, highFirst=F)
 resultVerhaak = as.matrix(resultVerhaakIndex[,c(1:4)])
 
-# resultRembrandt = gsva(data.match, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
-# resultRembrandt = t(resultRembrandt$es.obs)
+resultRembrandt = gsva(data.match, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
+resultRembrandt = t(resultRembrandt$es.obs)
 
 # Get the colours of the subtype into the same order for the rembrandt called subtypes IMPORTANT!
 resultRembrandtMerge = merge(resultRembrandt, resultVerhaakIndex[,c(5,6)], by.x='row.names', by.y='row.names')

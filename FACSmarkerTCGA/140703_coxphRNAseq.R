@@ -48,6 +48,13 @@ main='FACS marker coexpression signature in \nGlioblastoma multiforme adjusted f
 legend('topright', c('CD133', 'CD44'), col=c("red",'blue'), lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 # text(locator(1),labels='p = 0.053', cex=1) #add the p-value to the graph
 
+coxObjTmz = coxph(data.surv ~ CDE_DxAge + CDE_chemo_adjuvant_tmz + subtype , data=boundData, na.action="na.omit")
+summary(coxObjTmz)
+
 ############################################# Throw in many covariates ##################################
-coxObjL = coxph(data.surv ~ CDE_DxAge + subtype + G_CIMP_STATUS + CDE_chemo_adjuvant_tmz, data=boundData, na.action="na.omit")
+coxObjL = coxph(data.surv ~ CDE_DxAge + subtype + G_CIMP_STATUS , data=boundData, na.action="na.omit")
 summary(coxObjL)
+
+coxObj
+coxObjTmz
+coxObjL

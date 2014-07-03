@@ -9,7 +9,7 @@ callMarkerSubtype = function (signatureScore, CD133cutoff, CD44cutoff) {
     signatureScore$subtype = ""
     signatureScore$subtype = ifelse(signatureScore[,"CD133"] > signatureScore[,"CD44"], "CD133", "CD44")
     # Not having and intermediate case is also better for the Kaplan Myer curve
-    signatureScore$subtype[signatureScore[,"CD133"] < 0 & signatureScore[,"CD44"] < 0] = "doubleNegative"
+    #signatureScore$subtype[signatureScore[,"CD133"] < 0 & signatureScore[,"CD44"] < 0] = "doubleNegative"
     signatureScore = sort.dataframe(signatureScore, "subtype")
     signatureScore$subtype = as.factor(signatureScore$subtype)
     return (signatureScore)
@@ -37,6 +37,9 @@ clinical$survival = as.numeric(clinical$survival)
 clinical$status = 1
 clinical$status[is.na(clinical$survival)] = 0
 
+# Convert from weeks to days
+clinical$survival = clinical$survival * 7
+
 # match up the data and clinical
 matched = intersect(row.names(clinical), row.names(data))
 dataMatch = data[matched,]
@@ -53,7 +56,7 @@ surFitSubtype = survfit(survRembrant~verhaak, boundData)
 
 #### Plot FACS subtype ####
 plot(surFitRembrandt, main='FACS marker coexpression signature in Glioblastoma \nRembrandt dataset',
-     ylab='Survival probability',xlab='survival (months)', 
+     ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'),#'green'),
      cex=1.75, conf.int=F, lwd=1.5)
 legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
@@ -63,7 +66,8 @@ legend('topright', c('CD133', 'CD44'),# 'Intermediate'),
 #test for a difference between curves
 test = surv_test(survRembrant ~ boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
 test
-#legend(locator(1), legend='p = 0.65')
+legend(locator(1), legend='p = 0.49')
+
 
 #### Plot verhaak subtype ####
 plot(surFitSubtype, main='Verhaak Signature in Rembrandt Glioblastoma',

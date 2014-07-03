@@ -52,3 +52,17 @@ probOverlap(row.names(cd44Sig), row.names(cd15), row.names(rnaseqGem))
 
 ########################## CD133 and CD44 ########################## 
 probOverlap(row.names(cd44Sig), row.names(cd133Sig), row.names(rnaseqGem))
+
+
+################### Measure overlap between The subtypes called by FACS and TCGA subtypes #####################
+subtypes = dbReadTable(db, "rnaSeqSubtyped", row.names='row_names')
+
+xtabs(~ subtype + G_CIMP_STATUS, data=subtypes)
+fisher.test(xtabs(~ subtype + G_CIMP_STATUS, data=subtypes))
+
+fisher.test(xtabs(~ subtype + GeneExp_Subtype, data=subtypes[subtypes$GeneExp_Subtype %in% c('Proneural', 'Mesenchymal'),]))
+
+subtypes$MesOther = "Mesenchymal"
+subtypes$MesOther[!subtypes$GeneExp_Subtype %in% 'Mesenchymal'] = "Other"
+xtabs(~ subtype + MesOther, data=subtypes)
+fisher.test(xtabs(~ subtype + MesOther, data=subtypes))
