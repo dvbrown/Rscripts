@@ -61,8 +61,20 @@ xtabs(~ subtype + G_CIMP_STATUS, data=subtypes)
 fisher.test(xtabs(~ subtype + G_CIMP_STATUS, data=subtypes))
 
 fisher.test(xtabs(~ subtype + GeneExp_Subtype, data=subtypes[subtypes$GeneExp_Subtype %in% c('Proneural', 'Mesenchymal'),]))
+fisher.test(xtabs(~ subtype + GeneExp_Subtype, data=subtypes[subtypes$GeneExp_Subtype %in% c('Proneural', 'Classical'),]))
+fisher.test(xtabs(~ subtype + GeneExp_Subtype, data=subtypes[subtypes$GeneExp_Subtype %in% c('Proneural', 'Neural'),]))
+
 
 subtypes$MesOther = "Mesenchymal"
 subtypes$MesOther[!subtypes$GeneExp_Subtype %in% 'Mesenchymal'] = "Other"
 xtabs(~ subtype + MesOther, data=subtypes)
 fisher.test(xtabs(~ subtype + MesOther, data=subtypes))
+
+# Test if CD44 is significantly Mesenchymal
+prop.test(44, 76, p = 0.5) # p = 0.21
+
+# Test if CD133 is significantly Other
+prop.test(80, 91, p = 0.5) # p = 1.016e-12
+
+# Test if CD133 is significantly Classical
+prop.test(36, 36+28, p = 0.5) # p = 0.3816
