@@ -49,7 +49,7 @@ sur.fit = survfit(data.surv~subtype, boundData)
 
 plot(sur.fit, main='TCGA GBM cohort classified by FACS marker signature',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'),#'green'),
-    xlim=c(0,1600), 
+     xlim=c(0,1600), 
      cex=1.75, conf.int=F, lwd=1.33)
 
 legend('topright', c('CD133', 'CD44'),
@@ -180,19 +180,20 @@ data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
 
 sur.fit = survfit(data.surv~subtype, boundData)
 
-plot(sur.fit, main='FACS marker coexpression signature in \nGlioblastoma multiforme by Agilent array',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'),#'green'),
-     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
+plot(sur.fit, main='TCGA GBM patients stratified by FACS marker signature \n Agilent dataset',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     #xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
 
-legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
-       col=c("red",'blue'),#'green'),
-       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+legend('topright', c('CD133', 'CD44'),
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
+text(locator(1),labels='p=0.591', cex=1) #add the p-value to the graph
 summary(data.surv)
 #test for a difference between curves
 test = surv_test(data.surv~subtype, boundData)#, subset=!boundData$subtype %in% "intermediate")
 test
-# text(locator(1),labels='p=0.591', cex=1) #add the p-value to the graph
 
 # There still appears to be a strong assosciation of the CD133 with Proneural and vice versea. Somehow no survival advantage
 contingency = table(boundData$subtype, boundData$GeneExp_Subtype)
@@ -216,9 +217,6 @@ summary(data.surv)
 #test for a difference between curves
 test = surv_test(data.surv~boundDataSub$GeneExp_Subtype, subset=boundDataSub$GeneExp_Subtype %in% c("Proneural", "Mesenchymal"))
 test
-
-
-
 
 
 ############################################# Survival curve with Agilent using the 3sd signature ##################################
