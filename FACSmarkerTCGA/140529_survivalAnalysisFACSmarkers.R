@@ -86,9 +86,9 @@ legend('topright', c('CD133', 'CD44'),
 summary(data.surv)
 
 #test for a difference between curves
-test = surv_test(data.surv~boundDataSub$subtype, subset=!boundDataSub$subtype %in% "intermediate")
+test = surv_test(data.surv~boundDataSub$subtype)
 test
-# text(locator(1),labels='p=0.152', cex=1) #add the p-value to the graph
+text(locator(1),labels='p=0.150', cex=1) #add the p-value to the graph
 
 ############################################# Survival curve for subtype ##################################
 # Remove nosubtype cases
@@ -100,14 +100,17 @@ data.surv = Surv(boundDataSub$CDE_survival_time, event=boundDataSub$X_EVENT)
 sur.fit = survfit(data.surv~GeneExp_Subtype, boundDataSub)
 
 plot(sur.fit, main='FACS marker coexpression signature in \nGlioblastoma multiforme by RNAseq',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'green','orange', "blue"),xlim=c(0,750), cex=1.75)
+     col=c("red",'green','orange', "blue"),xlim=c(0,1600), lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 legend('topright', c('Proneural', 'Neural', 'Mesenchymal',"Classical"), 
-       col=c("red",'green','orange', "blue"),lwd=1, cex=0.9, bty='n', xjust=0.5, yjust=0.5)
+       col=c("red",'green','orange', "blue"),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+
 summary(data.surv)
 #test for a difference between curves
-test = surv_test(data.surv~boundDataSub$GeneExp_Subtype, subset=boundDataSub$GeneExp_Subtype %in% c("Proneural", "Mesenchymal"))
+test = surv_test(data.surv~boundDataSub$GeneExp_Subtype)#, subset=boundDataSub$GeneExp_Subtype %in% c("Proneural", "Mesenchymal"))
 test
+text(locator(1),labels='p=0.6488', cex=1) #add the p-value to the graph
 
 
 ############################################# Plot a KM of CD133, CD44, Proneural and Mesenchymal ##################################
@@ -123,7 +126,7 @@ data.surv = Surv(twoSignature$CDE_survival_time, event=twoSignature$X_EVENT)
 sur.fit = survfit(data.surv~subtype, twoSignature)
 
 plot(sur.fit, main='Comparison of Verhaak and \nFACS marker signatures',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue','purple', "orange"),xlim=c(0,750), cex=1.75, lwd=c(1.33,1.33,0.75,0.75),
+     col=c("red",'blue','purple', "orange"),xlim=c(0,1600), cex=1.2, lwd=c(1.33,1.33,0.75,0.75),
      lty=c(1,1,2,2)) # hatch the verhaak lines
 
 
@@ -133,8 +136,9 @@ legend('topright', c('CD133', 'CD44', 'Mesenchymal',"Proneural"),
 
 summary(data.surv)
 #test for a difference between curves
-test = surv_test(data.surv~twoSignature$GeneExp_Subtype, subset=twoSignature$GeneExp_Subtype %in% c("Proneural", "Mesenchymal"))
+test = surv_test(data.surv~twoSignature$subtype, subset=twoSignature$subtype %in% c('CD133', 'CD44', 'Mesenchymal',"Proneural"))
 test
+text(locator(1),labels='p=0.6488', cex=1) #add the p-value to the graph
 
 ############################################# Test the Agilent dataset ##################################
 # The signature derived from Agilent array
