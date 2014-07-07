@@ -54,32 +54,38 @@ surFitRembrandt = survfit(survRembrant~subtype, boundData)
 
 surFitSubtype = survfit(survRembrant~verhaak, boundData)
 
-#### Plot FACS subtype ####
-plot(surFitRembrandt, main='FACS marker coexpression signature in Glioblastoma \nRembrandt dataset',
-     ylab='Survival probability',xlab='survival (days)', 
+######################## Plot FACS subtype ############################
+
+plot(surFitRembrandt, main='Rembrandt GBM cohort classified by FACS marker signature',
+     ylab='Survival probability',xlab='survival (days)',
      col=c("red",'blue'),#'green'),
-     cex=1.75, conf.int=F, lwd=1.5)
-legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
-       col=c("red",'blue'),#'green'),
-       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+     #xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
+
+legend('topright', c('CD133', 'CD44'),
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 #test for a difference between curves
 test = surv_test(survRembrant ~ boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
 test
-legend(locator(1), legend='p = 0.49')
+text(locator(1),labels='p = 0.492', cex=1) #add the p-value to the graph
+
 
 
 #### Plot verhaak subtype ####
 plot(surFitSubtype, main='Verhaak Signature in Rembrandt Glioblastoma',
      ylab='Survival probability',xlab='survival (months)', 
-     col=c('green', 'blue', 'orange', 'red'),cex=1.75, conf.int=F, lwd=1.5)
+     col=c('green', 'blue', 'orange', 'red'),
+     cex=1.75, conf.int=F, lwd=1.33)
 
 legend('topright', c('Neural', 'Classical', 'Mesenchymal', 'Proneural'), 
-       col=c('green', 'blue', 'orange', 'red'), lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+       col=c('green', 'blue', 'orange', 'red'), 
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 test = surv_test(survRembrant ~ boundData$verhaak)#, subset=!boundData$subtype %in% "intermediate")
 test
-#legend(locator(1), legend='p = 0.87')
+text(locator(1), labels='p = 0.866')
 
 #### Plot Double Neg ####
 surFitDN = survfit(survRembrant~subtype, boundData)
@@ -95,4 +101,4 @@ legend('topright', c('CD133', 'CD44', 'double negative'),
 #test for a difference between curves
 testDN = surv_test(survRembrant ~ boundData$subtype)#, subset=!boundData$subtype %in% "doubleNegative")
 testDN
-legend(locator(1), legend='p = 0.34')
+# legend(locator(1), legend='p = 0.34')
