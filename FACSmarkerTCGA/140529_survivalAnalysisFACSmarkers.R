@@ -2,8 +2,7 @@ library(ggplot2)
 library(survival)
 library(coin)
 
-source("~/Documents/Rscripts/120704-sortDataFrame.R")
-source("~/Documents/Rscripts/140508_coexpressionFunctions.R")
+source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
 setwd("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/")
 
 # verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140529_verhaakSubtypeCD133_scores", row.names=1)
@@ -12,6 +11,8 @@ verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAg
 
 verhaakSignature = verhaakSignature[,c("CD133","CD44","GeneExp_Subtype","G_CIMP_STATUS")]
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
+
+verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, 0, 0)
 
 # Extract the clinical data for the RNAseq patients
 matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
@@ -30,8 +31,6 @@ ggplot(lattPlot, aes(value, fill = signature)) + geom_density(alpha = 0.2) +
     ggtitle("Distribution of CD133 and \nCD44 signature scores") +  # Set title
     coord_cartesian(xlim = c(-1, 1)) + theme_bw(base_size=20) + geom_vline(xintercept=0, colour="red") # The 0.125 is where I will call indeterminate
 
-verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, 0, 0)
-
 ############################################## bind the clinical and subtyping info together #############################################
 boundData = merge.data.frame(clin, verhaakSubtypeCall, by.x="row.names", by.y="row.names")
 boundData = sort.dataframe(boundData, "subtype")
@@ -48,19 +47,20 @@ data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
 
 sur.fit = survfit(data.surv~subtype, boundData)
 
-plot(sur.fit, main='FACS marker coexpression signature in \nGlioblastoma multiforme by RNAseq',ylab='Survival probability',xlab='survival (days)', 
+plot(sur.fit, main='TCGA GBM cohort classified by FACS marker signature',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'),#'green'),
-     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
+    xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
 
-legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
-       col=c("red",'blue'),#'green'),
-       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+legend('topright', c('CD133', 'CD44'),
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 summary(data.surv)
 #test for a difference between curves
 test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
 test
-#text(locator(1),labels='p=0.0151', cex=1) #add the p-value to the graph
+text(locator(1),labels='p=0.0162', cex=1) #add the p-value to the graph
 
 # Check the final table
 # write.table(boundData, "./survival/survivalTables/140606_RNAseq_SurvivalBoundData.txt", sep='\t')
@@ -74,20 +74,21 @@ boundDataSub = boundData[boundData$G_CIMP_STATUS == "NON G-CIMP",]
 data.surv = Surv(boundDataSub$CDE_survival_time, event=boundDataSub$X_EVENT)
 sur.fit = survfit(data.surv~boundDataSub$subtype)
 
-plot(sur.fit, main='FACS marker coexpression signature in Glioblastoma \nmultiforme by RNAseq no (G-CIMP)',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'),#'green'),
-     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
+plot(sur.fit, main='FACS marker coexpression signature in Glioblastoma \nmultiforme by RNAseq (no G-CIMP)',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
 
-legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
-       col=c("red",'blue'),#'green'),
-       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+legend('topright', c('CD133', 'CD44'),
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 summary(data.surv)
 
 #test for a difference between curves
 test = surv_test(data.surv~boundDataSub$subtype, subset=!boundDataSub$subtype %in% "intermediate")
 test
-text(locator(1),labels='p=0.152', cex=1) #add the p-value to the graph
+# text(locator(1),labels='p=0.152', cex=1) #add the p-value to the graph
 
 ############################################# Survival curve for subtype ##################################
 # Remove nosubtype cases
@@ -109,10 +110,31 @@ test = surv_test(data.surv~boundDataSub$GeneExp_Subtype, subset=boundDataSub$Gen
 test
 
 
+############################################# Plot a KM of CD133, CD44, Proneural and Mesenchymal ##################################
+
+boundDataSub$subtype = boundDataSub$GeneExp_Subtype
+boundDataSub = boundDataSub[boundDataSub$subtype %in% c('Proneural', 'Mesenchymal'),]
+
+twoSignature = rbind(boundData, boundDataSub)
+
+#generate the survival object and plot a Kaplan-Meier
+data.surv = Surv(twoSignature$CDE_survival_time, event=twoSignature$X_EVENT)
+
+sur.fit = survfit(data.surv~subtype, twoSignature)
+
+plot(sur.fit, main='Comparison of Verhaak and \nFACS marker signatures',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue','purple', "orange"),xlim=c(0,750), cex=1.75, lwd=c(1.33,1.33,0.75,0.75),
+     lty=c(1,1,2,2)) # hatch the verhaak lines
 
 
+legend('topright', c('CD133', 'CD44', 'Mesenchymal',"Proneural"), 
+       col=c("red",'blue','orange', "purple"), cex=0.9, bty='n', xjust=0.5, yjust=0.5,
+       lwd=c(1.33,1.33,0.75,0.75), lty=c(1,1,2,2))
 
-
+summary(data.surv)
+#test for a difference between curves
+test = surv_test(data.surv~twoSignature$GeneExp_Subtype, subset=twoSignature$GeneExp_Subtype %in% c("Proneural", "Mesenchymal"))
+test
 
 ############################################# Test the Agilent dataset ##################################
 # The signature derived from Agilent array
