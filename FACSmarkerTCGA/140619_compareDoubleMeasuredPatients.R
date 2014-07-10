@@ -198,21 +198,23 @@ surFitAgilent = survfit(survAgilent~subtype, boundDataA)
 surFitRNA = survfit(survRNA~subtype, boundDataR)
 
 par(mfrow=c(2,1))
-plot(surFitAgilent, main='FACS marker coexpression signature in \nGlioblastoma multiforme Agilent duplicates',
-     ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'),#'green'),
-     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
-legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
-       col=c("red",'blue'),#'green'),
-       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+plot(surFitAgilent, main='TCGA GBM cohort classified by FACS marker signature Agilent array', ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
+     
+legend('topright', c('CD133', 'CD44'),
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
-plot(surFitRNA, main='FACS marker coexpression signature in \nGlioblastoma multiforme RNAseq duplicates',
-     ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'),#'green'),
-     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
-legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
-       col=c("red",'blue'),#'green'),
-       lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+plot(surFitRNA, main='TCGA GBM cohort classified by FACS marker signature RNAseq', ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
+
+legend('topright', c('CD133', 'CD44'),
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 #test for a difference between curves
 testA = surv_test(survAgilent~boundDataA$subtype)#, subset=!boundData$subtype %in% "intermediate")

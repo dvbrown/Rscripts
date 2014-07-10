@@ -17,9 +17,13 @@ verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, 0, 0)
 # Extract the clinical data for the RNAseq patients
 matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
 # Subset clinical data for intersect
-clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender")]
+clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", "days_to_last_followup")]
 
-############################################## Segment the subtypes into CD133 CD44 and indetermiant #############################################
+# If the survival is NA, use the value for days to last followup
+clin$survival = clin$CDE_survival_time
+clin$survival[is.na(clin$survival)] = clin$days_to_last_followup[is.na(clin$survival)]
+
+############################################## Segment the subtypes into CD133 CD44 #############################################
 
 # Make an object to plot density gram
 lattPlot = data.frame(as.numeric(c(verhaakSignature[,"CD133"], verhaakSignature[,"CD44"])), 
@@ -48,7 +52,7 @@ data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
 sur.fit = survfit(data.surv~subtype, boundData)
 
 plot(sur.fit, main='TCGA GBM cohort classified by FACS marker signature',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'),#'green'),
+     col=c("red",'blue'),
      xlim=c(0,1600), 
      cex=1.75, conf.int=F, lwd=1.33)
 
@@ -254,4 +258,4 @@ summary(data.surv)
 #test for a difference between curves
 test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
 test
-text(locator(1),labels='p=0.0151', cex=1) #add the p-value to the graph
+# text(locator(1),labels='p=0.0151', cex=1) #add the p-value to the graph
