@@ -38,28 +38,28 @@ growthPlot7 = ggplot(data=day7Growth[day7Growth$treatment %in% 'DMSO',],
     ggtitle("Comparing growth at day 7 \nby marker status") +  # Set title
     theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-multiplot(growthPlot3, growthPlot7)
+#multiplot(growthPlot3, growthPlot7)
 
 ############################################## Calculate and plot the DMSO corrected values #################################################
 day3TMZ = calcDMSOcontrol(day3Growth)
 day7TMZ = calcDMSOcontrol(day7Growth)
 # 
-tmzPlot3 = ggplot(data=day3TMZ, aes(x=clone, y=dmsoCorrected, fill=cd133)) + 
-    scale_fill_manual(values=c("gold", "chartreuse4")) +
+tmzPlot3 = ggplot(data=day3TMZ, aes(x=clone, y=dmsoCorrected, fill=subPop)) + 
+    scale_fill_manual(values=c("gold", "chartreuse4", "skyblue2")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     xlab("Clone") + ylab("Cell number relative to \nDMSO control") +
-    ggtitle("Comparing temozolomide sensitivty at day 3 by \nCD133 status") +  # Set title
+    ggtitle("Temozolomide sensitivty at day 3 by \nmarker status") +  # Set title
     theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-tmzPlot7 = ggplot(data=day7TMZ, aes(x=clone, y=dmsoCorrected, fill=cd133)) + 
-    scale_fill_manual(values=c("gold", "chartreuse4")) +
+tmzPlot7 = ggplot(data=day7TMZ, aes(x=clone, y=dmsoCorrected, fill=subPop)) + 
+    scale_fill_manual(values=c("gold", "chartreuse4", "skyblue2")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     xlab("Clone") + ylab("Cell number relative to \nDMSO control") +
-    ggtitle("Comparing temozolomide sensitivty at day 7 by \nCD133 status") +  # Set title
+    ggtitle("Temozolomide sensitivty at day 7 by \nmarker status") +  # Set title
     theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-multiplot(tmzPlot3, tmzPlot7)
+#multiplot(tmzPlot3, tmzPlot7)
 
-multiplot(growthPlot3, growthPlot7, tmzPlot3, tmzPlot7, cols=2)
-# write.table(day3TMZ, '140423_day3TMZprocessed.txt', sep='\t')
-# write.table(day7TMZ, '140423_day7TMZprocessed.txt', sep='\t')
+#multiplot(growthPlot3, growthPlot7, tmzPlot3, tmzPlot7, cols=2)
+# write.table(day3TMZ, '140715_day3TMZprocessed.txt', sep='\t')
+# write.table(day7TMZ, '140715_day7TMZprocessed.txt', sep='\t')

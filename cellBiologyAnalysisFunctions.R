@@ -14,8 +14,8 @@ backgroundMeanSD <- function (dataFrame) {
 }
 
 calcDMSOcontrol = function(dataFrame) {
-    vehicle = dataFrame[dataFrame$treatment %in% 'vehicle',]
-    tmz = dataFrame[dataFrame$treatment %in% 'tmz',]
+    vehicle = dataFrame[dataFrame$treatment %in% 'DMSO',]
+    tmz = dataFrame[dataFrame$treatment %in% 'TMZ',]
     tmz$dmsoCorrected = tmz$mean / vehicle$mean
     return (tmz)
 }
