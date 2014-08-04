@@ -1,5 +1,4 @@
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
-source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 
 backgroundMeanSD <- function (dataFrame) {
     # Take the dataframe of raw data and then remove background fluorescence and take the mean and sd
@@ -44,8 +43,3 @@ extractPosNegReplicates = function(dataFrame) {
     colnames(result) = c('origin', 'mean', 'sd')
     return (result)
 }
-
-############################################## Read in the resazurin assay readings ###############################################
-setwd('~/Documents/Cell_biology/proliferation/Resazurin/140710_039_035/')
-growthD3 = read.delim('140709_day3Rep.txt')
-growthD7 = read.delim('140714_day7Rep.txt')
