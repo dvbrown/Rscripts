@@ -23,6 +23,8 @@ replicates = extractReplicates(c(1:168), dataMy)
 data = replicates[[3]]
 
 #write.table(data, '140808_replicatesDan.txt', sep='\t')
+
+# START HERE
 data = read.delim('output/140808_replicatesDanfixedNames.txt', row.names=1)
 ##################################### Some QC plots #####################################
 plot(dataSorted$Cp, dataSorted$location, pch=16, col='pink', main='Raw Cp scores qRT-PCR expt with honours students')
@@ -62,6 +64,7 @@ write.table(bindDataMatched, './output/140808_ddCtValuesMatched.txt', sep='\t')
 write.table(mixed, './output/140808_ddCtValuesMixed.txt', sep='\t')
 
 ######################################### Plot the ddCt values ########################################################
+
 clone035 = ggplot(data=bindDataMatched[!bindDataMatched$origin.x %in% c("041_CD133neg","041_CD133pos","041_mixed"),], 
                   aes(x=gene.x, y=ddCt, fill=origin.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
@@ -70,7 +73,6 @@ clone035 = ggplot(data=bindDataMatched[!bindDataMatched$origin.x %in% c("041_CD1
     xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
     ggtitle("qRT-PCR") +  # Set title
     theme_bw(base_size=18)
-
 clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 clone041 = ggplot(data=c041, aes(x=gene.x, y=ddCt, fill=origin.x)) + 
@@ -80,10 +82,9 @@ clone041 = ggplot(data=c041, aes(x=gene.x, y=ddCt, fill=origin.x)) +
     xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
     ggtitle("qRT-PCR") +  # Set title
     theme_bw(base_size=18)
-
 clone041 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-mixedPop = ggplot(data=mixed, aes(x=gene.x, y=ddCt, fill=origin.x)) + 
+mixedPop = ggplot(data=mixed[!mixed$origin.x %in% '035_mixed',], aes(x=gene.x, y=ddCt, fill=origin.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
     #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
@@ -91,3 +92,19 @@ mixedPop = ggplot(data=mixed, aes(x=gene.x, y=ddCt, fill=origin.x)) +
     ggtitle("qRT-PCR") +  # Set title
     theme_bw(base_size=18)
 mixedPop + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+############################################ Calculate the ddCt scores based on double Neg #################################################
+
+# The ddCt
+c035$ddCt = ddCTcalculate(geneOfInterest=c035$gene.x, sampleOfInterest=c035$origin.x,
+                          houseKeepingGene='GAPDH', referenceSample='035_CD44-/CD133-', data=c035) 
+
+clone035 = ggplot(data=c035,
+                  aes(x=gene.x, y=ddCt, fill=origin.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
+    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
+    ggtitle("qRT-PCR") +  # Set title
+    theme_bw(base_size=18)
+clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
