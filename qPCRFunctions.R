@@ -1,6 +1,7 @@
 library(reshape)
 library(ggplot2)
 library(plyr)
+library(gtools)
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
 
 # Intialise the package at the end by building a list containing all the functions in this script
