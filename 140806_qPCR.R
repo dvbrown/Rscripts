@@ -31,16 +31,46 @@ plot(dataSorted$Cp, dataSorted$location, pch=16, col='pink', main='Raw Cp scores
 plot(data$Cp.x, data$Cp.y, main='Replicate accuracy Cp', ylab='Cp replicate 1', xlab='Cp replicate 2', pch=16)
 abline(lm(data$Cp.x ~ data$Cp.y), col='red')
 summary(lm(data$Cp.x ~ data$Cp.y))
-text(locator(1), labels='R squared = 0.975')
+# text(locator(1), labels='R squared = 0.975')
 par(mfrow=c(1,1))
 
 ############################################ Calculate the ddCt scores #################################################
 # Subset the data by cell line
 clones = levels(data$origin.x)
-c035 = data[data$origin.x %in% c("035_33", "035_44", "035_DN", "035_DP", "035_M"),]
-c041 = data[data$origin.x %in% c("041_3N", "041_3P", "041_M"),]
-mixed = c041 = data[data$origin.x %in% c("020_M", "035_M","039_M","041_M" ),]
+c035 = data[data$origin.x %in% c("035_CD44-/CD133-", "035_CD44-/CD133+", "035_CD44+/CD133-", "035_CD44+/CD133+", "035_mixed"),]
+c041 = data[data$origin.x %in% c("041_CD133neg","041_CD133pos","041_mixed"),]
+mixed = data[data$origin.x %in% c("035_mixed", "039_mixed", "020_mixed", "041_mixed"),]
+
+c035 = droplevels(c035)
+c041 = droplevels(c041)
+mixed = droplevels(mixed)
 
 # The ddCt
 c035$ddCt = ddCTcalculate(geneOfInterest=c035$gene.x, sampleOfInterest=c035$origin.x,
-                          houseKeepingGene='GAPDH', referenceSample='035_M', data=c035)
+                          houseKeepingGene='GAPDH', referenceSample='035_mixed', data=c035)
+
+c041$ddCt = ddCTcalculate(geneOfInterest=c041$gene.x, sampleOfInterest=c041$origin.x,
+                          houseKeepingGene='GAPDH', referenceSample='041_mixed', data=c041)
+
+mixed$ddCt = ddCTcalculate(geneOfInterest=mixed$gene.x, sampleOfInterest=mixed$origin.x,
+                          houseKeepingGene='GAPDH', referenceSample='035_mixed', data=mixed)
+
+# Bind the data together
+bindDataMatched = rbind(c035, c041)
+bindDataMatched = bindDataMatched[mixedorder(bindDataMatched$origin.x),]
+write.table(bindDataMatched, './output/140808_ddCtValuesMatched.txt', sep='\t')
+write.table(mixed, './output/140808_ddCtValuesMixed.txt', sep='\t')
+
+######################################### Plot the ddCt values ########################################################
+allPlots = ggplot(data=bindDataMatched ,#[bindData$origin.x %in% positives,], 
+                  aes(x=gene.x, y=ddCt, fill=origin.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    # coord_cartesian(ylim = c(0, 10)) +
+    # scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 1),1)) + # This modifies the scale of the y axis.
+    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
+    ggtitle("qRT-PCR") +  # Set title
+    theme_bw(base_size=18)
+#pdf('140403_ddCtBySample.pdf', paper='a4')
+allPlots + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+#dev.off()
