@@ -41,13 +41,13 @@ c035 = data[data$origin.x %in% c("035_CD44-/CD133-", "035_CD44-/CD133+", "035_CD
 c041 = data[data$origin.x %in% c("041_CD133neg","041_CD133pos","041_mixed"),]
 mixed = data[data$origin.x %in% c("035_mixed", "039_mixed", "020_mixed", "041_mixed"),]
 
-c035 = droplevels(c035)
-c041 = droplevels(c041)
-mixed = droplevels(mixed)
+row.names(c035) = paste(c035$origin.x, c035$gene.x)
+row.names(c041) = paste(c041$origin.x, c041$gene.x)
+row.names(mixed) = paste(mixed$origin.x, mixed$gene.x)
 
 # The ddCt
 c035$ddCt = ddCTcalculate(geneOfInterest=c035$gene.x, sampleOfInterest=c035$origin.x,
-                          houseKeepingGene='GAPDH', referenceSample='035_mixed', data=c035)
+                          houseKeepingGene='GAPDH', referenceSample='035_mixed', data=c035) 
 
 c041$ddCt = ddCTcalculate(geneOfInterest=c041$gene.x, sampleOfInterest=c041$origin.x,
                           houseKeepingGene='GAPDH', referenceSample='041_mixed', data=c041)
@@ -62,15 +62,32 @@ write.table(bindDataMatched, './output/140808_ddCtValuesMatched.txt', sep='\t')
 write.table(mixed, './output/140808_ddCtValuesMixed.txt', sep='\t')
 
 ######################################### Plot the ddCt values ########################################################
-allPlots = ggplot(data=bindDataMatched ,#[bindData$origin.x %in% positives,], 
+clone035 = ggplot(data=bindDataMatched[!bindDataMatched$origin.x %in% c("041_CD133neg","041_CD133pos","041_mixed"),], 
                   aes(x=gene.x, y=ddCt, fill=origin.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
-    # coord_cartesian(ylim = c(0, 10)) +
-    # scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 1),1)) + # This modifies the scale of the y axis.
+    #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
     xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
     ggtitle("qRT-PCR") +  # Set title
     theme_bw(base_size=18)
-#pdf('140403_ddCtBySample.pdf', paper='a4')
-allPlots + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-#dev.off()
+
+clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+clone041 = ggplot(data=c041, aes(x=gene.x, y=ddCt, fill=origin.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
+    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
+    ggtitle("qRT-PCR") +  # Set title
+    theme_bw(base_size=18)
+
+clone041 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+mixedPop = ggplot(data=mixed, aes(x=gene.x, y=ddCt, fill=origin.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Gene") +      # Set legend title
+    #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
+    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
+    ggtitle("qRT-PCR") +  # Set title
+    theme_bw(base_size=18)
+mixedPop + theme(axis.text.x = element_text(angle = 90, hjust = 1))
