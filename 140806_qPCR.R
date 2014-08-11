@@ -1,5 +1,6 @@
 # Big qPCR expt
 source('~/Documents/Rscripts/qPCRFunctions.R')
+source('~/Documents/Rscripts/120612-multiplot.R')
 
 setwd('~/Documents/RNAdata/qPCRexpt/140728_mixedPop/140805_honourMashup/')
 # rawData = read.delim('140805_honoursMashup.txt', skip=1)
@@ -47,6 +48,11 @@ row.names(c035) = paste(c035$origin.x, c035$gene.x)
 row.names(c041) = paste(c041$origin.x, c041$gene.x)
 row.names(mixed) = paste(mixed$origin.x, mixed$gene.x)
 
+# Change Cp values of 40 to NA
+c035$meanCP[c035$meanCP == 40] = NA
+c041$meanCP[c041$meanCP == 40] = NA
+mixed$meanCP[mixed$meanCP == 40] = NA
+
 # The ddCt
 c035$ddCt = ddCTcalculate(geneOfInterest=c035$gene.x, sampleOfInterest=c035$origin.x,
                           houseKeepingGene='GAPDH', referenceSample='035_mixed', data=c035) 
@@ -65,46 +71,93 @@ write.table(mixed, './output/140808_ddCtValuesMixed.txt', sep='\t')
 
 ######################################### Plot the ddCt values ########################################################
 
-clone035 = ggplot(data=bindDataMatched[!bindDataMatched$origin.x %in% c("041_CD133neg","041_CD133pos","041_mixed"),], 
+clone035 = ggplot(data=c035,
                   aes(x=gene.x, y=ddCt, fill=origin.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
     #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
-    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
-    ggtitle("qRT-PCR") +  # Set title
+    xlab("Sample") + ylab("Gene expression normalised to mixed population") + # Set axis labels
+    ggtitle("Expression of Proneural/ Mesenchymal markers for GPSC number #035") +  # Set title+
     theme_bw(base_size=18)
-clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-clone041 = ggplot(data=c041, aes(x=gene.x, y=ddCt, fill=origin.x)) + 
+c041$ddCtN = ddCTcalculate(geneOfInterest=c041$gene.x, sampleOfInterest=c041$origin.x,
+                          houseKeepingGene='GAPDH', referenceSample='041_CD133neg', data=c041)
+
+clone041 = ggplot(data=c041, aes(x=gene.x, y=ddCtN, fill=origin.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
     #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
-    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
-    ggtitle("qRT-PCR") +  # Set title
+    xlab("Gene") + ylab("Gene expression normalised to CD133-") + # Set axis labels
+    ggtitle("Expression of Proneural/ Mesenchymal markers for GPSC number 041") +  # Set title
     theme_bw(base_size=18)
 clone041 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
+
 mixedPop = ggplot(data=mixed[!mixed$origin.x %in% '035_mixed',], aes(x=gene.x, y=ddCt, fill=origin.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    scale_fill_hue(name="Gene") +      # Set legend title
+    scale_fill_hue(name="Sample") +      # Set legend title
     #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
-    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
-    ggtitle("qRT-PCR") +  # Set title
+    xlab("Gene") + ylab("Gene expression normalised to GPSC #035") + # Set axis labels
+    ggtitle("Gene expression normalised to CD44-/CD133- subpopulation") +  # Set title
     theme_bw(base_size=18)
 mixedPop + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 ############################################ Calculate the ddCt scores based on double Neg #################################################
 
 # The ddCt
-c035$ddCt = ddCTcalculate(geneOfInterest=c035$gene.x, sampleOfInterest=c035$origin.x,
+c035$ddCtDN = ddCTcalculate(geneOfInterest=c035$gene.x, sampleOfInterest=c035$origin.x,
                           houseKeepingGene='GAPDH', referenceSample='035_CD44-/CD133-', data=c035) 
 
 clone035 = ggplot(data=c035,
-                  aes(x=gene.x, y=ddCt, fill=origin.x)) + 
+                  aes(x=gene.x, y=ddCtDN, fill=origin.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Subpopulation") +      # Set legend title
+    #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
+    xlab("Gene") + ylab("Gene expression normalised to CD44-/CD133- subpopulation") + # Set axis labels
+    ggtitle("Expression of Proneural/ Mesenchymal markers for GPSC number #035") +  # Set title+
+    theme_bw(base_size=18)
+clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+multiplot(clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1)), clone041 + theme(axis.text.x = element_text(angle = 90, hjust = 1)), 
+          mixedPop + theme(axis.text.x = element_text(angle = 90, hjust = 1)), cols=2)
+
+############################################ subset the data based on useful stuff #################################################
+
+c035Complete = c035[complete.cases(c035$ddCtDN),]
+c041Complete = c041[complete.cases(c041$ddCtN),]
+mixedComplete = mixed[complete.cases(mixed$ddCt),]
+
+clone035 = ggplot(data=c035Complete,
+                  aes(x=gene.x, y=ddCtDN, fill=origin.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Subpopulation") +      # Set legend title
+    #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
+    xlab("Gene") + ylab("Gene expression normalised to CD44-/CD133- subpopulation") + # Set axis labels
+    ggtitle("Expression of Proneural/ Mesenchymal markers for GPSC number #035") +  # Set title+
+    theme_bw(base_size=18)
+clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+clone041 = ggplot(data=c041Complete, aes(x=gene.x, y=ddCtN, fill=origin.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Gene") +      # Set legend title
     #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
-    xlab("Sample") + ylab("Gene expression normalised to CD133") + # Set axis labels
-    ggtitle("qRT-PCR") +  # Set title
+    xlab("Gene") + ylab("Gene expression normalised to CD133-") + # Set axis labels
+    ggtitle("Expression of Proneural/ Mesenchymal markers for GPSC number 041") +  # Set title
     theme_bw(base_size=18)
-clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+clone041 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+mixedPop = ggplot(data=mixedComplete[!mixedComplete$origin.x %in% '035_mixed',]
+                  , aes(x=gene.x, y=ddCt, fill=origin.x)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="Sample") +      # Set legend title
+    #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
+    xlab("Gene") + ylab("Gene expression normalised to GPSC #035") + # Set axis labels
+    ggtitle("Gene expression normalised to CD44-/CD133- subpopulation") +  # Set title
+    theme_bw(base_size=18)
+mixedPop + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+mixedPop + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+multiplot(clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1)), clone041 + theme(axis.text.x = element_text(angle = 90, hjust = 1)), 
+          mixedPop + theme(axis.text.x = element_text(angle = 90, hjust = 1)), cols=2)
