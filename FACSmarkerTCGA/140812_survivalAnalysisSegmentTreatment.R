@@ -16,7 +16,9 @@ verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, 0, 0)
 # Extract the clinical data for the RNAseq patients
 matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
 # Subset clinical data for intersect
-clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", "days_to_last_followup")]
+clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", "days_to_last_followup", "CDE_chemo_adjuvant_tmz", "CDE_radiation_adjuvant")]
+
+# I AM UP TO HERE
 
 # If the survival is NA, use the value for days to last followup
 clin$survival = clin$CDE_survival_time
