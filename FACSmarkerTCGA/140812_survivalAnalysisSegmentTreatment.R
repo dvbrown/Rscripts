@@ -5,8 +5,8 @@ library(coin)
 source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
 setwd("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/")
 
-verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140530_liberalSignatureScores2SD.txt", row.names=1)
-# The liberal signature score is more significant. Not having and intermediate case is also better
+verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140603_verhaakSubtypeAgilent.txt", row.names=1)
+# Use the Agilent dataset as this has more cases 
 
 verhaakSignature = verhaakSignature[,c("CD133","CD44","GeneExp_Subtype","G_CIMP_STATUS")]
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
@@ -18,11 +18,9 @@ matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
 # Subset clinical data for intersect
 clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", "days_to_last_followup", "CDE_chemo_adjuvant_tmz", "CDE_radiation_adjuvant")]
 
-# I AM UP TO HERE
-
 # If the survival is NA, use the value for days to last followup
-clin$survival = clin$CDE_survival_time
-clin$survival[is.na(clin$survival)] = clin$days_to_last_followup[is.na(clin$survival)]
+# clin$survival = clin$CDE_survival_time
+# clin$survival[is.na(clin$survival)] = clin$days_to_last_followup[is.na(clin$survival)]
 
 ############################################## Segment the subtypes into CD133 CD44 #############################################
 
@@ -44,61 +42,52 @@ row.names(boundData) = boundData$Row.names
 boundData$subtype = as.factor(boundData$subtype)
 boundData$gender = as.factor(boundData$gender)
 
+############################################# Subset the CD133 cases and then group by TMZ exposure ##################################
+
+cd133Patients = boundData[boundData$subtype %in% "CD133",]
+
 ############################################# Analysing the data for survival ##################################
 
 #generate the survival object and plot a Kaplan-Meier
-data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
+data.surv = Surv(cd133Patients$CDE_survival_time, event=cd133Patients$X_EVENT)
 
-sur.fit = survfit(data.surv~subtype, boundData)
+sur.fit = survfit(data.surv~CDE_chemo_adjuvant_tmz, cd133Patients)
 
-plot(sur.fit, main='TCGA GBM cohort classified by FACS marker signature',ylab='Survival probability',xlab='survival (days)', 
+plot(sur.fit, main='TCGA GBM cohort CD133 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'),
      xlim=c(0,1600), 
      cex=1.75, conf.int=F, lwd=1.33)
 
-legend('topright', c('CD133', 'CD44'),
+legend('topright', c('FALSE', 'TRUE'), title="Adjuvant temozolomide",
        col=c("red",'blue'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 summary(data.surv)
 #test for a difference between curves
-test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
+test = surv_test(data.surv~as.factor(cd133Patients$CDE_chemo_adjuvant_tmz))#, subset=!boundData$subtype %in% "intermediate")
 test
-text(locator(1),labels='p=0.0162', cex=1) #add the p-value to the graph
+text(locator(1),labels='p=0.137', cex=1) #add the p-value to the graph
 
-# Check the final table
-# write.table(boundData, "./survival/survivalTables/140606_RNAseq_SurvivalBoundData.txt", sep='\t')
-contingency = table(boundData$subtype, boundData$GeneExp_Subtype)
-# Test the null hypothesis that the all events in the set are equally likely (from Chi-X distribution)
-chisq.test(contingency)
+############################################# Do the same for CD44 ##################################
 
-
-
-
-############################################# Plot a KM of CD133, CD44, Proneural and Mesenchymal ##################################
-
-
-boundDataSub$subtype = boundDataSub$GeneExp_Subtype
-boundDataSub = boundDataSub[boundDataSub$subtype %in% c('Proneural', 'Mesenchymal'),]
-
-twoSignature = rbind(boundData, boundDataSub)
+cd44Patients = boundData[boundData$subtype %in% "CD44",]
 
 #generate the survival object and plot a Kaplan-Meier
-data.surv = Surv(twoSignature$CDE_survival_time, event=twoSignature$X_EVENT)
+data.surv = Surv(cd44Patients$CDE_survival_time, event=cd44Patients$X_EVENT)
 
-sur.fit = survfit(data.surv~subtype, twoSignature)
+sur.fit = survfit(data.surv~CDE_chemo_adjuvant_tmz, cd44Patients)
 
-plot(sur.fit, main='Comparison of Verhaak and \nFACS marker signatures',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue','purple', "orange"),xlim=c(0,1600), cex=1.2, lwd=c(1.33,1.33,0.75,0.75),
-     lty=c(1,1,2,2)) # hatch the verhaak lines
+plot(sur.fit, main='TCGA GBM cohort CD44 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
 
-
-legend('topright', c('CD133', 'CD44', 'Mesenchymal',"Proneural"), 
-       col=c("red",'blue','orange', "purple"), cex=0.9, bty='n', xjust=0.5, yjust=0.5,
-       lwd=c(1.33,1.33,0.75,0.75), lty=c(1,1,2,2))
+legend('topright', c('FALSE', 'TRUE'), title="Adjuvant temozolomide",
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 summary(data.surv)
 #test for a difference between curves
-test = surv_test(data.surv~twoSignature$subtype, subset=twoSignature$subtype %in% c('CD133', 'CD44', 'Mesenchymal',"Proneural"))
+test = surv_test(data.surv~as.factor(cd44Patients$CDE_chemo_adjuvant_tmz))#, subset=!boundData$subtype %in% "intermediate")
 test
-# text(locator(1),labels='p=0.6488', cex=1) #add the p-value to the graph
+text(locator(1),labels='p=0.0165', cex=1) #add the p-value to the graph
