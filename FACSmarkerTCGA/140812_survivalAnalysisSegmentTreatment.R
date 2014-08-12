@@ -68,6 +68,24 @@ test = surv_test(data.surv~as.factor(cd133Patients$CDE_chemo_adjuvant_tmz))#, su
 test
 text(locator(1),labels='p=0.137', cex=1) #add the p-value to the graph
 
+#### Look at radiation ####
+sur.fit = survfit(data.surv~CDE_radiation_adjuvant, cd133Patients)
+
+plot(sur.fit, main='TCGA GBM cohort CD133 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
+
+legend('topright', c('FALSE', 'TRUE'), title="Adjuvant radiation",
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+
+summary(data.surv)
+#test for a difference between curves
+test = surv_test(data.surv~as.factor(cd133Patients$CDE_radiation_adjuvant))#, subset=!boundData$subtype %in% "intermediate")
+test
+text(locator(1),labels='p=1.4e-06', cex=1) #add the p-value to the graph
+
 ############################################# Do the same for CD44 ##################################
 
 cd44Patients = boundData[boundData$subtype %in% "CD44",]
@@ -91,3 +109,22 @@ summary(data.surv)
 test = surv_test(data.surv~as.factor(cd44Patients$CDE_chemo_adjuvant_tmz))#, subset=!boundData$subtype %in% "intermediate")
 test
 text(locator(1),labels='p=0.0165', cex=1) #add the p-value to the graph
+
+#### CD44 and radiation ####
+data.surv = Surv(cd44Patients$CDE_survival_time, event=cd44Patients$X_EVENT)
+sur.fit = survfit(data.surv~CDE_radiation_adjuvant, cd44Patients)
+
+plot(sur.fit, main='TCGA GBM cohort CD44 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
+
+legend('topright', c('FALSE', 'TRUE'), title="Adjuvant radiation",
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+
+summary(data.surv)
+#test for a difference between curves
+test = surv_test(data.surv~as.factor(cd44Patients$CDE_radiation_adjuvant))#, subset=!boundData$subtype %in% "intermediate")
+test
+text(locator(1),labels='p=0.004', cex=1) #add the p-value to the graph
