@@ -16,7 +16,7 @@ verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, 0, 0)
 # Extract the clinical data for the RNAseq patients
 matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
 # Subset clinical data for intersect
-clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", "days_to_last_followup")]
+clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", "days_to_last_followup", "sample_type")]
 
 # If the survival is NA, use the value for days to last followup
 clin$survival = clin$CDE_survival_time
@@ -42,6 +42,8 @@ row.names(boundData) = boundData$Row.names
 boundData$subtype = as.factor(boundData$subtype)
 boundData$gender = as.factor(boundData$gender)
 
+boundData = boundData[boundData$sample_type %in% c("Primary Tumor","Recurrent Tumor"),]
+
 ############################################# Analysing the data for survival ##################################
 
 #generate the survival object and plot a Kaplan-Meier
@@ -62,14 +64,13 @@ summary(data.surv)
 #test for a difference between curves
 test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
 test
-text(locator(1),labels='p=0.0162', cex=1) #add the p-value to the graph
+# text(locator(1),labels='p=0.0162', cex=1) #add the p-value to the graph
 
 # Check the final table
 # write.table(boundData, "./survival/survivalTables/140606_RNAseq_SurvivalBoundData.txt", sep='\t')
 contingency = table(boundData$subtype, boundData$GeneExp_Subtype)
 # Test the null hypothesis that the all events in the set are equally likely (from Chi-X distribution)
 chisq.test(contingency)
-
 
 
 
