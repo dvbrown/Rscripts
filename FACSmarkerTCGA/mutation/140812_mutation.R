@@ -1,5 +1,28 @@
 # This was downloaded from the cancer browser which in turn derives from the cancer genome atlas
 library(gtools)
+library(gplots)
+
+colorVerhaakSubtype <- function (dataFrame) {
+    # Colour in the molecular subtypes for heatmap plotting
+    # Takes as input a data frame contatining the molecular subtype
+    dataFrame$colours = "black"
+    dataFrame$colours[dataFrame$GeneExp_Subtype == "Proneural"] = "purple"
+    dataFrame$colours[dataFrame$GeneExp_Subtype == "Neural"] = "green"
+    dataFrame$colours[dataFrame$GeneExp_Subtype == "Classical"] = "blue"
+    dataFrame$colours[dataFrame$GeneExp_Subtype == "Mesenchymal"] = "red"
+    dataFrame$colours[dataFrame$G_CIMP_STATUS == "G-CIMP"] = "pink"
+    return (dataFrame)
+}
+
+colorMySubtype <- function (dataFrame) {
+    # Colour in the molecular subtypes for heatmap plotting
+    # Takes as input a data frame contatining the molecular subtype
+    dataFrame$colours = "black"
+    dataFrame$colours[dataFrame$subtype == "CD133"] = "red"
+    dataFrame$colours[dataFrame$subtype == "CD44"] = "blue"
+    # dataFrame$colours[dataFrame$G_CIMP_STATUS == "G-CIMP"] = "pink"
+    return (dataFrame)
+}
 
 setwd('~/Documents/public-datasets/cancerBrowser/TCGA_GBM_mutation-2014-05-02/')
 rawData = read.delim('genomicMatrix')
@@ -16,4 +39,13 @@ row.names(data) = genes[cases]
 
 # Subset the subtyped Patietns that exist for the mutations
 matched = intersect(row.names(patientSubtype), colnames(data))
-patientMutation = patientSubtype[matched,]
+dataSubtype = patientSubtype[matched,]
+dataMutation = data[,matched]
+
+dataSubtype = colorMySubtype(dataSubtype)
+
+# Make a heatmap where the input is a true false mutation matrix
+heatmap.2(dataMutation, cexRow=1.5, main="HeatMap of mutations", 
+          Colv=dataSubtype$colours, keysize=1, trace="none", col=c('blue', 'yellow'), density.info="none", dendrogram="row", 
+          ColSideColors=as.character(dataSubtype$colours), labRow=colnames(dataMatched), xlab="Samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5))
