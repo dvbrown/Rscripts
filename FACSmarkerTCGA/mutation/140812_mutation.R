@@ -57,7 +57,7 @@ dataP = as.matrix(dataSort)
 head(dataP)
 
 # Make a heatmap where the input is a true false mutation matrix
-heatmap.2(dataP, cexRow=0.75, main="HeatMap of mutations", 
+heatmap.2(dataP, cexRow=0.75, main="Somatic mutations segrgated by marker signature", 
           Colv=dataSubtype$colours, keysize=1, trace="none", col=c('white', 'black'), density.info="none", dendrogram="both", 
           ColSideColors=as.character(dataSubtype$colours), labRow=row.names(dataPresent), 
           xlab="Samples", labCol=NA, 
