@@ -1,5 +1,4 @@
 # This was downloaded from the cancer browser which in turn derives from the cancer genome atlas
-library(gtools)
 library(gplots)
 
 colorVerhaakSubtype <- function (dataFrame) {
@@ -41,11 +40,18 @@ row.names(data) = genes[cases]
 matched = intersect(row.names(patientSubtype), colnames(data))
 dataSubtype = patientSubtype[matched,]
 dataMutation = data[,matched]
+dataM = as.matrix(dataMutation)
+
+################################# Take only the top 10% mutated genes ##############################
+totalMuts = rowSums(dataM)
+cutOffMuts = quantile(totalMuts, probs=0.90)
+dataPresent = dataM[totalMuts > cutOffMuts,]
 
 dataSubtype = colorMySubtype(dataSubtype)
 
 # Make a heatmap where the input is a true false mutation matrix
-heatmap.2(dataMutation, cexRow=1.5, main="HeatMap of mutations", 
-          Colv=dataSubtype$colours, keysize=1, trace="none", col=c('blue', 'yellow'), density.info="none", dendrogram="row", 
-          ColSideColors=as.character(dataSubtype$colours), labRow=colnames(dataMatched), xlab="Samples", labCol=NA, 
+heatmap.2(dataPresent, cexRow=0.75, main="HeatMap of mutations", 
+          Colv=dataSubtype$colours, keysize=1, trace="none", col=c('white', 'black'), density.info="none", dendrogram="row", 
+          ColSideColors=as.character(dataSubtype$colours), labRow=row.names(dataPresent), 
+          xlab="Samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5))
