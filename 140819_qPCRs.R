@@ -23,4 +23,4 @@ data = buildDataFrameFromddCT(plateMap, cp)
 replicates = extractReplicates(c(1:384), data)
 rawData = replicates[[3]]
 row.names(rawData) = rawData$sample
-write.table(rawData, '140403_rawData.txt', sep='\t')
+write.table(rawData, '140819_mungedData.txt', sep='\t', row.names=F)
