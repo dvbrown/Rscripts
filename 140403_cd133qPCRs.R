@@ -2,6 +2,8 @@ source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 source('~/Documents/Rscripts/qPCRFunctions.R')
 setwd('~/Documents/RNAdata/qPCRexpt/140331_cd133s/')
 
+library
+
 subsetClones = function(cloneName) {
     # Takes the name of the clone as a string
     neg = paste(cloneName, '_neg', sep='')

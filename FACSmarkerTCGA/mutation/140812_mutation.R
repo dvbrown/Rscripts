@@ -1,6 +1,6 @@
 # This was downloaded from the cancer browser which in turn derives from the cancer genome atlas
-library(gtools)
 library(gplots)
+source("~/Documents/Rscripts/120704-sortDataFrame.R")
 
 colorVerhaakSubtype <- function (dataFrame) {
     # Colour in the molecular subtypes for heatmap plotting
@@ -41,11 +41,24 @@ row.names(data) = genes[cases]
 matched = intersect(row.names(patientSubtype), colnames(data))
 dataSubtype = patientSubtype[matched,]
 dataMutation = data[,matched]
+dataM = as.matrix(dataMutation)
 
-dataSubtype = colorMySubtype(dataSubtype)
+################################# Take only the top 1% mutated genes, which is 3 mutation anyway ##############################
+totalMuts = rowSums(dataM)
+cutOffMuts = quantile.default(totalMuts, probs=0.99)
+
+dataPresent = dataM[totalMuts >= cutOffMuts,]
+totalMuts = rowSums(dataPresent)
+toBsorted = as.data.frame(cbind(dataPresent, totalMuts))
+ 
+# Sort the dataframe according to the hightest number of mutations first
+dataSort = sort.dataframe(toBsorted, 150, highFirst=T)[,c(1:149)]
+dataP = as.matrix(dataSort)
+head(dataP)
 
 # Make a heatmap where the input is a true false mutation matrix
-heatmap.2(dataMutation, cexRow=1.5, main="HeatMap of mutations", 
-          Colv=dataSubtype$colours, keysize=1, trace="none", col=c('blue', 'yellow'), density.info="none", dendrogram="row", 
-          ColSideColors=as.character(dataSubtype$colours), labRow=colnames(dataMatched), xlab="Samples", labCol=NA, 
+heatmap.2(dataP, cexRow=0.75, main="Somatic mutations segrgated by marker signature", 
+          Colv=dataSubtype$colours, keysize=1, trace="none", col=c('white', 'black'), density.info="none", dendrogram="both", 
+          ColSideColors=as.character(dataSubtype$colours), labRow=row.names(dataPresent), 
+          xlab="Samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5))
