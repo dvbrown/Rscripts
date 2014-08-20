@@ -5,7 +5,6 @@ library(coin)
 source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
 setwd("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/")
 
-# verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140529_verhaakSubtypeCD133_scores", row.names=1)
 verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140530_liberalSignatureScores2SD.txt", row.names=1)
 # The liberal signature score is more significant. Not having and intermediate case is also better
 
@@ -33,7 +32,7 @@ colnames(lattPlot) = c('value', "signature")
 ggplot(lattPlot, aes(value, fill = signature)) + geom_density(alpha = 0.2) +
     xlab("Signature score") + ylab("Density") + # Set axis labels
     ggtitle("Distribution of CD133 and \nCD44 signature scores") +  # Set title
-    coord_cartesian(xlim = c(-1, 1)) + theme_bw(base_size=20) + geom_vline(xintercept=0, colour="red") # The 0.125 is where I will call indeterminate
+    coord_cartesian(xlim = c(-1, 1)) + theme_bw(base_size=20) + geom_vline(xintercept=0, colour="red")
 
 ############################################## bind the clinical and subtyping info together #############################################
 boundData = merge.data.frame(clin, verhaakSubtypeCall, by.x="row.names", by.y="row.names")
@@ -41,9 +40,7 @@ boundData = sort.dataframe(boundData, "subtype")
 row.names(boundData) = boundData$Row.names
 boundData$subtype = as.factor(boundData$subtype)
 boundData$gender = as.factor(boundData$gender)
-# # omit a case with no info
-# empty = is.na(boundData$CDE_survival_time)
-# boundData = boundData[!empty,]
+
 ############################################# Analysing the data for survival ##################################
 
 #generate the survival object and plot a Kaplan-Meier
@@ -71,6 +68,8 @@ text(locator(1),labels='p=0.0162', cex=1) #add the p-value to the graph
 contingency = table(boundData$subtype, boundData$GeneExp_Subtype)
 # Test the null hypothesis that the all events in the set are equally likely (from Chi-X distribution)
 chisq.test(contingency)
+
+
 ############################################# Remove the G-CIMP cases and retest ##################################
 boundDataSub = boundData[boundData$G_CIMP_STATUS == "NON G-CIMP",]
 
@@ -92,7 +91,7 @@ summary(data.surv)
 #test for a difference between curves
 test = surv_test(data.surv~boundDataSub$subtype)
 test
-text(locator(1),labels='p=0.150', cex=1) #add the p-value to the graph
+# text(locator(1),labels='p=0.150', cex=1) #add the p-value to the graph
 
 ############################################# Survival curve for subtype ##################################
 # Remove nosubtype cases
