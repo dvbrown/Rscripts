@@ -1,0 +1,56 @@
+library(ggplot2)
+source('~/Documents/Rscripts/multiplot.R')
+
+setwd('~/Documents/facsData/MUSE/Cell_Cycle/')
+data = read.csv('140819_cellCycle.csv')
+data$GPSC = as.factor(data$GPSC)
+
+events = ggplot(data=data, aes(x=Population, y=Events, fill=GPSC)) + 
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    scale_fill_hue(name="GPSC number") +      # Set legend title
+    #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
+    xlab("Subpopulation") + ylab("Number of events") + # Set axis labels
+    ggtitle("Number of events collected for Cell Cycle") +  # Set title+
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+events
+
+g1 = as.data.frame(data$G1)
+g1$phase = 'G1'
+s = as.data.frame(data$S)
+s$phase = 'S'
+g2 = as.data.frame(data$G2)
+g2$phase = 'G2'
+colnames(g1) = c('percent', 'phase')
+colnames(g2) = c('percent', 'phase')
+colnames(s) = c('percent', 'phase')
+
+gpscs = as.character(data$GPSC)
+patients = as.character(c(gpscs, gpscs, gpscs))
+cellcycle = rbind(g1, s, g2)
+cellcycle = cbind(cellcycle, patients)
+
+# write.table(cellcycle, '140824_mungThis.txt', sep='\t')
+
+munged = read.delim('140824_munged.txt')
+munged$gpsc = as.factor(munged$gpsc)
+
+# Split this dataframe by patient
+cycleByPatient <- split(munged, munged$gpsc)
+
+# Stacked bar graph -- this is probably what you want
+c035 = ggplot(data=cycleByPatient[[1]], aes(x=population, y=percent, fill=phase)) + geom_bar(stat="identity") +
+            xlab("Subpopulation") + ylab("Percent") + # Set axis labels
+            ggtitle("GPSC patient #035 cell cycle distribution") +  # Set title+
+            theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+c039 = ggplot(data=cycleByPatient[[2]], aes(x=population, y=percent, fill=phase)) + geom_bar(stat="identity") +
+    xlab("Subpopulation") + ylab("Percent") + # Set axis labels
+    ggtitle("GPSC patient #039 cell cycle distribution") +  # Set title+
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+c041 = ggplot(data=cycleByPatient[[3]], aes(x=population, y=percent, fill=phase)) + geom_bar(stat="identity") +
+    xlab("Subpopulation") + ylab("Percent") + # Set axis labels
+    ggtitle("GPSC patient #041 cell cycle distribution") +  # Set title+
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+multiplot(c035, c039, c041, cols=2)
