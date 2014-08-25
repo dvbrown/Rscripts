@@ -1,6 +1,6 @@
-# setwd('~/Documents/RNAdata/qPCRexpt/140819_mixedPopAgain/')
-# source('~/Documents/Rscripts/multiplot.R')
-# source('~/Documents/Rscripts/qPCRFunctions.R')
+setwd('~/Documents/RNAdata/qPCRexpt/140819_mixedPopAgain/')
+source('~/Documents/Rscripts/multiplot.R')
+source('~/Documents/Rscripts/qPCRFunctions.R')
 
 extractReplicates <- function (indexes, ctData) {
     # Retreive the indexes of the 384 wellplate
@@ -93,12 +93,12 @@ write.table(rawData, '140819_mungedData.txt', sep='\t', row.names=F)
 mungedData = read.delim('~/Dropbox//140819_mixedPopAgain//140819_rawData.txt', row.names=1)
 mungedData = mungedData[c(1:35),]
 
-# Plot correlation of the replicates
-plot(mungedData$Cp.x, mungedData$Cp.y, main='Replicate accuracy Cp', ylab='Cp replicate 1', xlab='Cp replicate 2', pch=16)
-abline(lm(mungedData$Cp.x ~ mungedData$Cp.y), col='red')
-summary(lm(mungedData$Cp.x ~ mungedData$Cp.y))
-# text(locator(1), labels='R squared = 0.9706')
-par(mfrow=c(1,1))
+# Plot correlation of the replicate
+correlation = ggplot(data=mungedData, aes(x=Cp.y, y=Cp.x, color=gene.x)) + 
+                geom_point(shape=19) + geom_smooth(method=lm, colour='red') +
+                xlab("Replicate 1") + ylab("Replicate 2") + # Set axis labels
+                ggtitle("Correlation of technical replicates") +  # Set title
+                theme_bw(base_size=18)
 
 ############################################ Calculate the ddCt scores #################################################
 # Subset the data by cell line
@@ -123,18 +123,18 @@ mixedPop = ggplot(data=mixed, aes(x=gene.x, y=ddCt, fill=origin.x)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Sample") +      # Set legend title
     #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
-    xlab("Gene") + ylab("Gene expression normalised to GPSC #035") + # Set axis labels
-    ggtitle("Gene expression normalised to CD44-/CD133- subpopulation") +  # Set title
-    theme_bw(base_size=18)
+    xlab("Gene") + ylab("Gene expression normalised\nto GPSC #035") + # Set axis labels
+    ggtitle("Expression of Proneural/ Mesenchymal markers \nfor mixed population GPSC") +  # Set title
+    theme_bw(base_size=14)
 mixedPop + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 clone035 = ggplot(data=c035, aes(x=gene.x, y=ddCt, fill=origin.x)) + 
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_hue(name="Subpopulation") +      # Set legend title
     #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
-    xlab("Gene") + ylab("Gene expression normalised to CD44-/CD133- subpopulation") + # Set axis labels
-    ggtitle("Expression of Proneural/ Mesenchymal markers for GPSC number #035") +  # Set title+
-    theme_bw(base_size=18)
+    xlab("Gene") + ylab("Gene expression normalised \nto CD44-/CD133- subpopulation") + # Set axis labels
+    ggtitle("Expression of Proneural/ Mesenchymal markers \nfor GPSC number #035") +  # Set title+
+    theme_bw(base_size=14)
 clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-multiplot(clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1)), mixedPop + theme(axis.text.x = element_text(angle = 90, hjust = 1)), cols=1)
+multiplot(clone035 + theme(axis.text.x = element_text(angle = 90, hjust = 1)), mixedPop + theme(axis.text.x = element_text(angle = 90, hjust = 1)),correlation, cols=2)
