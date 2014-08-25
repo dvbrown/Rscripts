@@ -1,4 +1,5 @@
 library(ggplot2)
+library(plyr)
 source('~/Documents/Rscripts/multiplot.R')
 
 setwd('~/Documents/facsData/MUSE/Cell_Cycle/')
@@ -54,3 +55,16 @@ c041 = ggplot(data=cycleByPatient[[3]], aes(x=population, y=percent, fill=phase)
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 multiplot(c035, c039, c041, cols=2)
+
+
+cdata <- ddply(munged, c('phase', 'population'), summarise,
+               N    = length(percent),
+               mean = mean(percent),
+               sd   = sd(percent),
+               se   = sd / sqrt(N) )
+
+repd = ggplot(data=cdata, aes(x=population, y=mean, fill=phase)) + geom_bar(stat="identity") +
+            xlab("Subpopulation") + ylab("Percent") + # Set axis labels
+            ggtitle("GPSC patient #035 cell cycle distribution") +  # Set title+
+            theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+repd
