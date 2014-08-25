@@ -43,3 +43,14 @@ extractPosNegReplicates = function(dataFrame) {
     colnames(result) = c('origin', 'mean', 'sd')
     return (result)
 }
+
+summariseByFactor <- function (dataFrame, factor1, factor2) {
+    # Takes a dataframe with factor information and computes summary statistics based on levels of as least 2 factors
+    # factor 1 and 2 are characters
+    result <- ddply(dataFrame, c(factor1, factor2), summarise,
+                   N    = length(percent),
+                   mean = mean(percent),
+                   sd   = sd(percent),
+                   se   = sd / sqrt(N) )
+  return (result)
+}

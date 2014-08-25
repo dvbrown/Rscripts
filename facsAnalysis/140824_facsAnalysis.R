@@ -12,7 +12,7 @@ events = ggplot(data=data, aes(x=Population, y=Events, fill=GPSC)) +
     #scale_y_continuous(breaks = round(seq(min(bindData$ddCt), max(bindData$ddCt), by = 0.5),0.5)) + # This modifies the scale of the y axis.
     xlab("Subpopulation") + ylab("Number of events") + # Set axis labels
     ggtitle("Number of events collected for Cell Cycle") +  # Set title+
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 events
 
 g1 = as.data.frame(data$G1)
@@ -54,7 +54,7 @@ c041 = ggplot(data=cycleByPatient[[3]], aes(x=population, y=percent, fill=phase)
     ggtitle("GPSC patient #041 cell cycle distribution") +  # Set title+
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
-multiplot(c035, c039, c041, cols=2)
+multiplot(c035, c039, c041, events, cols=2)
 
 
 cdata <- ddply(munged, c('phase', 'population'), summarise,
@@ -65,6 +65,9 @@ cdata <- ddply(munged, c('phase', 'population'), summarise,
 
 repd = ggplot(data=cdata, aes(x=population, y=mean, fill=phase)) + geom_bar(stat="identity") +
             xlab("Subpopulation") + ylab("Percent") + # Set axis labels
-            ggtitle("GPSC patient #035 cell cycle distribution") +  # Set title+
+            # geom_errorbar(position=position_dodge(width=0, height=3), width=.25, aes(ymin=mean-se, ymax=mean+se)) +
+            ggtitle("Cell cycle distribution of 3 GPSC patients") +  # Set title+
             theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 repd
+
+multiplot(c035, c039, c041, repd, cols=2)
