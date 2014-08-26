@@ -4,6 +4,29 @@ library(gplots)
 library(ggplot2)
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
 
+##################### Build the genelist ###########################
+
+library(annotate)
+library(hgu133a2.db)
+geneIDs = ls(hgu133a2ENTREZID)
+
+#get gene ID numbers from the annptation package allowing for multiple probes to match mulitple genes
+geneSymbols <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2SYMBOL),
+                                          function (symbol) { return(paste(symbol,collapse="; ")) } )))
+geneNames <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2GENENAME),
+                                        function (name) { return(paste(name,collapse="; ")) } )))
+unigene <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2UNIGENE),
+                                      function (unigeneID) { return(paste(unigeneID,collapse="; ")) } )))
+
+#strip the Hs from the start of unigene reference
+unigene <- gsub("Hs\\.","",unigene)
+
+#read the gene annotations into a dataframe for use in the topTable function of limma
+genelist <- data.frame(GeneID=geneIDs,GeneSymbol=geneSymbols,GeneName=geneNames)
+rm(geneSymbols, geneNames, unigene)
+
+##################### IO ###########################
+
 setwd('~/Documents/public-datasets/GPSC_subgroups/bhat2013/GSE49009_RAW/')
 list.files()
 
@@ -64,4 +87,35 @@ topNorm = sort.dataframe(topNorm, 1, highFirst=T)
 heatmap.2(topNorm[,c(1:17)], cexRow=0.8, main="Enrichment of FACS marker signatures \n in Molecular Subtype", scale="row",
           Rowv=NULL, Colv=TRUE, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="column", 
           ColSideColors=as.character(dm$colour)[1:17], labRow=NA, xlab="Aglent samples", labCol=colnames(topNorm), 
-          offsetRow=c(1,1), margins=c(2,7.5))
+          offsetRow=c(1,1), margins=c(10,4))
+
+##################### Export data ###########################
+write.table(norm, '../analysis/140826_rmaNormalised.txt', sep='\t')
+
+##################### Differential expression testing ###########################
+dataUntreated = norm[,c(1:17)]
+
+f = paste(dm$Subtype)[c(1:17)]
+f = factor(f)
+design = model.matrix(~0+f)
+colnames(design) = levels(f)
+
+fit = lmFit(dataUntreated, design)
+fit$design
+
+cont.matrix = makeContrasts(mesVSpn="Mesenchymal-Proneural", levels=design)
+fit2  = contrasts.fit(fit, cont.matrix)
+fit2  = eBayes(fit2)
+
+#write the output to a table of differentially expressed genes. Change this value to suit
+result = topTable(fit2, coef=1, number=22277, genelist=genelist,  
+                                         adjust='BH', sort.by='logFC', lfc=0)
+result = sort.dataframe(result, 4, highFirst=T)
+
+head(result,100)
+tail(result,100)
+
+results <- decideTests(fit2)
+summary(results)
+
+write.table(result, '../analysis/140826_mesVSpnDE.txt', sep='\t')
