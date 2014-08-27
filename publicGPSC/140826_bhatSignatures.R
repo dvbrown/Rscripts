@@ -1,8 +1,12 @@
+library(GSVA)
+library(gplots)
 
 ##################### IO ###########################
 setwd('~/Documents/public-datasets/GPSC_subgroups/bhat2013/analysis/')
 
-data = read.delim('140826_probeAveraged.txt')
+data = read.delim('140826_probeAveraged.txt', row.names=1)
+dataM = as.matrix(data)
+dm = read.delim('../designMatrix.txt')[c(1:17),]
 # Just the untreated controls
 
 cd133Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140527_cd133Cutoff.txt", row.names=1)
@@ -15,3 +19,17 @@ l1cam = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/resul
 bigSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15" = row.names(cd15),
                "ALDH1"=row.names(aldh1), "ITGA6"=row.names(itag6), "L1CAM"=row.names(l1cam))
 rm(cd133Sig, cd44Sig, cd15, aldh1, itag6, l1cam)
+
+##################### GSVA ###########################
+bigResult = gsva(dataM, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
+bigResult = t(bigResult$es.obs)
+
+dm$colour = "black"
+dm$colour[dm$Subtype %in% 'Proneural'] = 'purple'
+dm$colour[dm$Subtype %in% 'Mesenchymal'] = 'red'
+myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
+
+heatmap.2(t(bigResult), cexRow=1.2, main="Enrichment of FACS marker signatures \n in Molecular Subtype", scale="none",
+          Rowv=NULL, Colv=TRUE, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="column", 
+          ColSideColors=as.character(dm$colour), xlab="Aglent samples", labCol=row.names(bigResult), labRow=colnames(bigResult), 
+          offsetRow=c(1,1), margins=c(8,7))
