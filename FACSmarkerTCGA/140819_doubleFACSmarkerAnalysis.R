@@ -26,7 +26,7 @@ plotCoexpression(cd44, 'CD44')
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 # Use twice the standard deviation and significantly correlated
-cd44genes = cd44[cd44[,1] > 3*sd(cd44[,1]) & cd44[,4] < 0.05,]
+cd44genes = cd44[cd44[,1] > 2*sd(cd44[,1]) & cd44[,4] < 0.05,]
 
 cd44Square = makeSquareCoexpressionMatrix(cd44genes, dat)
 cd44Dissim = makeDissimilarity(cd44Square)
@@ -39,7 +39,7 @@ plotCoexpression(cd15, 'CD15')
 
 # Subset the dataframe with correlation values for those with high correlation and significance
 # Use twice the standard deviation and significantly correlated
-cd15genes = cd15[cd15[,1] > 3*sd(cd15[,1]) & cd15[,4] < 0.05,]
+cd15genes = cd15[cd15[,1] > 2*sd(cd15[,1]) & cd15[,4] < 0.05,]
 
 cd15Square = makeSquareCoexpressionMatrix(cd15genes, dat)
 cd15Dissim = makeDissimilarity(cd15Square)
@@ -51,18 +51,25 @@ colnames(correlations) = c('CD133', 'CD44', 'CD15')
 colnames(fdrs) = c('CD133', 'CD44', 'CD15')
 correlations = as.data.frame(correlations)
 
+######################################## Plot the doubles ################################################
 # get the genes which have been thresholded
-correlated = c(row.names(cd133genes), row.names(cd44genes), row.names(cd15genes))
-correlated = unique(correlated)
+cd133Corr = row.names(cd133genes)
+cd44Corr = row.names(cd44genes)
+cd15Corr = row.names(cd15genes)
+
+#correlated = c(row.names(cd133genes), row.names(cd44genes), row.names(cd15genes))
+#correlated = unique(correlated)
 
 correlations$threshold = "not significant"
-correlations[correlated,]$threshold = "significant"
-
+correlations[cd133Corr,]$threshold = "CD133"
+correlations[cd44Corr,]$threshold = "CD44"
+correlations[cd15Corr,]$threshold = "CD15"
 
 ######################################## Plot the doubles ################################################
 
 cd133_44 = ggplot(data=correlations, aes(x=CD133, y=CD44, color=threshold)) + 
             geom_point(shape=19, alpha=1/4) + geom_smooth(method=lm, colour='red') +
+            scale_colour_manual(values=c('red', 'green', 'blue', 'grey')) +    
             xlab("CD133") + ylab("CD44") + # Set axis labels
             ggtitle("Correlation of genes with double FACS markers") +  # Set title
             theme_bw(base_size=18)
