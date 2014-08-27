@@ -119,3 +119,11 @@ results <- decideTests(fit2)
 summary(results)
 
 write.table(result, '../analysis/140826_mesVSpnDE.txt', sep='\t')
+
+# Tkae the probe averages
+summariseData = avereps(data, ID=genelist$GeneSymbol)
+colnames(summariseData) = dm$cellLine
+
+# Remove NAs
+summariseData = summariseData[row.names(summariseData) != 'NA' ,c(1:17)]
+write.table(summariseData, '../analysis/140826_probeAveraged.txt', sep='\t')
