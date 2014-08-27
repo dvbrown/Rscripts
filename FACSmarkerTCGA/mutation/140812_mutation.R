@@ -43,6 +43,8 @@ dataSubtype = patientSubtype[matched,]
 dataMutation = data[,matched]
 dataM = as.matrix(dataMutation)
 
+dataSubtype = colorMySubtype(dataSubtype)
+
 ################################# Take only the top 1% mutated genes, which is 3 mutation anyway ##############################
 totalMuts = rowSums(dataM)
 cutOffMuts = quantile.default(totalMuts, probs=0.99)
@@ -57,8 +59,8 @@ dataP = as.matrix(dataSort)
 head(dataP)
 
 # Make a heatmap where the input is a true false mutation matrix
-heatmap.2(dataP, cexRow=0.75, main="Somatic mutations segrgated by marker signature", 
-          Colv=dataSubtype$colours, keysize=1, trace="none", col=c('white', 'black'), density.info="none", dendrogram="both", 
+heatmap.2(dataP, cexRow=0.75, main="Somatic mutations segrgated by marker signature", scale='none',
+          Colv=dataSubtype$colours, keysize=1, trace="none", col=c('white', 'black'), 
+          density.info="none", dendrogram="row", labCol=colnames(dataPresent),
           ColSideColors=as.character(dataSubtype$colours), labRow=row.names(dataPresent), 
-          xlab="Samples", labCol=NA, 
-          offsetRow=c(1,1), margins=c(2,7.5))
+          xlab="Samples", offsetRow=c(1,1), margins=c(2,7.5))

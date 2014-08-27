@@ -56,32 +56,35 @@ correlations = as.data.frame(correlations)
 cd133Corr = row.names(cd133genes)
 cd44Corr = row.names(cd44genes)
 cd15Corr = row.names(cd15genes)
+cd44Cd15 = intersect(cd44Corr, cd15Corr)
 
-#correlated = c(row.names(cd133genes), row.names(cd44genes), row.names(cd15genes))
-#correlated = unique(correlated)
-
+# Set the colours of the scatterplots
 correlations$threshold = "not significant"
 correlations[cd133Corr,]$threshold = "CD133"
 correlations[cd44Corr,]$threshold = "CD44"
 correlations[cd15Corr,]$threshold = "CD15"
+correlations[cd44Cd15,]$threshold = "CD44 + CD15"
+
 
 ######################################## Plot the doubles ################################################
 
 cd133_44 = ggplot(data=correlations, aes(x=CD133, y=CD44, color=threshold)) + 
             geom_point(shape=19, alpha=1/4) + geom_smooth(method=lm, colour='red') +
-            scale_colour_manual(values=c('red', 'green', 'blue', 'grey')) +    
+            scale_colour_manual(values=c('red','green', 'blue', 'purple','grey')) +    
             xlab("CD133") + ylab("CD44") + # Set axis labels
             ggtitle("Correlation of genes with double FACS markers") +  # Set title
             theme_bw(base_size=18)
 
 cd133_15 = ggplot(data=correlations, aes(x=CD133, y=CD15, color=threshold)) + 
     geom_point(shape=19, alpha=1/4) + geom_smooth(method=lm, colour='red') +
+    scale_colour_manual(values=c('red','green', 'blue', 'purple','grey')) +
     xlab("CD133") + ylab("CD15") + # Set axis labels
     ggtitle("Correlation of genes with double FACS markers") +  # Set title
     theme_bw(base_size=18)
 
 cd44_15 = ggplot(data=correlations, aes(x=CD44, y=CD15, color=threshold)) + 
     geom_point(shape=19, alpha=1/4) + geom_smooth(method=lm, colour='red') +
+    scale_colour_manual(values=c('red','green', 'blue', 'purple','grey')) +
     xlab("CD44") + ylab("CD15") + # Set axis labels
     ggtitle("Correlation of genes with double FACS markers") +  # Set title
     theme_bw(base_size=18)
