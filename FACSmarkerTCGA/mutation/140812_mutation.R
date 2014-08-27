@@ -59,8 +59,17 @@ dataP = as.matrix(dataSort)
 head(dataP)
 
 # Make a heatmap where the input is a true false mutation matrix
-heatmap.2(dataP, cexRow=0.75, main="Somatic mutations segrgated by marker signature", scale='none',
-          Colv=dataSubtype$colours, keysize=1, trace="none", col=c('white', 'black'), 
-          density.info="none", dendrogram="row", labCol=colnames(dataPresent),
+heatmap.2(dataP, cexRow=0.5, main="Somatic mutations segrgated by marker signature", scale='none',
+          Colv=as.factor(dataSubtype$colours), keysize=1, trace="none", col=c('white', 'black'), 
+          density.info="none", dendrogram="none", labCol='',
           ColSideColors=as.character(dataSubtype$colours), labRow=row.names(dataPresent), 
-          xlab="Samples", offsetRow=c(1,1), margins=c(2,7.5))
+          xlab="Samples", offsetRow=c(1,1), margins=c(5,7.5))
+
+########################### Measure the IDH1 distribution ##########################
+idh1 = dataM['IDH1',]
+idh1 = cbind(idh1, dataSubtype)
+fisher.test(table(idh1$idh1, idh1$subtype))
+
+nf1 = dataM['NF1',]
+nf1 = cbind(nf1, dataSubtype)
+fisher.test(table(nf1$nf1, nf1$subtype))
