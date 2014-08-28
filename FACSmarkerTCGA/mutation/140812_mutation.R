@@ -69,6 +69,7 @@ heatmap.2(dataP, cexRow=0.5, main="Somatic mutations segrgated by marker signatu
 idh1 = dataM['IDH1',]
 idh1 = cbind(idh1, dataSubtype)
 fisher.test(table(idh1$idh1, idh1$subtype))
+#p-value = 0.01046
 
 nf1 = dataM['NF1',]
 nf1 = cbind(nf1, dataSubtype)
