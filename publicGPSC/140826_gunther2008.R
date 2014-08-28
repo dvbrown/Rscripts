@@ -30,3 +30,32 @@ setwd('~/Documents/public-datasets/GPSC_subgroups/Gunther2008-Oncogene/GSE8049_R
 list.files()
 
 rawData = ReadAffy()
+
+dm = readTargets('../designMatrix.txt')
+myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
+
+par(mfrow=(c(2,1)))
+# boxData = exprs(rawData)
+colnames(boxData) = dm$cellLine
+boxplot(rawData, col=rainbow(21), main='Gunther unNormalised data', las=1, mar=c(5,5,5,2))
+# data = rma(rawData, verbose=T)
+# norm = exprs(data)
+colnames(norm) = dm$cellLine
+boxplot(norm, col=rainbow(21), main='Gunther normalised data', las=2, mar=c(5,5,5,2))
+par(mfrow=(c(1,1)))
+
+rm(boxData)
+##################### Render the prinical components ###########################
+pca = princomp(norm)
+pcaDf = as.data.frame(cbind(pca$loadings[,1], pca$loadings[,2]))
+pcaDf = cbind(pcaDf, dm)[c(1:17),]
+dd_text = dm$cellLine
+
+g = ggplot(data=pcaDf, aes(x=V1, y=V2, color=Subtype)) + 
+    geom_point(shape=19) + #geom_smooth(method=lm, colour='red') +
+    xlab("PC1") + ylab("PC2") + # Set axis labels
+    ggtitle("Principal component analysis Bhat 2013") +  # Set title
+    theme_bw(base_size=18)
+
+g + geom_text(data = pcaDf, aes(x=V1, y=V2,
+                                label=dd_text[1:17], size=0.2), colour="black")
