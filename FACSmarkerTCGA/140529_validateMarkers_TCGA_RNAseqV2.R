@@ -19,12 +19,13 @@ aldh1 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/resul
 itag6 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ITGA6//140528_ITGA6Cutoff.txt", row.names=1)
 l1cam = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/L1CAM/140528_L1CAMCutoff.txt", row.names=1)
 
-myPalette <- colorRampPalette(c("green", "black", "red"))(n = 1000)
+myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 
 ############################################# Mung data into form for GSVA #############################################
 rnaseqM = as.matrix(rnaseq)
 bigSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15" = row.names(cd15),
                "ALDH1"=row.names(aldh1), "ITGA6"=row.names(itag6), "L1CAM"=row.names(l1cam))
+rm(cd133Sig, cd44Sig, cd15, aldh1, itag6, l1cam)
 
 # Extract the clinical data for the RNAseq patients
 matched = intersect(row.names(clinical), colnames(rnaseq))
@@ -69,7 +70,7 @@ subTypeHeat = as.matrix(verhaakSubtypeAll[,signatures])
 
 # Make heat map with Veerhaak subtype
 heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype and G-CIMP", 
-          Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="column", 
           ColSideColors=as.character(verhaakSubtypeAll$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5))
 
