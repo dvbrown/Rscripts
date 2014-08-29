@@ -57,4 +57,19 @@ subTypeHeat = as.matrix(verhaakSubtype[,signatures])
 heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype", 
           Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
           ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Agilent samples", labCol=NA, 
-          offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
+          offsetRow=c(1,1), margins=c(2,7.5))
+
+# Make heat map with only 3 markers
+heatmap.2(t(subTypeHeat[,c(1:3)]), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype and G-CIMP", #scale='row',
+          Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Agilent samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5))
+
+# Make heat map with only 3 mRNAs
+markers = as.matrix(agilentM[c('CD44', 'FUT4', 'PROM1'),])
+markers = markers[,row.names(verhaakSubtype)]
+
+heatmap.2(markers, cexRow=1.5, main="Enrichment of FACS marker mRNAs\n in Molecular Subtype and G-CIMP", scale='row',
+          Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Agilent samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5))
