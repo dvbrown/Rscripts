@@ -69,9 +69,23 @@ verhaakSubtypeAll = read.delim("output.txt", row.names=1)
 subTypeHeat = as.matrix(verhaakSubtypeAll[,signatures])
 
 # Make heat map with Veerhaak subtype
-heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype and G-CIMP", 
-          Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="column", 
+heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype and G-CIMP", #scale='row',
+          Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
           ColSideColors=as.character(verhaakSubtypeAll$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5))
+
+# Make heat map with only 3 markers
+heatmap.2(t(subTypeHeat[,c(1:3)]), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype and G-CIMP", #scale='row',
+          Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(verhaakSubtypeAll$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5))
+
+# Make heat map with only 3 mRNAs
+markers = as.matrix(rnaseq[c('CD44', 'FUT4', 'PROM1'),])
+
+heatmap.2(markers, cexRow=1.5, main="Enrichment of FACS marker mRNAs\n in Molecular Subtype and G-CIMP", #scale='row',
+          Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(verhaakSubtypeAll$colours), labRow=row.names(markers), xlab="Samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5))
 
 
