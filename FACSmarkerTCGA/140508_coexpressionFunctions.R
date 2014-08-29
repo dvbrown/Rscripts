@@ -165,10 +165,10 @@ bindGeneExprClinical <- function (clinicalData, subtypedGeneExpression, signatur
     row.names(boundData) = row.names(clinicalData)
     verhaakSubtype = boundData[,c(signatures, "GeneExp_Subtype")]
     verhaakSubtype$colours = "black"
-    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "red"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "purple"
     verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Neural"] = "green"
     verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Classical"] = "blue"
-    verhaakSubtype$colours[boundData$GeneExp_Subtype == "Mesenchymal"] = "orange"
+    verhaakSubtype$colours[boundData$GeneExp_Subtype == "Mesenchymal"] = "red"
     return (verhaakSubtype)
 }
 
@@ -179,11 +179,11 @@ bindGeneExprCIMPClinical <- function (clinicalData, subtypedGeneExpression, sign
     row.names(boundData) = row.names(clinicalData)
     verhaakSubtype = boundData[,c(signatures, "GeneExp_Subtype", "G_CIMP_STATUS")]
     verhaakSubtype$colours = "black"
-    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "red"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Proneural"] = "purple"
     verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Neural"] = "green"
     verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Classical"] = "blue"
-    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Mesenchymal"] = "orange"
-    verhaakSubtype$colours[verhaakSubtype$G_CIMP_STATUS == "G-CIMP"] = "pink"
+    verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Mesenchymal"] = "red"
+    verhaakSubtype$colours[verhaakSubtype$G_CIMP_STATUS == "G-CIMP"] = "violet"
     return (verhaakSubtype)
 }
 

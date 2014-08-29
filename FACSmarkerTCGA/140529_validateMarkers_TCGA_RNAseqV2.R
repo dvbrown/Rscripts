@@ -70,7 +70,7 @@ subTypeHeat = as.matrix(verhaakSubtypeAll[,signatures])
 
 # Make heat map with Veerhaak subtype
 heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype and G-CIMP", #scale='row',
-          Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          Colv=verhaakSubtypeAll$G_CIMP_STATUS, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
           ColSideColors=as.character(verhaakSubtypeAll$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5))
 

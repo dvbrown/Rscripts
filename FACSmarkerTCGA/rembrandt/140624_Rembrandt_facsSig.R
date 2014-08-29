@@ -62,10 +62,10 @@ resultVerhaakIndex = as.data.frame(resultVerhaak)
 index = max.col(resultVerhaakIndex)
 resultVerhaakIndex = cbind(resultVerhaakIndex, index)
 resultVerhaakIndex$subtype = ""
-resultVerhaakIndex$subtype[resultVerhaakIndex$index == 1] = 'red'
+resultVerhaakIndex$subtype[resultVerhaakIndex$index == 1] = 'purple'
 resultVerhaakIndex$subtype[resultVerhaakIndex$index == 2] = 'green'
 resultVerhaakIndex$subtype[resultVerhaakIndex$index == 3] = 'blue'
-resultVerhaakIndex$subtype[resultVerhaakIndex$index == 4] = 'orange'
+resultVerhaakIndex$subtype[resultVerhaakIndex$index == 4] = 'red'
 resultVerhaakIndex = sort.dataframe(resultVerhaakIndex, 5, highFirst=F)
 resultVerhaak = as.matrix(resultVerhaakIndex[,c(1:4)])
 

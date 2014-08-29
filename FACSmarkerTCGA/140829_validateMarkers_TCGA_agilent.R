@@ -43,7 +43,7 @@ bigResult = t(bigResult$es.obs)
 # Merge Agilent - FACs data and clinicial data. Add Verhaak subtype
 signatures = names(bigSigs)
 verhaakSubtype = bindGeneExprCIMPClinical(clin, bigResult, signatures)
-verhaakSubtype = sort.dataframe(verhaakSubtype, 'colours')
+verhaakSubtype = sort.dataframe(verhaakSubtype, 'GeneExp_Subtype')
 
 # The damn datatypes are not correct. Dump and read in object from file
 write.table(verhaakSubtype, "output.txt", sep='\t')
