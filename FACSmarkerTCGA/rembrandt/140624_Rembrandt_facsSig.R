@@ -89,6 +89,24 @@ heatmap.2(t(resultRembrandt), cexRow=1.5, main="Enrichment of FACS marker signat
           ColSideColors=as.character(resultRembrandtMerge$subtype), labRow=colnames(resultRembrandt), xlab="Rembrandt samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
 
+# Reduced subtype
+# Make heat map with only 3 markers
+heatmap.2(t(resultRembrandt[,c(1:3)]), cexRow=1.5, main="Enrichment of FACS marker signatures\nin Rembrandt GBM", 
+          Colv=resultRembrandtMerge$subtype, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(resultRembrandtMerge$subtype), labRow=colnames(resultRembrandt), xlab="Rembrandt samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
+
+# Make heat map with only 3 mRNAs
+markers = as.matrix(data.match[c('CD44', 'FUT4', 'PROM1'),])
+markers = apply(markers, c(1,2), as.numeric)
+
+heatmap.2(markers, cexRow=1.5, main="Enrichment of FACS marker mRNAs\n in Molecular Subtype and G-CIMP", scale='row',
+          Colv=resultRembrandtMerge$subtype, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(resultRembrandtMerge$subtype), labRow=colnames(resultRembrandt), xlab="Rembrandt samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
+
+#################### Call the molecualr subtype ####################
+
 subtypeRembrandt = callMarkerSubtype(as.data.frame(resultRembrandtMerge[,c(2,3,8,9)]), 0, 0)
 # subtypeRembrandt = merge(subtypeRembrandt, resultVerhaakIndex, by.x='row.names', by.y='row.names')
 
