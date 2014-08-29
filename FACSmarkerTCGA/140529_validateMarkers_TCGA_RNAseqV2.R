@@ -204,11 +204,6 @@ heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures
           ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Aglent samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
 
-
-
-
-
-
 ############################################# Try the 3SD signature gsva ##################################
 # Classify the RNA-seq TCGA samples provide they are different patients than Agilent
 library(GSVA)

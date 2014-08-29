@@ -10,7 +10,7 @@ setwd('~/Documents/public-datasets/rembrandt/rembrandt_GBM/processedData/')
 db <- dbConnect(SQLite(), dbname="140624_rembrandtGBM.sqlite")
 dbListTables(db) 
 
-myPalette <- colorRampPalette(c("green", "black", "red"))(n = 1000)
+myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 
 #### The signature IO ####
 cd133Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140527_cd133Cutoff.txt", row.names=1)
@@ -19,8 +19,11 @@ cd15 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/result
 aldh1 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ALDH1/140528_ALDH1Cutoff.txt", row.names=1)
 itag6 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ITGA6//140528_ITGA6Cutoff.txt", row.names=1)
 l1cam = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/L1CAM/140528_L1CAMCutoff.txt", row.names=1)
+
 bigSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15" = row.names(cd15),
                "ALDH1"=row.names(aldh1), "ITGA6"=row.names(itag6), "L1CAM"=row.names(l1cam))
+rm(cd133Sig, cd44Sig, cd15, aldh1, itag6, l1cam)
+
 
 verhaakSig = read.delim('~/Documents/public-datasets/TCGA/classficationSignature/131022_danFixedTCGAsignature.txt')
 verSigs = list(verhaakSig$Proneural, verhaakSig$Neural, verhaakSig$Classical, verhaakSig$Mesenchymal)
@@ -76,7 +79,7 @@ resultRembrandtMerge = sort.dataframe(resultRembrandtMerge, 8, highFirst=F)
 resultRembrandt = as.matrix(resultRembrandtMerge[,c(2:7)])
 
 #### Make heat map with my subtype ####
-heatmap.2(t(resultVerhaak), cexRow=1.5, main="Enrichment of FACS marker signatures in Rembrandt Data", 
+heatmap.2(t(resultVerhaak), cexRow=1.5, main="Identifying molecular subtype in Rembrandt Data", 
           Colv=resultVerhaakIndex$subtype, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
           ColSideColors=as.character(resultVerhaakIndex$subtype), labRow=colnames(resultVerhaakIndex), xlab="Rembrandt samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
