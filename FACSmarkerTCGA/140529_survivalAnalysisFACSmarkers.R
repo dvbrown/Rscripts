@@ -70,28 +70,31 @@ contingency = table(boundData$subtype, boundData$GeneExp_Subtype)
 chisq.test(contingency)
 
 
-############################################# Remove the G-CIMP cases and retest ##################################
-boundDataSub = boundData[boundData$G_CIMP_STATUS == "NON G-CIMP",]
+############################################# Label the G-CIMP cases ##################################
+boundDataSub = boundData
+boundDataSub$subtype = as.character(boundDataSub$subtype)
+boundDataSub$subtype[boundDataSub$G_CIMP_STATUS %in% "G-CIMP"] = 'G-CIMP'
+boundDataSub$subtype = as.factor(boundDataSub$subtype)
 
 #generate the survival object and plot a Kaplan-Meier
 data.surv = Surv(boundDataSub$CDE_survival_time, event=boundDataSub$X_EVENT)
 sur.fit = survfit(data.surv~boundDataSub$subtype)
 
-plot(sur.fit, main='FACS marker coexpression signature in Glioblastoma \nmultiforme by RNAseq (no G-CIMP)',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'),
-     xlim=c(0,1600), 
-     cex=1.75, conf.int=F, lwd=1.33)
+plot(sur.fit, #main='FACS marker coexpression signature in Glioblastoma \nmultiforme by RNAseq (no G-CIMP)',
+     ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue', 'green'), cex.axis=1.2,
+     cex=1.25, conf.int=F, lwd=1.33)
 
-legend('topright', c('CD133', 'CD44'),
-       col=c("red",'blue'),
+legend('topright', c('CD133', 'CD44', 'G-CIMP'),
+       col=c("red",'blue', 'green'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 summary(data.surv)
 
 #test for a difference between curves
-test = surv_test(data.surv~boundDataSub$subtype)
+test = surv_test(data.surv~subtype, data=boundDataSub, subset=boundDataSub$subtype %in% c("CD133", "CD44"))
 test
-# text(locator(1),labels='p=0.150', cex=1) #add the p-value to the graph
+# text(locator(1),labels='p=0.065', cex=1) #add the p-value to the graph
 
 ############################################# Survival curve for subtype ##################################
 # Remove nosubtype cases
