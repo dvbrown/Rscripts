@@ -8,6 +8,7 @@ source("~/Documents/Rscripts/120704-sortDataFrame.R")
 source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
 
 data = read.delim('/Users/d.brown6/Documents/public-datasets/firehose/stddata__2013_12_10/GBM/20131210_dataReformatting/dataRearranging/140110_agilentNoNulls.txt')
+# data = read.delim('/Users/d.brown6/Documents/public-datasets/cancerBrowser/deDupAgilent/140526_agilentDedupPatients.txt')
 tcgaSigs = read.delim('~/Documents/public-datasets/TCGA/classficationSignature/131022_danFixedTCGAsignature.txt')
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
 cd133Sig = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/140527_cd133Cutoff.txt", row.names=1)
@@ -52,8 +53,6 @@ heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures
           ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Aglent samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
 
-
-
 verhaakSubtypeCall = callMarkerSubtype(verhaakSubtype, 0, 0)
 
 ############################################## Survival analysis #############################################
@@ -70,15 +69,18 @@ data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
 
 sur.fit = survfit(data.surv~subtype, boundData)
 
-par(mfrow=c(2,1))
-plot(sur.fit, main='FACS marker coexpression signature in \nGlioblastoma multiforme by original Agilent',ylab='Survival probability',xlab='survival (days)', 
+par(mfrow=c(1,1))
+plot(sur.fit, #main='FACS marker coexpression signature in \nGlioblastoma multiforme by original Agilent',
+     ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'),#'green'),
-     xlim=c(0,750), cex=1.75, conf.int=F, lwd=1.5)
+     xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.5)
 
 legend('topright', c('CD133', 'CD44'),# 'Intermediate'), 
        col=c("red",'blue'),#'green'),
        lwd=2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
+par(mfrow=c(1,1))
 summary(data.surv)
 #test for a difference between curves
 test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")

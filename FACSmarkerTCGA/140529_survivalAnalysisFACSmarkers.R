@@ -48,9 +48,9 @@ data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
 
 sur.fit = survfit(data.surv~subtype, boundData)
 
-plot(sur.fit, main='TCGA GBM cohort classified by FACS marker signature',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'),
-     xlim=c(0,1600), 
+plot(sur.fit, # main='TCGA GBM cohort classified by FACS marker signature',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'), cex.axis=1.2,
+     #xlim=c(0,3000), 
      cex=1.75, conf.int=F, lwd=1.33)
 
 legend('topright', c('CD133', 'CD44'),
@@ -128,14 +128,15 @@ data.surv = Surv(twoSignature$CDE_survival_time, event=twoSignature$X_EVENT)
 
 sur.fit = survfit(data.surv~subtype, twoSignature)
 
-plot(sur.fit, main='Comparison of Verhaak and \nFACS marker signatures',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue','purple', "orange"),xlim=c(0,1600), cex=1.2, lwd=c(1.33,1.33,0.75,0.75),
+plot(sur.fit, #main='Comparison of Verhaak and \nFACS marker signatures',
+     ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue','purple', "orange"),xlim=c(0,1600), cex=1.2, lwd=c(1.33,1.33,1.2,1.2), cex.axis=1.2,
      lty=c(1,1,2,2)) # hatch the verhaak lines
 
 
 legend('topright', c('CD133', 'CD44', 'Mesenchymal',"Proneural"), 
        col=c("red",'blue','orange', "purple"), cex=0.9, bty='n', xjust=0.5, yjust=0.5,
-       lwd=c(1.33,1.33,0.75,0.75), lty=c(1,1,2,2))
+       lwd=c(1.33,1.33,1.2,1.2), lty=c(1,1,2,2))
 
 summary(data.surv)
 #test for a difference between curves
@@ -183,10 +184,12 @@ data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
 
 sur.fit = survfit(data.surv~subtype, boundData)
 
-plot(sur.fit, main='TCGA GBM patients stratified by FACS marker signature \n Agilent dataset',ylab='Survival probability',xlab='survival (days)', 
+plot(sur.fit, #main='TCGA GBM patients stratified by FACS marker signature \n Agilent dataset',
+     ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'),
-     #xlim=c(0,1600), 
-     cex=1.75, conf.int=F, lwd=1.33)
+     #xlim=c(0,3000), 
+     cex.axis=1.2,
+     cex=2, conf.int=F, lwd=1.33)
 
 legend('topright', c('CD133', 'CD44'),
        col=c("red",'blue'),

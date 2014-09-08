@@ -1,5 +1,8 @@
 # Compare veerhak and my FACS signatures
+library(sqldf)
 setwd('~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/signatureComparison/')
+
+db <- dbConnect(SQLite(), dbname="~/Documents/public-datasets/cancerBrowser/tcgaData.sqlite")
 
 probOverlap <- function (signature1, signature2, allGenes) {
   # the signatures should be a vector of gene names. All genes is all possible genes that were measured, also a vector of gene names
@@ -46,9 +49,13 @@ phyper(length(mesCD44) - 1, length(row.names(cd44Sig)), length(row.names(rnaseqG
 
 ########################## CD15 and Mesenchymal ########################## 
 probOverlap(tcgaSigs$Mesenchymal, row.names(cd15), row.names(rnaseqGem))
+# 5.932462e-91
 
 ########################## CD15 and CD44 ########################## 
 probOverlap(row.names(cd44Sig), row.names(cd15), row.names(rnaseqGem))
+# Measure the degree of overlap
+cd44_15 = intersect(row.names(cd44Sig), row.names(cd15))
+length(cd44_15)/621
 
 ########################## CD133 and CD44 ########################## 
 probOverlap(row.names(cd44Sig), row.names(cd133Sig), row.names(rnaseqGem))
@@ -70,11 +77,31 @@ subtypes$MesOther[!subtypes$GeneExp_Subtype %in% 'Mesenchymal'] = "Other"
 xtabs(~ subtype + MesOther, data=subtypes)
 fisher.test(xtabs(~ subtype + MesOther, data=subtypes))
 
-# Test if CD44 is significantly Mesenchymal
-prop.test(44, 76, p = 0.5) # p = 0.21
+########################## Use bionomial distribution to measure division of Mol subtype with FACS sig #######################
 
-# Test if CD133 is significantly Other
-prop.test(80, 91, p = 0.5) # p = 1.016e-12
+# Can CD44/ CD133 classification unequal in Neural?
+neural = subtypes[subtypes$GeneExp_Subtype %in% 'Neural',]
+xtabs(~ GeneExp_Subtype + subtype, data=neural)
+binom.test(15, 15+13, p = 0.5) # p = 0.85
+
+# Can CD44/ CD133 classification unequal in Classical?
+classical = subtypes[subtypes$GeneExp_Subtype %in% 'Classical',]
+xtabs(~ GeneExp_Subtype + subtype, data=classical)
+binom.test(28, 28+14, p = 0.5) # p = 0.04
+
+# Test if CD44 is significantly Mesenchymal
+xtabs(~ GeneExp_Subtype + subtype, data=subtypes[subtypes$GeneExp_Subtype %in% 'Mesenchymal',])
+binom.test(44, 44+11, p = 0.5) # 8.699e-06
+
+# Test if CD133 is significantly Proneural
+xtabs(~ GeneExp_Subtype + subtype, data=subtypes[subtypes$GeneExp_Subtype %in% 'Proneural',])
+binom.test(37, 39, p = 0.5) # 2.841e-09
 
 # Test if CD133 is significantly Classical
 prop.test(36, 36+28, p = 0.5) # p = 0.3816
+
+subtypeClassicfication = rbind(c(37,2), c(44, 11), c(15, 13), c(28, 14))
+row.names(subtypeClassicfication) = c('Pro', 'Mes', 'Neu', 'Class')
+pairwise.prop.test(subtypeClassicfication)
+
+p.adjust(c(0.85, 0.04, 8.699e-06, 2.841e-09), method='fdr')

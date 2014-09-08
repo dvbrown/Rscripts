@@ -51,10 +51,12 @@ data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
 
 sur.fit = survfit(data.surv~subtype, boundData)
 
-plot(sur.fit, main='TCGA GBM cohort classified by FACS marker signature',ylab='Survival probability',xlab='survival (days)', 
+plot(sur.fit, 
+     #main='TCGA GBM cohort classified by FACS marker signature',
+     ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'),
      xlim=c(0,1600), 
-     cex=1.75, conf.int=F, lwd=1.33)
+     cex=2, conf.int=F, lwd=1.33)
 
 legend('topright', c('CD133', 'CD44'),
        col=c("red",'blue'),
@@ -64,7 +66,7 @@ summary(data.surv)
 #test for a difference between curves
 test = surv_test(data.surv~boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
 test
-# text(locator(1),labels='p=0.0162', cex=1) #add the p-value to the graph
+text(locator(1),labels='p=0.0162', cex=1) #add the p-value to the graph
 
 # Check the final table
 # write.table(boundData, "./survival/survivalTables/140606_RNAseq_SurvivalBoundData.txt", sep='\t')
