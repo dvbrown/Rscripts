@@ -58,14 +58,14 @@ surFitSubtype = survfit(survRembrant~verhaak, boundData)
 
 plot(surFitRembrandt, 
      #main='Rembrandt GBM cohort classified by FACS marker signature',
-     ylab='Survival probability',xlab='survival (days)', #xlim=c(0,700),
+     ylab='Survival probability',xlab='survival (days)',
      col=c("red",'blue'),#'green'),
-     xlim=c(0,1600), 
-     cex=2, conf.int=F, lwd=1.33)
+     #xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.2)
 
 legend('topright', c('CD133', 'CD44'),
        col=c("red",'blue'),
-       lwd=1.2, cex=1.5, bty='n', xjust=0.5, yjust=0.5)
+       lwd=1.2, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 #test for a difference between curves
 test = surv_test(survRembrant ~ boundData$subtype)#, subset=!boundData$subtype %in% "intermediate")
