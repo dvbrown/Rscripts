@@ -70,29 +70,68 @@ rm(ALDH1, ALDH1genes)
 ######################################## L1CAM coexpressed Genes ################################################
 L1CAM = correlateGeneWithGEM(dat, 'L1CAM')
 
-plotCoexpression(L1CAM, 'L1CAM')
+# Subset the dataframe with correlation values for those with high correlation and significance
+L1CAMgenes = L1CAM[L1CAM[,1] > 2*sd(L1CAM[,1]) & L1CAM[,4] < 0.05,]
+
+dbWriteTable(conn = db, name = "l1camAllgenes", value = as.data.frame(L1CAM), row.names = TRUE)
+dbWriteTable(conn = db, name = "l1camCuttOff", value = as.data.frame(L1CAMgenes), row.names = TRUE)
+
+# L1CAM_cytoscape = cytoScapeInput(1-L1CAMDissim, coexpressedShortList=L1CAMgenes, 'L1CAM')
+rm(L1CAM, L1CAMgenes)
+
+######################################## Olig2 coexpressed Genes ################################################
+olig2 = correlateGeneWithGEM(dat, 'OLIG2')
+olig2['OLIG2',]
 
 # Subset the dataframe with correlation values for those with high correlation and significance
-L1CAMgenes = L1CAM[L1CAM[,1] > 3*sd(L1CAM[,1]) & L1CAM[,4] < 0.05,]
-write.table(L1CAMgenes, './140529_L1CAMCutoff.txt', sep='\t')
+olig2genes = olig2[olig2[,1] > 2*sd(olig2[,1]) & olig2[,4] < 0.05,]
 
-L1CAMSquare = makeSquareCoexpressionMatrix(L1CAMgenes, dat)
-L1CAMDissim = makeDissimilarity(L1CAMSquare)
+dbWriteTable(conn = db, name = "olig2Allgenes", value = as.data.frame(olig2), row.names = TRUE)
+dbWriteTable(conn = db, name = "olig2CuttOff", value = as.data.frame(olig2genes), row.names = TRUE)
 
-# Make a heatmap
-pdf(file="L1CAM_corr_HeatMap.pdf", paper="a4")
-buildCorrelationHeatMap(dat, L1CAMDissim, 'L1CAM')
-dev.off()
+rm(olig2, olig2genes)
+######################################## GFAP coexpressed Genes ################################################
+gfap = correlateGeneWithGEM(dat, 'GFAP')
+gfap['GFAP',]
 
-pdf(file="L1CAM_tom_HeatMap.pdf", paper="a4")
-buildTOMHeatMap(dat, L1CAMDissim, "L1CAM")
-dev.off()
+# Subset the dataframe with correlation values for those with high correlation and significance
+gfapgenes = gfap[gfap[,1] > 2*sd(gfap[,1]) & gfap[,4] < 0.05,]
 
-pdf('L1CAM_MDS.pdf', paper='a4')
-makeMDS(L1CAMDissim, 'L1CAM')
-dev.off()
+dbWriteTable(conn = db, name = "gfapAllgenes", value = as.data.frame(gfap), row.names = TRUE)
+dbWriteTable(conn = db, name = "gfapCuttOff", value = as.data.frame(gfapgenes), row.names = TRUE)
 
-L1CAM_cytoscape = cytoScapeInput(1-L1CAMDissim, coexpressedShortList=L1CAMgenes, 'L1CAM')
-rm(L1CAM, L1CAMgenes)
-################################################################
-#doublePos = corAndPvalue(x=dat[,c("PROM1", "CD44")], y=dat)
+rm(gfap, gfapgenes)
+######################################## YKL40 coexpressed Genes ################################################
+ykl40 = correlateGeneWithGEM(dat, 'CHI3L1')
+ykl40['CHI3L1',]
+
+# Subset the dataframe with correlation values for those with high correlation and significance
+ykl40genes = ykl40[ykl40[,1] > 2*sd(ykl40[,1]) & ykl40[,4] < 0.05,]
+
+dbWriteTable(conn = db, name = "ykl40Allgenes", value = as.data.frame(ykl40), row.names = TRUE)
+dbWriteTable(conn = db, name = "ykl40CuttOff", value = as.data.frame(ykl40genes), row.names = TRUE)
+
+rm(ykl40, ykl40genes)
+######################################## SOX2 coexpressed Genes ################################################
+sox2 = correlateGeneWithGEM(dat, 'SOX2')
+sox2['SOX2',]
+# Subset the dataframe with correlation values for those with high correlation and significance
+sox2genes = sox2[sox2[,1] > 2*sd(sox2[,1]) & sox2[,4] < 0.05,]
+
+dbWriteTable(conn = db, name = "sox2Allgenes", value = as.data.frame(sox2), row.names = TRUE)
+dbWriteTable(conn = db, name = "sox2CuttOff", value = as.data.frame(sox2genes), row.names = TRUE)
+
+rm(sox2, sox2genes)
+
+######################################## B-3- tubulin coexpressed Genes ################################################
+b3tub = correlateGeneWithGEM(dat, 'TUBB3')
+b3tub['TUBB3',]
+# Subset the dataframe with correlation values for those with high correlation and significance
+b3tubgenes = b3tub[b3tub[,1] > 2*sd(b3tub[,1]) & b3tub[,4] < 0.05,]
+
+dbWriteTable(conn = db, name = "tubb3Allgenes", value = as.data.frame(b3tub), row.names = TRUE)
+dbWriteTable(conn = db, name = "tubb3CuttOff", value = as.data.frame(b3tubgenes), row.names = TRUE)
+
+rm(b3tub, b3tubgenes)
+
+dbDisconnect(db)
