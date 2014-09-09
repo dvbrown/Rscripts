@@ -184,6 +184,12 @@ bindGeneExprCIMPClinical <- function (clinicalData, subtypedGeneExpression, sign
     verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Classical"] = "blue"
     verhaakSubtype$colours[verhaakSubtype$GeneExp_Subtype == "Mesenchymal"] = "red"
     verhaakSubtype$colours[verhaakSubtype$G_CIMP_STATUS == "G-CIMP"] = "violet"
+    # order the heatmap
+    verhaakSubtype$order[verhaakSubtype$GeneExp_Subtype == "Proneural"] = 1
+    verhaakSubtype$order[verhaakSubtype$GeneExp_Subtype == "Neural"] = 4
+    verhaakSubtype$order[verhaakSubtype$GeneExp_Subtype == "Classical"] = 5
+    verhaakSubtype$order[verhaakSubtype$GeneExp_Subtype == "Mesenchymal"] = 3
+    verhaakSubtype$order[verhaakSubtype$G_CIMP_STATUS == "G-CIMP"] = 2
     return (verhaakSubtype)
 }
 
