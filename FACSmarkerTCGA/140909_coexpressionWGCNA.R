@@ -1,6 +1,7 @@
 getwd()
 library(WGCNA)
 library(sqldf)
+library(ggplot2)
 
 dat = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/140526_agilentDedupPatients.txt", row.names=1)
 setwd('/Users/d.brown6/Documents/public-datasets/cancerBrowser/deDupAgilent/results/')
@@ -21,7 +22,6 @@ dbWriteTable(conn = db, name = "cd133CuttOff", value = as.data.frame(cd133genes)
 
 # Export to cytoscape
 # cd133_cytoscape = cytoScapeInput(1-cd133Dissim,coexpressedShortList=cd133genes, 'CD133')
-rm(cd133, cd133genes)
 ######################################## CD44 coexpressed Genes ################################################
 cd44 = correlateGeneWithGEM(dat, 'CD44')
 
@@ -32,7 +32,24 @@ dbWriteTable(conn = db, name = "cd44Allgenes", value = as.data.frame(cd44), row.
 dbWriteTable(conn = db, name = "cd44CuttOff", value = as.data.frame(cd44genes), row.names = TRUE)
 # cd44_cytoscape = cytoScapeInput(1-cd44Dissim, cd44Color, coexpressedShortList=cd44genes, 'CD44')
 
-rm(cd44, cd44genes)
+#### Make a histogram ####
+cd133[,2] = "CD133"
+cd44[,2] = "CD44"
+df = rbind(cd133[,c(1,2)], cd44[,c(1,2)])
+row.names(df) = NULL
+df = as.data.frame(df)
+colnames(df) = c("correlation", "Marker")
+df = df[!is.na(df$correlation),]
+
+df$correlation = as.character(df$correlation)
+df$correlation = as.numeric(df$correlation)
+
+ggplot(df, aes(x=correlation, fill=Marker)) + geom_density(alpha=.2) +
+    xlab("Pearson correlation") + ylab("Frequency") + # Set axis labels
+    ggtitle("Comparison of CD133 and CD44 correlation scores") +  # Set title
+    theme_bw(base_size=18)
+
+rm(cd44, cd44genes, cd133, cd133genes)
 ######################################## CD15 coexpressed Genes ################################################
 cd15 = correlateGeneWithGEM(dat, 'FUT4')
 
