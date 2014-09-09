@@ -40,10 +40,8 @@ row.names(df) = NULL
 df = as.data.frame(df)
 colnames(df) = c("correlation", "Marker")
 df = df[!is.na(df$correlation),]
-
 df$correlation = as.character(df$correlation)
 df$correlation = as.numeric(df$correlation)
-
 ggplot(df, aes(x=correlation, fill=Marker)) + geom_density(alpha=.2) +
     xlab("Pearson correlation") + ylab("Frequency") + # Set axis labels
     ggtitle("Comparison of CD133 and CD44 correlation scores") +  # Set title
