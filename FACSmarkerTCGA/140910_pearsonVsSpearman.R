@@ -31,6 +31,7 @@ cd44Ag = dbReadTable(db, "cd44Allgenes")
 resultSpear = cor(agilent[,'PROM1'], agilent, method = "spearman", use ="pairwise.complete.obs")
 resultPear = cor(agilent[,'PROM1'], agilent, method='pearson', use ="pairwise.complete.obs")
 scatterCD133 = as.data.frame(cbind(as.vector(resultSpear), as.vector(resultPear)))
+colnames(scatterCD133) = c('spearman', 'pearson')
 
 # Scatter plot the 2 
 cd133 = ggplot(data=scatterCD133, aes(x=V1, y=V2)) + 
@@ -43,6 +44,7 @@ cd133 = ggplot(data=scatterCD133, aes(x=V1, y=V2)) +
 resultSpear = cor(agilent[,'CD44'], agilent, use ="pairwise.complete.obs", method = "spearman")
 resultPear = cor(agilent[,'CD44'], agilent, method='pearson', use ="pairwise.complete.obs")
 scatterCD44 = as.data.frame(cbind(as.vector(resultSpear), as.vector(resultPear)))
+colnames(scatterCD44) = c('spearman', 'pearson')
 
 # Scatter plot the 2 
 cd44 = ggplot(data=scatterCD44, aes(x=V1, y=V2)) + 
@@ -55,4 +57,8 @@ multiplot(cd133, cd44, cols=1)
 dbDisconnect(db) 
 
 # Write out data
-database <- dbConnect(SQLite(), dbname='~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/spearmanPearsonComparison/correlations/sqlite')
+setwd('~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/spearmanPearsonComparison/correlations/')
+database <- dbConnect(SQLite(), dbname='correlations.sqlite')
+dbWriteTable(conn = database, name = "cd133Correlation", value = scatterCD133, row.names = TRUE)
+dbWriteTable(conn = database, name = "cd44correlation", value = scatterCD44, row.names = TRUE)
+dbDisconnect(database) 
