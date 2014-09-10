@@ -37,3 +37,5 @@ ggplot(data=cd44, aes(x=correlation.x, y=correlation.y)) +
     xlab("Agilent") + ylab("RNAseq") + # Set axis labels
     ggtitle("Correlation of RNAseq and Agilent") +  # Set title
     theme_bw(base_size=18)
+
+dbDisconnect(db) 

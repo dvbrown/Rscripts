@@ -2,6 +2,7 @@ getwd()
 library(WGCNA)
 library(sqldf)
 library(ggplot2)
+source('~/Documents/Rscripts/multiplot.R')
 
 function (geneExpressionMatrix = dat, gene='PROM1') {
     corrPval = corAndPvalue(x=geneExpressionMatrix[,gene], y=geneExpressionMatrix)
@@ -27,7 +28,7 @@ cd133Ag = dbReadTable(db, "cd133Allgenes")
 cd44Ag$genes = row.names(cd44Ag)
 cd44Ag = dbReadTable(db, "cd44Allgenes")
 
-resultSpear = cor(agilent[,'PROM1'], agilent, use ="pairwise.complete.obs", method = "spearman")
+resultSpear = cor(agilent[,'PROM1'], agilent, method = "spearman", use ="pairwise.complete.obs")
 resultPear = cor(agilent[,'PROM1'], agilent, method='pearson', use ="pairwise.complete.obs")
 scatterCD133 = as.data.frame(cbind(as.vector(resultSpear), as.vector(resultPear)))
 
@@ -44,8 +45,14 @@ resultPear = cor(agilent[,'CD44'], agilent, method='pearson', use ="pairwise.com
 scatterCD44 = as.data.frame(cbind(as.vector(resultSpear), as.vector(resultPear)))
 
 # Scatter plot the 2 
-cd44 = ggplot(data=scatter, aes(x=V1, y=V2)) + 
+cd44 = ggplot(data=scatterCD44, aes(x=V1, y=V2)) + 
             geom_point(shape=19, alpha=1/4) + geom_smooth(method=lm, colour='red') +
             xlab("Spearman") + ylab("Pearson") +
             ggtitle("Comparison of Spearman and Pearson correlation for CD44") +  # Set title
             theme_bw(base_size=18)
+
+multiplot(cd133, cd44, cols=1)
+dbDisconnect(db) 
+
+# Write out data
+database <- dbConnect(SQLite(), dbname='~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/spearmanPearsonComparison/correlations/sqlite')
