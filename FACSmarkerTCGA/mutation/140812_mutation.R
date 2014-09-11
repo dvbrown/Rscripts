@@ -31,9 +31,9 @@ fisherTestGene <- function (dataMatrix, gene, subtypeInfo) {
     geneSubset = dataMatrix[gene,]
     result = cbind(geneSubset, subtypeInfo)
     tab = table(result[,'geneSubset'], result$subtype)
-    fisher.test(tab)
+    print(fisher.test(tab))
+    return (tab)
 }
-fisherTestGene(dataM, 'IDH1', dataSubtype)
 
 setwd('~/Documents/public-datasets/cancerBrowser/TCGA_GBM_mutation-2014-05-02/')
 rawData = read.delim('genomicMatrix')
@@ -80,12 +80,26 @@ heatmap.2(dataP, cexRow=0.5,# main="Somatic mutations segrgated by marker signat
 
 ########################### Measure the IDH1 distribution ##########################
 
-idh1 = dataM['IDH1',]
-idh1 = cbind(idh1, dataSubtype)
-fisher.test(table(idh1$idh1, idh1$subtype))
+fisherTestGene(dataM, 'IDH1', dataSubtype)
 #p-value = 0.01046
 
-nf1 = dataM['NF1',]
-nf1 = cbind(nf1, dataSubtype)
-fisher.test(table(nf1$nf1, nf1$subtype))
+fisherTestGene(dataM, 'NF1', dataSubtype)
 # p-value = 0.05884
+
+fisherTestGene(dataM, 'PTEN', dataSubtype)
+# p-value = 0.1565
+
+fisherTestGene(dataM, 'PDGFRA', dataSubtype)
+# p-value = 0.635
+
+fisherTestGene(dataM, 'TP53', dataSubtype)
+# p-value = 0.01267
+
+fisherTestGene(dataM, 'EGFR', dataSubtype)
+# p-value = 1
+
+fisherTestGene(dataM, 'PIK3CA', dataSubtype)
+# p-value = 0.556
+
+fisherTestGene(dataM, 'PIK3R1', dataSubtype)
+# p-value = 0.2072
