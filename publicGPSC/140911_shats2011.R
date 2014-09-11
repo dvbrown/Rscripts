@@ -8,15 +8,15 @@ source('~/Documents/Rscripts/multiplot.R')
 ##################### Build the genelist ###########################
 
 library(annotate)
-library(hgu133plus2.db)
-geneIDs = ls(hgu133plus2ENTREZID)
+library(hgu133a2.db)
+geneIDs = ls(hgu133a2ENTREZID)
 
 #get gene ID numbers from the annptation package allowing for multiple probes to match mulitple genes
-geneSymbols <- as.character(unlist(lapply(mget(geneIDs,env=hgu133plus2SYMBOL),
+geneSymbols <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2SYMBOL),
                                           function (symbol) { return(paste(symbol,collapse="; ")) } )))
-geneNames <- as.character(unlist(lapply(mget(geneIDs,env=hgu133plus2GENENAME),
+geneNames <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2GENENAME),
                                         function (name) { return(paste(name,collapse="; ")) } )))
-unigene <- as.character(unlist(lapply(mget(geneIDs,env=hgu133plus2UNIGENE),
+unigene <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2UNIGENE),
                                       function (unigeneID) { return(paste(unigeneID,collapse="; ")) } )))
 
 #strip the Hs from the start of unigene reference
@@ -70,3 +70,42 @@ g3 = ggplot(data=pcaDf, aes(x=V1, y=V2, color=growth)) +
     theme_bw(base_size=18)
 g3
 multiplot(g, g2,g3, cols=2)
+
+##################### Make a heatmap ###########################
+dm$colour = "black"
+dm$colour[dm$subpopulation %in% 'CD133+'] = 'blue'
+dm$colour[dm$subpopulation %in% 'CD133-'] = 'red'
+dm$colour = as.factor(dm$colour)
+name = paste(dm$patient, dm$growth, dm$subpopulation)
+
+# Extract median absolute deviation and take the top 500
+madData = apply(norm, 1, mad)
+
+madDataSort = as.data.frame(madData)
+madDataSort$probe = row.names(madDataSort)
+colnames(madDataSort) = c('value', 'probe')
+madDataSort = sort.dataframe(madDataSort, 1, highFirst=T)
+top500 = row.names(madDataSort[c(1:500),])
+topNorm = norm[top500,]
+topNorm = sort.dataframe(topNorm, 1, highFirst=T)
+name = paste(dm$patient, dm$subpopulation)
+
+heatmap.2(topNorm, cexRow=0.8, main="Gene expression profiles CD133 sorted GPSCs", scale="row",
+          Colv=as.factor(dm$subpopulation), keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(dm$colour), labRow=NA,labCol=name, 
+          offsetRow=c(1,1), margins=c(15,4))
+
+heatmap.2(topNorm, cexRow=0.8, main="Gene expression profiles CD133 sorted GPSCs", scale="row",
+          keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="both", 
+          ColSideColors=as.character(dm$colour), labRow=NA, labCol=name, 
+          offsetRow=c(1,1), margins=c(15,4))
+
+# Tkae the probe averages
+summariseData = avereps(data, ID=genelist$GeneSymbol)
+# Remove NAs
+summariseData = summariseData[row.names(summariseData) != 'NA' ,]
+
+##################### Export data ###########################
+write.table(norm, '../analysis/140911_rmaNormalised.txt', sep='\t')
+write.table(summariseData, '../analysis/140911_shatGEM.txt', sep='\t')
+write.table(topNorm, '../analysis/140911_top500.txt', sep='\t')
