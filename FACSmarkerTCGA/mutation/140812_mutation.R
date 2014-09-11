@@ -24,6 +24,17 @@ colorMySubtype <- function (dataFrame) {
     return (dataFrame)
 }
 
+# DEBUG THIS
+fisherTestGene <- function (dataMatrix, gene, subtypeInfo) {
+    # Take a true false matrix of mutated genes. Subtype info is dataSubtype
+    # take a character of the gene you wish to fisher test
+    geneSubset = dataMatrix[gene,]
+    result = cbind(geneSubset, subtypeInfo)
+    tab = table(result[,'geneSubset'], result$subtype)
+    fisher.test(tab)
+}
+fisherTestGene(dataM, 'IDH1', dataSubtype)
+
 setwd('~/Documents/public-datasets/cancerBrowser/TCGA_GBM_mutation-2014-05-02/')
 rawData = read.delim('genomicMatrix')
 # Start with the RNAseq patitents but I have to write the Agilent patients to file
@@ -54,18 +65,21 @@ totalMuts = rowSums(dataPresent)
 toBsorted = as.data.frame(cbind(dataPresent, totalMuts))
  
 # Sort the dataframe according to the hightest number of mutations first
-dataSort = sort.dataframe(toBsorted, 150, highFirst=T)[,c(1:149)]
+# dataSort = sort.dataframe(toBsorted, 150, highFirst=T)[,c(1:149)]
+dataSort = sort.dataframe(toBsorted, 150, highFirst=T)[c(1:100),c(1:149)]
 dataP = as.matrix(dataSort)
+dataP <- dataP[ nrow(dataP):1, ] 
 head(dataP)
 
 # Make a heatmap where the input is a true false mutation matrix
-heatmap.2(dataP, cexRow=0.5, main="Somatic mutations segrgated by marker signature", scale='none',
-          Colv=as.factor(dataSubtype$colours), keysize=1, trace="none", col=c('white', 'black'), 
+heatmap.2(dataP, cexRow=0.5,# main="Somatic mutations segrgated by marker signature", scale='none',
+          Colv=as.factor(dataSubtype$colours), key=F, trace="none", col=c('white', 'black'), 
           density.info="none", dendrogram="none", labCol='',
           ColSideColors=as.character(dataSubtype$colours), labRow=row.names(dataPresent), 
-          xlab="Samples", offsetRow=c(1,1), margins=c(5,7.5))
+          offsetRow=c(1,1), margins=c(5,7.5)) #xlab="Samples")
 
 ########################### Measure the IDH1 distribution ##########################
+
 idh1 = dataM['IDH1',]
 idh1 = cbind(idh1, dataSubtype)
 fisher.test(table(idh1$idh1, idh1$subtype))
@@ -74,3 +88,4 @@ fisher.test(table(idh1$idh1, idh1$subtype))
 nf1 = dataM['NF1',]
 nf1 = cbind(nf1, dataSubtype)
 fisher.test(table(nf1$nf1, nf1$subtype))
+# p-value = 0.05884
