@@ -29,7 +29,6 @@ bigSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15
                "ALDH1"=row.names(aldh1), "ITGA6"=row.names(itag6), "L1CAM"=row.names(l1cam))
 rm(cd133Sig, cd44Sig, cd15, aldh1, itag6, l1cam)
 
-
 # Extract the clinical data for the Agilent patients
 matched = intersect(row.names(clinical), colnames(agilentM))
 # Subset clinical data for intersect
@@ -73,3 +72,28 @@ heatmap.2(markers, cexRow=1.5, main="Enrichment of FACS marker mRNAs\n in Molecu
           Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
           ColSideColors=as.character(verhaakSubtype$colours), labRow=colnames(subTypeHeat), xlab="Agilent samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5))
+
+############################################# Us the non default enrichment statistic ##################################################################
+# Call the subtypes with GSVA
+bigResult2 = gsva(agilentM, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1, mx.diff=FALSE)
+bigResult2 = (bigResult2$es.obs)
+
+# Merge Agilent - FACs data and clinicial data. Add Verhaak subtype
+signatures = names(bigSigs)
+verhaakSubtype = bindGeneExprCIMPClinical(clin, bigResult, signatures)
+verhaakSubtype = sort.dataframe(verhaakSubtype, 'GeneExp_Subtype')
+
+# The damn datatypes are not correct. Dump and read in object from file
+write.table(verhaakSubtype, "output.txt", sep='\t')
+# write.table(verhaakSubtype, "./survival/140603_verhaakSubtypeAgilent.txt", sep='\t')
+
+verhaakSubtype = read.delim("output.txt", row.names=1)
+verhaakSubtype = verhaakSubtype[!verhaakSubtype$colours %in% 'black',]
+subTypeHeat = as.matrix(verhaakSubtype[,signatures])
+
+# Make an object to plot density gram
+lattPlot = data.frame((cbind(bigResult[,"CD133"], bigResult2["CD133",])))#, 
+
+par(mfrow=c(2,1))
+hist(bigResult[,"CD133"])
+hist(bigResult2["CD133",])
