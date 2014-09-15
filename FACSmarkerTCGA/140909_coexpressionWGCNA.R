@@ -149,4 +149,15 @@ dbWriteTable(conn = db, name = "tubb3CuttOff", value = as.data.frame(b3tubgenes)
 
 rm(b3tub, b3tubgenes)
 
+######################################## ID1 tubulin coexpressed Genes ################################################
+id1 = correlateGeneWithGEM(dat, 'ID1')
+id1['ID1',]
+# Subset the dataframe with correlation values for those with high correlation and significance
+id1genes = id1[id1[,1] > 2*sd(id1[,1]) & id1[,4] < 0.05,]
+
+dbWriteTable(conn = db, name = "id1Allgenes", value = as.data.frame(id1), row.names = TRUE)
+dbWriteTable(conn = db, name = "id1CuttOff", value = as.data.frame(id1genes), row.names = TRUE)
+
+rm(id1,id1genes )
+
 dbDisconnect(db)
