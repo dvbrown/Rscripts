@@ -14,7 +14,7 @@ matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
 
 # Subset clinical data for intersect
 clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", 'CDE_chemo_adjuvant_tmz', 'CDE_chemo_tmz',
-                           'CDE_radiation_any', 'CDE_tmz_chemoradiation_standard', 'GeneExp_Subtype')]
+                           'CDE_radiation_any', 'CDE_tmz_chemoradiation_standard', 'GeneExp_Subtype', 'G_CIMP_STATUS')]
 
 ############################################## bind the clinical and subtyping info together #############################################
 
@@ -29,8 +29,12 @@ boundData$G_CIMP_STATUS[boundData$G_CIMP_STATUS %in% 'G-CIMP'] = TRUE
 boundData$G_CIMP_STATUS[!boundData$G_CIMP_STATUS %in% 'TRUE'] = FALSE
 boundData$G_CIMP_STATUS = as.factor(boundData$G_CIMP_STATUS)
 
+boundData = boundData[,c(1:10, 12:14,20,21)]
+
 ############################################# Analysing the data for survival ##################################
 data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
-coxPH = coxph(data.surv ~  subtype +  CDE_DxAge + CDE_chemo_tmz+  CDE_radiation_any + gender, 
+
+coxPH = coxph(data.surv ~  subtype +  CDE_DxAge + CDE_chemo_tmz +  CDE_radiation_any , 
               data=boundData, na.action="na.omit")
+
 summary(coxPH)
