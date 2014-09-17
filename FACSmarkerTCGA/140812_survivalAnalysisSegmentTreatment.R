@@ -44,8 +44,8 @@ cd44Patients = boundData[boundData$subtype %in% "CD44",]
 data.surv.cd133 = Surv(cd133Patients$CDE_survival_time, event=cd133Patients$X_EVENT)
 data.surv.cd44 = Surv(cd44Patients$CDE_survival_time, event=cd44Patients$X_EVENT)
 
-# sur.fit.cd133 = survfit(data.surv.cd133~CDE_chemo_adjuvant_tmz, cd133Patients)
-# sur.fit.cd44 = survfit(data.surv.cd44~CDE_chemo_adjuvant_tmz, cd44Patients)
+# sur.fit.cd133 = survfit(data.surv.cd133~CDE_radiation_any, cd133Patients)
+# sur.fit.cd44 = survfit(data.surv.cd44~CDE_radiation_any, cd44Patients)
 sur.fit.cd133 = survfit(data.surv.cd133~CDE_chemo_tmz, cd133Patients)
 sur.fit.cd44 = survfit(data.surv.cd44~CDE_chemo_tmz, cd44Patients)
 
@@ -58,7 +58,7 @@ legend('topright', c('FALSE', 'TRUE'), title="Adjuvant temozolomide",
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 summary(data.surv.cd133)
-test.cd133 = surv_test(data.surv.cd133~as.factor(cd133Patients$CDE_chemo_adjuvant_tmz))
+test.cd133 = surv_test(data.surv.cd133~as.factor(cd133Patients$CDE_chemo_tmz))
 test.cd133
 # text(locator(1),labels='p=0.137', cex=1) #add the p-value to the graph
 
@@ -70,7 +70,7 @@ legend('topright', c('FALSE', 'TRUE'), title="Adjuvant temozolomide",
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 summary(data.surv.cd44)
 #test for a difference between curves
-test.cd44 = surv_test(data.surv.cd44~as.factor(cd44Patients$CDE_chemo_adjuvant_tmz))
+test.cd44 = surv_test(data.surv.cd44~as.factor(cd44Patients$CDE_chemo_tmz))
 test.cd44
 # text(locator(1),labels='p=0.0165', cex=1) #add the p-value to the graph
 
