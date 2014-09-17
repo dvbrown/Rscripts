@@ -16,7 +16,8 @@ verhaakSubtypeCall = callMarkerSubtype(verhaakSignature, 0, 0)
 # Extract the clinical data for the RNAseq patients
 matched = intersect(row.names(clinical), row.names(verhaakSubtypeCall))
 # Subset clinical data for intersect
-clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", "days_to_last_followup", "CDE_chemo_adjuvant_tmz", "CDE_radiation_adjuvant")]
+clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", 'CDE_chemo_adjuvant_tmz', 'CDE_chemo_tmz',
+                           'CDE_radiation_any', 'CDE_tmz_chemoradiation_standard', 'GeneExp_Subtype', 'G_CIMP_STATUS')]
 
 ############################################## bind the clinical and subtyping info together #############################################
 
@@ -43,8 +44,10 @@ cd44Patients = boundData[boundData$subtype %in% "CD44",]
 data.surv.cd133 = Surv(cd133Patients$CDE_survival_time, event=cd133Patients$X_EVENT)
 data.surv.cd44 = Surv(cd44Patients$CDE_survival_time, event=cd44Patients$X_EVENT)
 
-sur.fit.cd133 = survfit(data.surv.cd133~CDE_chemo_adjuvant_tmz, cd133Patients)
-sur.fit.cd44 = survfit(data.surv.cd44~CDE_chemo_adjuvant_tmz, cd44Patients)
+# sur.fit.cd133 = survfit(data.surv.cd133~CDE_chemo_adjuvant_tmz, cd133Patients)
+# sur.fit.cd44 = survfit(data.surv.cd44~CDE_chemo_adjuvant_tmz, cd44Patients)
+sur.fit.cd133 = survfit(data.surv.cd133~CDE_chemo_tmz, cd133Patients)
+sur.fit.cd44 = survfit(data.surv.cd44~CDE_chemo_tmz, cd44Patients)
 
 par(mfrow=c(2,1))
 plot(sur.fit.cd133, main='TCGA GBM cohort CD133 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
@@ -71,12 +74,20 @@ test.cd44 = surv_test(data.surv.cd44~as.factor(cd44Patients$CDE_chemo_adjuvant_t
 test.cd44
 # text(locator(1),labels='p=0.0165', cex=1) #add the p-value to the graph
 
+data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
+sur.fit = survfit(data.surv ~ subtype, boundData)
+par(mfrow=c(1,1))
+plot(sur.fit, main='TCGA GBM cohort all patients classified by subtype',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     cex=1.75, conf.int=F, lwd=1.33)
+legend('topright', c('CD133', 'CD44'), title="Coexpression subtype",
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
-
-
-
-
-
+summary(data.surv)
+test = surv_test(data.surv~as.factor(boundData$subtype))
+test
+##########################################################################################
 
 
 #### Look at radiation ####
