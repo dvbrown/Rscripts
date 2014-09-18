@@ -22,6 +22,16 @@ agilentGem = read.delim('~/Documents/public-datasets/cancerBrowser/TCGA_GBM_G450
 
 matched = intersect(colnames(rnaseqGem), colnames(agilentGem))
 
+# Is there a different number of CIMP samples?
+agilent = agilent[colnames(agilentGem),]
+rnaSeq = rnaSeq[colnames(rnaseqGem),]
+agilent$platform = "agilent"
+rnaSeq$platform = 'rnaseq'
+bigData = rbind(agilent, rnaSeq)
+cimpTab = table(bigData$G_CIMP_STATUS, bigData$platform)
+cimpTab = cimpTab[c(2,3),]
+fisher.test(cimpTab)
+
 rm(rnaseqGem, agilentGem)
 ################ Investigate the difference bewtween double measured patients and the rest of Agilent ###################
 doublePatient = clinical[matched,]
@@ -59,7 +69,7 @@ range(singleDate, na.rm=T)
 range(doubleDate, na.rm=T)
 
 # The theapry that the patients received. First build a contingency table
-therapy = xtabs(~ CDE_therapy + platform, data=compClinical, exclude=""))
+therapy = xtabs(~ CDE_therapy + platform, data=compClinical, exclude="")
 # Chi squared test
 summary(therapy)
 therapy = table(compClinical$CDE_therapy, compClinical$platform, exclude="")

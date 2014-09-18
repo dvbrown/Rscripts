@@ -28,6 +28,7 @@ l1cam = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/resul
 
 fascSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15" = row.names(cd15),
                "ALDH1"=row.names(aldh1), "ITGA6"=row.names(itag6), "L1CAM"=row.names(l1cam))
+rm(cd133Sig, cd44Sig, cd15, aldh1, itag6, l1cam)
 
 tcgaSigs = read.delim('~/Documents/public-datasets/TCGA/classficationSignature/131022_danFixedTCGAsignature.txt')
 

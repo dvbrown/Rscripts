@@ -5,7 +5,8 @@ library(coin)
 source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
 setwd("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/")
 
-verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140530_liberalSignatureScores2SD.txt", row.names=1)
+verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140603_verhaakSubtypeAgilent.txt", row.names=1)
+# Use the Agilent dataset as this has more cases 
 
 verhaakSignature = verhaakSignature[,c("CD133","CD44","GeneExp_Subtype","G_CIMP_STATUS")]
 clinical = read.delim("~/Documents/public-datasets/cancerBrowser/TCGA_GBM_exp_HiSeqV2-2014-05-02/clinical_dataDots.txt", row.names=1)
@@ -25,13 +26,14 @@ boundData = sort.dataframe(boundData, "subtype")
 row.names(boundData) = boundData$Row.names
 boundData$subtype = as.factor(boundData$subtype)
 boundData$gender = as.factor(boundData$gender)
-boundData = boundData[,c(1:14,17)]
 
 # Fix up the GCIMP to only have true and false
-boundData$G_CIMP_STATUS.x = as.character(boundData$G_CIMP_STATUS.x)
-boundData$G_CIMP_STATUS.x[boundData$G_CIMP_STATUS.x %in% 'G-CIMP'] = TRUE
-boundData$G_CIMP_STATUS.x[!boundData$G_CIMP_STATUS.x %in% 'TRUE'] = FALSE
-boundData$G_CIMP_STATUS.x = as.factor(boundData$G_CIMP_STATUS.x)
+boundData$G_CIMP_STATUS = boundData$G_CIMP_STATUS.x
+boundData$G_CIMP_STATUS = as.character(boundData$G_CIMP_STATUS)
+boundData$G_CIMP_STATUS[boundData$G_CIMP_STATUS %in% 'G-CIMP'] = TRUE
+boundData$G_CIMP_STATUS[!boundData$G_CIMP_STATUS %in% 'TRUE'] = FALSE
+boundData$G_CIMP_STATUS = as.factor(boundData$G_CIMP_STATUS)
+boundData = boundData[,c(1:11,13,14,17,18)]
 
 ############################################# Subset the Subtype cases indivdually ##################################
 
@@ -49,6 +51,7 @@ sur.fit.cd44 = survfit(data.surv.cd44~CDE_radiation_any, cd44Patients)
 # sur.fit.cd133 = survfit(data.surv.cd133~CDE_chemo_tmz, cd133Patients)
 # sur.fit.cd44 = survfit(data.surv.cd44~CDE_chemo_tmz, cd44Patients)
 
+par(mfrow=c(1,1))
 plot(sur.fit.cd133, main='CD133 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'), cex.axis=1.33, cex.lab=1.33,
      cex=1.75, conf.int=F, lwd=1.33)
@@ -58,9 +61,8 @@ legend('topright', c('FALSE', 'TRUE'), title="Radiation",
 
 summary(data.surv.cd133)
 test.cd133 = surv_test(data.surv.cd133~as.factor(cd133Patients$CDE_radiation_any))
-# test.cd133 = surv_test(data.surv.cd133~as.factor(cd133Patients$CDE_radiation_any))
 test.cd133
-text(locator(1),labels='p=0.007907', cex=1) #add the p-value to the graph
+text(locator(1),labels='p=1.709e-06', cex=1) #add the p-value to the graph
 
 plot(sur.fit.cd44, main='CD44 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'), cex.axis=1.33, cex.lab=1.33,
@@ -71,15 +73,14 @@ legend('topright', c('FALSE', 'TRUE'), title="Radiation",
 summary(data.surv.cd44)
 #test for a difference between curves
 test.cd44 = surv_test(data.surv.cd44~as.factor(cd44Patients$CDE_radiation_any))
-# test.cd44 = surv_test(data.surv.cd44~as.factor(cd44Patients$CDE_radiation_any))
 test.cd44
-text(locator(1),labels='p=0.0005704', cex=1) #add the p-value to the graph
+text(locator(1),labels='p=0.01078', cex=1) #add the p-value to the graph
 
 data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
 sur.fit = survfit(data.surv ~ subtype, boundData)
 par(mfrow=c(1,1))
 plot(sur.fit, main='TCGA GBM cohort all patients classified by subtype',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'), cex.axis=1.33, cex.lab=1.33,
+     col=c("red",'blue'),
      cex=1.75, conf.int=F, lwd=1.33)
 legend('topright', c('CD133', 'CD44'), title="Coexpression subtype",
        col=c("red",'blue'),
@@ -89,3 +90,42 @@ summary(data.surv)
 test = surv_test(data.surv~as.factor(boundData$subtype))
 test
 ##########################################################################################
+
+#### Look at radiation ####
+sur.fit = survfit(data.surv~CDE_radiation_adjuvant, cd133Patients)
+
+plot(sur.fit, main='TCGA GBM cohort CD133 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
+
+legend('topright', c('FALSE', 'TRUE'), title="Adjuvant radiation",
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+
+summary(data.surv)
+#test for a difference between curves
+test = surv_test(data.surv~as.factor(cd133Patients$CDE_radiation_adjuvant))#, subset=!boundData$subtype %in% "intermediate")
+test
+text(locator(1),labels='p=1.4e-06', cex=1) #add the p-value to the graph
+
+
+
+#### CD44 and radiation ####
+data.surv = Surv(cd44Patients$CDE_survival_time, event=cd44Patients$X_EVENT)
+sur.fit = survfit(data.surv~CDE_radiation_adjuvant, cd44Patients)
+
+plot(sur.fit, main='TCGA GBM cohort CD44 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     xlim=c(0,1600), 
+     cex=1.75, conf.int=F, lwd=1.33)
+
+legend('topright', c('FALSE', 'TRUE'), title="Adjuvant radiation",
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+
+summary(data.surv)
+#test for a difference between curves
+test = surv_test(data.surv~as.factor(cd44Patients$CDE_radiation_adjuvant))#, subset=!boundData$subtype %in% "intermediate")
+test
+text(locator(1),labels='p=0.004', cex=1) #add the p-value to the graph

@@ -3,7 +3,7 @@ library(coin)
 library(ggplot2)
 
 source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
-
+source("~/Documents/Rscripts/multiplot.R")
 ############################################## IO and general munging #############################################
 # Load the signature
 verhaakSignature = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/survival/140530_liberalSignatureScores2SD.txt", row.names=1)
@@ -38,3 +38,22 @@ data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
 coxPH = coxph(data.surv ~  subtype +  CDE_DxAge + CDE_chemo_tmz+  CDE_radiation_any + gender, 
               data=boundData, na.action="na.omit")
 summary(coxPH)
+
+
+############################################# Investigate Classical and Neural survival ##################################
+head(boundData)
+classical = boundData[boundData$GeneExp_Subtype.x %in% 'Classical',]
+neural = boundData[boundData$GeneExp_Subtype.x %in% 'Neural',]
+
+neuralPlot = ggplot(data=classical, aes(x=subtype, y=CDE_survival_time, fill=subtype)) + geom_boxplot() + guides(fill=FALSE) +
+            xlab("Subtype") + ylab("Survival") + # Set axis labels
+            ggtitle("Survival of Classical GBMs\n by coexpression subtype") + theme_bw(base_size=20)
+
+classPlot = ggplot(data=neural, aes(x=subtype, y=CDE_survival_time, fill=subtype)) + geom_boxplot() + guides(fill=FALSE) +
+            xlab("Subtype") + ylab("Survival") + # Set axis labels
+            ggtitle("Survival of Neural GBMs\n by coexpression subtype") + theme_bw(base_size=20)
+
+multiplot(neuralPlot, classPlot, cols=2)
+
+t.test(CDE_survival_time ~ subtype, data=classical)
+t.test(CDE_survival_time ~ subtype, data=neural)

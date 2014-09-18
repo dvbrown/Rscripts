@@ -89,7 +89,6 @@ test = surv_test(data.surv~as.factor(boundData$subtype))
 test
 ##########################################################################################
 
-
 #### Look at radiation ####
 sur.fit = survfit(data.surv~CDE_radiation_adjuvant, cd133Patients)
 
