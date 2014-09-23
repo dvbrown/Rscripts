@@ -28,8 +28,8 @@ plotHeatMap <- function (signatureScore, sampleName) {
     # Arg 2, a string representing the sampleName. Will be used for the file name
     fileName = paste(sampleName, 'heatMap.pdf', sep='_')
     pdf(fileName, width=11.69, height=8.27, useDingbats=FALSE)
-    heatmap.2(t(signatureScore), cexRow=1.5, cexCol=0.6, main=sampleName, 
-            keysize=1, trace="none", density.info="none", dendrogram="both", xlab="Samples", col=myPalette,
+    heatmap.2(t(signatureScore), cexRow=1.5, cexCol=0.6, main=sampleName, Rowv=colnames(signatureScore),
+            keysize=1, trace="none", density.info="none", dendrogram="column", xlab="Samples", col=myPalette,
             offsetRow=c(1,1), margins=c(7,7), labRow=colnames(signatureScore), labCol=row.names(signatureScore))
   dev.off()
 }
