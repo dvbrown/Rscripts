@@ -1,4 +1,9 @@
+library(sqldf)
+library(GSVA)
+library(gplots)
+
 setwd('~/Documents/public-datasets/RNA-seq/anoop2014_singleCellGBM/')
+db <- dbConnect(SQLite(), dbname='~/Documents/public-datasets/cancerBrowser/deDupAgilent/coexpression.sqlite')
 
 subsetSamples <- function (dataFrame, sampleNameStub) {
     # The dataframe with the measurements
@@ -9,6 +14,22 @@ subsetSamples <- function (dataFrame, sampleNameStub) {
     return (result)
 }
 
+measureSignatures <- function (dataFrame, signatureList) {
+    # First argument is the dataframe containing the gene expression measurments
+    # Second argument is the list containing the names of genes in the signature
+    dataMatrix = as.matrix(dataFrame)
+    sigScore = gsva(dataMatrix, signatureList,  rnaseq=F, verbose=T, parallel.sz=1)
+    result = t(sigScore$es.obs)
+    return (result)
+}
+
+
+dbListTables(db)
+cd133Sig = dbReadTable(db, "cd133CuttOff")
+cd44Sig = dbReadTable(db, "cd44CuttOff")
+cd15 = dbReadTable(db, "cd15CuttOff")
+signatures = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), 'CD15' = row.names(cd15))
+rm(cd133Sig, cd44Sig, cd15)
 
 data = read.delim('GSE57872_GBM_data_matrix.txt', row.names=1)
 annotation = read.delim('sample.txt')
@@ -20,3 +41,5 @@ mgh28Data = subsetSamples(data, 'MGH28')
 mgh29Data = subsetSamples(data, 'MGH29')
 mgh30Data = subsetSamples(data, 'MGH30')
 mgh31Data = subsetSamples(data, 'MGH31')
+
+
