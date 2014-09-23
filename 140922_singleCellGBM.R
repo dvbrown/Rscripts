@@ -22,6 +22,18 @@ measureSignatures <- function (dataFrame, signatureList) {
     result = t(sigScore$es.obs)
     return (result)
 }
+
+plotHeatMap <- function (signatureScore, sampleName) {
+    # Argument 1, a numeric matrix with the signature scores
+    # Arg 2, a string representing the sampleName. Will be used for the file name
+    fileName = paste(sampleName, 'heatMap.pdf', sep='_')
+    pdf(fileName, width=11.69, height=8.27, useDingbats=FALSE)
+    heatmap.2(t(signatureScore), cexRow=1.5, cexCol=0.6, main=sampleName, 
+            keysize=1, trace="none", density.info="none", dendrogram="both", xlab="Samples", col=myPalette,
+            offsetRow=c(1,1), margins=c(7,7), labRow=colnames(signatureScore), labCol=row.names(signatureScore))
+  dev.off()
+}
+
 ############################################## IO #############################################
 
 dbListTables(db)
@@ -52,8 +64,10 @@ mgh30Signature = measureSignatures(mgh30Data, signatures)
 mgh31Signature = measureSignatures(mgh31Data, signatures)
 
 ############################################## Heatmaps #############################################
-myPalette <- colorRampPalette(c("green", "black", "red"))(n = 1000)
+myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 
-heatmap.2(t(mgh26Signature), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Anoop et al", 
-          keysize=1, trace="none", density.info="none", dendrogram="both", xlab="Samples", col=myPalette,
-          offsetRow=c(1,1), margins=c(2,7.5), labRow=colnames(mgh26Signature), labCol=row.names(mgh26Signature))
+plotHeatMap(mgh26Signature, 'MGH26')
+plotHeatMap(mgh28Signature, 'MGH28')
+plotHeatMap(mgh29Signature, 'MGH29')
+plotHeatMap(mgh30Signature, 'MGH30')
+plotHeatMap(mgh31Signature, 'MGH31')
