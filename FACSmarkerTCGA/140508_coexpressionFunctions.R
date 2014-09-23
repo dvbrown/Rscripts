@@ -203,3 +203,12 @@ callMarkerSubtype <- function (signatureScore, CD133cutoff, CD44cutoff) {
     signatureScore$subtype = as.factor(signatureScore$subtype)
     return (signatureScore)
 }
+
+measureSignatures <- function (dataFrame, signatureList) {
+    # First argument is the dataframe containing the gene expression measurments
+    # Second argument is the list containing the names of genes in the signature
+    dataMatrix = as.matrix(dataFrame)
+    sigScore = gsva(dataMatrix, signatureList,  rnaseq=F, verbose=T, parallel.sz=1)
+    result = t(sigScore$es.obs)
+    return (result)
+}

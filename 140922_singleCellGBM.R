@@ -23,7 +23,6 @@ measureSignatures <- function (dataFrame, signatureList) {
     return (result)
 }
 
-
 dbListTables(db)
 cd133Sig = dbReadTable(db, "cd133CuttOff")
 cd44Sig = dbReadTable(db, "cd44CuttOff")
@@ -42,4 +41,4 @@ mgh29Data = subsetSamples(data, 'MGH29')
 mgh30Data = subsetSamples(data, 'MGH30')
 mgh31Data = subsetSamples(data, 'MGH31')
 
-
+mgh26Signature = measureSignatures(mgh26Data, signatures)
