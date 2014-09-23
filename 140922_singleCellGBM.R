@@ -40,7 +40,8 @@ dbListTables(db)
 cd133Sig = dbReadTable(db, "cd133CuttOff")
 cd44Sig = dbReadTable(db, "cd44CuttOff")
 cd15 = dbReadTable(db, "cd15CuttOff")
-signatures = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), 'CD15' = row.names(cd15))
+signatures = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig)
+                  ,'CD15' = row.names(cd15))
 rm(cd133Sig, cd44Sig, cd15)
 
 data = read.delim('GSE57872_GBM_data_matrix.txt', row.names=1)
@@ -71,3 +72,8 @@ plotHeatMap(mgh28Signature, 'MGH28')
 plotHeatMap(mgh29Signature, 'MGH29')
 plotHeatMap(mgh30Signature, 'MGH30')
 plotHeatMap(mgh31Signature, 'MGH31')
+
+############################################## Process the tumour bulk #############################################
+bulk = data[,c('MGH26Tumor','MGH28Tumor', 'MGH29Tumor', 'MGH30Tumor', 'MGH31Tumor')]
+bulkSignature = measureSignatures(bulk, signatures)
+plotHeatMap(bulkSignature, 'Tumor bulk')
