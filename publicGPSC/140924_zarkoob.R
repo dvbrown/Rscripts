@@ -8,15 +8,15 @@ source('~/Documents/Rscripts/multiplot.R')
 ##################### Build the genelist ###########################
 
 library(annotate)
-library(hgu133a2.db)
-geneIDs = ls(hgu133a2ENTREZID)
+library(hgu133plus2.db)
+geneIDs = ls(hgu133plus2ENTREZID)
 
 #get gene ID numbers from the annptation package allowing for multiple probes to match mulitple genes
-geneSymbols <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2SYMBOL),
+geneSymbols <- as.character(unlist(lapply(mget(geneIDs,env=hgu133plus2SYMBOL),
                                           function (symbol) { return(paste(symbol,collapse="; ")) } )))
-geneNames <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2GENENAME),
+geneNames <- as.character(unlist(lapply(mget(geneIDs,env=hgu133plus2GENENAME),
                                         function (name) { return(paste(name,collapse="; ")) } )))
-unigene <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2UNIGENE),
+unigene <- as.character(unlist(lapply(mget(geneIDs,env=hgu133plus2UNIGENE),
                                       function (unigeneID) { return(paste(unigeneID,collapse="; ")) } )))
 
 #strip the Hs from the start of unigene reference
@@ -100,3 +100,13 @@ heatmap.2(topNorm, cexRow=0.8, main="Gene expression profiles CD133 sorted GPSCs
           keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="both", 
           ColSideColors=as.character(dm$colour), labRow=NA, labCol=name, 
           offsetRow=c(1,1), margins=c(15,4))
+
+# Take the probe averages
+summariseData = avereps(data, ID=genelist$GeneSymbol)
+# Remove NAs
+summariseData = summariseData[row.names(summariseData) != 'NA' ,]
+
+##################### Export data ###########################
+write.table(norm, '../analysis/140923_rmaNormalised.txt', sep='\t')
+write.table(summariseData, '../analysis/140923_zarookGEM.txt', sep='\t')
+write.table(topNorm, '../analysis/140923_top500.txt', sep='\t')
