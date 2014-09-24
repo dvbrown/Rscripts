@@ -47,7 +47,7 @@ par(mfrow=(c(1,1)))
 
 ##################### Render the prinical components ###########################
 
-dm$patient = as.factor(c('Sample 1', 'Sample 1', 'Sample 2','Sample 2','Sample 1','Sample 1','Sample 2', 'Sample 1', 'Sample 2'))
+dm$patient = as.factor(c('Sample 1', 'Sample 1', 'Sample 2','Sample 2','Sample 1','Sample 1','Sample 2', 'Sample 2'))
 dm$tissue = as.factor(c('GBM', 'GBM','GBM','GBM', 'Normal', 'Normal', 'Normal', 'Normal'))
 pca = princomp(norm)
 pcaDf = as.data.frame(cbind(pca$loadings[,1], pca$loadings[,2]))
@@ -73,3 +73,30 @@ g3 = ggplot(data=pcaDf, aes(x=V1, y=V2, color=subpopulation)) +
     theme_bw(base_size=18)
 g3
 multiplot(g, g2,g3, cols=2)
+
+##################### Make a heatmap ###########################
+dm$colour = c("blue", "red", "blue", "red", "blue", "red", "blue", "red")
+dm$colour = as.factor(dm$colour)
+name = paste(dm$patient, dm$tissue, dm$subpopulation)
+
+# Extract median absolute deviation and take the top 500
+madData = apply(norm, 1, mad)
+
+madDataSort = as.data.frame(madData)
+madDataSort$probe = row.names(madDataSort)
+colnames(madDataSort) = c('value', 'probe')
+madDataSort = sort.dataframe(madDataSort, 1, highFirst=T)
+top500 = row.names(madDataSort[c(1:500),])
+topNorm = norm[top500,]
+# topNorm = sort.dataframe(topNorm, 1, highFirst=T)
+name = paste(dm$patient, dm$subpopulation)
+
+heatmap.2(topNorm, cexRow=0.8, main="Gene expression profiles CD133 sorted GPSCs", scale="row",
+          Colv=as.factor(dm$colour), keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(dm$colour), labRow=NA,labCol=name, 
+          offsetRow=c(1,1), margins=c(15,4))
+
+heatmap.2(topNorm, cexRow=0.8, main="Gene expression profiles CD133 sorted GPSCs", scale="row",
+          keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="both", 
+          ColSideColors=as.character(dm$colour), labRow=NA, labCol=name, 
+          offsetRow=c(1,1), margins=c(15,4))
