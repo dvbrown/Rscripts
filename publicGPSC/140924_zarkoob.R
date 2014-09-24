@@ -32,14 +32,44 @@ list.files()
 
 rawData = ReadAffy()
 dm = readTargets('../designMatrix.txt')
+dm$cellLine = paste(dm[,2], dm$suorce, dm$subpopulation)
 myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 
 par(mfrow=(c(2,1)))
 boxData = exprs(rawData)
 colnames(boxData) = dm$cellLine
-boxplot(rawData, col=rainbow(21), main='Shats unNormalised data', las=1, mar=c(5,5,5,2))
+boxplot(rawData, col=rainbow(21), main='Zarook unNormalised data', las=1, mar=c(5,5,5,2))
 data = rma(rawData, verbose=T)
 norm = exprs(data)
 colnames(norm) = dm$cellLine
-boxplot(norm, col=rainbow(21), main='Shats normalised data', las=2, mar=c(5,5,5,2))
+boxplot(norm, col=rainbow(21), main='Zarook normalised data', las=2, mar=c(5,5,5,2))
 par(mfrow=(c(1,1)))
+
+##################### Render the prinical components ###########################
+
+dm$patient = as.factor(c('Sample 1', 'Sample 1', 'Sample 2','Sample 2','Sample 1','Sample 1','Sample 2', 'Sample 1', 'Sample 2'))
+dm$tissue = as.factor(c('GBM', 'GBM','GBM','GBM', 'Normal', 'Normal', 'Normal', 'Normal'))
+pca = princomp(norm)
+pcaDf = as.data.frame(cbind(pca$loadings[,1], pca$loadings[,2]))
+pcaDf = cbind(pcaDf, dm)
+dd_text = dm$suorce
+
+g = ggplot(data=pcaDf, aes(x=V1, y=V2, color=patient)) + 
+    geom_point(shape=19) + #geom_smooth(method=lm, colour='red') +
+    xlab("PC1") + ylab("PC2") + # Set axis labels
+    ggtitle("Principal component analysis Shats 2011") +  # Set title
+    theme_bw(base_size=18)
+g
+g2 = ggplot(data=pcaDf, aes(x=V1, y=V2, color=tissue)) + 
+    geom_point(shape=19) + #geom_smooth(method=lm, colour='red') +
+    xlab("PC1") + ylab("PC2") + # Set axis labels
+    ggtitle("Principal component analysis Shats 2011") +  # Set title
+    theme_bw(base_size=18)
+g2
+g3 = ggplot(data=pcaDf, aes(x=V1, y=V2, color=subpopulation)) + 
+    geom_point(shape=19) + #geom_smooth(method=lm, colour='red') +
+    xlab("PC1") + ylab("PC2") + # Set axis labels
+    ggtitle("Principal component analysis Shats 2011") +  # Set title
+    theme_bw(base_size=18)
+g3
+multiplot(g, g2,g3, cols=2)
