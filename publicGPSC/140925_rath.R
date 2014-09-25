@@ -101,3 +101,13 @@ heatmap.2(topNorm, cexRow=0.8, main="Gene expression profiles CD133 sorted GPSCs
           keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="both", 
           ColSideColors=as.character(dmCut$colour), labRow=NA, labCol=name, 
           offsetRow=c(1,1), margins=c(15,4))
+
+# Take the probe averages
+summariseData = avereps(data, ID=genelist$GeneSymbol)
+# Remove NAs
+summariseData = summariseData[row.names(summariseData) != 'NA' ,]
+
+##################### Export data ###########################
+write.table(norm, '../analysis/140911_rmaNormalised.txt', sep='\t')
+write.table(summariseData, '../analysis/140911_ruthGEM.txt', sep='\t')
+write.table(topNorm, '../analysis/140911_top500.txt', sep='\t')
