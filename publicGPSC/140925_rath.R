@@ -5,6 +5,27 @@ library(ggplot2)
 source('~/Documents/Rscripts/120704-sortDataFrame.R')
 source('~/Documents/Rscripts/multiplot.R')
 
+##################### Build the genelist ###########################
+
+library(annotate)
+library(hgu133a2.db)
+geneIDs = ls(hgu133a2ENTREZID)
+
+#get gene ID numbers from the annptation package allowing for multiple probes to match mulitple genes
+geneSymbols <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2SYMBOL),
+                                          function (symbol) { return(paste(symbol,collapse="; ")) } )))
+geneNames <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2GENENAME),
+                                        function (name) { return(paste(name,collapse="; ")) } )))
+unigene <- as.character(unlist(lapply(mget(geneIDs,env=hgu133a2UNIGENE),
+                                      function (unigeneID) { return(paste(unigeneID,collapse="; ")) } )))
+
+#strip the Hs from the start of unigene reference
+unigene <- gsub("Hs\\.","",unigene)
+
+#read the gene annotations into a dataframe for use in the topTable function of limma
+genelist <- data.frame(GeneID=geneIDs,GeneSymbol=geneSymbols,GeneName=geneNames)
+rm(geneSymbols, geneNames, unigene)
+
 ##################### IO ###########################
 setwd('~/Documents/public-datasets/GPSC_subgroups/rath2012_coCultureAstro/GSE37120_RAW/')
 list.files()
@@ -56,8 +77,8 @@ g3
 multiplot(g, g2,g3, cols=2)
 
 ##################### Make a heatmap ###########################
-dm$colour = c("blue", "blue", "red", "red", "blue", "blue", "red", "red")
-dm$colour = as.factor(dm$colour)
+dmCut$colour = c("blue", "blue", "red", "red", "blue", "blue", "red", "red")
+dmCut$colour = as.factor(dmCut$colour)
 
 # Extract median absolute deviation and take the top 500
 madData = apply(norm, 1, mad)
@@ -69,14 +90,14 @@ madDataSort = sort.dataframe(madDataSort, 1, highFirst=T)
 top500 = row.names(madDataSort[c(1:500),])
 topNorm = norm[top500,]
 # topNorm = sort.dataframe(topNorm, 1, highFirst=T)
-name = paste(dm$Source, dm$Subpopulation)
+name = paste(dmCut$sample, dmCut$Replicate)
 
 heatmap.2(topNorm, cexRow=0.8, main="Gene expression profiles CD133 sorted GPSCs", scale="row",
-          Colv=as.factor(dm$colour), keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
-          ColSideColors=as.character(dm$colour), labRow=NA,labCol=name, 
-          offsetRow=c(1,1), margins=c(15,4))
+          Colv=as.factor(dmCut$colour), keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(dmCut$colour), labRow=NA,labCol=name, 
+          offsetRow=c(1,1), margins=c(10,4))
 
 heatmap.2(topNorm, cexRow=0.8, main="Gene expression profiles CD133 sorted GPSCs", scale="row",
           keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="both", 
-          ColSideColors=as.character(dm$colour), labRow=NA, labCol=name, 
+          ColSideColors=as.character(dmCut$colour), labRow=NA, labCol=name, 
           offsetRow=c(1,1), margins=c(15,4))
