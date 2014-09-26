@@ -1,6 +1,7 @@
 library(sqldf)
 library(GSVA)
 library(gplots)
+library(ggplot2)
 
 setwd('~/Documents/public-datasets/RNA-seq/anoop2014_singleCellGBM/')
 db <- dbConnect(SQLite(), dbname='~/Documents/public-datasets/cancerBrowser/deDupAgilent/coexpression.sqlite')
@@ -78,6 +79,8 @@ bulk = data[,c('MGH26Tumor','MGH28Tumor', 'MGH29Tumor', 'MGH30Tumor', 'MGH31Tumo
 bulkSignature = measureSignatures(bulk, signatures)
 plotHeatMap(bulkSignature, 'Tumor bulk')
 
+############################################## Plot all patients on an axis of CD133 and CD44 scores #############################################
+
 # Stick the signature scores together
 mgh26Signature = as.data.frame(mgh26Signature)
 mgh28Signature = as.data.frame(mgh28Signature)
@@ -89,3 +92,14 @@ mgh28Signature$Patient = 'MGH28'
 mgh29Signature$Patient = 'MGH29'
 mgh30Signature$Patient = 'MGH30'
 mgh31Signature$Patient = 'MGH31'
+
+# Output
+signatureScores = rbind(mgh26Signature, mgh28Signature, mgh29Signature, mgh30Signature, mgh31Signature)
+# write.table(signatureScores, './140926_signatureScoresAllPat.txt', sep='\t')
+
+# Draw scatterplot
+ggplot(data=signatureScores, aes(x=CD133, y=CD44)) + 
+    geom_point(shape=19, alpha=1/4) + geom_smooth(method=lm, colour='red') +
+    xlab("CD133 signatures") + ylab("CD44 signatures") + # Set axis labels
+    ggtitle("The signature scores") +  # Set title
+    theme_bw(base_size=18)
