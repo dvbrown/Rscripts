@@ -77,3 +77,15 @@ plotHeatMap(mgh31Signature, 'MGH31')
 bulk = data[,c('MGH26Tumor','MGH28Tumor', 'MGH29Tumor', 'MGH30Tumor', 'MGH31Tumor')]
 bulkSignature = measureSignatures(bulk, signatures)
 plotHeatMap(bulkSignature, 'Tumor bulk')
+
+# Stick the signature scores together
+mgh26Signature = as.data.frame(mgh26Signature)
+mgh28Signature = as.data.frame(mgh28Signature)
+mgh29Signature = as.data.frame(mgh29Signature)
+mgh30Signature = as.data.frame(mgh30Signature)
+mgh31Signature = as.data.frame(mgh31Signature)
+mgh26Signature$Patient = 'MGH26'
+mgh28Signature$Patient = 'MGH28'
+mgh29Signature$Patient = 'MGH29'
+mgh30Signature$Patient = 'MGH30'
+mgh31Signature$Patient = 'MGH31'
