@@ -97,9 +97,12 @@ mgh31Signature$Patient = 'MGH31'
 signatureScores = rbind(mgh26Signature, mgh28Signature, mgh29Signature, mgh30Signature, mgh31Signature)
 # write.table(signatureScores, './140926_signatureScoresAllPat.txt', sep='\t')
 
+cbPalette = c('cornflowerblue', 'darkgreen', 'darkred', 'magenta4', 'mediumblue')
+
 # Draw scatterplot
-ggplot(data=signatureScores, aes(x=CD133, y=CD44)) + 
-    geom_point(shape=19, alpha=1/4) + geom_smooth(method=lm, colour='red') +
+ggplot(data=signatureScores, aes(x=CD133, y=CD44, color=Patient)) + 
+    geom_point(shape=19, alpha=1) + geom_smooth(method=lm, colour='black') +
+    scale_fill_manual(values=cbPalette) +
     xlab("CD133 signatures") + ylab("CD44 signatures") + # Set axis labels
-    ggtitle("The signature scores") +  # Set title
+    ggtitle("Anoop et al 2014 single cell RNAseq\nall patients by coexpression signature score") +  # Set title
     theme_bw(base_size=18)
