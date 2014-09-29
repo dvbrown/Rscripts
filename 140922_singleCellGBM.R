@@ -68,11 +68,11 @@ mgh31Signature = measureSignatures(mgh31Data, signatures)
 ############################################## Heatmaps #############################################
 myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 
-plotHeatMap(mgh26Signature, 'MGH26')
-plotHeatMap(mgh28Signature, 'MGH28')
-plotHeatMap(mgh29Signature, 'MGH29')
-plotHeatMap(mgh30Signature, 'MGH30')
-plotHeatMap(mgh31Signature, 'MGH31')
+# plotHeatMap(mgh26Signature, 'MGH26')
+# plotHeatMap(mgh28Signature, 'MGH28')
+# plotHeatMap(mgh29Signature, 'MGH29')
+# plotHeatMap(mgh30Signature, 'MGH30')
+# plotHeatMap(mgh31Signature, 'MGH31')
 
 ############################################## Process the tumour bulk #############################################
 bulk = data[,c('MGH26Tumor','MGH28Tumor', 'MGH29Tumor', 'MGH30Tumor', 'MGH31Tumor')]
