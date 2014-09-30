@@ -48,6 +48,7 @@ rm(cd133Sig, cd44Sig, cd15)
 data = read.delim('GSE57872_GBM_data_matrix.txt', row.names=1)
 annotation = read.delim('sample.txt')
 
+dbDisconnect(db)
 ############################################### Extract the interesting samples #########################
 
 interesting = c('MGH26', 'MGH28', 'MGH29', 'MGH30', 'MGH31')
@@ -57,6 +58,8 @@ mgh29Data = subsetSamples(data, 'MGH29')
 mgh30Data = subsetSamples(data, 'MGH30')
 mgh31Data = subsetSamples(data, 'MGH31')
 
+csc6Data = subsetSamples(data, 'CSC6')
+csc8Data = subsetSamples(data, 'CSC8')
 ############################################## GSVA #############################################
 
 mgh26Signature = measureSignatures(mgh26Data, signatures)
@@ -65,6 +68,8 @@ mgh29Signature = measureSignatures(mgh29Data, signatures)
 mgh30Signature = measureSignatures(mgh30Data, signatures)
 mgh31Signature = measureSignatures(mgh31Data, signatures)
 
+csc6Signature = measureSignatures(csc6Data, signatures)
+csc8Signature = measureSignatures(csc8Data, signatures)
 ############################################## Heatmaps #############################################
 myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 
@@ -74,6 +79,8 @@ myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 # plotHeatMap(mgh30Signature, 'MGH30')
 # plotHeatMap(mgh31Signature, 'MGH31')
 
+plotHeatMap(csc6Signature, 'CSC6')
+plotHeatMap(csc8Signature, 'CSC8')
 ############################################## Process the tumour bulk #############################################
 bulk = data[,c('MGH26Tumor','MGH28Tumor', 'MGH29Tumor', 'MGH30Tumor', 'MGH31Tumor')]
 bulkSignature = measureSignatures(bulk, signatures)
@@ -93,9 +100,16 @@ mgh29Signature$Patient = 'MGH29'
 mgh30Signature$Patient = 'MGH30'
 mgh31Signature$Patient = 'MGH31'
 
+csc6Signature = as.data.frame(csc6Signature)
+csc8Signature = as.data.frame(csc8Signature)
+csc6Signature$Origin = 'CSC6'
+csc8Signature$Origin = 'CSC8'
+
 # Output
 signatureScores = rbind(mgh26Signature, mgh28Signature, mgh29Signature, mgh30Signature, mgh31Signature)
 # write.table(signatureScores, './140926_signatureScoresAllPat.txt', sep='\t')
+
+stemSignatureScore = rbind(csc6Signature, csc8Signature)
 
 cbPalette = c('cornflowerblue', 'darkgreen', 'darkred', 'magenta4', 'mediumblue')
 
@@ -105,4 +119,11 @@ ggplot(data=signatureScores, aes(x=CD133, y=CD44, color=Patient)) +
     scale_fill_manual(values=cbPalette) +
     xlab("CD133 signatures") + ylab("CD44 signatures") + # Set axis labels
     ggtitle("Anoop et al 2014 single cell RNAseq\nall patients by coexpression signature score") +  # Set title
+    theme_bw(base_size=18)
+
+ggplot(data=stemSignatureScore, aes(x=CD133, y=CD44, color=Origin)) + 
+    geom_point(shape=19, alpha=1) + geom_smooth(method=lm, colour='black') +
+    scale_fill_manual(values=cbPalette) +
+    xlab("CD133 signature") + ylab("CD44 signature") + # Set axis labels
+    ggtitle("Anoop et al 2014 single cell RNAseq\nall CSC lines by coexpression signature score") +  # Set title
     theme_bw(base_size=18)
