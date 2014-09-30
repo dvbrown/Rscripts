@@ -125,5 +125,13 @@ ggplot(data=stemSignatureScore, aes(x=CD133, y=CD44, color=Origin)) +
     geom_point(shape=19, alpha=1) + geom_smooth(method=lm, colour='black') +
     scale_fill_manual(values=cbPalette) +
     xlab("CD133 signature") + ylab("CD44 signature") + # Set axis labels
-    ggtitle("Anoop et al 2014 single cell RNAseq\nall CSC lines by coexpression signature score") +  # Set title
+    ggtitle("Anoop et al 2014 single cell RNAseq\nall CSC cells by coexpression signature score") +  # Set title
     theme_bw(base_size=18)
+
+############################################### Output #########################
+db <- dbConnect(SQLite(), dbname="~/Documents/public-datasets/RNA-seq/anoop2014_singleCellGBM/singleCellRNAseq.sqlite")
+
+dbWriteTable(conn = db, name = "rawData", value = data, row.names = TRUE)
+dbWriteTable(conn = db, name = "tumourSignatureScores", value = signatureScores, row.names = TRUE)
+dbWriteTable(conn = db, name = "inVitroSigScores", value = stemSignatureScore, row.names = TRUE)
+dbDisconnect(db) 
