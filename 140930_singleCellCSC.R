@@ -36,3 +36,11 @@ geneData = dbReadTable(db, 'rawData', row.names=1)
 
 standard = cutOffDoubPos(sigData, 0.1, 0.1)
 write.table(standard, 'GSEAcutoffs/stemCellsInput/140930_standard.txt', sep='\t', row.names=F)
+
+strict = cutOffDoubPos(sigData, 0.15, 0.15)
+write.table(strict, 'GSEAcutoffs/stemCellsInput/140930_1515.txt', sep='\t', row.names=F)
+
+moreStrict = cutOffDoubPos(sigData, 0.175, 0.175)
+write.table(moreStrict, 'GSEAcutoffs/stemCellsInput/140930_175175.txt', sep='\t', row.names=F)
+
+dbDisconnect(db) 
