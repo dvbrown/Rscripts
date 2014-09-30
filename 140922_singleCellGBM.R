@@ -79,8 +79,8 @@ myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 # plotHeatMap(mgh30Signature, 'MGH30')
 # plotHeatMap(mgh31Signature, 'MGH31')
 
-plotHeatMap(csc6Signature, 'CSC6')
-plotHeatMap(csc8Signature, 'CSC8')
+# plotHeatMap(csc6Signature, 'CSC6')
+# plotHeatMap(csc8Signature, 'CSC8')
 ############################################## Process the tumour bulk #############################################
 bulk = data[,c('MGH26Tumor','MGH28Tumor', 'MGH29Tumor', 'MGH30Tumor', 'MGH31Tumor')]
 bulkSignature = measureSignatures(bulk, signatures)
@@ -107,6 +107,7 @@ csc8Signature$Origin = 'CSC8'
 
 # Output
 signatureScores = rbind(mgh26Signature, mgh28Signature, mgh29Signature, mgh30Signature, mgh31Signature)
+gbmGEM = data[,row.names(signatureScores)]
 # write.table(signatureScores, './140926_signatureScoresAllPat.txt', sep='\t')
 
 stemSignatureScore = rbind(csc6Signature, csc8Signature)
@@ -129,9 +130,13 @@ ggplot(data=stemSignatureScore, aes(x=CD133, y=CD44, color=Origin)) +
     theme_bw(base_size=18)
 
 ############################################### Output #########################
+# Subset the gene expression matrix for the interesting cases
+row.names(signatureScores)
+
+
 db <- dbConnect(SQLite(), dbname="~/Documents/public-datasets/RNA-seq/anoop2014_singleCellGBM/singleCellRNAseq.sqlite")
 
-dbWriteTable(conn = db, name = "rawData", value = data, row.names = TRUE)
-dbWriteTable(conn = db, name = "tumourSignatureScores", value = signatureScores, row.names = TRUE)
-dbWriteTable(conn = db, name = "inVitroSigScores", value = stemSignatureScore, row.names = TRUE)
+# dbWriteTable(conn = db, name = "rawData", value = data, row.names = TRUE)
+# dbWriteTable(conn = db, name = "tumourSignatureScores", value = signatureScores, row.names = TRUE)
+# dbWriteTable(conn = db, name = "inVitroSigScores", value = stemSignatureScore, row.names = TRUE)
 dbDisconnect(db) 

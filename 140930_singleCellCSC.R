@@ -1,4 +1,5 @@
 # This is the same script as 140926_singleCellGBMSegment but for the stem cells
+library(sqldf)
 
 setwd('~/Documents/public-datasets/RNA-seq/anoop2014_singleCellGBM/analysis/')
 source('~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R')
@@ -43,4 +44,4 @@ write.table(strict, 'GSEAcutoffs/stemCellsInput/140930_1515.txt', sep='\t', row.
 moreStrict = cutOffDoubPos(sigData, 0.175, 0.175)
 write.table(moreStrict, 'GSEAcutoffs/stemCellsInput/140930_175175.txt', sep='\t', row.names=F)
 
-dbDisconnect(db) 
+dbDisconnect(db)
