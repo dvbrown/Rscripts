@@ -44,4 +44,7 @@ write.table(strict, 'GSEAcutoffs/stemCellsInput/140930_1515.txt', sep='\t', row.
 moreStrict = cutOffDoubPos(sigData, 0.175, 0.175)
 write.table(moreStrict, 'GSEAcutoffs/stemCellsInput/140930_175175.txt', sep='\t', row.names=F)
 
+subsetGEM = geneData[,row.names(sigData)]
+write.table(subsetGEM, './GSEAcutoffs/stemCellsInput/140930_gem4GSEA.txt', sep='\t')
+
 dbDisconnect(db)

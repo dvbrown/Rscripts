@@ -107,7 +107,6 @@ csc8Signature$Origin = 'CSC8'
 
 # Output
 signatureScores = rbind(mgh26Signature, mgh28Signature, mgh29Signature, mgh30Signature, mgh31Signature)
-gbmGEM = data[,row.names(signatureScores)]
 # write.table(signatureScores, './140926_signatureScoresAllPat.txt', sep='\t')
 
 stemSignatureScore = rbind(csc6Signature, csc8Signature)
