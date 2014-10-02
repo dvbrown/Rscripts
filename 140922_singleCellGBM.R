@@ -111,19 +111,19 @@ signatureScores = rbind(mgh26Signature, mgh28Signature, mgh29Signature, mgh30Sig
 
 stemSignatureScore = rbind(csc6Signature, csc8Signature)
 
-cbPalette = c('cornflowerblue', 'darkgreen', 'darkred', 'magenta4', 'mediumblue')
+cbPalette = c('cornflowerblue', 'red', 'darkorange', 'darkgreen', 'darkorange')
 
 # Draw scatterplot
 ggplot(data=signatureScores, aes(x=CD133, y=CD44, color=Patient)) + 
     geom_point(shape=19, alpha=1) + geom_smooth(method=lm, colour='black') +
-    scale_fill_manual(values=cbPalette) +
+    scale_colour_manual(values=cbPalette) +
     xlab("CD133 signatures") + ylab("CD44 signatures") + # Set axis labels
     ggtitle("Anoop et al 2014 single cell RNAseq\nall patients by coexpression signature score") +  # Set title
     theme_bw(base_size=18)
 
 ggplot(data=stemSignatureScore, aes(x=CD133, y=CD44, color=Origin)) + 
     geom_point(shape=19, alpha=1) + geom_smooth(method=lm, colour='black') +
-    scale_fill_manual(values=cbPalette) +
+    scale_colour_manual(values=cbPalette) +
     xlab("CD133 signature") + ylab("CD44 signature") + # Set axis labels
     ggtitle("Anoop et al 2014 single cell RNAseq\nall CSC cells by coexpression signature score") +  # Set title
     theme_bw(base_size=18)

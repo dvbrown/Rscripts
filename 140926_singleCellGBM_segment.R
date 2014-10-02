@@ -52,19 +52,22 @@ write.table(subsetGEM, './analysis/140926_gem4GSEA.txt', sep='\t')
 write.table(subtype, './analysis/140926_phenotypes.txt', sep='\t', row.names=F)
 
 ##############################################  Vary the cutoffs for determining double positive and use GSEA ############################################## 
-standard = cutOffDoubPos(sigData, 0.1, 0.1)
-write.table(subtype, './analysis/GSEAcutoffs/phenotypes_standard.txt', sep='\t', row.names=F)
+# standard = cutOffDoubPos(sigData, 0.1, 0.1)
+# write.table(subtype, './analysis/GSEAcutoffs/phenotypes_standard.txt', sep='\t', row.names=F)
 
-double0 = cutOffDoubPos(sigData, 0, 0)
-write.table(double0, './analysis/GSEAcutoffs/phenotypes_double0.txt', sep='\t', row.names=F)
+highCD133lowCD44 = cutOffDoubPos(sigData, 0.25, -0.3)
+write.table(highCD133lowCD44, './analysis/GSEAcutoffs/highCD133lowCD44.txt', sep='\t', row.names=F)
 
-cd1330_cd4401 = cutOffDoubPos(sigData, 0, 0.1)
-write.table(cd1330_cd4401, './analysis/GSEAcutoffs/phenotypes_0_01.txt', sep='\t', row.names=F)
-
-cd133175_cd4425 = cutOffDoubPos(sigData, 0.175, 0.25)
-length(cd133175_cd4425[cd133175_cd4425 == 'doublePositive'])
-write.table(cd133175_cd4425, './analysis/GSEAcutoffs/phenotypes_0175_25.txt', sep='\t', row.names=F)
-
-cd13302_cd4425 = cutOffDoubPos(sigData, 0.2, 0.25)
-length(cd13302_cd4425[cd13302_cd4425 == 'doublePositive'])
-write.table(cd13302_cd4425, './analysis/GSEAcutoffs/phenotypes_2_25.txt', sep='\t', row.names=F)
+# double0 = cutOffDoubPos(sigData, 0, 0)
+# write.table(double0, './analysis/GSEAcutoffs/phenotypes_double0.txt', sep='\t', row.names=F)
+# 
+# cd1330_cd4401 = cutOffDoubPos(sigData, 0, 0.1)
+# write.table(cd1330_cd4401, './analysis/GSEAcutoffs/phenotypes_0_01.txt', sep='\t', row.names=F)
+# 
+# cd133175_cd4425 = cutOffDoubPos(sigData, 0.175, 0.25)
+# length(cd133175_cd4425[cd133175_cd4425 == 'doublePositive'])
+# write.table(cd133175_cd4425, './analysis/GSEAcutoffs/phenotypes_0175_25.txt', sep='\t', row.names=F)
+# 
+# cd13302_cd4425 = cutOffDoubPos(sigData, 0.2, 0.25)
+# length(cd13302_cd4425[cd13302_cd4425 == 'doublePositive'])
+# write.table(cd13302_cd4425, './analysis/GSEAcutoffs/phenotypes_2_25.txt', sep='\t', row.names=F)
