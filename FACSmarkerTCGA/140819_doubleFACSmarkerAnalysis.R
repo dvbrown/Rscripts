@@ -65,7 +65,6 @@ correlations[cd44Corr,]$threshold = "CD44"
 correlations[cd15Corr,]$threshold = "CD15"
 correlations[cd44Cd15,]$threshold = "CD44 + CD15"
 
-
 ######################################## Plot the doubles ################################################
 
 cd133_44 = ggplot(data=correlations, aes(x=CD133, y=CD44, color=threshold)) + 

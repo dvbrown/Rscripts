@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+<<<<<<< HEAD 
 source('140211_multiplotGgplot2.R')
 
 backgroundMeanSD <- function (dataFrame) {

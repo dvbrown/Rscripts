@@ -12,7 +12,7 @@ callMarkerSubtype = function(signatureScore, CD133cutoff, CD44cutoff) {
 }
 
 cutOffDoubPos <- function (signatureScore, CD133cutoff, CD44cutoff) {
-  doubPos = signatureScore[signatureScore$CD133 > CD133cutoff & signatureScore$CD44 > CD133cutoff,]
+  doubPos = signatureScore[signatureScore$CD133 > CD133cutoff & signatureScore$CD44 > CD44cutoff,]
   double = row.names(doubPos)
   subtyped = callMarkerSubtype(signatureScore, 0, 0)
   
@@ -25,6 +25,22 @@ cutOffDoubPos <- function (signatureScore, CD133cutoff, CD44cutoff) {
   row.names(subtyped)
   result = subtyped$subtype
   return (result)
+}
+
+cutOffReverse <- function (signatureScore, CD133cutoff, CD44cutoff) {
+    doubPos = signatureScore[signatureScore$CD133 > CD133cutoff & signatureScore$CD44 < CD44cutoff,]
+    double = row.names(doubPos)
+    subtyped = callMarkerSubtype(signatureScore, 0, 0)
+    
+    subtyped$subtype = as.character(subtyped$subtype)
+    subtyped[double,]$subtype = "doublePositive"
+    subtyped$subtype = as.factor(subtyped$subtype)
+    subsetCases = row.names(subtyped)
+    subsetGEM = geneData[,subsetCases]
+    colnames(subsetGEM)
+    row.names(subtyped)
+    result = subtyped$subtype
+    return (result)
 }
 
 setwd('~/Documents/public-datasets/RNA-seq/anoop2014_singleCellGBM/')
@@ -52,10 +68,12 @@ write.table(subsetGEM, './analysis/140926_gem4GSEA.txt', sep='\t')
 write.table(subtype, './analysis/140926_phenotypes.txt', sep='\t', row.names=F)
 
 ##############################################  Vary the cutoffs for determining double positive and use GSEA ############################################## 
-# standard = cutOffDoubPos(sigData, 0.1, 0.1)
-# write.table(subtype, './analysis/GSEAcutoffs/phenotypes_standard.txt', sep='\t', row.names=F)
+standard = cutOffDoubPos(sigData, 0.15, 0.2)
+length(standard[standard == 'doublePositive'])
+write.table(subtype, './analysis/GSEAcutoffs/phenotypes_standard.txt', sep='\t', row.names=F)
 
-highCD133lowCD44 = cutOffDoubPos(sigData, 0.25, -0.3)
+highCD133lowCD44 = cutOffReverse(sigData, 0.25, -0.3)
+length(highCD133lowCD44[highCD133lowCD44 == 'doublePositive'])
 write.table(highCD133lowCD44, './analysis/GSEAcutoffs/highCD133lowCD44.txt', sep='\t', row.names=F)
 
 # double0 = cutOffDoubPos(sigData, 0, 0)
