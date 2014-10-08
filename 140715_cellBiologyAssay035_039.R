@@ -122,4 +122,3 @@ tmzPlot7 = ggplot(data=day7TMZ, aes(x=clone, y=dmsoCorrected, fill=subPop)) +
 #multiplot(growthPlot3, growthPlot7, tmzPlot3, tmzPlot7, cols=2)
 # write.table(day3TMZ, '140715_day3TMZprocessed.txt', sep='\t')
 # write.table(day7TMZ, '140715_day7TMZprocessed.txt', sep='\t')
->>>>>>> 343ad01c8f7b2cbd48b9399071531aad2d73bf2b
