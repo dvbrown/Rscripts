@@ -55,21 +55,18 @@ setwd('~/Documents/Cell_biology/proliferation/Resazurin/140710_039_035/')
 setwd('~/Documents/')
 growthD3 = read.delim('140709_day3Rep.txt')
 growthD7 = read.delim('140714_day7Rep.txt')
-<<<<<<< HEAD
-=======
+
 growthD3$clone = as.factor(growthD3$clone)
 growthD7$clone = as.factor(growthD7$clone)
 growthD3$subPop = as.factor(growthD3$subPop)
 growthD7$subPop = as.factor(growthD7$subPop)
 
 ############################################## means and averages ###############################################
->>>>>>> 343ad01c8f7b2cbd48b9399071531aad2d73bf2b
 
 # Subtract background and take mean and SD
 day3Growth = backgroundMeanSD(growthD3)
 day7Growth = backgroundMeanSD(growthD7)
 
-<<<<<<< HEAD
 #plot replicates
 par(mfrow=c(2,1))
 plot(growthD7$rep1, growthD7$rep2, ylab='replicate 2', xlab='replicate1', main='Consistency day7', pch=16)
