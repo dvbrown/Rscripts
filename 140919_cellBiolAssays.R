@@ -91,8 +91,8 @@ invasion = invasion[c(1:10),]
 
 # Plot Data
 spherePlot = ggplot(data=invasion[invasion$treatment %in% FALSE,], aes(x=patient, y=mean, fill=subpop)) + 
-    scale_fill_manual(values=c("gold", "chartreuse4", "skyblue2", "forestgreen")) +
-    #scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
+    #scale_fill_manual(values=c("gold", "chartreuse4", "skyblue2", "forestgreen")) +
+    scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Surface area of gliomasphere") +
@@ -104,13 +104,50 @@ invasionNorm = normaliseMatrixCD133(invasion)
 invasionSubpop = invasionNorm[[2]]
 
 normPlot = ggplot(invasionSubpop, aes(x=patient, y=norm, fill=subpop)) + 
-    scale_fill_manual(values=c("skyblue2", "forestgreen")) +
-    #scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
+    #scale_fill_manual(values=c("skyblue2", "forestgreen")) +
+    scale_fill_manual(values=c("lightgrey", "white")) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     #geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Surface area of gliomasphere") +
-    ggtitle("Surface area of sphere without matrix") +  # Set title
+    ggtitle("Surface area realtive to double negative") +  # Set title
     # scale_x_continuous(breaks=pretty_breaks(5)) +
-    scale_x_continuous(breaks = round(seq(min(invasionSubpop$norm), max(invasionSubpop$norm), by = 0.5),1)) +
+    scale_y_continuous(breaks = round(seq(0, 9, by = 1),1)) +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 normPlot
+
+multiplot(spherePlot, normPlot)
+
+# write.table(invasion, "./140927_004AND041Analysis/141008_invasionReplicates.txt", sep='\t')
+# write.table(invasionNorm[[2]], "./140927_004AND041Analysis/141008_invasionRNormalised.txt", sep='\t')
+# write.table(invasionNorm[[1]], "./140927_004AND041Analysis/141008_invasionRmatNormalised.txt", sep='\t')
+
+############################################## Analyse ELDA###############################################
+rm(list=ls())
+source('~/Documents/Rscripts/cellBiologyAnalysisFunctions.R')
+setwd("~/Documents/Cell_biology/microscopy/ELDA/140919_041/")
+
+data = read.delim('140924_effienecy.txt')
+data = data[c(1:4),]
+
+tests = read.delim('140924_pairwiseTests.txt')
+tests = tests[c(1:6),]
+
+data$patient = '#041'
+transformedData = data[]
+transformedData[,c(2:4)] = (data[,c(2:4)] ^ -1) * 100
+
+# Dividing by 1.96 gives SE
+ci = transformedData[,3] - transformedData[,2]
+transformedData$se = ci / 1.96
+sd = sqrt(96) * se
+transformedData$sd = sqrt(96) * transformedData$se
+
+eldaPlot = ggplot(transformedData, aes(x=patient, y=Estimate, fill=Group)) + 
+    scale_fill_manual(values=c("gold", "chartreuse4", "skyblue2", "maroon")) +
+    #scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +
+    geom_errorbar(aes(ymin=Estimate-se, ymax=Estimate+se), width=.2, position=position_dodge(0.9)) +
+    xlab("GPSC line") + ylab("Sphere forming efficiency") +
+    ggtitle("GPSC 041") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+eldaPlot
