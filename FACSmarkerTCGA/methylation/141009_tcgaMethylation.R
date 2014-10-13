@@ -23,6 +23,8 @@
 
 ######################################################## IO ######################################################## 
 library(sqldf)
+library(gplots)
+library(RColorBrewer)
 setwd("~/Documents/public-datasets/TCGA/methylation/")
 list.files()
 
@@ -62,5 +64,14 @@ colorMatrix[colorMatrix == "UC"] <- NA # Unable to make call
 colorMatrix[colorMatrix == "ML"] <- 0.125 # methylation loss compared to normal
 colorMatrix[colorMatrix == "MG"] <- 0.25 # methylation gain compared to normal
 
-colorMatrix = apply(calls[,], c(1,2), as.numeric)
-head(colorMatrix)
+numberMatrix = apply(colorMatrix[,], c(1,2), as.numeric)
+head(numberMatrix)
+myPalette <- colorRampPalette(c("white", "black"))(n = 5)
+
+heatmap.2(t(numberMatrix))
+
+heatmap.2(t(numberMatrix), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype and G-CIMP", 
+          Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          ColSideColors=as.character(verhaakSubtypeAll$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
+          offsetRow=c(1,1), margins=c(2,7.5))
+######################################################## Test for differences in the calls between CD44 and CD133 ################################################
