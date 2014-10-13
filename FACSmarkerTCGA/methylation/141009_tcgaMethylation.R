@@ -66,12 +66,15 @@ colorMatrix[colorMatrix == "MG"] <- 0.25 # methylation gain compared to normal
 
 numberMatrix = apply(colorMatrix[,], c(1,2), as.numeric)
 head(numberMatrix)
+write.table(numberMatrix, "./141013_callsConvertNumbers.txt", sep='\t')
 myPalette <- colorRampPalette(c("white", "black"))(n = 5)
 
-heatmap.2(t(numberMatrix))
+######################################################## Take the top 400 genes as Brennan did ################################################
 
-heatmap.2(t(numberMatrix), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype and G-CIMP", 
-          Colv=verhaakSubtypeAll$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
-          ColSideColors=as.character(verhaakSubtypeAll$colours), labRow=colnames(subTypeHeat), xlab="Samples", labCol=NA, 
-          offsetRow=c(1,1), margins=c(2,7.5))
-######################################################## Test for differences in the calls between CD44 and CD133 ################################################
+totalMeth = rowSums(numberMatrix)
+cutOffMeth = quantile.default(totalMeth, probs=0.99, na.rm=T)
+
+dataPresent = dataM[totalMuts >= cutOffMuts,]
+
+totalMuts = rowSums(dataPresent)
+toBsorted = as.data.frame(cbind(dataPresent, totalMuts))
