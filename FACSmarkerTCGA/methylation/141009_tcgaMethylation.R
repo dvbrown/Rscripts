@@ -21,6 +21,7 @@
 # UC: Unable to make call
 # Methylation class confidence scores vary from 0 (no call) to 4 (high confidence).
 
+######################################################## IO ######################################################## 
 library(sqldf)
 setwd("~/Documents/public-datasets/TCGA/methylation/")
 list.files()
@@ -41,9 +42,13 @@ clinical = dbReadTable(db, "clinicalData", row.names=1)
 subs = grep('*.01', row.names(clinical), value=T)
 clinical = clinical[subs,]
     
-# Trim the last 6 characters of the names. THIS IS WHERE I'M UP TO
+# Trim the last 6 characters of the names.
 row.names(clinical) = substr(row.names(clinical), 1, 15)
 colnames(calls) = substr(colnames(calls), 1, 12)
 
 # Subset the clinical data for the methylation cases that are present
 clinicalCalls = clinical[colnames(calls),]
+clinicalCalls = clinicalCalls[, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", 'CDE_chemo_adjuvant_tmz', 'CDE_chemo_tmz',
+                           'CDE_radiation_any', 'CDE_tmz_chemoradiation_standard', 'GeneExp_Subtype', 'G_CIMP_STATUS')]
+
+######################################################## Analysis ######################################################## 
