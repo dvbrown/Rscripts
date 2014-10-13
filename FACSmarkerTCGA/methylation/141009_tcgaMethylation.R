@@ -51,4 +51,16 @@ clinicalCalls = clinical[colnames(calls),]
 clinicalCalls = clinicalCalls[, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", 'CDE_chemo_adjuvant_tmz', 'CDE_chemo_tmz',
                            'CDE_radiation_any', 'CDE_tmz_chemoradiation_standard', 'GeneExp_Subtype', 'G_CIMP_STATUS')]
 
-######################################################## Analysis ######################################################## 
+######################################################## Assign colours to methylation calls ################################################
+head(calls)
+colorMatrix = apply(calls[,], c(1,2), as.character)
+
+colorMatrix[colorMatrix == "UT"] <- 0 # Not methylated tumor
+colorMatrix[colorMatrix == "MT"] <- 0.5 # Is methylated tumor
+colorMatrix[colorMatrix == "ES"] <- 1 # epigenetically silenced tumor
+colorMatrix[colorMatrix == "UC"] <- NA # Unable to make call
+colorMatrix[colorMatrix == "ML"] <- 0.125 # methylation loss compared to normal
+colorMatrix[colorMatrix == "MG"] <- 0.25 # methylation gain compared to normal
+
+colorMatrix = apply(calls[,], c(1,2), as.numeric)
+head(colorMatrix)
