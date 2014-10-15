@@ -9,19 +9,19 @@ backgroundMeanSD <- function (dataFrame) {
     return (dataFrame)
 }
 
-normaliseMatrixCD133 = function(dataFrame) {
+normaliseMatrixDN = function(dataFrame) {
     # Normalise Matrix first
     noMatrix = dataFrame[dataFrame$treatment %in%  FALSE,]
     matrix = dataFrame[dataFrame$treatment %in% TRUE,]
     matrix$matNormalised = matrix$mean / noMatrix$mean
     matrix$matNormalisedSD = matrix$sd / noMatrix$sd
     # Normalise doubleNeg
-    negative = matrix[matrix$subpop %in% 'CD44-/CD133-',]
-    theRest = matrix[!matrix$subpop %in% 'CD44-/CD133-',]
-    theRest$norm = theRest$mean / negative$mean
-    # Return both dataframes
-    result = list(matrix, theRest)
-    return (result)
+#     negative = matrix[matrix$subpop %in% 'CD44-/CD133-',]
+#     theRest = matrix[!matrix$subpop %in% 'CD44-/CD133-',]
+#     theRest$norm = theRest$mean / negative$mean
+#     # Return both dataframes
+#     result = list(matrix, theRest)
+    return (matrix)
 }
 
 setwd("~/Documents/Cell_biology/microscopy/invasion/141014_clone041_039/")
@@ -42,8 +42,14 @@ spherePlot = ggplot(data=invasion[invasion$treatment %in% FALSE,], aes(x=patient
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 spherePlot
 
-invasionNorm = normaliseMatrixCD133(invasion)
-invasionSubpop = invasionNorm[[2]]
+invasionDN = normaliseMatrixDN(invasion)
+
+# Have to manually make the normalisation
+invasionDN$norm = 1
+invasionDN[2,14] = invasionDN[2,12] / invasionDN[1,12]
+invasionDN[4,14] = invasionDN[4,12] / invasionDN[3,12]
+invasionDN[5,14] = invasionDN[5,12] / invasionDN[3,12]
+invasionDN
 
 normPlot = ggplot(invasionSubpop, aes(x=patient, y=norm, fill=subpop)) + 
     #scale_fill_manual(values=c("skyblue2", "forestgreen")) +
