@@ -72,9 +72,9 @@ myPalette <- colorRampPalette(c("white", "black"))(n = 5)
 ######################################################## Take the top 400 genes as Brennan did ################################################
 
 totalMeth = rowSums(numberMatrix)
-cutOffMeth = quantile.default(totalMeth, probs=0.99, na.rm=T)
+cutOffMeth = quantile.default(totalMeth, probs=0.95, na.rm=T)
 
-dataPresent = dataM[totalMuts >= cutOffMuts,]
+methylKeep = numberMatrix[totalMeth >= cutOffMeth,]
 
 totalMuts = rowSums(dataPresent)
 toBsorted = as.data.frame(cbind(dataPresent, totalMuts))
