@@ -1,5 +1,8 @@
+# Note that in this experiment I beleive that clone #035 has been swapped with #039
+# See my lab book #2 pg 95
+
 library(plyr)
-source('140211_multiplotGgplot2.R')
+source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 
 ############################################## Analyse invasion assay ###############################################
 backgroundMeanSD <- function (dataFrame) {
@@ -51,20 +54,60 @@ invasionDN[4,14] = invasionDN[4,12] / invasionDN[3,12]
 invasionDN[5,14] = invasionDN[5,12] / invasionDN[3,12]
 invasionDN
 
-normPlot = ggplot(invasionSubpop, aes(x=patient, y=norm, fill=subpop)) + 
-    #scale_fill_manual(values=c("skyblue2", "forestgreen")) +
-    scale_fill_manual(values=c("lightgrey", "white")) +
+normPlot = ggplot(invasionDN, aes(x=patient, y=norm, fill=subpop)) + 
+    scale_fill_manual(values=colour) +
+    #scale_fill_manual(values=bw) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     #geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Surface area of gliomasphere") +
     ggtitle("Surface area realtive to double negative") +  # Set title
     # scale_x_continuous(breaks=pretty_breaks(5)) +
     scale_y_continuous(breaks = round(seq(0, 9, by = 1),1)) +
+    #geom_hline(yintercept=1) +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 normPlot
 
 multiplot(spherePlot, normPlot)
 
-# write.table(invasion, "./140927_004AND041Analysis/141008_invasionReplicates.txt", sep='\t')
-# write.table(invasionNorm[[2]], "./140927_004AND041Analysis/141008_invasionRNormalised.txt", sep='\t')
-# write.table(invasionNorm[[1]], "./140927_004AND041Analysis/141008_invasionRmatNormalised.txt", sep='\t')
+write.table(invasion, "./141015_meanSDInvasion.txt", sep='\t')
+write.table(invasionDN, "./141015_invasionRNormalised.txt", sep='\t')
+
+rm(list=ls())
+
+############################################## Analyse growth assay ###############################################
+source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
+source('~/Documents/Rscripts/cellBiologyAnalysisFunctions.R')
+
+setwd("~/Documents/Cell_biology/proliferation/Resazurin/141007_3clones/")
+rawData = read.delim("141015_growthDayRepBlanked.txt")
+
+summarisedData = backgroundMeanSD(rawData)
+bw = c("grey21", "grey82", "grey52", "grey97")
+colour = c("chartreuse4", "gold", "skyblue2", "orangered1")
+
+# Plot the raw results
+growthPlot7 = ggplot(summarisedData[summarisedData$treatment %in% 'DMSO',], 
+                     aes(x=patient, y=mean, fill=subpop)) + 
+    #scale_fill_manual(values=colour) +
+    scale_fill_manual(values=bw) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("PDAC") + ylab("Fluorescent intensity") +
+    ggtitle("Comparing growth at day 7 by \nmarker status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+
+# Analyse the temozolomide
+temo = calcDMSOcontrol(summarisedData)
+
+tmzPlot7 = ggplot(data=temo, aes(x=patient, y=dmsoCorrected, fill=subpop)) + 
+    #scale_fill_manual(values=colour) +
+    scale_fill_manual(values=bw) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("PDAC") + ylab("Cell number relative to \nDMSO control") +
+    ggtitle("Temozolomide sensitivty at day 7 by \nmarker status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+
+multiplot(growthPlot7, tmzPlot7)
+
+# write.table(temo, './141015_processedData.txt', sep='\t')
+# write.table(temo, './140919_gpsc041/141008_summarisedTMZ.txt', sep='\t')
