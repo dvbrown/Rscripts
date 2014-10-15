@@ -1,11 +1,7 @@
 library(plyr)
 source('140211_multiplotGgplot2.R')
-source('~/Documents/Rscripts/cellBiologyAnalysisFunctions.R')
 
 ############################################## Analyse invasion assay ###############################################
-rm(list=ls())
-source('~/Documents/Rscripts/cellBiologyAnalysisFunctions.R')
-
 backgroundMeanSD <- function (dataFrame) {
     # Take the dataframe of raw data take the mean and sd
     dataFrame$mean = rowMeans(dataFrame[,c(4:6)], na.rm=T)
@@ -28,11 +24,8 @@ normaliseMatrixCD133 = function(dataFrame) {
     return (result)
 }
 
-############################################## IO ###############################################
 setwd("~/Documents/Cell_biology/microscopy/invasion/141014_clone041_039/")
 rawData = read.delim("141015_InvasionRep.txt")
-
-invasion = backgroundMeanSD(rawData)
 
 # Plot Data
 spherePlot = ggplot(data=invasion[invasion$treatment %in% FALSE,], aes(x=patient, y=mean, fill=subpop)) + 
