@@ -26,11 +26,15 @@ normaliseMatrixCD133 = function(dataFrame) {
 
 setwd("~/Documents/Cell_biology/microscopy/invasion/141014_clone041_039/")
 rawData = read.delim("141015_InvasionRep.txt")
+invasion = backgroundMeanSD(rawData)
+
+bw = c("grey21", "grey82", "grey52", "grey97")
+colour = c("gold", "chartreuse4", "skyblue2", "forestgreen")
 
 # Plot Data
 spherePlot = ggplot(data=invasion[invasion$treatment %in% FALSE,], aes(x=patient, y=mean, fill=subpop)) + 
-    #scale_fill_manual(values=c("gold", "chartreuse4", "skyblue2", "forestgreen")) +
-    scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
+    scale_fill_manual(values=colour) +
+    #scale_fill_manual(values=bw) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Surface area of gliomasphere") +
