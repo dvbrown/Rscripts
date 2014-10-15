@@ -110,4 +110,32 @@ tmzPlot7 = ggplot(data=temo, aes(x=patient, y=dmsoCorrected, fill=subpop)) +
 multiplot(growthPlot7, tmzPlot7)
 
 # write.table(temo, './141015_processedData.txt', sep='\t')
-# write.table(temo, './140919_gpsc041/141008_summarisedTMZ.txt', sep='\t')
+
+############################################## Analyse ELDA assay ###############################################
+rm(list=ls())
+source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
+setwd("~/Documents/Cell_biology/microscopy/ELDA/141007/")
+rawData = read.delim("141015_eldaOutData.txt")
+rawData = rawData[c(1:8),]
+
+bw = c("grey21", "grey82", "grey52", "grey97")
+colour = c("chartreuse4", "gold", "skyblue2", "orangered1")
+
+# Transform to efficiencey
+transformedData = rawData[]
+transformedData[,c(2:4)] = (rawData[,c(2:4)] ^ -1) * 100
+
+# Dividing by 1.96 gives SE
+ci = transformedData[,3] - transformedData[,2]
+transformedData$se = ci / 1.96
+transformedData$sd = sqrt(96) * transformedData$se
+
+eldaPlot = ggplot(transformedData, aes(x=patient, y=Estimate, fill=subpopulation)) + 
+    scale_fill_manual(values=colour) +
+    #scale_fill_manual(values=bw) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +
+    geom_errorbar(aes(ymin=Estimate-se, ymax=Estimate+se), width=.2, position=position_dodge(0.9)) +
+    xlab("GPSC line") + ylab("Sphere forming efficiency") +
+    ggtitle("GPSC 041") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+eldaPlot
