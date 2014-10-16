@@ -21,6 +21,7 @@
 # UC: Unable to make call
 # Methylation class confidence scores vary from 0 (no call) to 4 (high confidence).
 
+# I abandonded this analysis as uninformative
 ######################################################## IO ######################################################## 
 library(sqldf)
 library(gplots)
