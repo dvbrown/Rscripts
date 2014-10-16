@@ -54,3 +54,15 @@ summariseByFactor <- function (dataFrame, factor1, factor2) {
                    se   = sd / sqrt(N) )
   return (result)
 }
+
+takeUnison <- function (clinicalData, genomicData) {
+    # Takes the union of cases in clinical and genomic data.
+    # Sort both datasets so the order is the same
+    samples = intersect(colnames(genomicData), row.names(clinicalData))
+    clinIntersect = clinicalData[samples,]
+    gemIntersect = genomicData[,samples]
+    clinIntersect <- clinIntersect[order(row.names(clinIntersect)),]
+    gemIntersect <- gemIntersect[order(row.names(gemIntersect)),]
+    # Returns a list with clinical data first and genomic data second
+    result = list(clinIntersect, gemIntersect)
+}

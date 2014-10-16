@@ -3,6 +3,7 @@ library(sqldf)
 library(gplots)
 library(RColorBrewer)
 library(limma)
+source("~/Documents/Rscripts/120704-sortDataFrame.R")
 setwd("~/Documents/public-datasets/cancerBrowser/methylation/")
 list.files()
 
@@ -41,3 +42,19 @@ head(h27)
 result = takeUnison(clinical, h27)
 h27Union = result[[2]]
 clinicalUnion = result[[1]]
+
+f = factor(clinicalUnion$subtype)
+design = model.matrix(~0+f)
+colnames(design) = levels(f)
+fit = lmFit(h27Union, design)
+
+cont.matrix = makeContrasts(cd133vscd44="fCD133-fCD44", levels=design)
+fit2  = contrasts.fit(fit, cont.matrix)
+fit2  = eBayes(fit2)
+
+#write the output to a table of differentially expressed genes. Change this value to suit
+result = topTable(fit2, coef=1, number=22277, #genelist=genelist,  
+                  adjust='BH', sort.by='logFC', lfc=0)
+
+head(result,100)
+tail(result,100)
