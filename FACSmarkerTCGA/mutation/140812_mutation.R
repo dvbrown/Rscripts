@@ -103,3 +103,9 @@ fisherTestGene(dataM, 'PIK3CA', dataSubtype)
 
 fisherTestGene(dataM, 'PIK3R1', dataSubtype)
 # p-value = 0.2072
+
+fisherTestGene(dataM, 'PDGFRB', dataSubtype)
+# p-value = 0.5066
+
+fisherTestGene(dataM, 'CDKN2A', dataSubtype)
+# p-value = 0.5066

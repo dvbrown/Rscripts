@@ -1,7 +1,6 @@
 # Note that in this experiment I beleive that clone #035 has been swapped with #039
 # See my lab book #2 pg 95
 
-library(plyr)
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 
 ############################################## Analyse invasion assay ###############################################
@@ -36,8 +35,8 @@ colour = c("gold", "chartreuse4", "skyblue2", "forestgreen")
 
 # Plot Data
 spherePlot = ggplot(data=invasion[invasion$treatment %in% FALSE,], aes(x=patient, y=mean, fill=subpop)) + 
-    scale_fill_manual(values=colour) +
-    #scale_fill_manual(values=bw) +
+    #scale_fill_manual(values=colour) +
+    scale_fill_manual(values=bw) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Surface area of gliomasphere") +
@@ -55,8 +54,8 @@ invasionDN[5,14] = invasionDN[5,12] / invasionDN[3,12]
 invasionDN
 
 normPlot = ggplot(invasionDN, aes(x=patient, y=norm, fill=subpop)) + 
-    scale_fill_manual(values=colour) +
-    #scale_fill_manual(values=bw) +
+    #scale_fill_manual(values=colour) +
+    scale_fill_manual(values=bw) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     #geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Clone") + ylab("Surface area of gliomasphere") +
@@ -72,7 +71,7 @@ multiplot(spherePlot, normPlot)
 write.table(invasion, "./141015_meanSDInvasion.txt", sep='\t')
 write.table(invasionDN, "./141015_invasionRNormalised.txt", sep='\t')
 
-rm(list=ls())
+#rm(list=ls())
 
 ############################################## Analyse growth assay ###############################################
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
@@ -107,12 +106,12 @@ tmzPlot7 = ggplot(data=temo, aes(x=patient, y=dmsoCorrected, fill=subpop)) +
     ggtitle("Temozolomide sensitivty at day 7 by \nmarker status") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 
-multiplot(growthPlot7, tmzPlot7)
+# multiplot(growthPlot7, tmzPlot7)
 
 # write.table(temo, './141015_processedData.txt', sep='\t')
 
 ############################################## Analyse ELDA assay ###############################################
-rm(list=ls())
+#rm(list=ls())
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 setwd("~/Documents/Cell_biology/microscopy/ELDA/141007/")
 rawData = read.delim("141015_eldaOutData.txt")
@@ -131,11 +130,14 @@ transformedData$se = ci / 1.96
 transformedData$sd = sqrt(96) * transformedData$se
 
 eldaPlot = ggplot(transformedData, aes(x=patient, y=Estimate, fill=subpopulation)) + 
-    scale_fill_manual(values=colour) +
-    #scale_fill_manual(values=bw) +
+    #scale_fill_manual(values=colour) +
+    scale_fill_manual(values=bw) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +
     geom_errorbar(aes(ymin=Estimate-se, ymax=Estimate+se), width=.2, position=position_dodge(0.9)) +
     xlab("GPSC line") + ylab("Sphere forming efficiency") +
-    ggtitle("GPSC 041") +  # Set title
+    ggtitle("GPSC 041") + scale_y_continuous(breaks = round(seq(0, 100, by = 5),2)) +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
-eldaPlot
+
+svg("~/Documents/Cell_biology/proliferation/Resazurin//141007_3clones/141015_allExptsTogether.svg", width=11.69, height=8.27)
+multiplot(growthPlot7, tmzPlot7, eldaPlot, spherePlot, normPlot, cols=2)
+dev.off()
