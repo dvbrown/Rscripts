@@ -57,20 +57,12 @@ fit2  = eBayes(fit2)
 
 #write the output to a table of differentially expressed genes. Change this value to suit
 result = topTable(fit2, coef=1, number=22277, #genelist=genelist,  
-                  adjust='BH', sort.by='logFC', lfc=0)
+                  adjust='BH', sort.by='p', lfc=0)
 
 head(result,100)
 results <- decideTests(fit2)
 summary(results)
-result$threshold = as.factor(abs(result$logFC) > 2 & result$adj.P.Val < 0.05)
-
-volcanoCIMP = ggplot(data=result, aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
-    geom_point(alpha=0.4, size=1.75) + scale_colour_manual(values='grey') +
-    xlim(c(-0.2, 0.2)) + ylim(c(0, 1)) +
-    xlab("log2 fold change") + ylab("-log10 FDR adjusted p-value") + # Set axis labels
-    ggtitle("TCGA GBM dataset Infinium HumanMethylation27\n G-CIMP cases retained") +  # Set title
-    theme_bw(base_size=18)
-
+result$threshold = as.factor(abs(result$logFC) > 2 & result$adj.P.Val < 0.1)
 
 ###################################### Remove G-CIMP cases and retest ##########################
 clinicalnoCIMP = clinicalUnion[clinicalUnion$G_CIMP_STATUS %in% "NON G-CIMP",]
@@ -92,23 +84,23 @@ result2 = topTable(fit2, coef=1, number=22277, #genelist=genelist,
                   adjust='BH', sort.by='logFC', lfc=0)
 
 head(result2,100)
-result2 <- decideTests(fit2)
-summary(result2)
+result3 <- decideTests(fit2)
+summary(result3)
 
 ##Construct the volcano plot object.
 ##ighlight genes that have an absolute fold change > 2 and a p-value < Bonferroni cut-off
-result2$threshold = as.factor(abs(result2$logFC) > 2 & result2$adj.P.Val < 0.05)
+result2$threshold = as.factor(abs(result2$logFC) > 2 & result2$adj.P.Val < 0.1)
 
 volcanoNoCIMP = ggplot(data=result2, aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
-    geom_point(alpha=0.4, size=1.75) + scale_colour_manual(values='grey') +
-    xlim(c(-0.2, 0.2)) + ylim(c(0, 1)) +
+    geom_point(alpha=0.4, size=1.75) + scale_colour_manual(values=c('grey', 'blue')) +
+    xlim(c(-0.2, 0.2)) + ylim(c(0, 0.67)) +
     xlab("log2 fold change") + ylab("-log10 FDR adjusted p-value") + # Set axis labels
     ggtitle("TCGA GBM dataset Infinium HumanMethylation27\n G-CIMP cases removed") +  # Set title
     theme_bw(base_size=18)
 
 volcanoCIMP = ggplot(data=result, aes(x=logFC, y=-log10(adj.P.Val), colour=threshold)) +
-    geom_point(alpha=0.4, size=1.75) + scale_colour_manual(values='grey') +
-    xlim(c(-0.2, 0.2)) + ylim(c(0, 1)) +
+    geom_point(alpha=0.4, size=1.75) + scale_colour_manual(values=c('grey', 'blue')) +
+    xlim(c(-0.2, 0.2)) + ylim(c(0, 0.67)) +
     xlab("log2 fold change") + ylab("-log10 FDR adjusted p-value") + # Set axis labels
     ggtitle("TCGA GBM dataset Infinium HumanMethylation27\n G-CIMP cases retained") +  # Set title
     theme_bw(base_size=18)
