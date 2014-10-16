@@ -74,7 +74,15 @@ myPalette <- colorRampPalette(c("white", "black"))(n = 5)
 totalMeth = rowSums(numberMatrix)
 cutOffMeth = quantile.default(totalMeth, probs=0.95, na.rm=T)
 
-methylKeep = numberMatrix[totalMeth >= cutOffMeth,]
+methylKeep = ifelse(totalMeth >= cutOffMeth, TRUE, FALSE)
+methylKeep = methylKeep[methylKeep %in% TRUE]
+length(methylKeep)
+toBsorted = (numberMatrix[names(methylKeep),])
+head(toBsorted)
 
-totalMuts = rowSums(dataPresent)
-toBsorted = as.data.frame(cbind(dataPresent, totalMuts))
+# Make a heatmap where the input is a numeric representation of methylation
+heatmap.2(toBsorted, cexRow=0.5,# main="Somatic mutations segrgated by marker signature", scale='none',
+         # Colv=as.factor(dataSubtype$colours), key=F, trace="none", col=c('white', 'black'), 
+          density.info="none", dendrogram="none", labCol='', col=myPalette,
+          #ColSideColors=as.character(dataSubtype$colours), labRow=row.names(dataPresent), 
+          offsetRow=c(1,1), margins=c(5,7.5)) #xlab="Samples")
