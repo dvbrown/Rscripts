@@ -71,6 +71,9 @@ mydata <- data.frame(methylVariable, fit$cluster)
 
 # Merge the coexpression subtype with k means
 kMclusters = merge.data.frame(mydata[,c(370,371)], clinicalUnion, by.x="row.names", by.y="row.names")
+
+noCIMPtable = table(kMclusters$fit.cluster, kMclusters$subtype)
+fisher.test(noCIMPtable[c(1,2),]) # No significant difference
     
 ###################################### limma analysis ##########################
 f = factor(clinicalUnion$subtype)
