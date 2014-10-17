@@ -46,6 +46,11 @@ result = takeUnison(clinical, h27)
 h27Union = result[[2]]
 clinicalUnion = result[[1]]
 
+
+###################################### K means clustering ##########################
+
+
+###################################### limma analysis ##########################
 f = factor(clinicalUnion$subtype)
 design = model.matrix(~f)
 colnames(design) = levels(f)
