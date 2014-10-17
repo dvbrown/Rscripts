@@ -3,6 +3,7 @@ library(sqldf)
 library(gplots)
 library(RColorBrewer)
 library(limma)
+library(lumi)
 source("~/Documents/Rscripts/120704-sortDataFrame.R")
 source("~/Documents/Rscripts/multiplot.R")
 setwd("~/Documents/public-datasets/cancerBrowser/methylation/")
@@ -46,10 +47,28 @@ result = takeUnison(clinical, h27)
 h27Union = result[[2]]
 clinicalUnion = result[[1]]
 
-
 ###################################### K means clustering ##########################
+# Have a look at the data distribution
+methylMat = as.matrix(h27Union)
+hist(methylMat)
+# Want to use B value or M value or whatever lloks more normal
 
 
+# Extract the 370 of the most variant probes by standard deviation
+sdProbes = apply(methylMat, 1, sd)
+names(sdProbes) = row.names(methylMat)
+sdProbes = sort.int(sdProbes, decreasing=F)
+head(sdProbes, 25)
+subsetting = tail(sdProbes, 370)
+methylVariable = methylMat[names(subsetting),]
+
+# K-Means Cluster Analysis
+fit <- kmeans(methylVariable, 3) # 3 cluster solution
+# get cluster means
+aggregate(methylVariable,by=list(fit$cluster),FUN=mean)
+# append cluster assignment
+mydata <- data.frame(methylVariable, fit$cluster) 
+    
 ###################################### limma analysis ##########################
 f = factor(clinicalUnion$subtype)
 design = model.matrix(~f)
