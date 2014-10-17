@@ -16,7 +16,7 @@
 
 # The methylation calls are as follows:
 # MG: Methylation gain compared to normal ML: Methylation loss compared to normal MT: Methylated in tumor
-# UT: Unmethylated in tumor
+# UT: Unmethylated in tumorcli  
 # ES: Epigenetically silenced
 # UC: Unable to make call
 # Methylation class confidence scores vary from 0 (no call) to 4 (high confidence).
@@ -39,10 +39,10 @@ calls = calls[,c(1:353)]
 
 db <- dbConnect(SQLite(), dbname="~/Documents/public-datasets/cancerBrowser/tcgaData.sqlite")
 dbListTables(db)
-clinical = dbReadTable(db, "clinicalData", row.names=1)
+clinical = dbReadTable(db, "clinicalAllPatients", row.names=1)
 
 # Retain only the ".01 cases" these arew the primary tumours.
-subs = grep('*.01', row.names(clinical), value=T)
+#subs = grep('*.01', row.names(clinical), value=T)
 clinical = clinical[subs,]
     
 # Trim the last 6 characters of the names.

@@ -4,6 +4,7 @@ library(gplots)
 library(RColorBrewer)
 library(limma)
 library(lumi)
+library(ggplot2)
 source("~/Documents/Rscripts/120704-sortDataFrame.R")
 source("~/Documents/Rscripts/multiplot.R")
 setwd("~/Documents/public-datasets/cancerBrowser/methylation/")
@@ -72,8 +73,21 @@ mydata <- data.frame(methylVariable, fit$cluster)
 # Merge the coexpression subtype with k means
 kMclusters = merge.data.frame(mydata[,c(370,371)], clinicalUnion, by.x="row.names", by.y="row.names")
 
-noCIMPtable = table(kMclusters$fit.cluster, kMclusters$subtype)
-fisher.test(noCIMPtable[c(1,2),]) # No significant difference
+noCIMPtable = xtabs(~ subtype + fit.cluster, data = kMclusters)
+fisher.test(noCIMPtable[,c(1,3)]) # No significant difference
+
+write.table(noCIMPtable, './141017_noushmerCoexpOverlap.txt', sep='\t')
+
+# Code CD133 as 1 and CD44 as 0 for the purposes of plotting a scatetr
+kMclusters$fit.cluster = as.numeric(kMclusters$fit.cluster)
+kMclusters$sub = 0
+kMclusters$sub[kMclusters$subtype %in% "CD133"] = 1
+
+ggplot(data=kMclusters, aes(x=fit.cluster, y=sub)) + 
+    geom_point(shape=19, position=position_jitter(width=0.01,height=.05), alpha=0.3) +
+    xlab("methylation cluster") + ylab("CD133 assigned") + # Set axis labels
+    ggtitle("Anoop et al 2014 single cell RNAseq\nall CSC cells by coexpression signature score") +  # Set title
+    theme_bw(base_size=18)
     
 ###################################### limma analysis ##########################
 f = factor(clinicalUnion$subtype)
