@@ -60,14 +60,17 @@ names(sdProbes) = row.names(methylMat)
 sdProbes = sort.int(sdProbes, decreasing=F)
 head(sdProbes, 25)
 subsetting = tail(sdProbes, 370)
-methylVariable = methylMat[names(subsetting),]
+methylVariable = t(methylMat[names(subsetting),])
 
-# K-Means Cluster Analysis
+# K-Means Cluster Analysis. Do this by patients!
 fit <- kmeans(methylVariable, 3) # 3 cluster solution
 # get cluster means
 aggregate(methylVariable,by=list(fit$cluster),FUN=mean)
 # append cluster assignment
-mydata <- data.frame(methylVariable, fit$cluster) 
+mydata <- data.frame(methylVariable, fit$cluster)
+
+# Merge the coexpression subtype with k means
+kMclusters = merge.data.frame(mydata[,c(370,371)], clinicalUnion, by.x="row.names", by.y="row.names")
     
 ###################################### limma analysis ##########################
 f = factor(clinicalUnion$subtype)
