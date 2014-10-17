@@ -26,6 +26,7 @@
 library(sqldf)
 library(gplots)
 library(RColorBrewer)
+library(fmsb)
 setwd("~/Documents/public-datasets/TCGA/methylation/")
 list.files()
 
@@ -43,17 +44,38 @@ clinical = dbReadTable(db, "clinicalAllPatients", row.names=1)
 
 # Retain only the ".01 cases" these arew the primary tumours.
 #subs = grep('*.01', row.names(clinical), value=T)
-clinical = clinical[subs,]
+# clinical = clinical[subs,]
     
 # Trim the last 6 characters of the names.
-row.names(clinical) = substr(row.names(clinical), 1, 15)
-colnames(calls) = substr(colnames(calls), 1, 12)
+# row.names(clinical) = substr(row.names(clinical), 1, 15)
+# colnames(calls) = substr(colnames(calls), 1, 12)
+# 
+# # Subset the clinical data for the methylation cases that are present
+# clinicalCalls = clinical[colnames(calls),]
+# clinicalCalls = clinicalCalls[, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", 'CDE_chemo_adjuvant_tmz', 'CDE_chemo_tmz',
+#                            'CDE_radiation_any', 'CDE_tmz_chemoradiation_standard', 'GeneExp_Subtype', 'G_CIMP_STATUS')]
 
-# Subset the clinical data for the methylation cases that are present
-clinicalCalls = clinical[colnames(calls),]
-clinicalCalls = clinicalCalls[, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", 'CDE_chemo_adjuvant_tmz', 'CDE_chemo_tmz',
-                           'CDE_radiation_any', 'CDE_tmz_chemoradiation_standard', 'GeneExp_Subtype', 'G_CIMP_STATUS')]
 
+######################################################## Add the methylation subtype to coexpression subtype ################################################
+head(clinical)
+head(data)
+row.names(data) = gsub('-',  '.',data$TCGAID)
+overlap = merge.data.frame(data, clinical, by.x="row.names", by.y="row.names")
+overlapTable = xtabs(~ DNA.Methylation.Clusters + subtype, data = overlap)
+write.table(overlapTable, '../../cancerBrowser/methylation/141017_brennanCoexpOverlap.txt', sep='\t')
+overlapTable = as.data.frame(overlapTable)
+
+pairwise.fisher.test(overlapTable[,1], (overlapTable[,1] + overlapTable[,2]), p.adjust.method='fdr')
+
+fisherMung = read.delim("~/Documents/public-datasets/cancerBrowser/methylation/141017_brennanCoexpOverlap.txt")
+apply(fisherMung[,c(2,3)], 1, binom.test) # had to paste these results into excel
+
+binomialTests = read.delim("~/Documents/public-datasets/cancerBrowser/methylation/141017_brennanCoexpBinomial.txt")
+binomialTests$fdr = p.adjust(binomialTests$binom.test, method='fdr')
+binomialTests$bf = p.adjust(binomialTests$binom.test, method='bonferroni')
+binomialTests
+
+write.table(binomialTests, "~/Documents/public-datasets/cancerBrowser/methylation/141017_brennanCoexpBinomial.txt", sep='\t')
 ######################################################## Assign colours to methylation calls ################################################
 head(calls)
 colorMatrix = apply(calls[,], c(1,2), as.character)
