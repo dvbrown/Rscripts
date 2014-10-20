@@ -55,7 +55,7 @@ clinical = dbReadTable(db, "clinicalAllPatients", row.names=1)
 # clinicalCalls = clinicalCalls[, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", "gender", 'CDE_chemo_adjuvant_tmz', 'CDE_chemo_tmz',
 #                            'CDE_radiation_any', 'CDE_tmz_chemoradiation_standard', 'GeneExp_Subtype', 'G_CIMP_STATUS')]
 
-
+dbDisconnect(db)
 ######################################################## Add the methylation subtype to coexpression subtype ################################################
 head(clinical)
 head(data)
@@ -73,6 +73,8 @@ apply(fisherMung[,c(2,3)], 1, binom.test) # had to paste these results into exce
 binomialTests = read.delim("~/Documents/public-datasets/cancerBrowser/methylation/141017_brennanCoexpBinomial.txt")
 binomialTests$fdr = p.adjust(binomialTests$binom.test, method='fdr')
 binomialTests$bf = p.adjust(binomialTests$binom.test, method='bonferroni')
+binomialTests$enrichment = binomialTests$CD133 / binomialTests$total *100
+
 binomialTests
 
 write.table(binomialTests, "~/Documents/public-datasets/cancerBrowser/methylation/141017_brennanCoexpBinomial.txt", sep='\t')
