@@ -16,5 +16,11 @@ markerScore = dbReadTable(db, "markerScoresRNAseq", row.names=1)
 gcimp = row.names(clinical[clinical$G_CIMP_STATUS %in% "G-CIMP", ])
 notGcimp = row.names(clinical[!clinical$G_CIMP_STATUS %in% "G-CIMP", ])
 
+#markerCIMP = merge.data.frame(clinical, markerScore, by.x=0, by.y=0)
+
 markerCIMP = markerScore[gcimp,]
+markerCIMP = markerCIMP[!is.na(markerCIMP$CD133),]
 markerNotcIMP = markerScore[notGcimp,]
+markerNotcIMP = markerNotcIMP[!is.na(markerNotcIMP$CD133),]
+
+boxplot
