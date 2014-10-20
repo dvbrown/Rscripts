@@ -76,36 +76,39 @@ binomialTests$bf = p.adjust(binomialTests$binom.test, method='bonferroni')
 binomialTests
 
 write.table(binomialTests, "~/Documents/public-datasets/cancerBrowser/methylation/141017_brennanCoexpBinomial.txt", sep='\t')
-######################################################## Assign colours to methylation calls ################################################
-head(calls)
-colorMatrix = apply(calls[,], c(1,2), as.character)
 
-colorMatrix[colorMatrix == "UT"] <- 0 # Not methylated tumor
-colorMatrix[colorMatrix == "MT"] <- 0.5 # Is methylated tumor
-colorMatrix[colorMatrix == "ES"] <- 1 # epigenetically silenced tumor
-colorMatrix[colorMatrix == "UC"] <- NA # Unable to make call
-colorMatrix[colorMatrix == "ML"] <- 0.125 # methylation loss compared to normal
-colorMatrix[colorMatrix == "MG"] <- 0.25 # methylation gain compared to normal
 
-numberMatrix = apply(colorMatrix[,], c(1,2), as.numeric)
-head(numberMatrix)
-write.table(numberMatrix, "./141013_callsConvertNumbers.txt", sep='\t')
-myPalette <- colorRampPalette(c("white", "black"))(n = 5)
 
-######################################################## Take the top 400 genes as Brennan did ################################################
-
-totalMeth = rowSums(numberMatrix)
-cutOffMeth = quantile.default(totalMeth, probs=0.95, na.rm=T)
-
-methylKeep = ifelse(totalMeth >= cutOffMeth, TRUE, FALSE)
-methylKeep = methylKeep[methylKeep %in% TRUE]
-length(methylKeep)
-toBsorted = (numberMatrix[names(methylKeep),])
-head(toBsorted)
-
-# Make a heatmap where the input is a numeric representation of methylation
-heatmap.2(toBsorted, cexRow=0.5,# main="Somatic mutations segrgated by marker signature", scale='none',
-         # Colv=as.factor(dataSubtype$colours), key=F, trace="none", col=c('white', 'black'), 
-          density.info="none", dendrogram="none", labCol='', col=myPalette,
-          #ColSideColors=as.character(dataSubtype$colours), labRow=row.names(dataPresent), 
-          offsetRow=c(1,1), margins=c(5,7.5)) #xlab="Samples")
+# ######################################################## Assign colours to methylation calls ################################################
+# head(calls)
+# colorMatrix = apply(calls[,], c(1,2), as.character)
+# 
+# colorMatrix[colorMatrix == "UT"] <- 0 # Not methylated tumor
+# colorMatrix[colorMatrix == "MT"] <- 0.5 # Is methylated tumor
+# colorMatrix[colorMatrix == "ES"] <- 1 # epigenetically silenced tumor
+# colorMatrix[colorMatrix == "UC"] <- NA # Unable to make call
+# colorMatrix[colorMatrix == "ML"] <- 0.125 # methylation loss compared to normal
+# colorMatrix[colorMatrix == "MG"] <- 0.25 # methylation gain compared to normal
+# 
+# numberMatrix = apply(colorMatrix[,], c(1,2), as.numeric)
+# head(numberMatrix)
+# write.table(numberMatrix, "./141013_callsConvertNumbers.txt", sep='\t')
+# myPalette <- colorRampPalette(c("white", "black"))(n = 5)
+# 
+# ######################################################## Take the top 400 genes as Brennan did ################################################
+# 
+# totalMeth = rowSums(numberMatrix)
+# cutOffMeth = quantile.default(totalMeth, probs=0.95, na.rm=T)
+# 
+# methylKeep = ifelse(totalMeth >= cutOffMeth, TRUE, FALSE)
+# methylKeep = methylKeep[methylKeep %in% TRUE]
+# length(methylKeep)
+# toBsorted = (numberMatrix[names(methylKeep),])
+# head(toBsorted)
+# 
+# # Make a heatmap where the input is a numeric representation of methylation
+# heatmap.2(toBsorted, cexRow=0.5,# main="Somatic mutations segrgated by marker signature", scale='none',
+#          # Colv=as.factor(dataSubtype$colours), key=F, trace="none", col=c('white', 'black'), 
+#           density.info="none", dendrogram="none", labCol='', col=myPalette,
+#           #ColSideColors=as.character(dataSubtype$colours), labRow=row.names(dataPresent), 
+#           offsetRow=c(1,1), margins=c(5,7.5)) #xlab="Samples")
