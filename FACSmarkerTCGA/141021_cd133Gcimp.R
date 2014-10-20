@@ -19,7 +19,18 @@ markerCIMP = merge.data.frame(clinical, markerScore, by.x=0, by.y=0)
 markerCIMP = markerCIMP[!markerCIMP$G_CIMP_STATUS %in% "",]
 
 ggplot(markerCIMP, aes(x=G_CIMP_STATUS, y=CD133, fill=G_CIMP_STATUS)) + geom_boxplot() +
-    #scale_colour_manual(values=cbPalette) +
+    scale_colour_manual(values=c("aqua", "orange")) +
     xlab("CD133 signatures") + ylab("CD44 signatures") + # Set axis labels
     ggtitle("No difference in CD133 coexpression signature by CIMP status") +  # Set title
+    guides(fill=FALSE) + geom_jitter() +  theme_bw(base_size=18)
+
+############################ Extract the raw expression values ###############################
+markermRNA = rnaSeqGem[,c('PROM1', 'FUT4', 'CD44')]
+gemCIMP = merge.data.frame(clinical, markermRNA, by.x=0, by.y=0)
+gemCIMP = gemCIMP[!gemCIMP$G_CIMP_STATUS %in% "",]
+
+ggplot(gemCIMP, aes(x=G_CIMP_STATUS, y=PROM1, fill=G_CIMP_STATUS)) + geom_boxplot() +
+    scale_colour_manual(values=c("aqua", "orange")) +
+    xlab("CD133 signatures") + ylab("CD44 signatures") + # Set axis labels
+    ggtitle("Minor difference in CD133 coexpression signature by CIMP status") +  # Set title
     guides(fill=FALSE) + geom_jitter() +  theme_bw(base_size=18)
