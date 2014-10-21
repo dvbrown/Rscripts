@@ -13,6 +13,7 @@ clinical = clinical[!clinical$GeneExp_Subtype %in% "",]
 rnaSeqGem = dbReadTable(db, "RNAseqGem", row.names=1)
 markerScore = dbReadTable(db, "markerScoresRNAseq", row.names=1)
 
+molSubtype = c("blue", "red", "green", "purple")
 ############################ Annotate the CIMPs ###############################
 
 markerCIMP = merge.data.frame(clinical, markerScore, by.x=0, by.y=0)
@@ -20,7 +21,7 @@ markerCIMP = markerCIMP[!markerCIMP$G_CIMP_STATUS %in% "",]
 
 sig = ggplot(markerCIMP, aes(x=G_CIMP_STATUS, y=CD133, fill=G_CIMP_STATUS)) + geom_boxplot() +
         scale_colour_manual(values=molSubtype) +
-        xlab("") + ylab("enrichment score") + # Set axis labels
+        xlab("RNAseq") + ylab("enrichment score") + # Set axis labels
         ggtitle("No difference in CD133 coexpression\n signature by CIMP status") +  # Set title
         guides(fill=FALSE) + geom_jitter(aes(colour=GeneExp_Subtype, shape=GeneExp_Subtype)) +  theme_bw(base_size=18)
 
@@ -31,13 +32,12 @@ gemCIMP = gemCIMP[!gemCIMP$G_CIMP_STATUS %in% "",]
 
 mRNA = ggplot(gemCIMP, aes(x=G_CIMP_STATUS, y=PROM1, fill=G_CIMP_STATUS)) + geom_boxplot() +
         scale_colour_manual(values=molSubtype) +
-        xlab("") + ylab("mRNA expression") + # Set axis labels
+        xlab("RNAseq") + ylab("mRNA expression") + # Set axis labels
         ggtitle("Minor difference in CD133 mRNA expression\n by CIMP status") +  # Set title
     guides(fill=FALSE) + geom_jitter(aes(colour=GeneExp_Subtype, shape=GeneExp_Subtype)) +  theme_bw(base_size=18)
 
-multiplot(sig, mRNA, cols=2)
+#multiplot(sig, mRNA, cols=2)
 
-molSubtype = c("purple", "red", "green", "blue")
 
 ############################ Repeat with Agilent data ###############################
 agilentGem = dbReadTable(db, "AgilentGem", row.names=1)
@@ -54,17 +54,16 @@ gemCIMP = gemCIMP[!gemCIMP$G_CIMP_STATUS %in% "",]
 
 sigAgilent = ggplot(markerCIMP, aes(x=G_CIMP_STATUS, y=CD133, fill=G_CIMP_STATUS)) + geom_boxplot() +
                 scale_colour_manual(values=molSubtype) +
-                xlab("") + ylab("enrichment score") + # Set axis labels
+                xlab("Agilent") + ylab("enrichment score") + # Set axis labels
                 ggtitle("No difference in CD133 coexpression\n signature by CIMP status") +  # Set title
                 guides(fill=FALSE) + geom_jitter(aes(colour=GeneExp_Subtype, shape=GeneExp_Subtype)) +  theme_bw(base_size=18)
 
 mRNAAgilent = ggplot(gemCIMP, aes(x=G_CIMP_STATUS, y=PROM1, fill=G_CIMP_STATUS)) + geom_boxplot() +
     scale_colour_manual(values=molSubtype) +
-    xlab("") + ylab("mRNA expression") + # Set axis labels
+    xlab("Agilent") + ylab("mRNA expression") + # Set axis labels
     ggtitle("Difference in CD133 mRNA expression\n by CIMP status") +  # Set title
     guides(fill=FALSE) + geom_jitter(aes(colour=GeneExp_Subtype, shape=GeneExp_Subtype)) +  theme_bw(base_size=18)
 
-multiplot(sig, mRNA, sigAgilent, mRNAAgilent, cols=2)
+multiplot(sigAgilent, mRNAAgilent, cols=2)
 
 dbDisconnect(db)
-dbDisconnect(coExpDb)
