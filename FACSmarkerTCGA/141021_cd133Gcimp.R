@@ -5,7 +5,7 @@ source("~/Documents/Rscripts/multiplot.R")
 setwd("~/Documents/public-datasets/cancerBrowser/cd133_gCIMP/")
 
 ############################ IO ################################
-db = dbConnect(SQLite(), dbname="~/Documents/public-datasets/cancerBrowser/tcgaData.sqlite")
+db1 = dbConnect(SQLite(), dbname="~/Documents/public-datasets/cancerBrowser/tcgaData.sqlite")
 dbListTables(db)
 clinical = dbReadTable(db, "clinicalAllPatients", row.names=1)
 
@@ -40,5 +40,7 @@ multiplot(sig, mRNA, cols=2)
 
 ############################ Repeat with Agilent data ###############################
 library(GSVA)
-agilentGem = dbReadTable(db, "AgilentGem", row.names=1)
+agilentGem = dbReadTable(db1, "AgilentGem", row.names=1)
 
+dbDisconnect(db)
+dbDisconnect(coExpDb)

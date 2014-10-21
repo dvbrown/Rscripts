@@ -90,7 +90,7 @@ heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures
 ############################################# Call subtypes with Agilent array daya n = 483 ##################################################################
 
 
-agilentM = t(as.matrix(agilent))
+agilentM = (as.matrix(agilentGem))
 # Change NAs to 0 as GSVA doesn't like it
 agilentM[is.na(agilentM)] <- 0
 
@@ -106,6 +106,10 @@ clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status",
 # Call the subtypes with GSVA
 bigResult = gsva(agilentM, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
 bigResult = t(bigResult$es.obs)
+
+# Write to database
+#dbWriteTable(conn = db1, name = "markerScoresAgilent", value = as.data.frame(bigResult), row.names = TRUE)
+#dbDisconnect(db1)
 
 # Merge Agilent - FACs data and clinicial data. Add Verhaak subtype
 signatures = names(bigSigs)
