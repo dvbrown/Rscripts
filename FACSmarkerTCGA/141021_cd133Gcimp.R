@@ -58,4 +58,17 @@ mRNAAgilent = ggplot(gemCIMP, aes(x=G_CIMP_STATUS, y=PROM1, fill=G_CIMP_STATUS))
 
 multiplot(sigAgilent, mRNAAgilent, cols=2)
 
+beeswarm(PROM1 ~ G_CIMP_STATUS, data = gemCIMP, pch = 16,
+        pwcol = as.factor(gemCIMP$GeneExp_Subtype), xlab = 'Agilent',
+         ylab = 'mRNA expression',
+         labels = c('G-CIMP', 'non G-CIMP'))
+boxplot(PROM1 ~ G_CIMP_STATUS, data = gemCIMP, add = T,
+        names = c("",""), col="#0000ff22") 
+legend('topright', legend = levels(as.factor(gemCIMP$GeneExp_Subtype)), title = 'Molecular subtype',
+       pch = 16, col = 1:2)
+
 dbDisconnect(db)
+
+########## Conduct a t test on GCIMP mRNA vs the rest mRNA ##########
+qqline(gemCIMP$PROM1)
+t.test(PROM1 ~ G_CIMP_STATUS, data=gemCIMP)
