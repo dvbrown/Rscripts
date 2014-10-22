@@ -160,4 +160,26 @@ dbWriteTable(conn = db, name = "id1CuttOff", value = as.data.frame(id1genes), ro
 
 rm(id1,id1genes )
 
+######################################## Nestin tubulin coexpressed Genes ################################################
+nes = correlateGeneWithGEM(dat, 'NES')
+nes['NES',]
+# Subset the dataframe with correlation values for those with high correlation and significance
+nesgenes = nes[nes[,1] > 2*sd(nes[,1]) & nes[,4] < 0.05,]
+
+dbWriteTable(conn = db, name = "nesAllgenes", value = as.data.frame(nes), row.names = TRUE)
+dbWriteTable(conn = db, name = "nesCuttOff", value = as.data.frame(nesgenes), row.names = TRUE)
+
+rm(nes,nesgenes)
+
+######################################## PAX6 coexpressed Genes ################################################
+pax6 = correlateGeneWithGEM(dat, 'PAX6')
+pax6['PAX6',]
+# Subset the dataframe with correlation values for those with high correlation and significance
+pax6genes = pax6[pax6[,1] > 2*sd(pax6[,1]) & pax6[,4] < 0.05,]
+
+dbWriteTable(conn = db, name = "pax6Allgenes", value = as.data.frame(pax6), row.names = TRUE)
+dbWriteTable(conn = db, name = "pax6CuttOff", value = as.data.frame(pax6genes), row.names = TRUE)
+
+rm(pax6, pax6genes)
+
 dbDisconnect(db)
