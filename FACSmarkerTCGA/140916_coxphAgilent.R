@@ -15,6 +15,7 @@ clin = clin[, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status","X_EVENT", 
                            'CDE_radiation_any', 'CDE_tmz_chemoradiation_standard', 'GeneExp_Subtype')]
 
 clinical = clinical[!clinical$GeneExp_Subtype %in% "",]
+clin2 = merge.data.frame(clin, clinical[,c("G_CIMP_STATUS", "subtype")], by.x=0, by.y=0)
 
 markerAgilent = dbReadTable(db, "markerScoresAgilent", row.names=1)
 molSubtype = c("blue", "red", "green", "purple")
