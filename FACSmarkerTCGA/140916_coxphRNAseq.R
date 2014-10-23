@@ -29,16 +29,22 @@ boundData$subtype = as.factor(boundData$subtype)
 
 # Fix up the GCIMP to only have true and false
 boundData$G_CIMP_STATUS = as.character(boundData$G_CIMP_STATUS)
-boundData$G_CIMP_STATUS[boundData$G_CIMP_STATUS %in% 'G-CIMP'] = TRUE
-boundData$G_CIMP_STATUS[!boundData$G_CIMP_STATUS %in% 'TRUE'] = FALSE
-boundData$G_CIMP_STATUS = as.factor(boundData$G_CIMP_STATUS)
+boundData$G_CIMP_STATUS[boundData$G_CIMP_STATUS %in% 'G-CIMP'] = 1
+boundData$G_CIMP_STATUS[!boundData$G_CIMP_STATUS %in% 1] = 0
+boundData$G_CIMP_STATUS = as.numeric(boundData$G_CIMP_STATUS)
+
+boundData = boundData[!is.na(boundData$X_EVENT),]
 
 ############################################# Analysing the data for survival ##################################
 data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
-coxPH = coxph(data.surv ~  subtype +  CDE_DxAge + CDE_chemo_tmz+  CDE_radiation_any + gender, 
+coxPH = coxph(data.surv ~  subtype +  CDE_DxAge  + gender + G_CIMP_STATUS, 
               data=boundData, na.action="na.omit")
 summary(coxPH)
 
+data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
+coxPH = coxph(data.surv ~  subtype + G_CIMP_STATUS, 
+              data=boundData, na.action="na.omit")
+summary(coxPH)
 
 ############################################# Investigate Classical and Neural survival ##################################
 head(boundData)
