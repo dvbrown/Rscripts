@@ -28,6 +28,9 @@ ykl40 = dbReadTable(db, "ykl40CuttOff")
 tubb3 = dbReadTable(db, 'tubb3CuttOff')
 gfap = dbReadTable(db, 'gfapCuttOff')
 id1 = dbReadTable(db, 'id1CuttOff')
+
+pax6 = dbReadTable(db, 'pax6CuttOff')
+nes = dbReadTable(db, 'nesCuttOff')
     
 myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 
@@ -36,9 +39,9 @@ rnaseqM = as.matrix(rnaseq)
 bigSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15" = row.names(cd15),
                "ALDH1"=row.names(aldh1), "ITGA6"=row.names(itag6), "L1CAM"=row.names(l1cam),
                'GFAP'=row.names(gfap), 'YKL40'=row.names(ykl40), 'SOX2'=row.names(sox2), 'OLIG2'=row.names(olig2),
-               'TUBB3'=row.names(tubb3), 'ID1'= row.names(id1))
+               'TUBB3'=row.names(tubb3), 'ID1'= row.names(id1), 'PAX6'=row.names(pax6), 'NES'=row.names(nes))
 
-rm(cd133Sig, cd44Sig, cd15, aldh1, itag6, l1cam, olig2, gfap, ykl40, tubb3, id1)
+rm(cd133Sig, cd44Sig, cd15, aldh1, itag6, l1cam, olig2, gfap, ykl40, tubb3, id1, pax6, nes)
 
 # Extract the clinical data for the RNAseq patients
 matched = intersect(row.names(clinical), colnames(rnaseq))

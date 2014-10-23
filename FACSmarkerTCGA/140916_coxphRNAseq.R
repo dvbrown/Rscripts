@@ -37,7 +37,7 @@ boundData = boundData[!is.na(boundData$X_EVENT),]
 
 ############################################# Analysing the data for survival ##################################
 data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
-coxPH = coxph(data.surv ~  subtype +  CDE_DxAge  + gender + G_CIMP_STATUS, 
+coxPH = coxph(data.surv ~  subtype +  CDE_DxAge  + gender + G_CIMP_STATUS + CDE_chemo_tmz + CDE_radiation_any, 
               data=boundData, na.action="na.omit")
 summary(coxPH)
 

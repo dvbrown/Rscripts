@@ -33,15 +33,15 @@ matched = intersect(row.names(clinical), row.names(markerAgilent))
 #################### Do Agilent coxph ###################
 clinAgilent = clinical[matched,]
 data.surv = Surv(clinAgilent$CDE_survival_time, event=clinAgilent$X_EVENT)
-coxPH = coxph(data.surv ~  subtype +  CDE_DxAge  + gender + G_CIMP_STATUS + CDE_chemo_tmz + CDE_radiation_any, 
+coxPH = coxph(data.surv ~  subtype + CDE_DxAge  + gender + G_CIMP_STATUS + CDE_chemo_tmz + CDE_radiation_any, 
               data=clinAgilent, na.action="na.omit")
 summary(coxPH)
 
 
 #################### Try all patients regardless of Agilent or RNAseq ###################
 data.surv = Surv(clinical$CDE_survival_time, event=clinical$X_EVENT)
-coxPH = coxph(data.surv ~  subtype +  CDE_DxAge  + gender + G_CIMP_STATUS + CDE_chemo_tmz + CDE_radiation_any, 
+coxPH = coxph(data.surv ~ CDE_DxAge  + gender + G_CIMP_STATUS + subtype  + CDE_radiation_any + CDE_chemo_tmz, 
               data=clinical, na.action="na.omit")
-result = summary(coxPH)
+summary(coxPH)
 
 dbDisconnect(db)
