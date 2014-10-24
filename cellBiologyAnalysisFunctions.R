@@ -20,21 +20,22 @@ calcDMSOcontrol = function(dataFrame) {
     return (tmz)
 }
 
-calcGrowthNormCD133 = function(dataFrame) {
-    negative = dataFrame[dataFrame$cd133 %in% 'neg',]
-    positive = dataFrame[dataFrame$cd133 %in% 'pos',]
-    positive$negNormalised = positive$mean / negative$mean
-    return (positive)
-}
+# calcGrowthNormCD133 = function(dataFrame) {
+#     negative = dataFrame[dataFrame$cd133 %in% 'neg',]
+#     positive = dataFrame[dataFrame$cd133 %in% 'pos',]
+#     positive$negNormalised = positive$mean / negative$mean
+#     return (positive)
+# }
 
 calcGrowthNormalised = function(dataFrame, patientName) {
     # Normalises a patient by the double negative subpopulation set to 1
     # Patient is a charaacter string of patient eg #035
     # Extract all cases of the individual patient
     patient = dataFrame[dataFrame[,"patient"] %in% patientName,]
+    patient = patient[patient[,"treatment"] %in% "DMSO",]
     # Extract the double negative
     dn = patient[patient[,"subpop"] %in% "CD44-/CD133-",]
-    otherSample = patient[!patient[,"subpop"] %in% "CD44-/CD133-",]
+    otherSample = patient
     #     otherSample$norm1 = otherSample$rep1 / dn$rep1
     #     otherSample$norm3 = otherSample$rep3 / dn$rep3
     #     otherSample$norm2 = otherSample$rep2 / dn$rep2
@@ -60,12 +61,13 @@ extractPosNegReplicates = function(dataFrame) {
 }
 
 summariseByFactor <- function (dataFrame, factor1, factor2) {
+    require(plyr)
     # Takes a dataframe with factor information and computes summary statistics based on levels of as least 2 factors
     # factor 1 and 2 are characters
     result <- ddply(dataFrame, c(factor1, factor2), summarise,
-                   N    = length(percent),
-                   mean = mean(percent),
-                   sd   = sd(percent),
+                   N    = length(normDN),
+                   mean = mean(normDN),
+                   sd   = sd(normDN),
                    se   = sd / sqrt(N) )
   return (result)
 }
