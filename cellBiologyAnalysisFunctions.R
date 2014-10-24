@@ -20,11 +20,26 @@ calcDMSOcontrol = function(dataFrame) {
     return (tmz)
 }
 
-calcProlifNormalised = function(dataFrame) {
+calcGrowthNormCD133 = function(dataFrame) {
     negative = dataFrame[dataFrame$cd133 %in% 'neg',]
     positive = dataFrame[dataFrame$cd133 %in% 'pos',]
     positive$negNormalised = positive$mean / negative$mean
     return (positive)
+}
+
+calcGrowthNormalised = function(dataFrame, patientName) {
+    # Normalises a patient by the double negative subpopulation set to 1
+    # Patient is a charaacter string of patient eg #035
+    # Extract all cases of the individual patient
+    patient = dataFrame[dataFrame[,"patient"] %in% patientName,]
+    # Extract the double negative
+    dn = patient[patient[,"subpop"] %in% "CD44-/CD133-",]
+    otherSample = patient[!patient[,"subpop"] %in% "CD44-/CD133-",]
+    #     otherSample$norm1 = otherSample$rep1 / dn$rep1
+    #     otherSample$norm3 = otherSample$rep3 / dn$rep3
+    #     otherSample$norm2 = otherSample$rep2 / dn$rep2
+    otherSample$normDN = otherSample$mean / dn$mean
+    return (otherSample)
 }
 
 extractPosNegReplicates = function(dataFrame) {
