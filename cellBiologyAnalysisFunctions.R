@@ -29,7 +29,7 @@ calcDMSOcontrol = function(dataFrame) {
 
 calcGrowthNormalised = function(dataFrame, patientName) {
     # Normalises a patient by the double negative subpopulation set to 1
-    # Patient is a charaacter string of patient eg #035
+    # Patient is a charaacter string of patient eg #035. Treat is either DMSO or TMZ
     # Extract all cases of the individual patient
     patient = dataFrame[dataFrame[,"patient"] %in% patientName,]
     patient = patient[patient[,"treatment"] %in% "DMSO",]
@@ -40,6 +40,18 @@ calcGrowthNormalised = function(dataFrame, patientName) {
     #     otherSample$norm3 = otherSample$rep3 / dn$rep3
     #     otherSample$norm2 = otherSample$rep2 / dn$rep2
     otherSample$normDN = otherSample$mean / dn$mean
+    return (otherSample)
+}
+
+calcTMZNormalised = function(dataFrame, patientName) {
+    # Normalises a patient by the double negative subpopulation set to 1
+    # Patient is a charaacter string of patient eg #035. Treat is either DMSO or TMZ
+    # Extract all cases of the individual patient
+    patient = dataFrame[dataFrame[,"patient"] %in% patientName,]
+    # Extract the double negative
+    dn = patient[patient[,"subpop"] %in% "CD44-/CD133-",]
+    otherSample = patient
+    otherSample$normDN = otherSample$dmsoCorrected / dn$dmsoCorrected
     return (otherSample)
 }
 

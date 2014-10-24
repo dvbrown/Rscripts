@@ -21,7 +21,7 @@ elda = read.delim("141023_eldaSummary.txt")
 bw = c("grey21", "grey82", "grey52", "grey97")
 color = c("chartreuse4", "skyblue2", "gold", "orangered1")
 
-################## Growth TMZ assay ############################
+################## Growth assay ############################
 # Plot the raw results
 growthPlot = ggplot(growth[growth$treatment %in% 'DMSO',], 
                      aes(x=patient, y=mean, fill=subpop)) + 
@@ -68,8 +68,54 @@ growthSummPlot = ggplot(summariseGrowth, aes(x=subpop, y=mean, fill=subpop)) +
 
 multiplot(growthPlot, normalisedGrowthPlot, growthSummPlot, cols=2)
 
-# Write into database
-dbWriteTable(conn = db, name = "resazurin", value = growth, row.names = TRUE)
+anova(lm(normDN ~ subpop, data = growthData))
+
+################## TMZ assay ############################
+calcDMSOcontrol = function(dataFrame) {
+    vehicle = dataFrame[dataFrame$treatment %in% 'DMSO',]
+    tmz = dataFrame[dataFrame$treatment %in% 'TMZ',]
+    tmz$dmsoCorrected = tmz$mean / vehicle$mean
+    return (tmz)
+}
+tmz = calcDMSOcontrol(growth)
+
+four = calcTMZNormalised(tmz, "#004")
+twenty = calcTMZNormalised(tmz, "#020")
+twenty8 = calcTMZNormalised(tmz, "#028")
+thirty5 = calcTMZNormalised(tmz, "#035")
+thrity9 = calcTMZNormalised(tmz, "#039")
+# 041 was done twice, need to separate
+fourty1 = calcTMZNormalised(tmz[c(1:17),], "#041")
+fourty2 = calcTMZNormalised(tmz[c(18:19),], "#041")
+tmzData = rbind(four, twenty, thirty5, thrity9, fourty1, fourty2)
+rm(four, twenty, thirty5, thrity9, fourty1, fourty2)
+# Get rid of the duplicate #041 readings
+tmzData = tmzData[c(1:15,17),]
+
+normalisedTMZPlot = ggplot(tmzData, aes(x=patient, y=normDN, fill=subpop)) + 
+    scale_fill_manual(values=color) +
+    #scale_fill_manual(values=bw) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("PDGC") + ylab("Cell number relative to\nCD44-/CD133-") +
+    ggtitle("TMZ sensitivity at day 7 by \nmarker status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+
+summariseTMZ = summariseByFactor(tmzData, "subpop", "treatment")
+tmzSummPlot = ggplot(summariseTMZ, aes(x=subpop, y=mean, fill=subpop)) + 
+    scale_fill_manual(values=color) +
+    #scale_fill_manual(values=bw) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
+    xlab("Subpopulation") + ylab("Cell number relative to\nCD44-/CD133-") +
+    ggtitle("TMZ sensitivity at day 7 by \nmarker status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
+
+multiplot(normalisedTMZPlot, tmzSummPlot, cols=1)
+
+anova(lm(normDN ~ subpop, data = tmzData))
+
+#### Write into database ####
+dbWriteTable(conn = db, name = "growthData", value = growthData, row.names = TRUE)
 dbWriteTable(conn = db, name = "invasion", value = invasion, row.names = TRUE)
 dbWriteTable(conn = db, name = "elda", value = elda, row.names = TRUE)
 
