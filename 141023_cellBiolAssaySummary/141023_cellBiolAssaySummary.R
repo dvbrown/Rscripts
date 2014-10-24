@@ -15,8 +15,8 @@ growth = read.delim("141023_resazurinSummaryRoundEd.txt")
 colnames(growth) = c("patient", "assayDate", "subpop", "rep1", "rep2", "rep3", "mean", "sd", "treatment")
 growth$sample = paste(growth[,"patient"], growth[,"subpop"], sep="_")
     
-invasion = read.delim("141023_invasionSumRound.txt")
-elda = read.delim("141023_eldaSummary.txt")
+# invasion = read.delim("141023_invasionSumRound.txt")
+# elda = read.delim("141023_eldaSummary.txt")
 
 bw = c("grey21", "grey82", "grey52", "grey97")
 color = c("chartreuse4", "skyblue2", "gold", "orangered1")
@@ -116,7 +116,6 @@ anova(lm(normDN ~ subpop, data = tmzData))
 
 #### Write into database ####
 dbWriteTable(conn = db, name = "growthData", value = growthData, row.names = TRUE)
-dbWriteTable(conn = db, name = "invasion", value = invasion, row.names = TRUE)
-dbWriteTable(conn = db, name = "elda", value = elda, row.names = TRUE)
+dbWriteTable(conn = db, name = "tmzData", value = tmzData, row.names = TRUE)
 
 dbDisconnect(db)
