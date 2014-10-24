@@ -4,29 +4,41 @@ library(ggplot2)
 source("~/Documents/Rscripts/cellBiologyAnalysisFunctions.R")
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 
+calcInvNormalised = function(dataFrame, patientName) {
+    # Normalises a patient by the double negative subpopulation set to 1
+    # Patient is a charaacter string of patient eg #035
+    # Extract all cases of the individual patient
+    patient = dataFrame[dataFrame[,"patient"] %in% patientName,]
+    patient = patient[patient[,"treatment"] %in% "FALSE",]
+    # Extract the double negative
+    dn = patient[patient[,"subpop"] %in% "CD44-/CD133-",]
+    otherSample = patient
+    otherSample$normDN = otherSample$mean / dn$mean
+    return (otherSample)
+}
+
 combineExperiments <- function (dataFrame, summaryFunction) {
   # Run consective normalisations then bind and trim the result
-  four = summaryFunction(dataFrame, "#004", "assayDate")
-  twenty = summaryFunction(dataFrame, "#020", assayDate)
-  twenty8 = summaryFunction(dataFrame, "#028")
+  four = summaryFunction(dataFrame, "#004")
+  twenty = summaryFunction(dataFrame, "#020")
   thirty5 = summaryFunction(dataFrame, "#035")
   thrity9 = summaryFunction(dataFrame, "#039")
   # 041 was done twice, need to separate
-  fourty1 = summaryFunction(dataFrame[c(1:34),], "#041")
-  fourty2 = summaryFunction(dataFrame[c(35:38),], "#041")
+  fourty1 = summaryFunction(dataFrame[c(1:21),], "#041")
+  fourty2 = summaryFunction(dataFrame[c(22:25),], "#041")
   rawData = rbind(four, twenty, thirty5, thrity9, fourty1, fourty2)
   # Get rid of the duplicate #041 readings
-  deDup = rawData[c(1:15,17),]
+  #deDup = rawData[c(1:15,17),]
   return (rawData)
 }
-combineExperiments(invasion, summariseByFactor)
+combineExperiments(invasion, calcInvNormalised)
 
 setwd("~/Documents/Cell_biology/141023_summary/")
 list.files()
 
 # Intialise and write into database
 db <- dbConnect(SQLite(), dbname="assaySummary.sqlite")
-invasion = read.delim("141023_invasionSumRound.txt")
+invasion = read.delim("141023_invasionSummary.txt")
 invasion$mean = rowMeans(invasion[,c(4:6)], na.rm=T)
 invasion$sd = apply(invasion[,c(4:6)], 1, sd, na.rm=T)
 colnames(invasion) = c("patient", "assayDate", "subpop", "rep1", "rep2", "rep3", "mean", "sd", "treatment")
