@@ -4,34 +4,22 @@ library(ggplot2)
 source("~/Documents/Rscripts/cellBiologyAnalysisFunctions.R")
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 
-summariseByFactor <- function (dataFrame, factor1, factor2, factor3) {
-    require(plyr)
-    # Takes a dataframe with factor information and computes summary statistics based on levels of as least 2 factors
-    # factor 1 and 2 are characters
-    result <- ddply(dataFrame, c(factor1, factor2, factor3), summarise,
-                    N    = length(mean),
-                    mean = mean(mean),
-                    sd   = sd(mean),
-                    se   = sd / sqrt(N) )
-    return (result)
-}
-
-combineExperiments <- function (dataFrame) {
+combineExperiments <- function (dataFrame, summaryFunction) {
   # Run consective normalisations then bind and trim the result
-  four = summariseByFactor(dataFrame, "patient", "assayDate", "treatment")
-#   twenty = summaryFunction(dataFrame, "#020", assayDate)
-#   twenty8 = summaryFunction(dataFrame, "#028")
-#   thirty5 = summaryFunction(dataFrame, "#035")
-#   thrity9 = summaryFunction(dataFrame, "#039")
-#   # 041 was done twice, need to separate
-#   fourty1 = summaryFunction(dataFrame[c(1:34),], "#041")
-#   fourty2 = summaryFunction(dataFrame[c(35:38),], "#041")
-#   rawData = rbind(four, twenty, thirty5, thrity9, fourty1, fourty2)
-#   # Get rid of the duplicate #041 readings
-#   deDup = rawData[c(1:15,17),]
-  return (four)
+  four = summaryFunction(dataFrame, "#004", "assayDate")
+  twenty = summaryFunction(dataFrame, "#020", assayDate)
+  twenty8 = summaryFunction(dataFrame, "#028")
+  thirty5 = summaryFunction(dataFrame, "#035")
+  thrity9 = summaryFunction(dataFrame, "#039")
+  # 041 was done twice, need to separate
+  fourty1 = summaryFunction(dataFrame[c(1:34),], "#041")
+  fourty2 = summaryFunction(dataFrame[c(35:38),], "#041")
+  rawData = rbind(four, twenty, thirty5, thrity9, fourty1, fourty2)
+  # Get rid of the duplicate #041 readings
+  deDup = rawData[c(1:15,17),]
+  return (rawData)
 }
-combineExperiments(invasion)
+combineExperiments(invasion, summariseByFactor)
 
 setwd("~/Documents/Cell_biology/141023_summary/")
 list.files()
