@@ -110,3 +110,7 @@ invSumPlot = ggplot(invasionSummary, aes(x=subpop, y=mean, fill=subpop)) +
 invSumPlot
 
 multiplot(spherePlot, spherePlotNorm, matrixNorm ,invSumPlot, cols=2)
+
+dbWriteTable(conn = db, name = "normalisedSphereArea", value = dnNormSphere, row.names = TRUE)
+dbWriteTable(conn = db, name = "invasionSummary", value = invasionSummary, row.names = TRUE)
+dbDisconnect(db)
