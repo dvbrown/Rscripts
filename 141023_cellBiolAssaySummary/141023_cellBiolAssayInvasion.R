@@ -37,7 +37,6 @@ invasion = read.delim("141028_invasionSummary.txt")
 # Divide by 1000 to make axis nicer
 invasion$mean = rowMeans(invasion[,c(4:6)], na.rm=T) / 1000
 invasion$sd = apply(invasion[,c(4:6)], 1, sd, na.rm=T) / 1000
-colnames(invasion) = c("patient", "assayDate", "subpop", "rep1", "rep2", "rep3", "mean", "sd", "treatment")
 
 bw = c("grey21", "grey82", "grey52", "grey97")
 color = c("chartreuse4", "skyblue2", "gold", "orangered1")
@@ -55,8 +54,12 @@ spherePlot = ggplot(invasion[invasion$treatment %in% 'FALSE',],
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 
 # Normalise by double negative. As #035 has no DN must discard it
-dnNormSphere = combineExperiments(invasion, calcInvNormalised)
+dnNormSphere = combineExperiments(invasion, calcInvNormalised)[c(1:9),]
+# Need to mung #041 myself
+fourty = read.delim("141023_invasion041.txt")[c(1,3,5,8),]
+dnNormSphere = rbind(dnNormSphere, fourty)
 
+tail(invasion)
 spherePlotNorm = ggplot(dnNormSphere, aes(x=patient, y=normDN, fill=subpop)) + 
     scale_fill_manual(values=color) +
     #scale_fill_manual(values=bw) +
