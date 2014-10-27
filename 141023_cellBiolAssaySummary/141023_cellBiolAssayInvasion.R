@@ -111,6 +111,9 @@ invSumPlot
 
 multiplot(spherePlot, spherePlotNorm, matrixNorm ,invSumPlot, cols=2)
 
+anova(lm(dnNorm ~ subpop, data=matNorm))
+# 0.2256
+
 dbWriteTable(conn = db, name = "normalisedSphereArea", value = dnNormSphere, row.names = TRUE)
 dbWriteTable(conn = db, name = "invasionSummary", value = invasionSummary, row.names = TRUE)
 dbDisconnect(db)
