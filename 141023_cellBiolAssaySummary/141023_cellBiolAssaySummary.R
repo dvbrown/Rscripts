@@ -110,7 +110,9 @@ tmzSummPlot = ggplot(summariseTMZ, aes(x=subpop, y=mean, fill=subpop)) +
     ggtitle("TMZ sensitivity at day 7 by \nmarker status") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
 
-multiplot(normalisedTMZPlot, tmzSummPlot, cols=1)
+pdf(file="./141028_growthTMZ.pdf", useDingbats=F, height=12, width=18)
+multiplot(growthPlot, growthSummPlot, normalisedTMZPlot, tmzSummPlot, cols=2)
+dev.off()
 
 anova(lm(normDN ~ subpop, data = tmzData))
 
