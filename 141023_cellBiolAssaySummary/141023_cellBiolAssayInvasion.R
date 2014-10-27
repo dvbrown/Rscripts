@@ -21,26 +21,22 @@ combineExperiments <- function (dataFrame, summaryFunction) {
   # Run consective normalisations then bind and trim the result
   four = summaryFunction(dataFrame, "#004")
   twenty = summaryFunction(dataFrame, "#020")
-  thirty5 = summaryFunction(dataFrame, "#035")
+  #thirty5 = summaryFunction(dataFrame, "#035")
   thrity9 = summaryFunction(dataFrame, "#039")
-  # 041 was done twice, need to separate
-  fourty1 = summaryFunction(dataFrame[c(1:21),], "#041")
-  fourty2 = summaryFunction(dataFrame[c(22:25),], "#041")
-  rawData = rbind(four, twenty, thirty5, thrity9, fourty1, fourty2)
+  rawData = rbind(four, twenty, thrity9)
   # Get rid of the duplicate #041 readings
-  #deDup = rawData[c(1:15,17),]
   return (rawData)
 }
-combineExperiments(invasion, calcInvNormalised)
 
 setwd("~/Documents/Cell_biology/141023_summary/")
 list.files()
 
 # Intialise and write into database
 db <- dbConnect(SQLite(), dbname="assaySummary.sqlite")
-invasion = read.delim("141023_invasionSummary.txt")
-invasion$mean = rowMeans(invasion[,c(4:6)], na.rm=T)
-invasion$sd = apply(invasion[,c(4:6)], 1, sd, na.rm=T)
+invasion = read.delim("141028_invasionSummary.txt")
+# Divide by 1000 to make axis nicer
+invasion$mean = rowMeans(invasion[,c(4:6)], na.rm=T) / 1000
+invasion$sd = apply(invasion[,c(4:6)], 1, sd, na.rm=T) / 1000
 colnames(invasion) = c("patient", "assayDate", "subpop", "rep1", "rep2", "rep3", "mean", "sd", "treatment")
 
 bw = c("grey21", "grey82", "grey52", "grey97")
@@ -54,6 +50,17 @@ spherePlot = ggplot(invasion[invasion$treatment %in% 'FALSE',],
     #scale_fill_manual(values=bw) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
-    xlab("PDGC") + ylab("Fluorescent intensity") +
-    ggtitle("Growth at day 7 by \nmarker status") +  # Set title
+    xlab("PDGC") + ylab("Surface area (uM)") +
+    ggtitle("Gliomasphere surface area at day 7 by \nmarker status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+
+# Normalise by double negative. As #035 has no DN must discard it
+dnNormSphere = combineExperiments(invasion, calcInvNormalised)
+
+spherePlotNorm = ggplot(dnNormSphere, aes(x=patient, y=normDN, fill=subpop)) + 
+    scale_fill_manual(values=color) +
+    #scale_fill_manual(values=bw) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("PDGC") + ylab("Surface area relative to \nCD44-/CD133-") +
+    ggtitle("Gliomasphere surface area at day 7 by \nmarker status") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
