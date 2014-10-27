@@ -83,6 +83,7 @@ summariseByFactor = function (dataFrame, factor1, factor2) {
     result <- ddply(dataFrame, c(factor1, factor2), summarise,
                     N = length(dnNorm), mean = mean(dnNorm), sd   = sd(dnNorm), se   = sd / sqrt(N) )
     return (result)
+}
 
 matNorm = normaliseNoMat(invasion)
 # write.table(matNorm, './invasion/141028_mungInvasion.txt', sep='\t')
@@ -96,4 +97,16 @@ matrixNorm= ggplot(matNorm, aes(x=patient, y=dnNorm, fill=subpop)) +
     ggtitle("Gliomasphere invasion at day 7 by \nmarker status") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 
-summariseByFactor(matNorm, 'subpop', 'treatment')
+invasionSummary = summariseByFactor(matNorm, 'subpop', 'treatment')
+
+invSumPlot = ggplot(invasionSummary, aes(x=subpop, y=mean, fill=subpop)) + 
+    scale_fill_manual(values=color) +
+    #scale_fill_manual(values=bw) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
+    xlab("PDGC") + ylab("Invasion relative to \nCD44-/CD133-") +
+    ggtitle("Gliomasphere invasion at day 7") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
+invSumPlot
+
+multiplot(spherePlot, spherePlotNorm, matrixNorm ,invSumPlot, cols=2)
