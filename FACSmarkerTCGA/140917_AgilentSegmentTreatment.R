@@ -30,8 +30,8 @@ boundData$gender = as.factor(boundData$gender)
 # Fix up the GCIMP to only have true and false
 boundData$G_CIMP_STATUS = boundData$G_CIMP_STATUS.x
 boundData$G_CIMP_STATUS = as.character(boundData$G_CIMP_STATUS)
-boundData$G_CIMP_STATUS[boundData$G_CIMP_STATUS %in% 'G-CIMP'] = TRUE
-boundData$G_CIMP_STATUS[!boundData$G_CIMP_STATUS %in% 'TRUE'] = FALSE
+boundData$G_CIMP_STATUS[boundData$G_CIMP_STATUS %in% 'G-CIMP'] = 1
+boundData$G_CIMP_STATUS[!boundData$G_CIMP_STATUS %in% '1'] = 0
 boundData$G_CIMP_STATUS = as.factor(boundData$G_CIMP_STATUS)
 boundData = boundData[,c(1:11,13,14,17,18)]
 
@@ -89,7 +89,6 @@ legend('topright', c('CD133', 'CD44'), title="Coexpression subtype",
 summary(data.surv)
 test = surv_test(data.surv~as.factor(boundData$subtype))
 test
-##########################################################################################
 
 #### Look at radiation ####
 sur.fit = survfit(data.surv~CDE_radiation_adjuvant, cd133Patients)
@@ -129,3 +128,13 @@ summary(data.surv)
 test = surv_test(data.surv~as.factor(cd44Patients$CDE_radiation_adjuvant))#, subset=!boundData$subtype %in% "intermediate")
 test
 text(locator(1),labels='p=0.004', cex=1) #add the p-value to the graph
+
+############################# Make a Cox proportional hazards model to get hazard ratios ##############################
+# CD133 patients
+coxCD133ph = coxph(data.surv.cd133 ~ CDE_DxAge + G_CIMP_STATUS + CDE_chemo_tmz + CDE_radiation_any, 
+              data=cd133Patients, na.action="na.omit")
+
+coxCD44ph = coxph(data.surv.cd44 ~ CDE_DxAge + G_CIMP_STATUS + CDE_chemo_tmz + CDE_radiation_any, 
+                    data=cd44Patients, na.action="na.omit")
+summary(coxCD133ph)
+summary(coxCD44ph)
