@@ -78,6 +78,15 @@ subtypes$MesOther[!subtypes$GeneExp_Subtype %in% 'Mesenchymal'] = "Other"
 xtabs(~ subtype + MesOther, data=subtypes)
 fisher.test(xtabs(~ subtype + MesOther, data=subtypes))
 
+subtypes$PromOther = "Proneural"
+subtypes$PromOther[!subtypes$GeneExp_Subtype %in% 'Proneural'] = "Other"
+xtabs(~ subtype + PromOther, data=subtypes)
+fisher.test(xtabs(~ subtype + PromOther, data=subtypes))
+
+################### Measure the actual signature scores using Mann Whitney test ################### 
+wilcox.test(CD133 ~ PromOther, data=subtypes)
+wilcox.test(CD44 ~ MesOther, data=subtypes)
+
 ########################## Use bionomial distribution to measure division of Mol subtype with FACS sig #######################
 
 # Can CD44/ CD133 classification unequal in Neural?

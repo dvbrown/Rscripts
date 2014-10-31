@@ -127,6 +127,11 @@ verhaakSubtype = read.delim("output.txt", row.names=1)
 
 subTypeHeat = as.matrix(verhaakSubtype[,signatures])
 
+# Test ALDHA1A
+verhaakSubtype$MesOther = "Mesenchymal"
+verhaakSubtype$MesOther[!verhaakSubtype$GeneExp_Subtype %in% 'Mesenchymal'] = "Other"
+wilcox.test(ALDH1 ~ MesOther, data=verhaakSubtype)
+
 # Make heat map with Veerhaak subtype
 heatmap.2(t(subTypeHeat), cexRow=1.5, main="Enrichment of FACS marker signatures \n in Molecular Subtype", 
           Colv=verhaakSubtype$colours, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
