@@ -37,6 +37,20 @@ coxPH = coxph(data.surv ~  subtype + CDE_DxAge  + gender + G_CIMP_STATUS + CDE_c
               data=clinAgilent, na.action="na.omit")
 summary(coxPH)
 
+# Plot survival curve including G-CIMP
+clinAgilent$threeGroup = clinAgilent$subtype
+levels(clinAgilent$threeGroup) = c("CD133", "CD44", "G-CIMP")
+clinAgilent$threeGroup[clinAgilent$G_CIMP_STATUS %in% 'G-CIMP'] = "G-CIMP"
+clinAgilent$threeGroup = as.factor(clinAgilent$threeGroup)
+data.surv = Surv(clinAgilent$CDE_survival_time, event=clinAgilent$X_EVENT)
+threeGroupFit = survfit(data.surv ~ threeGroup, clinAgilent)
+
+plot(threeGroupFit, main='Agilent microarray',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue', 'green'), cex.axis=1.33, cex.lab=1.33,
+     cex=1.75, conf.int=F, lwd=1.33)
+legend('topright', c('CD133', 'CD44', "G-CIMP"), title="",
+       col=c("red",'blue', 'green'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 #################### Try all patients regardless of Agilent or RNAseq ###################
 data.surv = Surv(clinical$CDE_survival_time, event=clinical$X_EVENT)

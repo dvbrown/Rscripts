@@ -46,6 +46,20 @@ coxPH = coxph(data.surv ~  subtype + G_CIMP_STATUS,
               data=boundData, na.action="na.omit")
 summary(coxPH)
 
+# Plot survival curve including G-CIMP
+boundData$threeGroup = boundData$subtype
+levels(boundData$threeGroup) = c("CD133", "CD44", "G-CIMP")
+boundData$threeGroup[boundData$G_CIMP_STATUS %in% 1] = as.factor("G-CIMP")
+data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
+threeGroupFit = survfit(data.surv ~ threeGroup, boundData)
+
+plot(threeGroupFit, main='RNAseq',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue', 'green'), cex.axis=1.33, cex.lab=1.33,
+     cex=1.75, conf.int=F, lwd=1.33)
+legend('topright', c('CD133', 'CD44', "G-CIMP"), title="",
+       col=c("red",'blue', 'green'),
+       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+
 ############################################# Investigate Classical and Neural survival ##################################
 head(boundData)
 classical = boundData[boundData$GeneExp_Subtype.x %in% 'Classical',]
