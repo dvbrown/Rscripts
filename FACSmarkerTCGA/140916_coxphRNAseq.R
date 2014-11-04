@@ -60,6 +60,11 @@ legend('topright', c('CD133', 'CD44', "G-CIMP"), title="",
        col=c("red",'blue', 'green'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
+twoGroup = !boundData$threeGroup %in% 'G-CIMP'
+test = surv_test(data.surv~as.factor(boundData$threeGroup), data=boundData, subset=twoGroup)
+test
+text(locator(1),labels='p-value 0.065 \nCD133 vs CD44', cex=1) #add the p-value to the graph
+
 ############################################# Investigate Classical and Neural survival ##################################
 head(boundData)
 classical = boundData[boundData$GeneExp_Subtype.x %in% 'Classical',]

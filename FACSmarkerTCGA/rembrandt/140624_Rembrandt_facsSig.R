@@ -66,16 +66,22 @@ resultVerhaakIndex$subtype[resultVerhaakIndex$index == 1] = 'purple'
 resultVerhaakIndex$subtype[resultVerhaakIndex$index == 2] = 'green'
 resultVerhaakIndex$subtype[resultVerhaakIndex$index == 3] = 'blue'
 resultVerhaakIndex$subtype[resultVerhaakIndex$index == 4] = 'red'
-resultVerhaakIndex = sort.dataframe(resultVerhaakIndex, 5, highFirst=F)
+
+
+resultVerhaakIndex$order = 0
+resultVerhaakIndex$order[resultVerhaakIndex$index == 1] = 1
+resultVerhaakIndex$order[resultVerhaakIndex$index == 2] = 3
+resultVerhaakIndex$order[resultVerhaakIndex$index == 3] = 4
+resultVerhaakIndex$order[resultVerhaakIndex$index == 4] = 2
 resultVerhaak = as.matrix(resultVerhaakIndex[,c(1:4)])
 
 resultRembrandt = gsva(data.match, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
 resultRembrandt = t(resultRembrandt$es.obs)
 
 # Get the colours of the subtype into the same order for the rembrandt called subtypes IMPORTANT!
-resultRembrandtMerge = merge(resultRembrandt, resultVerhaakIndex[,c(5,6)], by.x='row.names', by.y='row.names')
+resultRembrandtMerge = merge(resultRembrandt, resultVerhaakIndex[,c(6, 7)], by.x='row.names', by.y='row.names')
 row.names(resultRembrandtMerge) = resultRembrandtMerge$Row.names
-resultRembrandtMerge = sort.dataframe(resultRembrandtMerge, 8, highFirst=F)
+resultRembrandtMerge = sort.dataframe(resultRembrandtMerge, 9, highFirst=F)
 resultRembrandt = as.matrix(resultRembrandtMerge[,c(2:7)])
 
 #### Make heat map with my subtype ####
@@ -85,7 +91,7 @@ heatmap.2(t(resultVerhaak), cexRow=1.5, main="Identifying molecular subtype in R
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
 
 heatmap.2(t(resultRembrandt), cexRow=1.5, main="Enrichment of FACS marker signatures\nin Rembrandt GBM", 
-          Colv=resultRembrandtMerge$subtype, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
+          Colv=resultRembrandtMerge$order, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
           ColSideColors=as.character(resultRembrandtMerge$subtype), labRow=colnames(resultRembrandt), xlab="Rembrandt samples", labCol=NA, 
           offsetRow=c(1,1), margins=c(2,7.5), ylab="Marker")
 
