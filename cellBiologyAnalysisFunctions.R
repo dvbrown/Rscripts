@@ -1,9 +1,9 @@
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 
-backgroundMeanSD <- function (dataFrame) {
+backgroundMeanSD <- function (dataFrame, blankEntry) {
     # Take the dataframe of raw data and then remove background fluorescence and take the mean and sd
-    # Subtract the background (0 cells) which is the first row
-    background = rowMeans(dataFrame[1,4:6], na.rm=T)
+    # Subtract the background which is indexed by the row number in the argument to the function
+    background = rowMeans(dataFrame[blankEntry,4:6], na.rm=T)
     # Subtract the background and bind back the metaData
     holder = dataFrame[,c(4:6)] - background
     result = cbind(dataFrame[,c(7:9)], holder)

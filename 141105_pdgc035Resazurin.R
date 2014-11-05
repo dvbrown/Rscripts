@@ -18,3 +18,5 @@ summaryStats = function(dataFrame, groups) {
 setwd("~/Documents/Cell_biology/proliferation/Resazurin/141028_correct035/")
 rawData = read.delim("pdgc035Reped.txt")
 rawData = rawData[!is.na(rawData$subpop),]
+
+backgroundMeanSD(rawData, 7)
