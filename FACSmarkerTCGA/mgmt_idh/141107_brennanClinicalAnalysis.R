@@ -31,9 +31,22 @@ contTable$cd133Percent = (contTable$CD133 / (contTable$CD133 + contTable$CD44)) 
 contTable$cd44Percent = (contTable$CD44 / (contTable$CD133 + contTable$CD44)) * 100
 write.table(contTable, "./141107_mungThis.txt", sep='\t')
 
-plotData 
+plotData = read.delim("141107_molecularFeaturesSubtype.txt")
+#colors = c("purple", "red", "blue", "green")
+colors = c("blue", "red", "green", "purple")
 
-ggplot(data = contTable, aes(x = Type.of.Behavior, y = Sample.Size, fill = Stage.of.Change)) + 
-    geom_bar()
+#### Plot molecular subtype per group ####
+ggplot(data = plotData[c(1:4, 11:14),], aes(x = subtype, y = percentWithin, fill = entry)) + 
+    geom_bar(stat="identity", colour="black") + scale_fill_manual(values=colors) +
+    xlab("Coexpression subtype") + ylab("Percent of coexpression subtype") +
+    ggtitle("Composition of molecular subtype\nfor coexpression subtype") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+
+#### Plot the rest of the data percent between ####
+ggplot(data = plotData[c(5:10, 15:20),], aes(x = entry, y = percentBetween, fill = subtype)) + 
+    geom_bar(stat="identity", colour="black") + scale_fill_manual(values=c('tomato', 'steelblue1')) +
+    xlab("Molecular feature") + ylab("Percent of all patietns") +
+    ggtitle("Distribution of molecular features for coexpression subtype") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 
 dbDisconnect(db)
