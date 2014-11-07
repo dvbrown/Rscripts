@@ -34,4 +34,7 @@ bigDF1 = bigDF[,c("Row_names__1", "CDE_chemo_adjuvant_tmz", "CDE_radiation_any",
 bigDF1$IDH1_status = as.character(bigDF1$IDH1_status)
 bigDF1$IDH1_status[bigDF1$IDH1_status %in% c("R132C", "R132G", "R132H")] = 'MT'
 bigDF1$IDH1_status = as.factor(bigDF1$IDH1_status)
-levels(bigDF1$IDH1_status) = c("WT", "MT")#, "R132C", "R132G", "R132H")
+
+dbWriteTable(db, "brennanCoexpClinical", bigDF1, row.names=T)
+
+dbDisconnect(db)
