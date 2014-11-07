@@ -1,6 +1,3 @@
-library(survival)
-library(coin)
-library(ggplot2)
 library(sqldf)
 
 source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
