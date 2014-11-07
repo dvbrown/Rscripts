@@ -24,8 +24,9 @@ subtypeAllPatients = subtypeAllPatients[!subtypeAllPatients$Row_names__1 %in% 'T
 
  # Merge the data together
 bigDF = merge.data.frame(subtypeAllPatients, brennan, by.x=0, by.y=0)
-bigDF1 = bigDF[,c("Row_names__1", "CDE_chemo_adjuvant_tmz", "CDE_radiation_any", "subtype", "Secondary_or_recurrent", "Age_at_procedure",
-                 "G.CIMP_status", "IDH1_status", "Molecular_subtype", "Therapy_class", "Vital_status", "OS_.days.", "Progression_status", "PFS_.days.")]
+bigDF1 = bigDF[,c("Row_names__1", "CDE_chemo_adjuvant_tmz", "CDE_radiation_any", "subtype", "Secondary_or_recurrent", "Age_at_procedure", "MGMT_Status",
+                 "G.CIMP_status", "IDH1_status", "Molecular_subtype", "Therapy_class", "Vital_status", "OS_.days.", "Progression_status", "PFS_.days.",
+                 "Meth_class_2012")]
 
 # IDH status to mutant
 bigDF1$IDH1_status = as.character(bigDF1$IDH1_status)

@@ -12,3 +12,8 @@ dbListTables(db)
 setwd("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/mgmtIDHCoexp/")
 
 clinical = dbReadTable(db, "brennanCoexpClinical", row.names=1)
+
+xtabs(subtype ~ Molecular_subtype + G_CIMP_status + IDH1_status + )
+
+
+dbDisconnect(db)
