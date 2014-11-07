@@ -1,0 +1,27 @@
+library(survival)
+library(coin)
+library(ggplot2)
+library(sqldf)
+
+source("~/Documents/Rscripts/FACSmarkerTCGA/140508_coexpressionFunctions.R")
+source("~/Documents/Rscripts/multiplot.R")
+db = dbConnect(SQLite(), dbname="~/Documents/public-datasets/cancerBrowser/tcgaData.sqlite")
+dbListTables(db)
+
+# Mund and write brennan data into database
+setwd("~/Documents/public-datasets/TCGA/2013_dataFreeze/")
+brennan = read.delim("Cell2013Brennan.txt", row.names=1, na.strings="")
+# dbWriteTable(conn = db, name = "brennanClinical", value = brennan, row.names = TRUE)
+
+subtypeAllPatients = dbReadTable(db, "clinicalAllPatients", row.names=T)
+subtypeAllPatients$rowName = substr(subtypeAllPatients$Row_names__1, 1, 12)
+subtypeName = gsub("\\.", "-", subtypeAllPatients$Row_names__1)
+subtypeName1 = substr(subtypeName, 1, 12)
+
+# Remove duplicate patients. These are always 02 ie recurrents
+subtypeName3 = subtypeName1[!duplicated(subtypeName1)]
+subtypeAllPatients  = subtypeAllPatients [!duplicated(subtypeName1),]
+row.names(subtypeAllPatients) = subtypeName3
+
+ # Merge the data together
+bigDF = merge.data.frame(subtypeAllPatients, brennan, by.x=0, by.y=0)

@@ -85,7 +85,10 @@ eldaSummPlot = ggplot(summData, aes(x=subpopulation, y=mean, fill=subpopulation)
 eldaSummPlot
 
 fit2 <- aov(norm ~ subpopulation, efficieny) 
-summary(fit2) # 0.248
+summary(fit2) # 0.0964
 TukeyHSD(fit2)
+
+fit3 <- aov(estimate ~ subpopulation, efficieny) 
+summary(fit3) # 0.27
 
 multiplot(eldaNormPlot, eldaPlot, eldaPlotRetain, eldaSummPlot, cols=2)
