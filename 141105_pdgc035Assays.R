@@ -50,3 +50,20 @@ tmzPlot7 = ggplot(data=temo, aes(x=patient, y=dmsoCorrected, fill=subpop)) +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 
 multiplot(growthPlot7, tmzPlot7)
+
+############################################## Invasion ###############################################
+invasion = read.delim('~/Documents/Cell_biology/microscopy/invasion/141107_035/141107_outputRep.txt')
+
+dat = invasion
+dat$mean = rowMeans(dat[c(4:6)], na.rm=T)
+dat$sd = apply(dat[c(4:6)], 1, sd, na.rm=T)
+dat$cv = dat$sd / dat$mean * 100
+
+invPlot = ggplot(data=dat, aes(x=subpopulation, y=mean, fill=treatment)) + 
+    scale_fill_manual(values=c("forestgreen", "darkorange")) +
+    # scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("PDAC") + ylab("Cell number relative to \nDMSO control") +
+    ggtitle("Invasion assay day 7") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
