@@ -39,20 +39,40 @@ growthPlot = ggplot(growth[growth$treatment %in% 'DMSO',],
     ggtitle("Growth at day 7 by \nmarker status") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 
-# Summarise by marker status and get sem
-result <- ddply(growthMung, c('subpop', 'treatment'), summarise,
-                N    = length(growthStd),
-                mean = mean(growthStd),
-                sd   = sd(growthStd),
-                se   = sd / sqrt(N) )
+################### Summarise by marker status and get sem ################### 
+# extract Growth columns
+growth = growthMung[growthMung$treatment %in% 'DMSO',]
+growthSummary <- ddply(growth, 'subpop', summarise,
+                N    = length(growthStd), mean = mean(growthStd),
+                geoMean = exp(mean(log(growthStd))), geoSD = exp(sd(log(growthStd))),
+                sd   = sd(growthStd), se   = sd / sqrt(N) )
 
+growthSumPlot = ggplot(growthSummary, aes(x=subpop, y=mean, fill=subpop)) + 
+    scale_fill_manual(values=color) +
+    #scale_fill_manual(values=bw) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
+    xlab("PDGC") + ylab("Fluorescent intensity") +
+    ggtitle("Growth at day 7 by \nmarker status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+growthSumPlot
 
-
-pdf(file="./141028_growthTMZ.pdf", useDingbats=F, height=12, width=18)
-multiplot(growthPlot, growthSummPlot, normalisedTMZPlot, tmzSummPlot, cols=2)
+pdf(file="./resazurin/141112_growthDMSO.pdf", useDingbats=F, height=12, width=18)
+growthSumPlot
 dev.off()
 
-anova(lm(normDN ~ subpop, data = tmzData))
+anova(lm(growthStd ~ subpop + patient, data = growth))
+
+################### TMZ analysis ################### 
+tmz = growthMung[growthMung$treatment %in% 'TMZ',]
+tmzSummary <- ddply(tmz, 'subpop', summarise,
+                       N    = length(TMZstd), mean = mean(TMZstd),
+                       geoMean = exp(mean(log(TMZstd))), geoSD = exp(sd(log(TMZstd))),
+                       sd   = sd(TMZstd), se   = sd / sqrt(N) )
+
+
+
+
 
 #### Write into database ####
 dbWriteTable(conn = db, name = "growthData", value = growthData, row.names = TRUE)
