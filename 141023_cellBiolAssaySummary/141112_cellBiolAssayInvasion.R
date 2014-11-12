@@ -55,6 +55,7 @@ invSumPlot = ggplot(invSummary, aes(x=subpop, y=mean, fill=subpop)) +
 invSumPlot
 
 anova(lm(dnNorm ~ subpop + patient, data = invasion))
+TukeyHSD.aov(aov(lm(dnNorm ~ subpop + patient, data = invasion)), which="subpop")
 
 dbWriteTable(conn = db, name = "normalisedSphereArea", value = dnNormSphere, row.names = TRUE)
 dbWriteTable(conn = db, name = "invasionSummary", value = invasionSummary, row.names = TRUE)
