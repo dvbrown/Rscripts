@@ -48,16 +48,16 @@ growthSummary <- ddply(growth, 'subpop', summarise,
                 sd   = sd(growthStd), se   = sd / sqrt(N) )
 
 growthSumPlot = ggplot(growthSummary, aes(x=subpop, y=mean, fill=subpop)) + 
-    scale_fill_manual(values=color) +
-    #scale_fill_manual(values=bw) +
+    #scale_fill_manual(values=color) + guides(fill=FALSE) +
+    scale_fill_manual(values=bw) +  guides(fill=FALSE) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
-    xlab("PDGC") + ylab("Fluorescent intensity") +
+    xlab("Subpopulation") + ylab("Growth relative to CD44-/CD133-") +
     ggtitle("Growth at day 7 by \nmarker status") +  # Set title
-    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
 growthSumPlot
 
-pdf(file="./resazurin/141112_growthDMSO.pdf", useDingbats=F, height=12, width=18)
+pdf(file="./resazurin/141112_growthDMSObw.pdf", useDingbats=F, height=12, width=18)
 growthSumPlot
 dev.off()
 
@@ -70,9 +70,21 @@ tmzSummary <- ddply(tmz, 'subpop', summarise,
                        geoMean = exp(mean(log(TMZstd))), geoSD = exp(sd(log(TMZstd))),
                        sd   = sd(TMZstd), se   = sd / sqrt(N) )
 
+tmzSumPlot = ggplot(tmzSummary, aes(x=subpop, y=mean, fill=subpop)) + 
+    #scale_fill_manual(values=color) +  guides(fill=FALSE) +
+    scale_fill_manual(values=bw) +  guides(fill=FALSE) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
+    xlab("PDGC") + ylab("Temozolomide resistance") +
+    ggtitle("Resistance to TMZ at day 7 \nby marker status") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+tmzSumPlot
 
+pdf(file="./resazurin/141112_growthTMZbw.pdf", useDingbats=F, height=12, width=18)
+tmzSumPlot
+dev.off()
 
-
+anova(lm(TMZstd ~ subpop + patient, data = tmz))
 
 #### Write into database ####
 dbWriteTable(conn = db, name = "growthData", value = growthData, row.names = TRUE)
