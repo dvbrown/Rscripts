@@ -1,5 +1,6 @@
 library(sqldf)
 library(ggplot2)
+library(plyr)
 
 source("~/Documents/Rscripts/cellBiologyAnalysisFunctions.R")
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
@@ -19,6 +20,8 @@ growth$sd = apply(growth[,c(4:6)], 1, sd, na.rm=T)
 growth$cv = growth$sd / growth$mean * 100
 
 write.table(growth, "141112_growthSummary.txt", sep='\t')
+# I munged the data in excel and made the appropriate normalisations.
+# The important columns are growth std and tmzstd
 growthMung = read.delim("141112_growthNormalise.txt")
 
 bw = c("grey21", "grey82", "grey52", "grey97")
@@ -37,10 +40,11 @@ growthPlot = ggplot(growth[growth$treatment %in% 'DMSO',],
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 
 # Summarise by marker status and get sem
-
-
-
-
+result <- ddply(growthMung, c('subpop', 'treatment'), summarise,
+                N    = length(growthStd),
+                mean = mean(growthStd),
+                sd   = sd(growthStd),
+                se   = sd / sqrt(N) )
 
 
 
