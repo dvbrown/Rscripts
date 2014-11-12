@@ -40,7 +40,19 @@ eldaSummary <- ddply(efficieny, 'subpopulation', summarise,
                     geoMean = exp(mean(log(estimate))), geoSD = exp(sd(log(estimate))),
                     sd   = sd(estimate), se   = sd / sqrt(N) )
 
+eldaSumPlot = ggplot(eldaSummary, aes(x=subpopulation, y=mean, fill=subpopulation)) + 
+    #scale_fill_manual(values=color) + guides(fill=FALSE) +
+    scale_fill_manual(values=bw) +  guides(fill=FALSE) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
+    xlab("Subpopulation") + ylab("Sphere forming efficiency") +
+    ggtitle("Sphere forming efficiency at day 7 by \nmarker status") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
+eldaSumPlot
 
+pdf(file="./141112_eldabw.pdf", useDingbats=F, height=12, width=18)
+eldaSumPlot
+dev.off()
 
-
-multiplot(eldaNormPlot, eldaPlot, eldaPlotRetain, eldaSummPlot, cols=2)
+anova(lm(estimate ~ subpopulation + clone, data = efficieny)) # 0.03653 *
+TukeyHSD.aov(aov(lm(estimate ~ subpopulation + clone, data = efficieny)), which="subpopulation")
