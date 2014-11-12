@@ -45,8 +45,8 @@ invSummary <- ddply(invasion, 'subpop', summarise,
                        sd   = sd(dnNorm), se   = sd / sqrt(N) )
 
 invSumPlot = ggplot(invSummary, aes(x=subpop, y=mean, fill=subpop)) + 
-    scale_fill_manual(values=color) + guides(fill=FALSE) +
-    #scale_fill_manual(values=bw) +  guides(fill=FALSE) +
+    #scale_fill_manual(values=color) + guides(fill=FALSE) +
+    scale_fill_manual(values=bw) +  guides(fill=FALSE) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
     xlab("Subpopulation") + ylab("Invasive index relative to CD44-/CD133-") +
@@ -54,7 +54,11 @@ invSumPlot = ggplot(invSummary, aes(x=subpop, y=mean, fill=subpop)) +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
 invSumPlot
 
-anova(lm(dnNorm ~ subpop + patient, data = invasion))
+pdf(file="./141112_invasionBw.pdf", useDingbats=F, height=12, width=18)
+invSumPlot
+dev.off()
+
+anova(lm(dnNorm ~ subpop + patient, data = invasion)) # 0.04551 *
 TukeyHSD.aov(aov(lm(dnNorm ~ subpop + patient, data = invasion)), which="subpop")
 
 dbWriteTable(conn = db, name = "normalisedSphereArea", value = dnNormSphere, row.names = TRUE)
