@@ -23,6 +23,7 @@ write.table(growth, "141112_growthSummary.txt", sep='\t')
 # I munged the data in excel and made the appropriate normalisations.
 # The important columns are growth std and tmzstd
 growthMung = read.delim("141112_growthNormaliseConfident.txt")
+anova(lm(mean ~ patient + treatment + subpop, data = growthMung))
 
 bw = c("grey21", "grey82", "grey52", "grey97")
 color = c("chartreuse4", "skyblue2", "gold", "orangered1")
@@ -61,8 +62,12 @@ growthSumPlot
 # growthSumPlot
 # dev.off()
 
-anova(lm(growthStd ~ subpop + patient, data = growth))
-TukeyHSD.aov(aov(growthStd ~ subpop + patient, data = growth), which="subpop")
+anova(lm(mean ~ subpop + patient, data = growth))
+TukeyHSD(aov(mean ~ subpop, data = growth), which="subpop")
+write.table(growth, '141113_growthData.txt', sep='\t')
+
+with(growth, pairwise.t.test(growthStd, subpop, 
+    p.adj="fdr", paired=F))
 
 ################### TMZ analysis ################### 
 tmz = growthMung[growthMung$treatment %in% 'TMZ',]
@@ -85,9 +90,9 @@ pdf(file="./141112_growthTMZ.pdf", useDingbats=F, height=12, width=18)
 tmzSumPlot
 dev.off()
 
-anova(lm(TMZstd ~ subpop + patient, data = tmz))
-TukeyHSD.aov(aov(TMZstd ~ subpop + patient, data = tmz), which="subpop")
-t.test(TMZstd ~ subpop, data = tmz[tmz$subpop %in% c('CD44-/CD133-', 'CD44+/CD133+'),])
+anova(lm(mean ~ subpop + patient, data = tmz))
+TukeyHSD.aov(aov(mean ~ subpop + patient, data = tmz), which="subpop")
+write.table(tmz, '141113_tmzData.txt', sep='\t')
 
 #### Write into database ####
 dbWriteTable(conn = db, name = "growthData", value = growthData, row.names = TRUE)
