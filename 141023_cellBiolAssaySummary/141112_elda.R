@@ -50,9 +50,10 @@ eldaSumPlot = ggplot(eldaSummary, aes(x=subpopulation, y=mean, fill=subpopulatio
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
 eldaSumPlot
 
-pdf(file="./141112_eldabw.pdf", useDingbats=F, height=12, width=18)
-eldaSumPlot
-dev.off()
+# pdf(file="./141112_eldabw.pdf", useDingbats=F, height=12, width=18)
+# eldaSumPlot
+# dev.off()
 
 anova(lm(estimate ~ subpopulation + clone, data = efficieny)) # 0.03653 *
 TukeyHSD.aov(aov(lm(estimate ~ subpopulation + clone, data = efficieny)), which="subpopulation")
+# CD44+/CD133+-CD44-/CD133- 0.0261761

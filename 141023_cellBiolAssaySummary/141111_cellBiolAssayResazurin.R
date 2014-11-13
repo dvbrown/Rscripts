@@ -62,8 +62,8 @@ growthSumPlot
 # growthSumPlot
 # dev.off()
 
-anova(lm(mean ~ subpop + patient, data = growth))
-TukeyHSD(aov(mean ~ subpop, data = growth), which="subpop")
+anova(lm(mean ~ subpop + patient, data = growth)) #  0.04828 *  
+TukeyHSD(aov(mean ~ subpop, data = growth), which="subpop") # nothing significant is post hoc
 write.table(growth, '141113_growthData.txt', sep='\t')
 
 with(growth, pairwise.t.test(growthStd, subpop, 
@@ -90,8 +90,11 @@ pdf(file="./141112_growthTMZ.pdf", useDingbats=F, height=12, width=18)
 tmzSumPlot
 dev.off()
 
-anova(lm(mean ~ subpop + patient, data = tmz))
+anova(lm(mean ~ subpop + patient, data = tmz)) # 0.04134 *  
 TukeyHSD.aov(aov(mean ~ subpop + patient, data = tmz), which="subpop")
+# CD44+/CD133--CD44-/CD133-  0.0480090
+# CD44+/CD133+-CD44-/CD133-  0.9999899
+
 write.table(tmz, '141113_tmzData.txt', sep='\t')
 
 #### Write into database ####

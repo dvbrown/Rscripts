@@ -54,9 +54,9 @@ invSumPlot = ggplot(invSummary, aes(x=subpop, y=mean, fill=subpop)) +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
 invSumPlot
 
-pdf(file="./141112_invasionBw.pdf", useDingbats=F, height=12, width=18)
-invSumPlot
-dev.off()
+# pdf(file="./141112_invasionBw.pdf", useDingbats=F, height=12, width=18)
+# invSumPlot
+# dev.off()
 
 anova(lm(dnNorm ~ subpop + patient, data = invasion)) # 0.04551 *
 TukeyHSD.aov(aov(lm(dnNorm ~ subpop + patient, data = invasion)), which="subpop")
