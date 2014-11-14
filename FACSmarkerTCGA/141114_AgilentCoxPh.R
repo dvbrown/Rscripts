@@ -16,7 +16,7 @@ clin = clinical[matched, c("CDE_DxAge", "CDE_survival_time", "CDE_vital_status",
                            'CDE_radiation_any', 'CDE_tmz_chemoradiation_standard', 'GeneExp_Subtype', 'G_CIMP_STATUS')]
 
 # Remove cases where NA for treatment
-clin = clin[!is.na(clin$CDE_chemo_tmz),]
+#clin = clin[!is.na(clin$CDE_chemo_tmz),]
 
 ############################################## bind the clinical and subtyping info together #############################################
 boundData = merge.data.frame(clin, verhaakSubtypeCall, by.x="row.names", by.y="row.names")
@@ -70,6 +70,11 @@ coxCD44ph = coxph(data.surv.cd44 ~ CDE_DxAge + G_CIMP_STATUS + CDE_chemo_tmz + C
 summary(coxCD133ph)
 summary(coxCD44ph)
 
+
+
+
+# par(mfrow=c(2,2))
+par(mfrow=c(1,1))
 ############################# CD133 Temozolomide ##############################
 attach(cd133Patients)
 cd133.temo = data.frame(CDE_chemo_tmz=c(TRUE, FALSE), CDE_DxAge=rep(mean(CDE_DxAge, na.rm=T),2), G_CIMP_STATUS=rep(1-mean(G_CIMP_STATUS),2),
