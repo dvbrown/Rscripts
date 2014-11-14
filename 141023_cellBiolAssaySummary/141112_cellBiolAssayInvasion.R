@@ -33,6 +33,7 @@ list.files()
 
 # Intialise and write into database
 db <- dbConnect(SQLite(), dbname="assaySummary.sqlite")
+rawInvasion = read.delim("../141028_invasionSummary.txt")
 invasion = read.delim("141112_mungInvasion.txt")
 
 invasion$mean = rowMeans(invasion[,c(4:6)], na.rm=T)
@@ -60,11 +61,11 @@ invSumPlot
 # invSumPlot
 # dev.off()
 
+anova(lm(mean ~ subpop + patient + treatment, data = rawInvasion)) # 0.0354165 *
+TukeyHSD.aov(aov(mean ~ subpop + patient, data = rawInvasion), which="subpop") # CD44+/CD133-  CD44-/CD133- 0.0467581
+
 anova(lm(dnNorm ~ subpop + patient, data = invasion)) # 0.04551 *
 TukeyHSD.aov(aov(lm(dnNorm ~ subpop + patient, data = invasion)), which="subpop")
-
-anova(lm(mean ~ subpop + patient, data = invasion)) # 0.0354165 *
-TukeyHSD.aov(aov(mean ~ subpop + patient, data = invasion), which="subpop") # CD44+/CD133-  CD44-/CD133- 0.0467581
 
 dbWriteTable(conn = db, name = "normalisedSphereArea", value = dnNormSphere, row.names = TRUE)
 dbWriteTable(conn = db, name = "invasionSummary", value = invasionSummary, row.names = TRUE)
