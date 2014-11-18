@@ -82,9 +82,9 @@ cd133.temo = data.frame(CDE_chemo_tmz=c(TRUE, FALSE), CDE_DxAge=rep(mean(CDE_DxA
 detach(cd133Patients)
 
 plot(survfit(coxCD133ph, newdata=cd133.temo, na.action=na.pass), main='TCGA GBM cohort CD133 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33)
+     col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
 legend('topright', c('FALSE', 'TRUE'), title="Temozolomide",
-       col=c("red",'blue'),
+       col=c('blue', 'red'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 ############################# CD133 Radiation ##############################
@@ -94,9 +94,9 @@ cd133.rad = data.frame(CDE_radiation_any=c(TRUE, FALSE), CDE_DxAge=rep(mean(CDE_
 detach(cd133Patients)
 
 plot(survfit(coxCD133ph, newdata=cd133.rad, na.action=na.pass), main='TCGA GBM cohort CD133 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33)
+     col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
 legend('topright', c('FALSE', 'TRUE'), title="Radiation",
-       col=c("red",'blue'),
+       col=c("blue",'red'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 
@@ -107,9 +107,9 @@ cd44.temo = data.frame(CDE_chemo_tmz=c(TRUE, FALSE), CDE_DxAge=rep(mean(CDE_DxAg
 detach(cd44Patients)
 
 plot(survfit(coxCD44ph, newdata=cd44.temo, na.action=na.pass), main='TCGA GBM cohort CD44 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33)
+     col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
 legend('topright', c('FALSE', 'TRUE'), title="Temozolomide",
-       col=c("red",'blue'),
+       col=c("blue",'red'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
 ############################# CD44 Radiation ##############################
@@ -119,7 +119,7 @@ cd44.rad = data.frame(CDE_radiation_any=c(TRUE, FALSE), CDE_DxAge=rep(mean(CDE_D
 detach(cd44Patients)
 
 plot(survfit(coxCD44ph, newdata=cd44.rad, na.action=na.pass), main='TCGA GBM cohort CD44 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
-     col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33)
+     col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
 legend('topright', c('FALSE', 'TRUE'), title="Radiation",
-       col=c("red",'blue'),
+       col=c("blue",'red'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)

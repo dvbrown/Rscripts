@@ -29,8 +29,8 @@ bw = c("grey21", "grey82", "grey52", "grey97")
 color = c("chartreuse4", "skyblue2", "gold", "orangered1")
 
 ################## Growth assay ############################
-# Plot the raw results
-# growthPlot = ggplot(growth[growth$treatment %in% 'DMSO',], 
+#Plot the raw results
+# growthPlot = ggplot(growthMung[growthMung$treatment %in% 'DMSO',], 
 #                      aes(x=patient, y=mean, fill=subpop)) + 
 #     scale_fill_manual(values=color) +
 #     #scale_fill_manual(values=bw) +
@@ -39,7 +39,7 @@ color = c("chartreuse4", "skyblue2", "gold", "orangered1")
 #     xlab("PDGC") + ylab("Fluorescent intensity") +
 #     ggtitle("Growth at day 7 by \nmarker status") +  # Set title
 #     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
-
+# growthPlot
 ################### Summarise by marker status and get sem ################### 
 # extract Growth columns
 growth = growthMung[growthMung$treatment %in% 'DMSO',]
@@ -49,16 +49,16 @@ growthSummary <- ddply(growth, 'subpop', summarise,
                 sd   = sd(growthStd), se   = sd / sqrt(N) )
 
 growthSumPlot = ggplot(growthSummary, aes(x=subpop, y=mean, fill=subpop)) + 
-    #scale_fill_manual(values=color) + guides(fill=FALSE) +
-    scale_fill_manual(values=bw) +  guides(fill=FALSE) +
+    scale_fill_manual(values=color) + guides(fill=FALSE) +
+    #scale_fill_manual(values=bw) +  guides(fill=FALSE) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
     xlab("Subpopulation") + ylab("Growth relative to CD44-/CD133-") +
     ggtitle("Growth at day 7 by \nmarker status") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 growthSumPlot
 
-# pdf(file="./resazurin/141112_growthDMSObw.pdf", useDingbats=F, height=12, width=18)
+# pdf(file="./141118_growthDMSObw.pdf", useDingbats=F, height=12, width=18)
 # growthSumPlot
 # dev.off()
 
@@ -86,9 +86,9 @@ tmzSumPlot = ggplot(tmzSummary, aes(x=subpop, y=mean, fill=subpop)) +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
 tmzSumPlot
 
-pdf(file="./141112_growthTMZ.pdf", useDingbats=F, height=12, width=18)
-tmzSumPlot
-dev.off()
+# pdf(file="./141112_growthTMZ.pdf", useDingbats=F, height=12, width=18)
+# tmzSumPlot
+# dev.off()
 
 anova(lm(mean ~ subpop + patient, data = tmz)) # 0.04134 *  
 TukeyHSD.aov(aov(mean ~ subpop + patient, data = tmz), which="subpop")
