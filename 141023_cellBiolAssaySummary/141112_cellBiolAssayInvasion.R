@@ -41,6 +41,14 @@ invasion$mean = rowMeans(invasion[,c(4:6)], na.rm=T)
 bw = c("grey21", "grey82", "grey52", "grey97")
 color = c("chartreuse4", "skyblue2", "gold", "orangered1")
 
+invPlot = ggplot(invasion, aes(x=patient, y=dnNorm, fill=subpop)) + 
+    scale_fill_manual(values=color) + guides(fill=FALSE) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    xlab("GSPC") + ylab("Invasive index relative to CD44-/CD133-") +
+    ggtitle("Invasive index at day 7 by \nmarker status") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+invPlot
+
 ################## Invasion assay ############################
 invSummary <- ddply(invasion, 'subpop', summarise,
                        N    = length(dnNorm), mean = mean(dnNorm),
@@ -54,7 +62,7 @@ invSumPlot = ggplot(invSummary, aes(x=subpop, y=mean, fill=subpop)) +
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
     xlab("Subpopulation") + ylab("Invasive index relative to CD44-/CD133-") +
     ggtitle("Invasive index at day 7 by \nmarker status") +  # Set title
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1), text = element_text(size=24))
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 invSumPlot
 
 # pdf(file="./141112_invasionBw.pdf", useDingbats=F, height=12, width=18)

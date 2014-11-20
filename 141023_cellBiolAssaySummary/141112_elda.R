@@ -21,7 +21,7 @@ summariseByFactor = function (dataFrame, factor1) {
 
 # Intialise and write into database
 db <- dbConnect(SQLite(), dbname="assaySummary.sqlite")
-elda = read.delim("141111_eldaSummary.txt")
+elda = read.delim("141120_eldaSummary.txt")
 bw = c("grey21", "grey82", "grey52", "grey97")
 color = c("chartreuse4", "skyblue2", "gold", "orangered1")
 
@@ -32,7 +32,16 @@ efficieny[,c(4:6)] = (efficieny[,c(4:6)] ^ -1) * 100
 ci = efficieny[,6] - efficieny[,5]
 efficieny$se = ci / 1.96
 efficieny$sample = paste(efficieny$clone, efficieny$date, sep="_")
-efficieny = efficieny[c(1:16),]
+efficieny = efficieny[c(1:12),]
+
+eldaPlot = ggplot(efficieny, aes(x=clone, y=estimate, fill=subpopulation)) + 
+    scale_fill_manual(values=color) + guides(fill=FALSE) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    #geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
+    xlab("GSPC") + ylab("Sphere forming efficiency") +
+    ggtitle("Sphere forming efficiency at day 7 by \nmarker status") +  # Set title
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+eldaPlot
 
 # Summarise data
 eldaSummary <- ddply(efficieny, 'subpopulation', summarise,
@@ -41,8 +50,8 @@ eldaSummary <- ddply(efficieny, 'subpopulation', summarise,
                     sd   = sd(estimate), se   = sd / sqrt(N) )
 
 eldaSumPlot = ggplot(eldaSummary, aes(x=subpopulation, y=mean, fill=subpopulation)) + 
-    #scale_fill_manual(values=color) + guides(fill=FALSE) +
-    scale_fill_manual(values=bw) +  guides(fill=FALSE) +
+    scale_fill_manual(values=color) + guides(fill=FALSE) +
+    #scale_fill_manual(values=bw) +  guides(fill=FALSE) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
     xlab("Subpopulation") + ylab("Sphere forming efficiency") +
@@ -54,6 +63,6 @@ eldaSumPlot
 # eldaSumPlot
 # dev.off()
 
-anova(lm(estimate ~ subpopulation + clone, data = efficieny)) # 0.03653 *
+anova(lm(estimate ~ subpopulation + clone, data = efficieny)) #  0.0304706 *
 TukeyHSD.aov(aov(lm(estimate ~ subpopulation + clone, data = efficieny)), which="subpopulation")
 # CD44+/CD133+-CD44-/CD133- 0.0261761

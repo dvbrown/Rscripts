@@ -30,16 +30,16 @@ color = c("chartreuse4", "skyblue2", "gold", "orangered1")
 
 ################## Growth assay ############################
 #Plot the raw results
-# growthPlot = ggplot(growthMung[growthMung$treatment %in% 'DMSO',], 
-#                      aes(x=patient, y=mean, fill=subpop)) + 
-#     scale_fill_manual(values=color) +
-#     #scale_fill_manual(values=bw) +
-#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-#     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
-#     xlab("PDGC") + ylab("Fluorescent intensity") +
-#     ggtitle("Growth at day 7 by \nmarker status") +  # Set title
-#     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
-# growthPlot
+growthPlot = ggplot(growthMung[growthMung$treatment %in% 'DMSO',], 
+                     aes(x=patient, y=growthStd, fill=subpop)) + 
+    scale_fill_manual(values=color) +
+    #scale_fill_manual(values=bw) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    #geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("PDGC") + ylab("Fluorescent intensity") +
+    ggtitle("Growth at day 7 by marker status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+growthPlot
 ################### Summarise by marker status and get sem ################### 
 # extract Growth columns
 growth = growthMung[growthMung$treatment %in% 'DMSO',]
@@ -96,6 +96,17 @@ TukeyHSD.aov(aov(mean ~ subpop + patient, data = tmz), which="subpop")
 # CD44+/CD133+-CD44-/CD133-  0.9999899
 
 write.table(tmz, '141113_tmzData.txt', sep='\t')
+
+tmzPlot = ggplot(growthMung[growthMung$treatment %in% 'TMZ',], 
+                    aes(x=patient, y=TMZstd, fill=subpop)) + 
+    scale_fill_manual(values=color) +
+    #scale_fill_manual(values=bw) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    #geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("PDGC") + ylab("Growth relative to CD44-/CD133-") +
+    ggtitle("Growth at day 7 by marker status") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+tmzPlot
 
 #### Write into database ####
 dbWriteTable(conn = db, name = "growthData", value = growthData, row.names = TRUE)
