@@ -42,7 +42,7 @@ bw = c("grey21", "grey82", "grey52", "grey97")
 color = c("chartreuse4", "skyblue2", "gold", "orangered1")
 
 invPlot = ggplot(invasion, aes(x=patient, y=dnNorm, fill=subpop)) + 
-    scale_fill_manual(values=color) + guides(fill=FALSE) +
+    scale_fill_manual(values=color) + #guides(fill=FALSE) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     xlab("GSPC") + ylab("Invasive index relative to CD44-/CD133-") +
     ggtitle("Invasive index at day 7 by \nmarker status") +  # Set title
