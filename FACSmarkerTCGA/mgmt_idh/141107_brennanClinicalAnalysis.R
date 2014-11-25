@@ -23,6 +23,10 @@ cimp = xtabs (~ G_CIMP_status + subtype, data=clinical)
 idh = xtabs(~ IDH1_status + subtype, data=clinical)
 mgmt = xtabs(~ MGMT_Status + subtype, data= clinical)
 
+# Run the fisher tests
+fisher.test(idh)
+fisher.test(mgmt)
+
 contTable = rbind(molSubtype, cimp, idh, mgmt)
 contTable = as.data.frame(contTable[c(1,3:11),])
 

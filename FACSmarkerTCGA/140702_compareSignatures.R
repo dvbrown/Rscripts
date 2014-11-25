@@ -51,6 +51,7 @@ phyper(length(mesCD44) - 1, length(row.names(cd44Sig)), length(row.names(rnaseqG
 ########################## CD15 and Mesenchymal ########################## 
 probOverlap(tcgaSigs$Mesenchymal, row.names(cd15), row.names(rnaseqGem))
 # 5.932462e-91
+length(intersect(tcgaSigs$Mesenchymal, row.names(cd15)))
 
 ########################## CD15 and CD44 ########################## 
 probOverlap(row.names(cd44Sig), row.names(cd15), row.names(rnaseqGem))
