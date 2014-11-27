@@ -47,10 +47,11 @@ sur.fit = survfit(data.surv ~ subtype, boundData)
 par(mfrow=c(1,1))
 plot(sur.fit, main='TCGA GBM cohort all patients classified by subtype',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'),
-     cex=1.75, conf.int=F, lwd=1.33)
-legend('topright', c('CD133', 'CD44'), title="Coexpression subtype",
+     cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
+
+legend('topright', c('CD133-M n=169', 'CD44-M n=184'), title="Coexpression subtype",
        col=c("red",'blue'),
-       lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
+       lwd=1.33, cex=1.75, bty='n', xjust=0.5, yjust=0.5)
 
 summary(data.surv)
 test = surv_test(data.surv~as.factor(boundData$subtype))
@@ -80,10 +81,12 @@ attach(cd133Patients)
 cd133.temo = data.frame(CDE_chemo_tmz=c(TRUE, FALSE), CDE_DxAge=rep(mean(CDE_DxAge, na.rm=T),2), G_CIMP_STATUS=rep(1-mean(G_CIMP_STATUS),2),
                         CDE_radiation_any=rep(mean(CDE_radiation_any, na.rm=T),2))
 detach(cd133Patients)
+xtabs(~ CDE_chemo_tmz, cd133Patients)
 
 plot(survfit(coxCD133ph, newdata=cd133.temo, na.action=na.pass), main='TCGA GBM cohort CD133 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
-legend('topright', c('FALSE', 'TRUE'), title="Temozolomide",
+
+legend('topright', c('FALSE n=64', 'TRUE n=81'), title="Temozolomide",
        col=c('blue', 'red'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
