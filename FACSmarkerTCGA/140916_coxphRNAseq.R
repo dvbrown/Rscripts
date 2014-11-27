@@ -37,6 +37,18 @@ boundData = boundData[!is.na(boundData$X_EVENT),]
 
 ############################################# Analysing the data for survival ##################################
 data.surv = Surv(boundData$CDE_survival_time, event=boundData$X_EVENT)
+
+xtabs(~ subtype, boundData)
+sur.fit = survfit(data.surv ~ subtype, boundData)
+par(mfrow=c(1,1))
+
+plot(sur.fit, main='TCGA GBM cohort all patients classified by subtype',ylab='Survival probability',xlab='survival (days)', 
+     col=c("red",'blue'),
+     cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
+legend('topright', c('CD133-M n=90', 'CD44-M n=75'), title="Coexpression subtype",
+       col=c("red",'blue'),
+       lwd=1.33, cex=1.75, bty='n', xjust=0.5, yjust=0.5)
+
 coxPH = coxph(data.surv ~  subtype +  CDE_DxAge  + gender + G_CIMP_STATUS + CDE_chemo_tmz + CDE_radiation_any, 
               data=boundData, na.action="na.omit")
 summary(coxPH)
