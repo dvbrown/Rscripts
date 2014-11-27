@@ -1,4 +1,5 @@
 # A script to demonstrate Agilent is better than Affymetrix
+library(ggplot2)
 
 #Load Agilent
 setwd('~/Documents/public-datasets/cancerBrowser/TCGA_GBM_G4502A_07_2-2014-05-02/')
@@ -20,6 +21,13 @@ colnames(affyGAPDH) = c("expression", "gene")
 colnames(affyBact) = c("expression", "gene")
 affyGene = rbind(affyGAPDH, affyBact)
 
+ggplot(affyGene, aes(x=expression, fill=gene)) + geom_density(alpha=.3)
+
 
 agilentGAPDH = as.data.frame(t(agilent["GAPDH",]))
-agilentGAPDH$origin = "Agilent"
+agilentGAPDH$gene = "GAPDH"
+agilentBact = as.data.frame(t(agilent["ACTB",]))
+agilentBact$gene = "ACTB"
+colnames(agilentGAPDH) = c("expression", "gene")
+colnames(agilentBact) = c("expression", "gene")
+agilentGene = rbind(agilentGAPDH, agilentBact)
