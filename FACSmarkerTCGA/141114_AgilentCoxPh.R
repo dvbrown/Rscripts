@@ -95,10 +95,11 @@ attach(cd133Patients)
 cd133.rad = data.frame(CDE_radiation_any=c(TRUE, FALSE), CDE_DxAge=rep(mean(CDE_DxAge, na.rm=T),2), G_CIMP_STATUS=rep(1-mean(G_CIMP_STATUS),2),
                        CDE_chemo_tmz=rep(mean(CDE_chemo_tmz, na.rm=T),2))
 detach(cd133Patients)
+xtabs(~ CDE_radiation_any, cd133Patients)
 
 plot(survfit(coxCD133ph, newdata=cd133.rad, na.action=na.pass), main='TCGA GBM cohort CD133 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
-legend('topright', c('FALSE', 'TRUE'), title="Radiation",
+legend('topright', c('FALSE n=34', 'TRUE n=111'), title="Radiation",
        col=c("blue",'red'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
@@ -108,10 +109,11 @@ attach(cd44Patients)
 cd44.temo = data.frame(CDE_chemo_tmz=c(TRUE, FALSE), CDE_DxAge=rep(mean(CDE_DxAge, na.rm=T),2), G_CIMP_STATUS=rep(1-mean(G_CIMP_STATUS),2),
                         CDE_radiation_any=rep(mean(CDE_radiation_any, na.rm=T),2))
 detach(cd44Patients)
+xtabs(~ CDE_chemo_tmz, cd44Patients)
 
 plot(survfit(coxCD44ph, newdata=cd44.temo, na.action=na.pass), main='TCGA GBM cohort CD44 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
-legend('topright', c('FALSE', 'TRUE'), title="Temozolomide",
+legend('topright', c('FALSE n=67', 'TRUE n=96'), title="Temozolomide",
        col=c("blue",'red'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
 
@@ -120,9 +122,10 @@ attach(cd44Patients)
 cd44.rad = data.frame(CDE_radiation_any=c(TRUE, FALSE), CDE_DxAge=rep(mean(CDE_DxAge, na.rm=T),2), G_CIMP_STATUS=rep(1-mean(G_CIMP_STATUS),2),
                        CDE_chemo_tmz=rep(mean(CDE_chemo_tmz, na.rm=T),2))
 detach(cd44Patients)
+xtabs(~ CDE_radiation_any, cd44Patients)
 
 plot(survfit(coxCD44ph, newdata=cd44.rad, na.action=na.pass), main='TCGA GBM cohort CD44 patients classified by treatment',ylab='Survival probability',xlab='survival (days)', 
      col=c("red",'blue'), cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
-legend('topright', c('FALSE', 'TRUE'), title="Radiation",
+legend('topright', c('FALSE n=24', 'TRUE n=139'), title="Radiation",
        col=c("blue",'red'),
        lwd=1.33, cex=1.2, bty='n', xjust=0.5, yjust=0.5)
