@@ -21,7 +21,10 @@ colnames(affyGAPDH) = c("expression", "gene")
 colnames(affyBact) = c("expression", "gene")
 affyGene = rbind(affyGAPDH, affyBact)
 
-ggplot(affyGene, aes(x=expression, fill=gene)) + geom_density(alpha=.3)
+affyHist = ggplot(affyGene, aes(x=expression, fill=gene)) + geom_density(alpha=.3) +
+                xlab("Expression") + ylab("Density") +
+                ggtitle("Affymetrix") +  # Set title
+                theme_bw(base_size=24)
 
 
 agilentGAPDH = as.data.frame(t(agilent["GAPDH",]))
@@ -31,3 +34,11 @@ agilentBact$gene = "ACTB"
 colnames(agilentGAPDH) = c("expression", "gene")
 colnames(agilentBact) = c("expression", "gene")
 agilentGene = rbind(agilentGAPDH, agilentBact)
+
+agilenist = ggplot(agilentGene, aes(x=expression, fill=gene)) + geom_density(alpha=.3) +
+            xlab("Expression") + ylab("Density") +
+            ggtitle("Affymetrix") +  # Set title
+            theme_bw(base_size=24)
+
+
+rm(affy, agilent)
