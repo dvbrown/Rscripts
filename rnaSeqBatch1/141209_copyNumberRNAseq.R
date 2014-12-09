@@ -35,10 +35,18 @@ bedLike = bedLike[bedLike$chromosome_name %in% chr,]
 droplevels(bedLike$chromosome_name)
 seqNames = as.character(bedLike$chromosome_name)
 
+# Implement the copy number conversion from Patel et al
+# Sort by chromosome and start position
+bedLike = bedLike[order(bedLike$chromosome, bedLike$start_position),]
+
+moveAv <- function(x,n=100){
+    return (filter(x,rep(1/n,n), sides=2))
+}
+moveAv(bedLike$GIC_011)
+
 head(bedLike)
 gr = GRanges(seqnames = Rle(seqNames),
             ranges = IRanges(start=bedLike$start_position, end=bedLike$end_position),
             gem = bedLike[,c(7:12)],
-            name = bedLike$external_gene_name)#,
-            #seqinfo=Seqinfo(bedLike[,c(7:12)]))
+            name = bedLike$external_gene_name)
 gr
