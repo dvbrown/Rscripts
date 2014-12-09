@@ -23,6 +23,8 @@ moveAv <- function(x,n=100){
 }
 
 setwd("~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/copyNumber/")
+
+####################### Generate a bed like file ############################
 # cpm = read.delim("../GLMedgeR/131021_normalisedCPM.txt", row.names=1)
 # head(cpm)
 # 
@@ -34,6 +36,7 @@ setwd("~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/copyNumber/")
 # bedCpm = merge.data.frame(bedLike, cpm, by.x="ensembl_gene_id", by.y=0)
 # write.table(bedCpm, "141209_bedLike.txt", sep='\t')
 
+#################### Center the expression levels and take the moving average ######################
 bedLike = read.delim("141209_bedLike.txt")
 # Subset only vlaid chromosome names
 chr = as.factor(c(1:22, "X", "Y"))
@@ -59,11 +62,32 @@ copyNum[,c(7:12)] = as.data.frame(copMat)
 
 write.table(copyNum, "141209_bedLike.txt", sep='\t')
 
+#################### Draw the copy number plot #######################
+copyNum = read.delim("141209_bedLike.txt")
+copyNum$chromosome_name = paste("chr", copyNum$chromosome_name, sep="")
+
+myLengths =  c(249250621, 243199373, 198022430, 191154276, 180915260, 171115067, 159138663,
+                146364022, 141213431, 135534747, 135006516, 133851895, 115169878, 107349540, 
+                102531392,  90354753,  81195210,  78077248,  59128983,  63025520,  48129895, 
+                51304566, 155270560,  59373566)   
+
 seqNames = as.character(copyNum$chromosome_name)
-gr = GRanges(seqnames = Rle(seqNames),
+gr = GRanges(seqnames = Rle(seqNames), 
             ranges = IRanges(start=copyNum$start_position, end=copyNum$end_position),
             gem = copyNum[,c(7:12)],
-            name = copyNum$external_gene_name)
+            name = copyNum$external_gene_name,
+            startGene=    paste(copyNum$chromosome_name, copyNum$start_position, sep="_"))
 gr
+seqlengths(gr) = myLengths
 
-ggplot(data=copyNum, aes(x=begining, y=GIC_011)) + geom_line() + theme_bw(base_size=24)
+smallGR = gr[1:10]
+plot<-ggplot(smallGR) + #add basic layer
+    geom_point(aes(x=startGene,y=gem.GIC_011)) + #add copy number points to plot
+    theme_bw(base_size=24)
+
+autoplot(smallGR)
+
+# and save plot to file
+pdf("copy_numbers.png",14,21)
+print(plot)
+dev.off()
