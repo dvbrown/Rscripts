@@ -66,4 +66,4 @@ gr = GRanges(seqnames = Rle(seqNames),
             name = copyNum$external_gene_name)
 gr
 
-ggplot(data=copyNum, aes(x=begining, y=GIC_011)) + geom_line() + geom_point() + theme_bw(base_size=24)
+ggplot(data=copyNum, aes(x=begining, y=GIC_011)) + geom_line() + theme_bw(base_size=24)
