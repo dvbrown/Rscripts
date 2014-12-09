@@ -2,6 +2,8 @@
 library(biomaRt)
 library(annotate)
 library(org.Hs.eg.db)
+library(ggbio)
+library(GenomicRanges)
 
 annotateIds = function(geneList)  { 
     # Given a gene list return the ENSEMBL information and ID mappings
@@ -27,3 +29,16 @@ setwd("~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/copyNumber/")
 # write.table(bedCpm, "141209_bedLike.txt", sep='\t')
 
 bedLike = read.delim("141209_bedLike.txt")
+# Subset only vlaid chromosome names
+chr = as.factor(c(1:22, "X", "Y"))
+bedLike = bedLike[bedLike$chromosome_name %in% chr,]
+droplevels(bedLike$chromosome_name)
+seqNames = as.character(bedLike$chromosome_name)
+
+head(bedLike)
+gr = GRanges(seqnames = Rle(seqNames),
+            ranges = IRanges(start=bedLike$start_position, end=bedLike$end_position),
+            gem = bedLike[,c(7:12)],
+            name = bedLike$external_gene_name)#,
+            #seqinfo=Seqinfo(bedLike[,c(7:12)]))
+gr
