@@ -83,22 +83,23 @@ seqNames = as.character(copyNum$chromosome_name)
 # Write indivdual sample files
 copyN = read.delim("141210_bedFile.bed")
 copyN$chromosome_name = gsub("chr", "hs", copyN$chromosome_name)
+copyN = copyN[c(50:48512),c(1:3,5:10)]
 
 colnames(copyN)
-gic_011 = copyN[,c(1:5)]
+gic_011 = copyN[,c(1:4)]
 write.table(gic_011, "gic_011.txt", sep='\t', row.names=F)
 
-gic_020 = copyN[,c(1:4,6)]
+gic_020 = copyN[,c(1:3,5)]
 write.table(gic_020, "gic_020.txt", sep='\t', row.names=F)
 
-gic_034 = copyN[,c(1:4,7)]
+gic_034 = copyN[,c(1:3,6)]
 write.table(gic_034, "gic_034.txt", sep='\t', row.names=F)
 
-gic_035 = copyN[,c(1:4,8)]
+gic_035 = copyN[,c(1:3,7)]
 write.table(gic_035, "gic_035.txt", sep='\t', row.names=F)
 
-gic_039 = copyN[,c(1:4,9)]
+gic_039 = copyN[,c(1:3,8)]
 write.table(gic_039, "gic_039.txt", sep='\t', row.names=F)
 
-gic_041 = copyN[,c(1:4,10)]
+gic_041 = copyN[,c(1:3,9)]
 write.table(gic_041, "gic_041.txt", sep='\t', row.names=F)
