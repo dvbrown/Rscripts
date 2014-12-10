@@ -69,7 +69,22 @@ copyNum$chromosome_name = paste("chr", copyNum$chromosome_name, sep="")
 myLengths =  c(249250621, 243199373, 198022430, 191154276, 180915260, 171115067, 159138663,
                 146364022, 141213431, 135534747, 135006516, 133851895, 115169878, 107349540, 
                 102531392,  90354753,  81195210,  78077248,  59128983,  63025520,  48129895, 
-                51304566, 155270560,  59373566)   
+                51304566, 155270560,  59373566)
+
+# Construct a very long bed file by row binding indivdual samples
+wantedColumns = c("chromosome_name", "start_position", "end_position", "external_gene_name")
+
+# gic_011 = copyNum[,c(wantedColumns, "GIC_011")]
+# gic_020
+# gic_034
+# gic_035
+# gic_039
+# gic_041
+# colnames(copyNum)
+
+copyNumber = copyNum[,c("chromosome_name", "start_position", "end_position", "external_gene_name",
+                        'GIC_011', 'GIC_020', 'GIC_034', 'GIC_035', 'GIC_039', 'GIC_041')]
+write.table(copyNumber, "141210_bedFile.bed", sep='\t', row.names=F)
 
 seqNames = as.character(copyNum$chromosome_name)
 gr = GRanges(seqnames = Rle(seqNames), 
@@ -80,12 +95,10 @@ gr = GRanges(seqnames = Rle(seqNames),
 gr
 seqlengths(gr) = myLengths
 
-smallGR = gr[1:10]
-plot<-ggplot(smallGR) + #add basic layer
-    geom_point(aes(x=startGene,y=gem.GIC_011)) + #add copy number points to plot
-    theme_bw(base_size=24)
+smallGR = gr[c(1000:1200), c(1:3)]
 
-autoplot(smallGR)
+autoplot(smallGR,
+         stat = "coverage")
 
 # and save plot to file
 pdf("copy_numbers.png",14,21)
