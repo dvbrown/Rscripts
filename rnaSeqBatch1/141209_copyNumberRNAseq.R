@@ -74,33 +74,31 @@ myLengths =  c(249250621, 243199373, 198022430, 191154276, 180915260, 171115067,
 # Construct a very long bed file by row binding indivdual samples
 wantedColumns = c("chromosome_name", "start_position", "end_position", "external_gene_name")
 
-# gic_011 = copyNum[,c(wantedColumns, "GIC_011")]
-# gic_020
-# gic_034
-# gic_035
-# gic_039
-# gic_041
-# colnames(copyNum)
-
 copyNumber = copyNum[,c("chromosome_name", "start_position", "end_position", "external_gene_name",
                         'GIC_011', 'GIC_020', 'GIC_034', 'GIC_035', 'GIC_039', 'GIC_041')]
 write.table(copyNumber, "141210_bedFile.bed", sep='\t', row.names=F)
 
 seqNames = as.character(copyNum$chromosome_name)
-gr = GRanges(seqnames = Rle(seqNames), 
-            ranges = IRanges(start=copyNum$start_position, end=copyNum$end_position),
-            gem = copyNum[,c(7:12)],
-            name = copyNum$external_gene_name,
-            startGene=    paste(copyNum$chromosome_name, copyNum$start_position, sep="_"))
-gr
-seqlengths(gr) = myLengths
 
-smallGR = gr[c(1000:1200), c(1:3)]
+# Write indivdual sample files
+copyN = read.delim("141210_bedFile.bed")
+copyN$chromosome_name = gsub("chr", "hs", copyN$chromosome_name)
 
-autoplot(smallGR,
-         stat = "coverage")
+colnames(copyN)
+gic_011 = copyN[,c(1:5)]
+write.table(gic_011, "gic_011.txt", sep='\t', row.names=F)
 
-# and save plot to file
-pdf("copy_numbers.png",14,21)
-print(plot)
-dev.off()
+gic_020 = copyN[,c(1:4,6)]
+write.table(gic_020, "gic_020.txt", sep='\t', row.names=F)
+
+gic_034 = copyN[,c(1:4,7)]
+write.table(gic_034, "gic_034.txt", sep='\t', row.names=F)
+
+gic_035 = copyN[,c(1:4,8)]
+write.table(gic_035, "gic_035.txt", sep='\t', row.names=F)
+
+gic_039 = copyN[,c(1:4,9)]
+write.table(gic_039, "gic_039.txt", sep='\t', row.names=F)
+
+gic_041 = copyN[,c(1:4,10)]
+write.table(gic_041, "gic_041.txt", sep='\t', row.names=F)
