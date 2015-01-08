@@ -16,6 +16,11 @@ aldh1 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/resul
 itag6 = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/ITGA6//140528_ITGA6Cutoff.txt", row.names=1)
 l1cam = read.delim("~/Documents/public-datasets/cancerBrowser/deDupAgilent/results/L1CAM/140528_L1CAMCutoff.txt", row.names=1)
 
+# Read in the verhaak signatures
+verhaakSig = read.delim('~/Documents/public-datasets/TCGA/classficationSignature/131022_danFixedTCGAsignature.txt')
+verSigs = list(verhaakSig$Proneural, verhaakSig$Neural, verhaakSig$Classical, verhaakSig$Mesenchymal)
+names(verSigs) = colnames(verhaakSig)
+
 bigSigs = list("CD133" = row.names(cd133Sig), "CD44" = row.names(cd44Sig), "CD15" = row.names(cd15),
                "ALDH1"=row.names(aldh1), "ITGA6"=row.names(itag6), "L1CAM"=row.names(l1cam))
 rm(cd133Sig, cd44Sig, cd15, aldh1, itag6, l1cam)
@@ -24,6 +29,9 @@ rm(cd133Sig, cd44Sig, cd15, aldh1, itag6, l1cam)
 # dataM[is.na(dataM)] <- 0
 bigResult = gsva(dataM, bigSigs,  rnaseq=F, verbose=T, parallel.sz=1)
 bigResult = t(bigResult$es.obs)
+
+verhaakResult = gsva(dataM, verSigs, verbose=T, parallel.sz=1)
+verhaakResult = t(verhaakResult$es.obs)
 
 dm$colour = "black"
 dm$growth = c('S', 'A', 'S', 'A', 'S', 'A', 'S', 'A')
@@ -37,6 +45,11 @@ heatmap.2(t(bigResult), cexRow=1.5, cexCol=1.5, main="Enrichment of FACS marker 
           Rowv=NULL, Colv=TRUE, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="column", 
           ColSideColors=as.character(dm$colour), labCol=name, labRow=colnames(bigResult), 
           offsetRow=c(1,1), margins=c(14,7))
+
+heatmap.2(t(verhaakResult), cexRow=1.5, cexCol=1.5, main="Enrichment of FACS marker signatures \n in FACS sorted GPSCs", scale="none",
+          Rowv=NULL, Colv=TRUE, keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="column", 
+          # ColSideColors=as.character(dm$colour), labCol=name, labRow=colnames(bigResult), 
+          offsetRow=c(1,1), margins=c(14,7), labCol= name)
 
 # heatmap.2(t(bigResult), cexRow=1.2, main="Enrichment of FACS marker signatures \n in FACS sorted GPSCs", scale="none",
 #           Rowv=T, Colv=as.character(dm$colour), keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", 
