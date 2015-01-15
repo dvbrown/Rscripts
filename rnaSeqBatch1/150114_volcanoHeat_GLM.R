@@ -22,12 +22,11 @@ finalResult$threshold = as.factor(abs(finalResult$logFC) > 1 & finalResult$FDR <
 #   xlab("log2 fold change") + ylab("-log10 FDR adjusted p-value")
 
 g = ggplot(data=finalResult, aes(x=logFC, y=-log10(FDR), 
-                         label=external_gene_id, size=0.2), colour=threshold) + 
+                         label=external_gene_id, size=0.2), colours=threshold) + 
         geom_point(shape=19, alpha=0.5, size=1.75) +
         xlab("log2 fold change") + ylab("-log10 FDR adjusted p-value") +
         ggtitle("Differentially expressed genes short vs long term survivors") +  # Set title
         theme_bw(base_size=18)
-
 g
 #subset gene names for only significant genes
 dd_text = finalResult[(abs(finalResult$logFC) > 1.5) & (finalResult$FDR < 0.001),]
@@ -37,21 +36,3 @@ g + geom_text(data = dd_text, aes(x=logFC, y=-log10(FDR),
   theme(axis.title.x = element_text(size=16)) + 
   theme(axis.title.y = element_text(size=16)) +
   theme(title=element_text(size=18)) 
-
-
-#Draw a heatmap. First normalise the raw counts by library size
-# data = read.delim('140203_shortVSlongDEgenes.txt')
-# row.names(data) = data$external_gene_id
-# rawData = read.delim('140203_normalisedCPM')
-# sigGenes = as.character(data$ensembl_gene_id) #use to index the raw data
-# 
-# sigData = as.matrix(rawData[sigGenes,])
-
-#geneNames = data$external_gene_id ... FIX THIS
-
-# row.names(sigData) = geneNames
-# #Now call the heat map
-# corrdist = function(x) as.dist(1-cor(t(x)))
-# cc = brewer.pal(9, 'YlOrRd')
-# heatmap(sigData, col=cc, margins=c(7,5),cexRow=0.2, main='Hierarchical clustering GIC RNA-seq batch1', 
-#         xlab='Patient clones', ylab='Differentially expressed genes')
