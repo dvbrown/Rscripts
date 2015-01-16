@@ -2,9 +2,6 @@
 library(biomaRt)
 library(annotate)
 library(org.Hs.eg.db)
-library(ggbio)
-library(GenomicRanges)
-
 annotateIds = function(geneList)  { 
     # Given a gene list return the ENSEMBL information and ID mappings
     ensembl_genes = row.names(geneList)
@@ -66,6 +63,8 @@ copyNum = copyNum[c(400:48112),]
 
 #write.table(copyNum, "141212_bedLike_average800.txt", sep='\t')
 write.table(copyNum, "150116_bedLike_average8000.txt", sep='\t')
+
+
 
 #################### Draw the copy number plot #######################
 copyNum = read.delim("141212_bedLike_average800.txt")
