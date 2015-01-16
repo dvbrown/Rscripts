@@ -16,7 +16,8 @@ annotateIds = function(geneList)  {
     return (list)
 }
 
-moveAv <- function(x,n=800){
+#moveAv <- function(x,n=800){
+moveAv <- function(x,n=8000){
     # X is the time series a numeric vector
     # n is the window size to use. 100 is from Patel et al 2014 single cell GBM
     # Multily by 8 since I HAVE 8 times as many genes
@@ -63,7 +64,8 @@ copMat = scale(copMat)
 copyNum[,c(7:12)] = as.data.frame(copMat)
 copyNum = copyNum[c(400:48112),]
 
-write.table(copyNum, "141212_bedLike_average800.txt", sep='\t')
+#write.table(copyNum, "141212_bedLike_average800.txt", sep='\t')
+write.table(copyNum, "150116_bedLike_average8000.txt", sep='\t')
 
 #################### Draw the copy number plot #######################
 copyNum = read.delim("141212_bedLike_average800.txt")
