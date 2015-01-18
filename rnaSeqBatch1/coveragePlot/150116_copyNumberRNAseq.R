@@ -38,25 +38,35 @@ jpeg(filename="150116_smallHeatTest.jpeg", height=210, width=297,units="mm",
 heatmap.2(matCov, cexRow=1.5, main="Copy number as inferred by RNA-seq",
           colsep=colSep, sepcolor="black", sepwidth=c(2,2),
           keysize=1, trace="none", key.title="CNV",
-          col=myPalette, density.info="none", dendrogram="row", 
+          col=myPalette, density.info="none", dendrogram=NULL, 
           labRow=row.names(matCov), xlab="Position",
           offsetRow=c(1,1), margins=c(2,7.5))
 dev.off()
 
-########### Full heatmap ###############
-matCov = t(as.matrix(totCov[,c(7:12)]))
+########### Full heatmap ##############
+# Remove chromosome X and Y as it messes up sorting
+totCov = totCov[!totCov$chromosome_name %in% c('X', 'Y'),]
+# Convert to numeric for sorting
+totCov$chromosome_name = as.numeric(totCov$chromosome_name)
 
+subSet = seq(from=1, to=45557, by=20)
+subCov = totCov[subSet,]
 
+# Order by chromosome then start postition
+subCov <- subCov[order(subCov$chromosome_name, subCov$start_position),]
+subCov = subCov[!is.na(subCov$chromosome_name),]
+subCov$chromosome_name
 
-colSep = match(as.factor(c(1:22, "X", "Y")), totCov$chromosome_name)
-jpeg(filename="150116_bigHeatTest.jpeg", height=210, width=297,units="mm",
-     res=300)
-# heatmap.2(matCov, cexRow=1.5, main="Copy number as inferred by RNA-seq",
-#           colsep=colSep, sepcolor="black", sepwidth=c(2,2),
-#           keysize=1, trace="none", key.title="CNV",
-#           col=myPalette, density.info="none", dendrogram="row", 
-#           labRow=row.names(matCov), xlab="Position",
-#           offsetRow=c(1,1), margins=c(2,7.5))
-dev.off()
+matCovB = t(as.matrix(subCov[,c(7:12)]))
 
-quit("no")
+colSep = match(c(1:22), subCov$chromosome_name)
+
+# jpeg(filename="150119_bigHeatTest.jpeg", height=210, width=297,units="mm",
+#      res=300)
+heatmap.2(matCovB, cexRow=1.5, main="Copy number as inferred by RNA-seq",
+          colsep=colSep, sepcolor="black", sepwidth=c(2,2),
+          keysize=1, trace="none", key.title="CNV", Colv=subCov$chromosome_name,
+          col=myPalette, density.info="none", dendrogram="row", 
+          labRow=row.names(matCovB), xlab="Position", labCol=NULL,
+          offsetRow=c(1,1), margins=c(2,7.5))
+# dev.off()
