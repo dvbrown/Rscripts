@@ -49,16 +49,20 @@ totCov = totCov[!totCov$chromosome_name %in% c('X', 'Y'),]
 # Convert to numeric for sorting
 totCov$chromosome_name = as.numeric(totCov$chromosome_name)
 
+# Subset the every nth row to make the matrix smaller
 subSet = seq(from=1, to=45557, by=20)
 subCov = totCov[subSet,]
 
 # Order by chromosome then start postition
 subCov <- subCov[order(subCov$chromosome_name, subCov$start_position),]
 subCov = subCov[!is.na(subCov$chromosome_name),]
+subCov$chromosome_name =as.factor(subCov$chromosome_name)
+
 subCov$chromosome_name
 
+# Extract the copynumber for the PDGCs
 matCovB = t(as.matrix(subCov[,c(7:12)]))
-
+# Get the first occurance of each chromosome to delinate the heatmap.
 colSep = match(c(1:22), subCov$chromosome_name)
 
 # jpeg(filename="150119_bigHeatTest.jpeg", height=210, width=297,units="mm",
