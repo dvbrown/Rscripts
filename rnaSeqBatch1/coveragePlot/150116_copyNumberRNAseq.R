@@ -5,7 +5,7 @@ library(RColorBrewer)
 setwd("~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/copyNumber/")
 list.files()
 
-totCov = read.delim("141212_bedLike_average800.txt")
+totCov = read.delim("150116_bedLike_average800.txt")
 
 # Extract chr 7
 # chr7 = totCov[totCov$chromosome_name %in% 7,c(4:12)]
@@ -27,21 +27,21 @@ totCov = read.delim("141212_bedLike_average800.txt")
 myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 
 # Make heat map with copyNumber info
-smallCov= rbind(totCov[c(1:200),],totCov[c(20000:20200),])
-matCov = t(as.matrix(smallCov[,c(7:12)]))
-
-# Retreive the indicies of the first occurance of the chromosome names for use in colsep
-colSep = match(as.factor(c(1,17, 18)), smallCov$chromosome_name)
-
-jpeg(filename="150116_smallHeatTest.jpeg", height=210, width=297,units="mm",
-     res=300)
-heatmap.2(matCov, cexRow=1.5, main="Copy number as inferred by RNA-seq",
-          colsep=colSep, sepcolor="black", sepwidth=c(2,2),
-          keysize=1, trace="none", key.title="CNV",
-          col=myPalette, density.info="none", dendrogram=NULL, 
-          labRow=row.names(matCov), xlab="Position",
-          offsetRow=c(1,1), margins=c(2,7.5))
-dev.off()
+# smallCov= rbind(totCov[c(1:200),],totCov[c(20000:20200),])
+# matCov = t(as.matrix(smallCov[,c(7:12)]))
+# 
+# # Retreive the indicies of the first occurance of the chromosome names for use in colsep
+# colSep = match(as.factor(c(1,17, 18)), smallCov$chromosome_name)
+# 
+# jpeg(filename="150116_smallHeatTest.jpeg", height=210, width=297,units="mm",
+#      res=300)
+# heatmap.2(matCov, cexRow=1.5, main="Copy number as inferred by RNA-seq",
+#           colsep=colSep, sepcolor="black", sepwidth=c(2,2),
+#           keysize=1, trace="none", key.title="CNV",
+#           col=myPalette, density.info="none", dendrogram=NULL, 
+#           labRow=row.names(matCov), xlab="Position",
+#           offsetRow=c(1,1), margins=c(2,7.5))
+# dev.off()
 
 ########### Full heatmap ##############
 # Remove chromosome X and Y as it messes up sorting

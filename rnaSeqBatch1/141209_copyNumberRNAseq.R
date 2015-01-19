@@ -13,10 +13,11 @@ annotateIds = function(geneList)  {
     return (list)
 }
 
-moveAv <- function(x,n=800){
+moveAv <- function(x,n=350){
     # X is the time series a numeric vector
     # n is the window size to use. 100 is from Patel et al 2014 single cell GBM
     # Multily by 8 since I HAVE 8 times as many genes
+    # The circular argumenat doesn't appear to make a difference
     return (filter(x,rep(1/n,n), sides=2, circular=T))
 }
 
@@ -58,7 +59,7 @@ copMat = as.matrix(copyNum[,c(7:12)])
 copMat = scale(copMat)
 # Remove NA columns
 copyNum[,c(7:12)] = as.data.frame(copMat)
-copyNum = copyNum[c(400:48112),]
+# copyNum = copyNum[c(400:48112),] This is where circular = FALSE
 
 write.table(copyNum, "150116_bedLike_average800.txt", sep='\t')
 
