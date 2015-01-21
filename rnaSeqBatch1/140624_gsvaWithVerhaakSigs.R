@@ -30,22 +30,24 @@ row.names(geneNames) = geneNames$SYMBOL
 data.corrected = as.matrix(geneNames[,c(2:7)])
 
 result.corrected = gsva(data.corrected, verhaakSigMung)
-result.corrected = t(result.corrected$es.obs)
+result.corrected = (result.corrected$es.obs)
 
 result.log = gsva(data.log, verhaakSigMung)
 result.log = result.log$es.obs
+colnames(result.corrected) = c("MU011", "MU020", "MU034", "MU035", "MU039", "MU041")
 
-myPalette <- colorRampPalette(c("blue", "white", "yellow"))(n = 1000)
-
-# Make heat map with subtype
-heatmap.2(result.corrected, cexRow=1.5, main="Enrichment of Verhaak signatures \n in RNAseq batch 1", 
-          keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", Colv=NULL,
-          labCol=colnames(result.corrected), xlab="RNAseq batch 1 raw cpm", labRow=row.names(result.corrected), offsetRow=c(1,1), margins=c(15,10))
+myPalette <- colorRampPalette(c("blue", "white", "red"))(n = 1000)
 
 # Make heat map with subtype
-heatmap.2(result.log, cexRow=1.5, main="Enrichment of Verhaak signatures \n in RNAseq batch 1", 
-          keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", Colv=NULL,
-          labCol=colnames(result.log), xlab="RNAseq batch 1 log2 cpm", labRow=row.names(result.log), offsetRow=c(1,1), margins=c(15,10))
+heatmap.2(result.corrected, cexRow=1.5, main="", 
+          keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="column", #Colv=NULL,
+          labCol=colnames(result.corrected), xlab="PDGC sample", labRow=row.names(result.corrected), 
+          Rowv =c("Proneural", "Neural", "Classical", "Mesenchymal"), offsetRow=c(1,1), margins=c(8, 10))
+
+# Make heat map with subtype
+# heatmap.2(result.log, cexRow=1.5, main="Enrichment of Verhaak signatures \n in RNAseq batch 1", 
+#           keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", Colv=NULL,
+#           labCol=colnames(result.log), xlab="RNAseq batch 1 log2 cpm", labRow=row.names(result.log), offsetRow=c(1,1), margins=c(15,10))
 
 
 ################################# Enrich against my CD133/ CD44 signature ######################################
@@ -74,6 +76,6 @@ resultBig.log = gsva(data.log, biggerSigs, verbose=T, parallel.sz=1)
 resultBig.log = resultBig.log$es.obs
 
 # Make heat map with subtype
-heatmap.2(resultBig.log, cexRow=1.5, main="Enrichment of signatures \n in RNAseq batch 1", 
-          keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", Colv=NULL,
-          labCol=colnames(resultBig.log), xlab="RNAseq batch 1 log2 cpm", labRow=row.names(resultBig.log), offsetRow=c(1,1), margins=c(15,10))
+# heatmap.2(resultBig.log, cexRow=1.5, main="Enrichment of signatures \n in RNAseq batch 1", 
+#           keysize=1, trace="none", col=myPalette, density.info="none", dendrogram="row", Colv=NULL,
+#           labCol=colnames(resultBig.log), xlab="RNAseq batch 1 log2 cpm", labRow=row.names(resultBig.log), offsetRow=c(1,1), margins=c(15,10))
