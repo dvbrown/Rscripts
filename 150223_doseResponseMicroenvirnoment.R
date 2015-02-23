@@ -47,6 +47,16 @@ ruxDay3 = ggplot(ruxM, aes(x=Conc, y=mean, colour=Patient, group=Patient)) +
     geom_point(stat="identity", position=position_dodge(), colour="black") + geom_line() +
     geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
     xlab("Concentration (uM)") + ylab("Fluorescent intensity") +
-    ggtitle("Comparing growth at day 7 by \nmarker status") +  # Set title
+    ggtitle("Dose response curve") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
 ruxDay3
+
+il6Day3 = ggplot(il6, aes(x=Conc, y=mean, colour=Patient, group=Patient)) + 
+    scale_fill_manual(values=c("forestgreen", "royalblue", "darkorange", "red")) +
+    # scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
+    geom_point(stat="identity", position=position_dodge(), colour="black") + geom_line() +
+    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
+    xlab("Concentration (uM)") + ylab("Fluorescent intensity") +
+    ggtitle("Dose response curve") +  # Set title
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+il6Day3
