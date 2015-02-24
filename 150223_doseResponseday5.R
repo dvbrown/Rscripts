@@ -7,7 +7,7 @@ summaryStats = function(dataFrame) {
     require(plyr)
     # Takes a dataframe with factor information and computes summary statistics based on levels of as least 2 factors
     # factor 1 and 2 are characters
-    result <- ddply(dataFrame, c('Patient', 'ConcLog'), summarise,
+    result <- ddply(dataFrame, c('Patient', 'Conc'), summarise,
                     N    = length(Value),
                     mean = mean(Value, na.rm=T),
                     sd   = sd(Value, na.rm=T),
@@ -39,44 +39,44 @@ il6M = summaryStats(il6)
 
 #### Plot the raw results ####
 
-bosDay5 = ggplot(bosM, aes(x=ConcLog, y=mean, colour=Patient, group=Patient)) + 
-    scale_fill_manual(values=c("forestgreen", "royalblue", "darkorange", "red")) +
-    # scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
-    geom_point(stat="identity", position=position_dodge(), colour="black") + geom_line() +
-    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
-    xlab("Log 2 concentration (uM)") + ylab("Fluorescent intensity") +
-    ggtitle("Dose response curve Bosutinib day 5") +  # Set title
-    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+bosDay5 = ggplot(data=bosM, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
+    geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
+    geom_point(alpha = 0.5, size = 5) +
+    geom_line() +
+    scale_x_log10(name = "Dose", breaks=c(0.05, 0.1, 0.5, 1, 5, 10, 50, 100)) +
+    scale_y_continuous(name = "Response") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
+                                   text = element_text(size=24))
 bosDay5
 
-ruxDay5 = ggplot(ruxM, aes(x=ConcLog, y=mean, colour=Patient, group=Patient)) + 
-    scale_fill_manual(values=c("forestgreen", "royalblue", "darkorange", "red")) +
-    # scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
-    geom_point(stat="identity", position=position_dodge(), colour="black") + geom_line() +
-    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
-    xlab("Log2 Concentration (uM)") + ylab("Fluorescent intensity") +
-    ggtitle("Dose response curve Ruxolitinib") +  # Set title
-    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+ruxDay5 = ggplot(data=ruxM, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
+    geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
+    geom_point(alpha = 0.5, size = 5) +
+    geom_line() +
+    scale_x_log10(name = "Dose", breaks=c(0.05, 0.1, 0.5, 1, 5, 10, 50, 100)) +
+    scale_y_continuous(name = "Response") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
+                                   text = element_text(size=24))
 ruxDay5
 
-il6Day5 = ggplot(il6M, aes(x=ConcLog, y=mean, colour=Patient, group=Patient)) + 
-    scale_fill_manual(values=c("forestgreen", "royalblue", "darkorange", "red")) +
-    # scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
-    geom_point(stat="identity", position=position_dodge(), colour="black") + geom_line() +
-    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
-    xlab("Log2 Concentration (ng)") + ylab("Fluorescent intensity") +
-    ggtitle("Dose response curve IL6") +  # Set title
-    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+il6Day5 = ggplot(data=il6M, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
+    geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
+    geom_point(alpha = 0.5, size = 5) +
+    geom_line() +
+    scale_x_log10(name = "Dose", breaks=c(0.05, 0.1, 0.5, 1, 5, 10, 50, 100)) +
+    scale_y_continuous(name = "Response") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
+                                   text = element_text(size=24))
 il6Day5
 
-dasDay5 = ggplot(dasM, aes(x=ConcLog, y=mean, colour=Patient, group=Patient)) + 
-    scale_fill_manual(values=c("forestgreen", "royalblue", "darkorange", "red")) +
-    # scale_fill_manual(values=c("black", "lightgrey", "darkgrey", "white")) +
-    geom_point(stat="identity", position=position_dodge(), colour="black") + geom_line() +
-    geom_errorbar(aes(ymin=mean-sd, ymax=mean+sd), width=.2, position=position_dodge(0.9)) +
-    xlab("Log2 Concentration (uM)") + ylab("Fluorescent intensity") +
-    ggtitle("Dose response curve Dasatinib") +  # Set title
-    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), text = element_text(size=24))
+dasDay5 = ggplot(data=dasM, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
+    geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
+    geom_point(alpha = 0.5, size = 5) +
+    geom_line() +
+    scale_x_log10(name = "Dose", breaks=c(0.05, 0.1, 0.5, 1, 5, 10, 50, 100)) +
+    scale_y_continuous(name = "Response") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
+                                   text = element_text(size=24))
 dasDay5
 
 multiplot(dasDay5, bosDay5, il6Day5, ruxDay5, cols=2)
