@@ -28,7 +28,7 @@ day5 = rbind(dasBos5, ruxIL5)
 day5$ConcLog = log2(day5$Conc + 0.001)
 day5$Value = day5$Value - 6000
 rux = day5[day5$Drug %in% "Ruxolitinib",]
-das = day5[day5$Drug %in% "Ruxolitinib",]
+das = day5[day5$Drug %in% "Dasatinib",]
 bos = day5[day5$Drug %in% "Bosutinib",]
 il6 = day5[day5$Drug %in% "IL6",]
 
@@ -44,20 +44,18 @@ bosDay5 = ggplot(data=bosM, aes(x = Conc, y = mean, group=Patient, colour = Pati
     geom_point(alpha = 0.5, size = 5) +
     geom_line() +
     scale_x_log10("Log 2 concentration (uM)") + scale_y_continuous("Fluorescent intensity") +
-    ggtitle("Dose response curve Bosatinib day 5") +  # Set title
+    ggtitle("Dose response curve Bosatinib (Src, Abl) day 5") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
-                                   text = element_text(size=24))
-bosDay5
+                                   text = element_text(size=22))
 
 ruxDay5 = ggplot(data=ruxM, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
     geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
     geom_point(alpha = 0.5, size = 5) +
     geom_line() +
     scale_x_log10("Log 2 concentration (uM)") + scale_y_continuous("Fluorescent intensity") +
-    ggtitle("Dose response curve Ruxitinib day 5") +  # Set title
+    ggtitle("Dose response curve Ruxitinib (Jak) day 5") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
-                                   text = element_text(size=24))
-ruxDay5
+                                   text = element_text(size=22))
 
 il6Day5 = ggplot(data=il6M, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
     geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
@@ -66,17 +64,15 @@ il6Day5 = ggplot(data=il6M, aes(x = Conc, y = mean, group=Patient, colour = Pati
     scale_x_log10("Log 2 concentration (pg/mL)") + scale_y_continuous("Fluorescent intensity") +
     ggtitle("Dose response curve IL-6 day 5") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
-                                   text = element_text(size=24))
-il6Day5
+                                   text = element_text(size=22))
 
 dasDay5 = ggplot(data=dasM, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
     geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
     geom_point(alpha = 0.5, size = 5) +
     geom_line() +
     scale_x_log10("Log 2 concentration (uM)") + scale_y_continuous("Fluorescent intensity") +
-    ggtitle("Dose response curve Dasatinib day 5") +  # Set title
+    ggtitle("Dose response curve Dasatinib (Src, Bcr-Abl, c-kit) day 5") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
-                                   text = element_text(size=24))
-dasDay5
+                                   text = element_text(size=22))
 
 multiplot(dasDay5, bosDay5, il6Day5, ruxDay5, cols=2)
