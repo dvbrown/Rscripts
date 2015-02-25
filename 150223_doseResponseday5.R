@@ -76,3 +76,21 @@ dasDay5 = ggplot(data=dasM, aes(x = Conc, y = mean, group=Patient, colour = Pati
                                    text = element_text(size=22))
 
 multiplot(dasDay5, bosDay5, il6Day5, ruxDay5, cols=2)
+
+############### Now take ratios #################
+rm(list = ls())
+
+# IO day5
+setwd("~/Documents/Cell_biology/microenvironment/150216_doseResponse/")
+list.files()
+dasBos5 = read.delim("dasBos_day5.txt")
+dasBos5$Group = paste(dasBos5$Patient, dasBos5$Drug, dasBos5$Conc, sep="_")
+ruxIL5 = read.delim("ruxIL6.txt")
+ruxIL5$Group = paste(ruxIL5$Patient, ruxIL5$Drug, ruxIL5$Conc, sep="_")
+
+# Summarise replicates
+day5 = rbind(dasBos5, ruxIL5)
+rux = day5[day5$Drug %in% "Ruxolitinib",]
+das = day5[day5$Drug %in% "Dasatinib",]
+bos = day5[day5$Drug %in% "Bosutinib",]
+il6 = day5[day5$Drug %in% "IL6",]
