@@ -156,3 +156,19 @@ dasDay5 = ggplot(data=dasM, aes(x = Conc, y = mean, group=PDGC, colour = PDGC)) 
 
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 multiplot(dasDay5, bosDay5, il6Day5, ruxDay5, cols=2)
+
+pdf(file="dasatinib.pdf", height=11.69, width=11.69, useDingbats=F)
+dasDay5
+dev.off()
+
+pdf(file="bosatininib.pdf", height=11.69, width=11.69, useDingbats=F)
+bosDay5
+dev.off()
+
+pdf(file="ruxitinib.pdf", height=11.69, width=11.69, useDingbats=F)
+ruxDay5
+dev.off()
+
+pdf(file="il6.pdf", height=11.69, width=11.69, useDingbats=F)
+il6Day5
+dev.off()
