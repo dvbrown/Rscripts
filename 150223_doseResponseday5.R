@@ -81,7 +81,7 @@ summaryStats = function(dataFrame) {
     require(plyr)
     # Takes a dataframe with factor information and computes summary statistics based on levels of as least 2 factors
     # factor 1 and 2 are characters
-    result <- ddply(dataFrame, c('Patient', 'Conc'), summarise,
+    result <- ddply(dataFrame, c('PDGC', 'Conc'), summarise,
                     N    = length(FoldChange),
                     mean = mean(FoldChange, na.rm=T),
                     sd   = sd(FoldChange, na.rm=T),
@@ -103,6 +103,10 @@ write.csv(day5, file="./excel/150225_day5Data.csv")
 # I had to mung the fold change manually
 
 day5 = read.delim("./excel/150225_day5Data.txt", row.names=1)
+colnames(day5) = c('Well', 'Value', 'PDGC', 'Drug', 'Conc' ,'Day', 'Group', 'FoldChange')
+# Add 1 so the logarithm of 0 becomes 0.
+day5$Conc[day5$Conc %in% 0.00] = 1
+
 rux = day5[day5$Drug %in% "Ruxolitinib",]
 das = day5[day5$Drug %in% "Dasatinib",]
 bos = day5[day5$Drug %in% "Bosutinib",]
@@ -114,41 +118,41 @@ bosM = summaryStats(bos)
 il6M = summaryStats(il6)
 
 # The plots
-bosDay5 = ggplot(data=bosM, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
+bosDay5 = ggplot(data=bosM, aes(x = Conc, y = mean, group=PDGC, colour = PDGC)) + 
     geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
     geom_point(alpha = 0.5, size = 5) +
     geom_line() +
     scale_x_log10("Log 2 concentration (uM)") + scale_y_continuous("Growth relative to vehicle") +
-    ggtitle("Dose response curve Bosatinib (Src, Abl) day 5") +  # Set title
+    ggtitle("Dose response Bosatinib \n(Src, Abl) day 5") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
-                                   text = element_text(size=22))
+                                   text = element_text(size=16))
 
-ruxDay5 = ggplot(data=ruxM, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
+ruxDay5 = ggplot(data=ruxM, aes(x = Conc, y = mean, group=PDGC, colour = PDGC)) + 
     geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
     geom_point(alpha = 0.5, size = 5) +
     geom_line() +
-    scale_x_log10("Log 2 concentration (uM)") + scale_y_continuous("Fluorescent intensity") +
-    ggtitle("Dose response curve Ruxitinib (Jak) day 5") +  # Set title
+    scale_x_log10("Log 2 concentration (uM)") + scale_y_continuous("Growth relative to vehicle") +
+    ggtitle("Dose response Ruxitinib (Jak) day 5") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
-                                   text = element_text(size=22))
+                                   text = element_text(size=16))
 
-il6Day5 = ggplot(data=il6M, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
+il6Day5 = ggplot(data=il6M, aes(x = Conc, y = mean, group=PDGC, colour = PDGC)) + 
     geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
     geom_point(alpha = 0.5, size = 5) +
     geom_line() +
-    scale_x_log10("Log 2 concentration (pg/mL)") + scale_y_continuous("Fluorescent intensity") +
-    ggtitle("Dose response curve IL-6 day 5") +  # Set title
+    scale_x_log10("Log 2 concentration (pg/mL)") + scale_y_continuous("Growth relative to vehicle") +
+    ggtitle("Dose response IL-6 day 5") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
-                                   text = element_text(size=22))
+                                   text = element_text(size=16))
 
-dasDay5 = ggplot(data=dasM, aes(x = Conc, y = mean, group=Patient, colour = Patient)) + 
+dasDay5 = ggplot(data=dasM, aes(x = Conc, y = mean, group=PDGC, colour = PDGC)) + 
     geom_errorbar(width = 0.05, size = 0.75, aes(ymax = mean + sd, ymin = mean - sd, x = Conc)) +
     geom_point(alpha = 0.5, size = 5) +
     geom_line() +
-    scale_x_log10("Log 2 concentration (uM)") + scale_y_continuous("Fluorescent intensity") +
-    ggtitle("Dose response curve Dasatinib \n(Src, Bcr-Abl, c-kit) day 5") +  # Set title
+    scale_x_log10("Log 2 concentration (uM)") + scale_y_continuous("Growth relative to vehicle") +
+    ggtitle("Dose response Dasatinib \n(Src, Bcr-Abl, c-kit) day 5") +  # Set title
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1), 
-                                   text = element_text(size=22))
+                                   text = element_text(size=16))
 
 source('~/Documents/Rscripts/140211_multiplotGgplot2.R')
 multiplot(dasDay5, bosDay5, il6Day5, ruxDay5, cols=2)
