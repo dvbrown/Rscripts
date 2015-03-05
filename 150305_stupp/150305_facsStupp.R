@@ -15,7 +15,6 @@ cellCycleLong = melt(cellCycle, id.vars=c("PDGC", "Subpopulation", "Fraction"))
 frequency = cellCycleLong[cellCycleLong$variable %in% "FreqOfParent",]
 cellCycleLong = cellCycleLong[!cellCycleLong$variable %in% "FreqOfParent",]
 
-# Stacked bar graph -- this is probably what you want
 MU035 = ggplot(data=cellCycleLong[cellCycleLong$PDGC %in% "MU035",], 
               aes(x=Subpopulation, y=value, fill=variable)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
@@ -24,7 +23,6 @@ MU035 = ggplot(data=cellCycleLong[cellCycleLong$PDGC %in% "MU035",],
     ggtitle("PDGC MU035 cell cycle distribution") +  # Set title+
     theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Stacked bar graph -- this is probably what you want
 MU039 = ggplot(data=cellCycleLong[cellCycleLong$PDGC %in% "MU039",], 
                aes(x=Subpopulation, y=value, fill=variable)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
@@ -33,7 +31,6 @@ MU039 = ggplot(data=cellCycleLong[cellCycleLong$PDGC %in% "MU039",],
     ggtitle("PDGC MU035 cell cycle distribution") +  # Set title+
     theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Stacked bar graph -- this is probably what you want
 MU020 = ggplot(data=cellCycleLong[cellCycleLong$PDGC %in% "MU020",], 
                aes(x=Subpopulation, y=value, fill=variable)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
@@ -42,7 +39,6 @@ MU020 = ggplot(data=cellCycleLong[cellCycleLong$PDGC %in% "MU020",],
     ggtitle("PDGC MU035 cell cycle distribution") +  # Set title+
     theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-# Stacked bar graph -- this is probably what you want
 MU004 = ggplot(data=cellCycleLong[cellCycleLong$PDGC %in% "MU004",], 
                aes(x=Subpopulation, y=value, fill=variable)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
