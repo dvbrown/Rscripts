@@ -3,6 +3,15 @@ require(ggplot2)
 library(reshape)
 source("~/Documents/Rscripts/multiplot.R")
 
+subtractBaseline = function(dataFrame, baseline, value) {
+    dataSorted = stuppTreated[order(stuppTreated$PDGC, stuppTreated$Treatment),]
+    baseline = dataSorted[dataSorted$Treatment %in% "dmso",]
+    treatment = dataSorted[dataSorted$Treatment %in% "stupp",]
+    subtract = treatment[,c(3:6)] - baseline[,c(3:6)]
+    result = cbind(treatment[,c(1,2)], subtract)
+    return (result)
+}
+
 setwd("~/Documents/Rscripts/150305_stupp/dat/")
 list.files()
 col = c("darkgreen", "orange", "red", "yellow")
@@ -32,3 +41,4 @@ pFreq = ggplot(data=deathLong[deathLong$variable %in% "Frequency",],
 multiplot(pCount, pFreq, cols=1)
 
 stuppTreated = deadFreq[deadFreq$Treatment %in% c("dmso","stupp"),c(1,2,4:7)]
+
