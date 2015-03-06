@@ -13,12 +13,9 @@ colnames(dat) = as.character(c("PDGC","Treatment","CD44-CD133-","CD44+","CD133+"
 # Convert from wide to long
 datLong = melt(dat, id.vars=c("PDGC", "Treatment"))
 
-MU035 = ggplot(data=datLong[datLong$PDGC %in% "MU035",], 
-               aes(x=variable, y=value, fill=Treatment)) +
-    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    scale_fill_manual(values=col) +
-    xlab("Subpopulation") + ylab("Percent of Parent") + # Set axis labels
-    ggtitle("PDGC MU035") +  # Set title+
+MU035 = ggplot(data=datLong[datLong$PDGC %in% "MU035",], aes(x=variable, y=value, fill=Treatment)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +  scale_fill_manual(values=col) + 
+    xlab("Subpopulation") + ylab("Percent of Parent") + ggtitle("PDGC MU035") +  # Set title+
     theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 MU020 = ggplot(data=datLong[datLong$PDGC %in% "MU020",], 
