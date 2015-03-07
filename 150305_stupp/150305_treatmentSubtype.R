@@ -3,6 +3,15 @@ require(ggplot2)
 library(reshape)
 source("~/Documents/Rscripts/multiplot.R")
 
+subtractBaseline = function(dataFrame, baseline, value) {
+    dataSorted = dataFrame[order(dataFrame[,'PDGC'], dataFrame[,'Treatment']),]
+    baseline = dataSorted[dataSorted$Treatment %in% baseline,]
+    treatment = dataSorted[dataSorted$Treatment %in% value,]
+    subtract =  treatment[,c(3:7)] - baseline[,c(3:7)]
+    result = cbind(treatment[,c(1,2)], subtract)
+    return (result)
+}
+
 setwd("~/Documents/facsData/flowJo/fortessa/150302_stupp/data/")
 list.files()
 
@@ -45,3 +54,25 @@ MU004 = ggplot(data=datLong[datLong$PDGC %in% "MU004",],
 multiplot(MU004, MU020, MU035, MU039, cols=2)
 
 ################# Calculate the percentage change #########################
+subtractBaseline = function(dataFrame, baseline, value) {
+    dataSorted = dataFrame[order(dataFrame[,'PDGC'], dataFrame[,'Treatment']),]
+    baseline = dataSorted[dataSorted$Treatment %in% baseline,]
+    treatment = dataSorted[dataSorted$Treatment %in% value,]
+    subtract =  treatment[,c(3:6)] - baseline[,c(3:6)]
+    result = cbind(treatment[,c(1,2)], subtract)
+    return (result)
+}
+
+stupp = subtractBaseline(dat, "dmso", "stupp")
+tmz = subtractBaseline(dat, "dmso", "tmz")
+rad = subtractBaseline(dat, "dmso", "rad")
+dif = rbind(tmz, rad, stupp)
+diff = dif[order(dif$PDGC, dif$Treatment),]
+diffLong = melt(diff, id.vars=c("PDGC", "Treatment"))
+
+MU035 = ggplot(data=diffLong[diffLong$PDGC %in% "MU035",], aes(x=variable, y=value, fill=Treatment)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +  
+    scale_fill_manual(values=col) + 
+    xlab("Subpopulation") + ylab("Difference to DMSO") + 
+    ggtitle("MU035") +  scale_y_continuous(limits=c(-20,20)) +
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
