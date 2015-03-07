@@ -69,10 +69,41 @@ rad = subtractBaseline(dat, "dmso", "rad")
 dif = rbind(tmz, rad, stupp)
 diff = dif[order(dif$PDGC, dif$Treatment),]
 diffLong = melt(diff, id.vars=c("PDGC", "Treatment"))
+col = c("darkorange", "darkred", "yellow")
 
 MU035 = ggplot(data=diffLong[diffLong$PDGC %in% "MU035",], aes(x=variable, y=value, fill=Treatment)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") +  
     scale_fill_manual(values=col) + 
     xlab("Subpopulation") + ylab("Difference to DMSO") + 
-    ggtitle("MU035") +  scale_y_continuous(limits=c(-20,20)) +
-    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    ggtitle("MU035") +  #scale_y_continuous(limits=c(-50,50)) +
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+MU020 = ggplot(data=diffLong[diffLong$PDGC %in% "MU020",], aes(x=variable, y=value, fill=Treatment)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +  
+    scale_fill_manual(values=col) + 
+    xlab("Subpopulation") + ylab("Difference to DMSO") + 
+    ggtitle("MU020") +  #scale_y_continuous(limits=c(-50,50)) +
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+MU039 = ggplot(data=diffLong[diffLong$PDGC %in% "MU039",], aes(x=variable, y=value, fill=Treatment)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +  
+    scale_fill_manual(values=col) + 
+    xlab("Subpopulation") + ylab("Difference to DMSO") + 
+    ggtitle("MU039") +  #scale_y_continuous(limits=c(-50,50)) +
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+MU004 = ggplot(data=diffLong[diffLong$PDGC %in% "MU004",], aes(x=variable, y=value, fill=Treatment)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +  
+    scale_fill_manual(values=col) + 
+    xlab("Subpopulation") + ylab("Difference to DMSO") + 
+    ggtitle("MU004") +  #scale_y_continuous(limits=c(-50,50)) +
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+multiplot(MU004, MU020, MU035, MU039, cols=2)
+
+#### Summarise for some stats ####
+require(plyr)
+# Insert the second grouping variable here
+diffSummry <- ddply(diffLong, c('variable', ''), summarise,
+                    N    = length(value), mean = mean(value),
+                    sd   = sd(value), se   = sd / sqrt(N) )
