@@ -104,6 +104,29 @@ multiplot(MU004, MU020, MU035, MU039, cols=2)
 #### Summarise for some stats ####
 require(plyr)
 # Insert the second grouping variable here
-diffSummry <- ddply(diffLong, c('variable', ''), summarise,
+diffSumry <- ddply(diffLong, c('variable', 'Treatment'), summarise,
                     N    = length(value), mean = mean(value),
                     sd   = sd(value), se   = sd / sqrt(N) )
+
+summryPlot = ggplot(data=diffSumry, aes(x=variable, y=mean, fill=Treatment)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +  
+    scale_fill_manual(values=col) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
+    xlab("Subpopulation") + ylab("Difference to DMSO") + 
+    ggtitle("Change of subtype n=4 PDGCs") +  #scale_y_continuous(limits=c(-50,50)) +
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+# Remove MU004 and replot
+diffSummry = ddply(diffLong[!diffLong$PDGC %in% "MU004",], c('variable', 'Treatment'), summarise,
+                   N    = length(value), mean = mean(value),
+                   sd   = sd(value), se   = sd / sqrt(N) )
+
+sumryPlot = ggplot(data=diffSummry, aes(x=variable, y=mean, fill=Treatment)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") +  
+    scale_fill_manual(values=col) +
+    geom_errorbar(aes(ymin=mean-se, ymax=mean+se), width=.2, position=position_dodge(0.9)) +
+    xlab("Subpopulation") + ylab("Difference to DMSO") + 
+    ggtitle("Change of subtype n=3 PDGCs\n(no MU004)") +  #scale_y_continuous(limits=c(-50,50)) +
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+multiplot(summryPlot, sumryPlot, cols=1)
