@@ -13,10 +13,7 @@ plotPDGC = function(dataFrame, pdgc) {
     scale_fill_manual(values=col) + ggtitle(paste("PDGC", pdgc, sep=" ")) +  # Set title
     xlab("Subpopulation") + ylab("Percent") + # Set axis labels
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    return (p)}
-
-p3 = plotPDGC(freqLong, "MU035")
-p3
+    return (p) }
 
 setwd("./150305_stupp/dat/")
 col = c("darkgreen", "blue", "yellow", "darkred")
@@ -29,3 +26,11 @@ count = dat[,c(1:3,7:9)]
 
 # Convert from wide to long
 freqLong = melt(freq, id.vars=c("Sample", "PDGC", "Treatment"))
+
+# Make the plots
+p35 = plotPDGC(freqLong, "MU035")
+p20 = plotPDGC(freqLong, "MU020")
+p4 = plotPDGC(freqLong, "MU004")
+p39 = plotPDGC(freqLong, "MU039")
+
+multiplot(p4, p20, p35, p39, cols=2)
