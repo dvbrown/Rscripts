@@ -3,16 +3,18 @@ require(ggplot2)
 library(reshape)
 source("./multiplot.R")
 
-plotPDGC = function(dataFrame, pdgc) 
-    {
-    datPlot = dataFrame[dataFrame$pdgc %in% pdgc,]
-    p = ggplot(data=ddatPlot, aes(x=variable, y=value, fill=Treatment)) +
+extract = freqLong[,"PDGC"] %in% "MU035"
+
+plotPDGC = function(dataFrame, pdgc) {
+    extract = dataFrame[,"PDGC"] %in% pdgc
+    datPlot = dataFrame[extract,]
+    p = ggplot(data=datPlot, aes(x=variable, y=value, fill=Treatment)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     scale_fill_manual(values=col) + ggtitle(paste("PDGC", pdgc, sep=" ")) +  # Set title
     xlab("Subpopulation") + ylab("Percent") + # Set axis labels
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
-    return (p)
-}
+    return (p)}
+
 p3 = plotPDGC(freqLong, "MU035")
 p3
 
