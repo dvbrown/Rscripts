@@ -14,6 +14,8 @@ datWide = ddply(dat, .(cDNA, Gene), summarise, rep1=Cp[1], rep2=Cp[2], meanRep =
 # Remove the non interesting targets
 datWide = datWide[c(1:112),]
 View(datWide)
+# Write to file
+write.csv(datWide, "./dat/150308_datWide.csv", row.names=F)
 
 # Plot replicates
 correlation = ggplot(data=datWide, aes(x=rep1, y=rep2, color=Gene)) + 
