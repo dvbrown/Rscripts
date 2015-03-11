@@ -43,6 +43,21 @@ foldChangecalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKe
     return (foldChange)
 }
 
+plotPDGC = function(dataFrame, pdgc="MU035") {
+    # This function takes a dataFrane of some data and returns a ggplot object specific to the cell line supplied as a string
+    extract = dataFrame[,"PDGC"] %in% pdgc
+    datPlot = dataFrame[extract,]
+    # The colour of the plots
+    cols = c("orange", "forestgreen", "darkblue", "darkred")
+    p = ggplot(data=datPlot, aes(x=Gene, y=ddCT, fill=Subpopulation)) +
+        geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+        ggtitle(paste("qPCR", pdgc, sep=" ")) +  scale_fill_manual(values=cols) + 
+        xlab("Gene") + ylab("ddCt") +
+        theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    return (p) }
+
+mu035p = plotPDGC(doubleSort, "MU035")
+
 setwd("150308_qPCR/")
 
 dat = read.delim("dat/150308_ctValuesMapped.txt", row.names=1)
@@ -98,8 +113,25 @@ markers = markers[!is.na(markers$ddCT),]
 
 # Combine the ddCt data
 analysed = rbind(c020, c035, c041, markers)
+write.table(analysed, "./dat/150810_ddCTdata.csv", sep=",", row.names=F)
 
-#### Some plots of data ####
+############ Some plots of data ############
+rm(c020, c035, c041, dat, datWide, markers)
 # Check the normality of the distribution
 hist(analysed$ddCT, breaks="FD")
 hist(analysed$foldChange, breaks="FD")
+
+doubleSort = analysed[analysed$Subpopulation %in% c("DN", "DP", "44", "133"),]
+singleSort = analysed[!analysed$Subpopulation %in% c("DN", "DP", "44", "133"),]
+
+mu035p = plotPDGC(doubleSort, "MU035")
+mu020p = plotPDGC(doubleSort, "MU020")
+mu041p = plotPDGC(doubleSort, "MU041")
+
+cols = c("orange", "forestgreen", "darkblue", "darkred")
+singleP = ggplot(data=singleSort, aes(x=Gene, y=ddCT, fill=cDNA)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    ggtitle("qPCR differentiation") +  scale_fill_manual(values=cols) + 
+    xlab("Gene") + ylab("ddCt") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+singleP
