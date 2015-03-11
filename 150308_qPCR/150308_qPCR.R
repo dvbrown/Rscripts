@@ -128,7 +128,7 @@ mu035p = plotPDGC(doubleSort, "MU035")
 mu020p = plotPDGC(doubleSort, "MU020")
 mu041p = plotPDGC(doubleSort, "MU041")
 
-cols = c("orange", "forestgreen", "darkblue", "darkred")
+cols = c("greenyellow", "lightblue", "orangered", "gold1")
 singleP = ggplot(data=singleSort, aes(x=Gene, y=ddCT, fill=cDNA)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     ggtitle("qPCR differentiation") +  scale_fill_manual(values=cols) + 
