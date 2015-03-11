@@ -1,7 +1,7 @@
 library(reshape)
 library(plyr)
 library(ggplot2)
-source('./multiplot.R')
+source('~/Documents/Rscripts/multiplot.R')
 source('../qPCRFunctions.R')
 
 ddCTcalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKeepingGene='GAPDH', referenceSample='020_N', data=rawData) 
@@ -56,8 +56,6 @@ plotPDGC = function(dataFrame, pdgc="MU035") {
         theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
     return (p) }
 
-mu035p = plotPDGC(doubleSort, "MU035")
-
 setwd("150308_qPCR/")
 
 dat = read.delim("dat/150308_ctValuesMapped.txt", row.names=1)
@@ -90,12 +88,12 @@ c035$foldChange = foldChangecalculate(geneOfInterest=c035$Gene, sampleOfInterest
                           houseKeepingGene='GAPDH', referenceSample='MU035_DN', data=c035) 
 
 c041 = datWide[datWide$PDGC %in% "MU041",]
+# Remove the fcs cells from this analysis
+c041 = c041[!c041$Subpopulation %in% "fcs",]
 c041$ddCT = ddCTcalculate(geneOfInterest=c041$Gene, sampleOfInterest=c041$cDNA,
                                 houseKeepingGene='GAPDH', referenceSample='MU041_DN', data=c041)
 c041$foldChange = foldChangecalculate(geneOfInterest=c041$Gene, sampleOfInterest=c041$cDNA,
                                 houseKeepingGene='GAPDH', referenceSample='MU041_DN', data=c041) 
-# Remove the fcs cells from this analysis
-c041 = c041[!c041$Subpopulation %in% "fcs",]
 
 c020 = datWide[datWide$PDGC %in% "MU020",]
 c020$ddCT = ddCTcalculate(geneOfInterest=c020$Gene, sampleOfInterest=c020$cDNA,
@@ -104,6 +102,7 @@ c020$foldChange = foldChangecalculate(geneOfInterest=c020$Gene, sampleOfInterest
                                       houseKeepingGene='GAPDH', referenceSample='MU020_DN', data=c020) 
 
 markers = datWide[datWide$PDGC %in% c("MU039", "H9", 'MU041'),]
+markers = markers[markers$Subpopulation %in% c("fcs", "pos", "neg", "NSC"),]
 markers$ddCT = ddCTcalculate(geneOfInterest=markers$Gene, sampleOfInterest=markers$cDNA,
                           houseKeepingGene='GAPDH', referenceSample='MU039_neg', data=markers)
 markers$foldChange = foldChangecalculate(geneOfInterest=markers$Gene, sampleOfInterest=markers$cDNA,
@@ -118,7 +117,7 @@ write.table(analysed, "./dat/150810_ddCTdata.csv", sep=",", row.names=F)
 analysed = analysed[!analysed$Gene %in% "GAPDH",]
 
 ############ Some plots of data ############
-rm(c020, c035, c041, dat, datWide, markers)
+#rm(c020, c035, c041, dat, datWide, markers)
 # Check the normality of the distribution
 hist(analysed$ddCT, breaks="FD")
 hist(analysed$foldChange, breaks="FD")
@@ -136,4 +135,5 @@ singleP = ggplot(data=singleSort, aes(x=Gene, y=ddCT, fill=cDNA)) +
     ggtitle("qPCR differentiation") +  scale_fill_manual(values=cols) + 
     xlab("Gene") + ylab("ddCt") +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-singleP
+
+multiplot(mu020p, mu035p, mu041p, singleP, cols=2)
