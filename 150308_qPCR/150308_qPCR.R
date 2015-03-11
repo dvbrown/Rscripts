@@ -117,7 +117,7 @@ write.table(analysed, "./dat/150810_ddCTdata.csv", sep=",", row.names=F)
 analysed = analysed[!analysed$Gene %in% "GAPDH",]
 
 ############ Some plots of data ############
-#rm(c020, c035, c041, dat, datWide, markers)
+rm(c020, c035, c041, dat, datWide, markers)
 # Check the normality of the distribution
 hist(analysed$ddCT, breaks="FD")
 hist(analysed$foldChange, breaks="FD")
@@ -137,3 +137,20 @@ singleP = ggplot(data=singleSort, aes(x=Gene, y=ddCT, fill=cDNA)) +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 multiplot(mu020p, mu035p, mu041p, singleP, cols=2)
+
+##### Sumarise data #####
+# Summarise the data by biological replicate
+bioRep = ddply(doubleSort, .(Subpopulation, Gene), summarise, meanddCt = mean(ddCT, na.rm=T), 
+                sdddCt = sd(ddCT, na.rm=T),reps=length(ddCT))
+bioRep$seDdCt = bioRep$sdddCt / (sqrt(bioRep$reps))
+bioRep = bioRep[!bioRep$Subpopulation %in% "DN",]
+
+# Plot the biological replicates
+ggplot(data=bioRep, aes(x=Gene, y=meanddCt, fill=Subpopulation)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    ggtitle("qPCR biological Replicates (n = 2 - 3)") +  scale_fill_manual(values=c("lightblue", "gold1", "orangered")) + 
+    geom_errorbar(aes(ymin=meanddCt-seDdCt, ymax=meanddCt+seDdCt), width=.2, position=position_dodge(0.9)) +
+    xlab("Gene") + ylab("ddCt") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+anova(lm(meanddCt ~ Gene + Subpopulation, data=bioRep))
