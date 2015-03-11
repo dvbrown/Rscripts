@@ -136,24 +136,3 @@ singleP = ggplot(data=singleSort, aes(x=Gene, y=ddCT, fill=cDNA)) +
     xlab("Gene") + ylab("ddCt") +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 singleP
-
-geneOfInterest=c035$Gene
-sampleOfInterest=c035$cDNA
-houseKeepingGene='GAPDH'
-referenceSample='MU035_DN'
-data=c035
-
-sampleHouse = paste(sampleOfInterest, houseKeepingGene)
-sampleGene = paste(sampleOfInterest, geneOfInterest)
-# Extract the Cp of the hosue keeping gene
-houseCp = data[sampleHouse, 'meanCp']
-geneCp = data[sampleGene, 'meanCp']
-# dCt calculation for the sample of interest
-dCt = houseCp - geneCp
-# Extract the meanCP for the reference sample. First get the index of the housekeeping gene, then the gene of interest
-refDctRowHouse = paste(referenceSample, houseKeepingGene)
-refDctRowGene = paste(referenceSample, geneOfInterest)
-# Calculate dCt for the reference sample
-referenceSample_dCt = data[refDctRowHouse, 'meanCp'] - data[refDctRowGene, 'meanCp']
-# Calculate ddCt
-ddCt = dCt - referenceSample_dCt
