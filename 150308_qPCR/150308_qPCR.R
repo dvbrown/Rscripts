@@ -115,6 +115,7 @@ markers = markers[!is.na(markers$ddCT),]
 analysed = rbind(c020, c035, c041, markers)
 analysed = analysed[order(analysed$cDNA, analysed$Gene),]
 write.table(analysed, "./dat/150810_ddCTdata.csv", sep=",", row.names=F)
+analysed = analysed[!analysed$Gene %in% "GAPDH",]
 
 ############ Some plots of data ############
 rm(c020, c035, c041, dat, datWide, markers)
