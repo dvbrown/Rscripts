@@ -2,7 +2,6 @@ library(reshape)
 library(plyr)
 library(ggplot2)
 source('~/Documents/Rscripts/multiplot.R')
-source('../qPCRFunctions.R')
 
 ddCTcalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKeepingGene='GAPDH', referenceSample='020_N', data=rawData) 
 {
