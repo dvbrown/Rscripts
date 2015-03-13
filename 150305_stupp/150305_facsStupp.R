@@ -81,15 +81,18 @@ diff = rbind(subtractBaseline(cellCycle, "CD44-/CD133-", "CD44-/CD133-"),
 cellCycleLong = melt(diff, id.vars=c("PDGC", "Subpopulation"))
 
 # Summarise the data by biological replicate
-cellCycleLong = cellCycleLong[!cellCycleLong$PDGC %in% "MU039"]
+#cellCycleLong = cellCycleLong[!cellCycleLong$PDGC %in% "MU004",]
 bioRep = ddply(cellCycleLong, .(Subpopulation, variable), summarise, meanPhase = mean(value, na.rm=T), 
                sdPhase = sd(value, na.rm=T),reps=length(value))
 bioRep$seDdCt = bioRep$sdPhase / (sqrt(bioRep$reps))
 
 baseline = ggplot(data=bioRep, aes(x=variable, y=meanPhase, fill=Subpopulation)) +
             geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-            ggtitle("Cell cycle profile of PDGCs by subpopulation") +  scale_fill_manual(values=c("forestgreen", "lightblue", "gold1", "red")) + 
+            ggtitle("Cell cycle Profile") +  scale_fill_manual(values=c("forestgreen", "lightblue", "gold1", "red")) + 
             geom_errorbar(aes(ymin=meanPhase-seDdCt, ymax=meanPhase+seDdCt), width=.2, position=position_dodge(0.9)) +
-            xlab("Gene") + ylab("ddCt") +
+            xlab("Cell Cycle Phase") + ylab("Percent difference of CD44-/CD133-") +
             theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+#pdf("plots/150313_cellCycleRepDMSO.pdf", useDingbats=F, width=17, height=17)
 baseline
+#dev.off()
