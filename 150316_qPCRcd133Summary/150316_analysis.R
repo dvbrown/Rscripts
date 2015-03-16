@@ -60,17 +60,10 @@ setwd("150316_qPCRcd133Summary/")
 dat = read.csv("dat/150316_summaryEdit.csv", row.names=1)
 dat$Sample = paste(dat$PDGC, dat$Subpopulation, sep="_")
 
-# Extract those genes contained in the reference sample
-refGenes = dat[dat$Sample %in% 'H9_ES_NA',]$Gene
-
 # Take the mean of duplicate measurements
 datWide = ddply(dat, .(Sample, Gene, PDGC, Subpopulation), summarise, meanCp = mean(MeanCP, na.rm=T))
 
-# Select only the interesting targets
 # The H9 NSC needs to be unified!!!
-datSub = dat[dat$Gene %in% c("BIIITUB", "GAPDH", "GFAP", "NANOG", "NES", "NOTCH1",
-                             "OLIG2", "POU5F1"),]
-
 # Calculate ddCT
 
 getddCt = function(dataFrame, sampleInt="MU035_CD133_neg") {
@@ -81,8 +74,9 @@ getddCt = function(dataFrame, sampleInt="MU035_CD133_neg") {
     
     # Subset the shared genes and sort
     subDat = dataFrame[dataFrame$Sample %in% c(sampleInt, "H9_ES_NA"),]
-    subDat2 = dataFrame[dataFrame$Gene %in% genes,]
-    subDat2 = subDat[order(subDat$Sample, subDat$Gene),]
+    subDat = subDat[subDat$Gene %in% genes,]
+    subDat = subDat[order(subDat$Sample, subDat$Gene),]
+    row.names(subDat) = paste(subDat$Sample, subDat$Gene)
     
     subDat$ddCT = ddCTcalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
                                 houseKeepingGene='GAPDH', referenceSample='H9_ES_NA', data=subDat)
