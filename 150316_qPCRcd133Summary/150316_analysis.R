@@ -60,13 +60,13 @@ setwd("150316_qPCRcd133Summary/")
 dat = read.csv("dat/150316_summaryEdit.csv", row.names=1)
 dat$Sample = paste(dat$PDGC, dat$Subpopulation, sep="_")
 
-# Take the mean of duplicate measurements
+# Take the mean of duplicated measurements
 datWide = ddply(dat, .(Sample, Gene, PDGC, Subpopulation), summarise, meanCp = mean(MeanCP, na.rm=T))
 
-# The H9 NSC needs to be unified!!!
 # Calculate ddCT
 
-getddCt = function(dataFrame, sampleInt="MU035_CD133_neg") {
+getddCt = function(dataFrame, sampleInt="MU035_CD133_neg") 
+    {
     # Extract the genes that were measured by both samples.
     samp = droplevels(dataFrame[dataFrame$Sample %in% sampleInt,"Gene"])
     ref = droplevels(dataFrame[dataFrame$Sample %in% 'H9_ES_NA', "Gene"])
@@ -78,13 +78,15 @@ getddCt = function(dataFrame, sampleInt="MU035_CD133_neg") {
     subDat = subDat[order(subDat$Sample, subDat$Gene),]
     row.names(subDat) = paste(subDat$Sample, subDat$Gene)
     
+    # Call the ddCt functions
     subDat$ddCT = ddCTcalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
                                 houseKeepingGene='GAPDH', referenceSample='H9_ES_NA', data=subDat)
     subDat$foldChange = foldChangecalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
                                 houseKeepingGene='GAPDH', referenceSample='H9_ES_NA', data=subDat)
-    return (subDat)
+    
+    # Remove the reference samples which will be 0 anyway.
+    result = subDat[subDat$Sample %in% sampleInt,]
+    return (result)
 }
-dataFrame = datWide
-sampleInt="MU035_CD133_neg"
 
-getddCt(datWide, "MU035_CD133_neg")
+result = getddCt(datWide, "MU035_CD133_neg")
