@@ -86,7 +86,33 @@ getddCt = function(dataFrame, sampleInt="MU035_CD133_neg")
     
     # Remove the reference samples which will be 0 anyway.
     result = subDat[subDat$Sample %in% sampleInt,]
+    #return (subDat)
     return (result)
 }
 
-result = getddCt(datWide, "MU035_CD133_neg")
+mu035_N = getddCt(datWide, "MU035_CD133_neg")
+mu035_P = getddCt(datWide, "MU035_CD133_pos")
+mu011_N = getddCt(datWide, "MU011_CD133_neg")
+mu011_P = getddCt(datWide, "MU011_CD133_pos")
+mu020_N = getddCt(datWide, "MU020_CD133_neg")
+mu020_P = getddCt(datWide, "MU020_CD133_pos")
+mu030_N = getddCt(datWide, "MU030_CD133_neg")
+mu030_P = getddCt(datWide, "MU030_CD133_pos")
+mu030a_N = getddCt(datWide, "MU030a_CD133_neg")
+mu030a_P = getddCt(datWide, "MU030a_CD133_pos")
+mu041_N = getddCt(datWide, "MU041_CD133_neg")
+mu041_P = getddCt(datWide, "MU041_CD133_pos")
+
+ddCt = rbind(mu011_N, mu011_P, mu020_N, mu020_P,
+             mu030_N, mu030_P, mu030a_N, mu030a_P,
+             mu035_N, mu035_P, mu041_N, mu041_P)
+write.csv(ddCt,"150317_ddCtResults.csv", row.names=F)
+
+rm(mu011_N, mu011_P, mu020_N, mu020_P, mu030_N, mu030_P, 
+   mu030a_N, mu030a_P, mu035_N, mu035_P, mu041_N, mu041_P)
+
+ggplot(data=ddCt, aes(x=Gene, y=ddCT, fill=Sample)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    ggtitle("qPCR individual samples") +  #scale_fill_manual(values=cols) + 
+    xlab("Gene") + ylab("ddCt") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
