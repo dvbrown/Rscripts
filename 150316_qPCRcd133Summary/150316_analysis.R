@@ -61,12 +61,13 @@ dat = read.csv("dat/150316_summaryEdit.csv", row.names=1)
 dat$Sample = paste(dat$PDGC, dat$Subpopulation, sep="_")
 levels(dat[,"Gene"])
 
-# Select only the interesting targets
-datSub = dat[dat$Gene %in% c("BIIITUB", "FOXG1", "GAPDH", "GFAP", "ID1", "LAMB1", "NANOG", "NES", "NOTCH1",
-                "OLIG2", "POU5F1", "SOX2"),]
-
 # Take the mean of duplicate measurements
-datWide = ddply(datSub, .(Sample, Gene, PDGC, Subpopulation), summarise, meanCp = mean(MeanCP, na.rm=T))
+datWide = ddply(dat, .(Sample, Gene, PDGC, Subpopulation), summarise, meanCp = mean(MeanCP, na.rm=T))
+
+# Select only the interesting targets
+# The H9 NSC needs to be unified!!!
+datSub = dat[dat$Gene %in% c("BIIITUB", "GAPDH", "GFAP", "NANOG", "NES", "NOTCH1",
+                             "OLIG2", "POU5F1"),]
 
 # Calculate ddCT
 
