@@ -1,7 +1,7 @@
 library(reshape)
 library(plyr)
 library(ggplot2)
-source('~/Documents/Rscripts/multiplot.R')
+#source('~/Documents/Rscripts/multiplot.R')
 
 ddCTcalculate = function(geneOfInterest, sampleOfInterest='020_N', houseKeepingGene='GAPDH', referenceSample='020_N', data=rawData) 
 {
@@ -59,7 +59,9 @@ setwd("150316_qPCRcd133Summary/")
 
 dat = read.csv("dat/150316_summaryEdit.csv", row.names=1)
 dat$Sample = paste(dat$PDGC, dat$Subpopulation, sep="_")
-levels(dat[,"Gene"])
+
+# Extract those genes contained in the reference sample
+refGenes = dat[dat$Sample %in% 'H9_ES_NA',]$Gene
 
 # Take the mean of duplicate measurements
 datWide = ddply(dat, .(Sample, Gene, PDGC, Subpopulation), summarise, meanCp = mean(MeanCP, na.rm=T))
@@ -72,8 +74,16 @@ datSub = dat[dat$Gene %in% c("BIIITUB", "GAPDH", "GFAP", "NANOG", "NES", "NOTCH1
 # Calculate ddCT
 
 getddCt = function(dataFrame, sampleInt="MU035_CD133_neg") {
-    subDat = dataFrame[dataFrame$Sample %in% c(sampleInt, 'H9_ES_NA'),] 
-    print(subDat)
+    # Extract the genes that were measured by both samples.
+    samp = droplevels(dataFrame[dataFrame$Sample %in% sampleInt,"Gene"])
+    ref = droplevels(dataFrame[dataFrame$Sample %in% 'H9_ES_NA', "Gene"])
+    genes = intersect(samp, ref)
+    
+    # Subset the shared genes and sort
+    subDat = dataFrame[dataFrame$Sample %in% c(sampleInt, "H9_ES_NA"),]
+    subDat2 = dataFrame[dataFrame$Gene %in% genes,]
+    subDat2 = subDat[order(subDat$Sample, subDat$Gene),]
+    
     subDat$ddCT = ddCTcalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
                                 houseKeepingGene='GAPDH', referenceSample='H9_ES_NA', data=subDat)
     subDat$foldChange = foldChangecalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
