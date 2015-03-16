@@ -69,20 +69,20 @@ getddCt = function(dataFrame, sampleInt="MU035_CD133_neg")
     {
     # Extract the genes that were measured by both samples.
     samp = droplevels(dataFrame[dataFrame$Sample %in% sampleInt,"Gene"])
-    ref = droplevels(dataFrame[dataFrame$Sample %in% 'H9_ES_NA', "Gene"])
+    ref = droplevels(dataFrame[dataFrame$Sample %in% 'H9_NSC_NA', "Gene"])
     genes = intersect(samp, ref)
     
     # Subset the shared genes and sort
-    subDat = dataFrame[dataFrame$Sample %in% c(sampleInt, "H9_ES_NA"),]
+    subDat = dataFrame[dataFrame$Sample %in% c(sampleInt, "H9_NSC_NA"),]
     subDat = subDat[subDat$Gene %in% genes,]
     subDat = subDat[order(subDat$Sample, subDat$Gene),]
     row.names(subDat) = paste(subDat$Sample, subDat$Gene)
     
     # Call the ddCt functions
     subDat$ddCT = ddCTcalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
-                                houseKeepingGene='GAPDH', referenceSample='H9_ES_NA', data=subDat)
+                                houseKeepingGene='GAPDH', referenceSample='H9_NSC_NA', data=subDat)
     subDat$foldChange = foldChangecalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
-                                houseKeepingGene='GAPDH', referenceSample='H9_ES_NA', data=subDat)
+                                houseKeepingGene='GAPDH', referenceSample='H9_NSC_NA', data=subDat)
     
     # Remove the reference samples which will be 0 anyway.
     result = subDat[subDat$Sample %in% sampleInt,]
