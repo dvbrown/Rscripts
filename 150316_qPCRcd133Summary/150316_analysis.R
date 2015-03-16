@@ -58,5 +58,28 @@ plotPDGC = function(dataFrame, pdgc="MU035") {
 setwd("150316_qPCRcd133Summary/")
 
 dat = read.csv("dat/150316_summaryEdit.csv", row.names=1)
+dat$Sample = paste(dat$PDGC, dat$Subpopulation, sep="_")
+levels(dat[,"Gene"])
 
 # Select only the interesting targets
+datSub = dat[dat$Gene %in% c("BIIITUB", "FOXG1", "GAPDH", "GFAP", "ID1", "LAMB1", "NANOG", "NES", "NOTCH1",
+                "OLIG2", "POU5F1", "SOX2"),]
+
+# Take the mean of duplicate measurements
+datWide = ddply(datSub, .(Sample, Gene, PDGC, Subpopulation), summarise, meanCp = mean(MeanCP, na.rm=T))
+
+# Calculate ddCT
+
+getddCt = function(dataFrame, sampleInt="MU035_CD133_neg") {
+    subDat = dataFrame[dataFrame$Sample %in% c(sampleInt, 'H9_ES_NA'),] 
+    print(subDat)
+    subDat$ddCT = ddCTcalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
+                                houseKeepingGene='GAPDH', referenceSample='H9_ES_NA', data=subDat)
+    subDat$foldChange = foldChangecalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
+                                houseKeepingGene='GAPDH', referenceSample='H9_ES_NA', data=subDat)
+    return (subDat)
+}
+dataFrame = datWide
+sampleInt="MU035_CD133_neg"
+
+getddCt(datWide, "MU035_CD133_neg")
