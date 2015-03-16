@@ -58,3 +58,5 @@ plotPDGC = function(dataFrame, pdgc="MU035") {
 setwd("150316_qPCRcd133Summary/")
 
 dat = read.csv("dat/150316_summaryEdit.csv", row.names=1)
+
+# Select only the interesting targets
