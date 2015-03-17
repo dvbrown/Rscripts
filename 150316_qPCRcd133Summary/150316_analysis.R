@@ -69,20 +69,20 @@ getddCt = function(dataFrame, sampleInt="MU035_CD133_neg")
     {
     # Extract the genes that were measured by both samples.
     samp = droplevels(dataFrame[dataFrame$Sample %in% sampleInt,"Gene"])
-    ref = droplevels(dataFrame[dataFrame$Sample %in% 'H9_NSC_NA', "Gene"])
+    ref = droplevels(dataFrame[dataFrame$Sample %in% 'H9_NSC_NSC_cells', "Gene"])
     genes = intersect(samp, ref)
     
     # Subset the shared genes and sort
-    subDat = dataFrame[dataFrame$Sample %in% c(sampleInt, "H9_NSC_NA"),]
+    subDat = dataFrame[dataFrame$Sample %in% c(sampleInt, "H9_NSC_NSC_cells"),]
     subDat = subDat[subDat$Gene %in% genes,]
     subDat = subDat[order(subDat$Sample, subDat$Gene),]
     row.names(subDat) = paste(subDat$Sample, subDat$Gene)
     
     # Call the ddCt functions
     subDat$ddCT = ddCTcalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
-                                houseKeepingGene='GAPDH', referenceSample='H9_NSC_NA', data=subDat)
+                                houseKeepingGene='GAPDH', referenceSample='H9_NSC_NSC_cells', data=subDat)
     subDat$foldChange = foldChangecalculate(geneOfInterest=subDat$Gene, sampleOfInterest=subDat$Sample,
-                                houseKeepingGene='GAPDH', referenceSample='H9_NSC_NA', data=subDat)
+                                houseKeepingGene='GAPDH', referenceSample='H9_NSC_NSC_cells', data=subDat)
     
     # Remove the reference samples which will be 0 anyway.
     result = subDat[subDat$Sample %in% sampleInt,]
@@ -103,7 +103,7 @@ mu030a_N = getddCt(datWide, "MU030a_CD133_neg")
 mu030a_P = getddCt(datWide, "MU030a_CD133_pos")
 mu041_N = getddCt(datWide, "MU041_CD133_neg")
 mu041_P = getddCt(datWide, "MU041_CD133_pos")
-h9ES = getddCt(datWide, "H9_ES_NA")
+h9ES = getddCt(datWide, "H9_ES_ES_cell")
 
 ddCt = rbind(mu011_N, mu011_P, mu020_N, mu020_P,
              mu030_N, mu030_P, mu030a_N, mu030a_P,
@@ -124,3 +124,14 @@ ggplot(data=ddCt, aes(x=Gene, y=ddCT, fill=Sample)) +
 bioRep = ddply(ddCt, .(Subpopulation, Gene), summarise, meanddCt = mean(ddCT, na.rm=T), 
                sdddCt = sd(ddCT, na.rm=T), reps=length(ddCT))
 bioRep$seddCt = bioRep$sdddCt / (sqrt(bioRep$reps))
+
+# Remove ES cells
+bioRep = bioRep[!bioRep$Subpopulation %in% "ES_cell",]
+
+# Plot the biological replicates
+ggplot(data=bioRep, aes(x=Gene, y=meanddCt, fill=Subpopulation)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    ggtitle("qPCR biological Replicates (n = 5 - 6)") +  scale_fill_manual(values=c("blue2", "gold1")) + 
+    geom_errorbar(aes(ymin=meanddCt-seddCt, ymax=meanddCt+seddCt), width=.2, position=position_dodge(0.9)) +
+    xlab("Gene") + ylab("ddCt") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
