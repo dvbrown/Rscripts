@@ -121,3 +121,6 @@ ggplot(data=ddCt, aes(x=Gene, y=ddCT, fill=Sample)) +
 
 ######## Summarise by bioloical replicates ######## 
 
+bioRep = ddply(ddCt, .(Subpopulation, Gene), summarise, meanddCt = mean(ddCT, na.rm=T), 
+               sdddCt = sd(ddCT, na.rm=T), reps=length(ddCT))
+bioRep$seddCt = bioRep$sdddCt / (sqrt(bioRep$reps))
