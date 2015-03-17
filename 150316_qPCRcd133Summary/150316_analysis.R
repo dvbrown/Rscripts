@@ -132,11 +132,19 @@ ggplot(data=ddCt, aes(x=Gene, y=ddCT)) +
     xlab("Gene") + ylab("ddCt relative to H9 NSC") +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
+# Add more asthetics to the plot
+ggplot(data=ddCt, aes(x=Gene, y=ddCT)) +
+    geom_boxplot() + geom_point(aes(shape=Subpopulation, colour=Sample), size =3, alpha=0.7,  position = position_jitter(w = 0.2)) + #geom_jitter() +
+    ggtitle("qPCR Summary") + geom_hline(yintercept=0, colour="red") +
+    xlab("Gene") + ylab("ddCt relative to H9 NSC") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
 ######## Summarise by bioloical replicates ######## 
 
 bioRep = ddply(ddCt, .(Subpopulation, Gene), summarise, meanddCt = mean(ddCT, na.rm=T), 
                sdddCt = sd(ddCT, na.rm=T), reps=length(ddCT))
-bioRep$seddCt = bioRep$sdddCt / (sqrt(bioRep$reps))
+bioRep$seddCt = bioRep$sdddCt / (bioRep$reps)
+write.csv(bioRep, "150318_biologicalReplicates.csv")
 
 # Remove ES cells
 bioRep = bioRep[!bioRep$Subpopulation %in% c("ES_cell", "Serum"),]
@@ -161,9 +169,30 @@ geneTtest <- function (gene) {
   result = test$p.value
   return (result)
 }
-
+# Conduct the statistical tests
 tests = c(geneTtest("BIIITUB"), geneTtest("CD133"), geneTtest("GFAP"), 
           geneTtest("NANOG"),   geneTtest("NES"), geneTtest("OCT4"), 
           geneTtest("OLIG2"),   geneTtest("SOX2"))
 names(tests) = unique(ddCt$Gene)
-p.adjust(tests, method="fdr")
+# Correct for multiple testing using FDR
+result = p.adjust(tests, method="fdr")
+bioRep$adj_pVal = result
+
+# Add a column with stars describing if a test is significant
+bioRep$star <- " "
+bioRep$star[bioRep$adj_pVal < .05]  = "*"
+bioRep$star[bioRep$adj_pVal < .01]  <- "**"
+bioRep$star[bioRep$adj_pVal < .001] <- "***"
+# Avoid repetition
+bioRep$star[1:8] = " "
+write.csv(bioRep, "150317_replicatesStatsTest.csv")
+
+##### Final plot #####
+ggplot(data=bioRep, aes(x=Gene, y=meanddCt, fill=Subpopulation)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    ggtitle("qPCR biological Replicates (n = 5 - 6)") +  scale_fill_manual(values=c("blue", "gold1")) + 
+    geom_errorbar(aes(ymin=meanddCt-seddCt, ymax=meanddCt+seddCt), width=.2, position=position_dodge(0.9)) +
+    xlab("Gene") + ylab("ddCT relative to H9 NSC") +
+    # Setting y to a 6 moves the asterix up to the top of the plot
+    geom_text(aes(label=star), colour="black", y=5, size=10) +
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
