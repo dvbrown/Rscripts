@@ -90,6 +90,7 @@ getddCt = function(dataFrame, sampleInt="MU035_CD133_neg")
     return (result)
 }
 
+############   Calculate ddCT ############  
 mu035_N = getddCt(datWide, "MU035_CD133_neg")
 mu035_P = getddCt(datWide, "MU035_CD133_pos")
 mu011_N = getddCt(datWide, "MU011_CD133_neg")
@@ -102,17 +103,21 @@ mu030a_N = getddCt(datWide, "MU030a_CD133_neg")
 mu030a_P = getddCt(datWide, "MU030a_CD133_pos")
 mu041_N = getddCt(datWide, "MU041_CD133_neg")
 mu041_P = getddCt(datWide, "MU041_CD133_pos")
+h9ES = getddCt(datWide, "H9_ES_NA")
 
 ddCt = rbind(mu011_N, mu011_P, mu020_N, mu020_P,
              mu030_N, mu030_P, mu030a_N, mu030a_P,
-             mu035_N, mu035_P, mu041_N, mu041_P)
+             mu035_N, mu035_P, mu041_N, mu041_P, h9ES)
 write.csv(ddCt,"150317_ddCtResults.csv", row.names=F)
 
-rm(mu011_N, mu011_P, mu020_N, mu020_P, mu030_N, mu030_P, 
+rm(mu011_N, mu011_P, mu020_N, mu020_P, mu030_N, mu030_P, h9ES,
    mu030a_N, mu030a_P, mu035_N, mu035_P, mu041_N, mu041_P)
 
 ggplot(data=ddCt, aes(x=Gene, y=ddCT, fill=Sample)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     ggtitle("qPCR individual samples") +  #scale_fill_manual(values=cols) + 
-    xlab("Gene") + ylab("ddCt") +
+    xlab("Gene") + ylab("ddCt relative to H9 NSC") +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+######## Summarise by bioloical replicates ######## 
+
