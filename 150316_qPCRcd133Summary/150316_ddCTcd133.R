@@ -108,10 +108,16 @@ ddCt = rbind(mu011_P, mu020_P, mu030_P, mu030a_P, mu035_P, mu041_P)
 write.csv(ddCt,"150317_ddCtResults.csv", row.names=F)
 
 rm(mu011_P, mu020_P, mu030_P, mu030a_P, mu035_P, mu041_P)
+# Get rid of the genes only measured on ES cells
+ddCt = ddCt[!ddCt$Gene %in% c("ATP5G3", "B2M", "CREB1", "GAPDH", "GRIA2",
+                              "HAPLN1", "MGMT", "REST"),]
 
-# Add more asthetics to the plot
+orderedDat = ddCt[order(ddCt$Gene, ddCt$PDGC),]
+
+# Make a boxplot of ddCT valuse
 ggplot(data=ddCt, aes(x=Gene, y=ddCT)) +
     geom_boxplot() + geom_point(aes(shape=Subpopulation, colour=Sample), size =3, alpha=0.7,  position = position_jitter(w = 0.2)) + #geom_jitter() +
     ggtitle("qPCR Summary") + geom_hline(yintercept=0, colour="red") +
-    xlab("Gene") + ylab("ddCt relative to H9 NSC") +
+    xlab("Gene") + ylab("ddCt relative to CD133 negative") +
+    scale_y_continuous(breaks = round(seq(-6, 6, by = 1),1)) +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
