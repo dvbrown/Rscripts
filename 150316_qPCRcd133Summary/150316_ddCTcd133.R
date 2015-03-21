@@ -65,6 +65,11 @@ dat$Gene = gsub("PROM1", "CD133", dat$Gene)
 # Take the mean of duplicated measurements
 datWide = ddply(dat, .(Sample, Gene, PDGC, Subpopulation), summarise, meanCp = mean(MeanCP, na.rm=T))
 
+# Check that GAPDH is not differentially expressed
+gapdh = datWide[datWide$Gene %in% "GAPDH",]
+plot(gapdh[gapdh$Subpopulation %in% "CD133_neg",]$meanCp,
+     gapdh[gapdh$Subpopulation %in% "CD133_pos",]$meanCp)
+
 # Calculate ddCT
 
 getddCt = function(dataFrame, sampleInt="MU035_CD133_neg") 
@@ -89,6 +94,7 @@ getddCt = function(dataFrame, sampleInt="MU035_CD133_neg")
     
     # Remove the reference samples which will be 0 anyway.
     result = subDat[subDat$Sample %in% sampleInt,]
+    # Will have to switch between these return values for plotting
     return (subDat)
     #return (result)
 }
@@ -109,7 +115,7 @@ ddCt = rbind(mu011_P, mu020_P, mu030_P, mu030a_P, mu035_P, mu041_P)
 
 rm(mu011_P, mu020_P, mu030_P, mu030a_P, mu035_P, mu041_P)
 # Get rid of the genes only measured on ES cells
-ddCt = ddCt[!ddCt$Gene %in% c("ATP5G3", "B2M", "CREB1",  "GRIA2", #"GAPDH",
+ddCt = ddCt[!ddCt$Gene %in% c("ATP5G3", "B2M", "CREB1",  "GRIA2", "GAPDH",
                               "HAPLN1", "MGMT", "REST"),]
 
 orderedDat = ddCt[order(ddCt$Gene, ddCt$PDGC),]
@@ -126,13 +132,50 @@ ggplot(data=ddCt, aes(x=Gene, y=ddCT)) +
 
 bioRep = ddply(ddCt, .(Subpopulation, Gene), summarise, meanddCt = mean(ddCT, na.rm=T), 
                sdddCt = sd(ddCT, na.rm=T), reps=length(ddCT))
-bioRep$seddCt = bioRep$sdddCt / (bioRep$reps)
+bioRep$seddCt = bioRep$sdddCt / sqrt(bioRep$reps)
 write.csv(bioRep, "150321_biologicalRepCD133.csv")
 
 # Plot the biological replicates
 ggplot(data=bioRep, aes(x=Gene, y=meanddCt, fill=Subpopulation)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    ggtitle("qPCR biological Replicates (n = 5 - 6)") +  scale_fill_manual(values=c("blue", "gold1")) + 
+    ggtitle("qPCR biological Replicates (n = 5 - 6)") +  scale_fill_manual(values="lightblue3") + 
     geom_errorbar(aes(ymin=meanddCt-seddCt, ymax=meanddCt+seddCt), width=.2, position=position_dodge(0.9)) +
-    xlab("Gene") + ylab("ddCT relative to H9 NSC") +
+    xlab("Gene") + ylab("ddCT relative to CD133 negative") + scale_y_continuous(breaks = round(seq(-6, 6, by = 1),1)) +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+geneTtest <- function (gene) {
+    # pass the name of the gene of interest as the argument
+    gem = ddCt[ddCt$Gene %in% gene,]
+    test = t.test(ddCT ~ Subpopulation, data=gem, paired=T)
+    result = test$p.value
+    return (result)
+}
+# Conduct the statistical tests
+ddCt$Subpopulation = droplevels(ddCt$Subpopulation)
+tests = c(geneTtest("BIIITUB"), geneTtest("CD133"), geneTtest("GFAP"), geneTtest("LAMB1"),
+          geneTtest("NANOG"),   geneTtest("NES"), geneTtest("OCT4"), 
+          geneTtest("OLIG2"),   geneTtest("SOX2"))
+names(tests) = unique(ddCt$Gene)
+# Correct for multiple testing using FDR
+result = p.adjust(tests, method="fdr")
+bioRep$adj_pVal = result
+
+# Add a column with stars describing if a test is significant
+bioRep$star <- " "
+bioRep$star[bioRep$adj_pVal < .05]  = "*"
+bioRep$star[bioRep$adj_pVal < .01]  <- "**"
+bioRep$star[bioRep$adj_pVal < .001] <- "***"
+# Avoid repetition
+bioRep$star[1:8] = " "
+write.csv(bioRep, "150321_replicatesStatsTest.csv")
+
+##### Final plot #####
+ggplot(data=bioRep, aes(x=Gene, y=meanddCt, fill=Subpopulation)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    ggtitle("qPCR biological Replicates (n = 5 - 6)") +  scale_fill_manual(values=c("blue","gold1")) + 
+    geom_errorbar(aes(ymin=meanddCt-seddCt, ymax=meanddCt+seddCt), width=.2, position=position_dodge(0.9)) +
+    xlab("Gene") + ylab("ddCT relative to H9 NSC") + scale_y_continuous(breaks = round(seq(-5, 5, by = 1),1)) +
+    # Setting y to a 6 moves the asterix up to the top of the plot
+    geom_text(aes(label=star), colour="black", y=3.5, size=10) +
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
