@@ -77,7 +77,28 @@ pdgcRep$seDiff = pdgcRep$sdDiff / sqrt(pdgcRep$reps)
 
 ggplot(data=pdgcRep, aes(x=Subpopulation, y=meanDiff, fill=variable)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    ggtitle("All PDGCs except MU035 \nn = 3 - 4") +  scale_fill_manual(values=cols) + 
+    ggtitle("Primary GBMs subpopulation stability \nafter 7 days n = 3 - 4") +  scale_fill_manual(values=cols) + 
     geom_errorbar(aes(ymin=meanDiff-seDiff, ymax=meanDiff+seDiff), width=.2, position=position_dodge(0.9)) +
     xlab("Sorted population") + ylab("% difference to mixed population") + scale_y_continuous(breaks = round(seq(-50, 50, by = 10),1)) +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+
+
+testDiffs <- function (sortedPop) {
+  tests = diff[!diff$PDGC %in% "MU035",]
+  dn = tests[tests$Subpopulation %in% sortedPop,]
+  fit = aov(value ~ PDGC + variable, data=dn)
+  summary(fit)
+}
+testDiffs("doubleNeg") # p = 0.46
+testDiffs("doublePos") # p = 0.0488
+testDiffs("CD133") # p = 0.303
+testDiffs("CD44") # p = 0.00305
+
+tests = diff[!diff$PDGC %in% "MU035",]
+cd44 = tests[tests$Subpopulation %in% "CD44",]
+fit = aov(value ~ PDGC + variable, data=cd44)
+TukeyHSD(fit)
+
+# DP_Freq-CD44_Freq    0.0847876
+# CD133_Freq-CD44_Freq 0.0406406
+# DN_Freq-CD44_Freq    0.0017871
