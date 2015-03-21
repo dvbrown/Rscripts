@@ -81,12 +81,3 @@ ggplot(data=pdgcRep, aes(x=Subpopulation, y=meanDiff, fill=variable)) +
     geom_errorbar(aes(ymin=meanDiff-seDiff, ymax=meanDiff+seDiff), width=.2, position=position_dodge(0.9)) +
     xlab("Sorted population") + ylab("% difference to mixed population") + scale_y_continuous(breaks = round(seq(-50, 50, by = 10),1)) +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
-
-
-#### Make a boxplot of difference ####
-ggplot(data=diff, aes(x=variable, y=value)) +
-    geom_boxplot() + geom_point(aes(colour=Subpopulation), size =3, alpha=0.7,  position = position_jitter(w = 0.2)) +
-    ggtitle("qPCR Summary") + geom_hline(yintercept=0, colour="red") +
-    xlab("Gene") + ylab("ddCt relative to CD133 negative") +
-    scale_y_continuous(breaks = round(seq(-50, 50, by = 10),1)) +
-    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
