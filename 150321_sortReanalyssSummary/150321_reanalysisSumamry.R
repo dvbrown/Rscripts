@@ -24,9 +24,29 @@ plotPDGC = function(dataFrame, pdgc="MU035") {
     return (p) }
 
 setwd("~/Documents/Rscripts/150321_sortReanalyssSummary/")
-freq = read.csv("rawData.csv", row.names=1)
+dat = read.csv("rawData.csv", row.names=1)
+dat = dat[!dat$Subpopulation %in% "iso",]
+expt1 = dat[dat$Date %in% "150310",]
+expt2 = dat[dat$Date %in% "141106",]
+# Remove the MU039 as it doesn't have all 4 subpops
+expt2 = expt2[!expt2$PDGC %in% "MU039",]
 
-freqBase = rbind(subtractBaseline(freq, "mixed", "doubleNeg"), subtractBaseline(freq, "mixed", "CD44"),
-                 subtractBaseline(freq, "mixed", "CD133"), subtractBaseline(freq, "mixed", "doublePos"))
+#### Calculate and mung the data ####
+freq1 = rbind(subtractBaseline(expt1, "mixed", "doubleNeg"), subtractBaseline(expt1, "mixed", "CD44"),
+                 subtractBaseline(expt1, "mixed", "CD133"), subtractBaseline(expt1, "mixed", "doublePos"))
 
-freqBase = freqBase[order(freqBase[,'PDGC'], freqBase[,'Subpopulation']),]
+freq2 = rbind(subtractBaseline(expt2, "mixed", "doubleNeg"), subtractBaseline(expt2, "mixed", "CD44"),
+              subtractBaseline(expt2, "mixed", "CD133"), subtractBaseline(expt2, "mixed", "doublePos"))
+# Calculate MU039
+mu039 = dat[dat$Date %in% "141106",]
+baseline = mu039[2,c(4:7)]
+mu039_dn = mu039["061114_039_DN.fcs", c(4:7)]
+mu039_dn = mu039_dn - baseline
+mu039_44 = mu039["061114_039_CD44.fcs", c(4:7)]
+mu039_44 = mu039_44 - baseline
+mu039Result = rbind(mu039_44, mu039_dn)
+mu039Result = cbind(rbind(dat["061114_039_CD44.fcs", c(1:3)], dat["061114_039_DN.fcs", c(1:3)]),
+                    mu039Result)
+
+freq = rbind(freq1, freq2, mu039Result)
+freq = freq[order(freq[,'PDGC'], freq[,'Subpopulation']),]
