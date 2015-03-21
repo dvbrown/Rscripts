@@ -51,3 +51,16 @@ p2 = ggplot(data=subtracted, aes(x=PDGC, y=subtract, fill=Treatment)) +
         theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
 multiplot(p1, p2, cols=1)
+
+subtracted$subtract = 100 - subtracted$subtract
+bioRep = ddply(subtracted[!subtracted$PDGC %in% "MU004",], .(Treatment), summarise, meanViability = mean(subtract, na.rm=T), 
+               sdDiff = sd(subtract, na.rm=T), reps=length(subtract))
+bioRep$seDiff = bioRep$sdDiff / (bioRep$reps)
+
+ggplot(data=bioRep, aes(x=Treatment, y=meanViability, fill=Treatment)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    ggtitle("Viability after 7 days of treatment") +  scale_fill_manual(values=colours) + 
+    xlab("Treatment") + ylab("Viability difference relative to DMSO") +
+    scale_y_continuous(limits = c(0, 100)) +
+    geom_errorbar(aes(ymin=meanViability-seDiff, ymax=meanViability+seDiff), width=.2, position=position_dodge(0.9)) +
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
