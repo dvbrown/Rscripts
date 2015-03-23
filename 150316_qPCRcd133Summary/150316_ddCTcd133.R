@@ -95,8 +95,8 @@ getddCt = function(dataFrame, sampleInt="MU035_CD133_neg")
     # Remove the reference samples which will be 0 anyway.
     result = subDat[subDat$Sample %in% sampleInt,]
     # Will have to switch between these return values for plotting
-    return (subDat)
-    #return (result)
+    #return (subDat)
+    return (result)
 }
 
 ############   Calculate ddCT ############  
@@ -170,12 +170,22 @@ bioRep$star[1:8] = " "
 write.csv(bioRep, "150321_replicatesStatsTest.csv")
 
 ##### Final plot #####
-ggplot(data=bioRep, aes(x=Gene, y=meanddCt, fill=Subpopulation)) +
-    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    ggtitle("qPCR biological Replicates (n = 5 - 6)") +  scale_fill_manual(values=c("blue","gold1")) + 
-    geom_errorbar(aes(ymin=meanddCt-seddCt, ymax=meanddCt+seddCt), width=.2, position=position_dodge(0.9)) +
-    xlab("Gene") + ylab("ddCT relative to H9 NSC") + scale_y_continuous(breaks = round(seq(-5, 5, by = 1),1)) +
-    # Setting y to a 6 moves the asterix up to the top of the plot
-    geom_text(aes(label=star), colour="black", y=3.5, size=10) +
-    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+# ggplot(data=bioRep, aes(x=Gene, y=meanddCt, fill=Subpopulation)) +
+#     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+#     ggtitle("qPCR biological Replicates (n = 5 - 6)") +  scale_fill_manual(values=c("blue","gold1")) + 
+#     geom_errorbar(aes(ymin=meanddCt-seddCt, ymax=meanddCt+seddCt), width=.2, position=position_dodge(0.9)) +
+#     xlab("Gene") + ylab("ddCT relative to H9 NSC") + scale_y_continuous(breaks = round(seq(-5, 5, by = 1),1)) +
+#     # Setting y to a 6 moves the asterix up to the top of the plot
+#     geom_text(aes(label=star), colour="black", y=3.5, size=10) +
+#     theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))# 
 
+# Make into boxplot
+
+p = ggplot(data=ddCt, aes(x=Gene, y=ddCT)) +
+    geom_boxplot() + geom_point(aes(colour=PDGC), size =3, alpha=0.7,  position = position_jitter(w = 0.175)) +
+    ggtitle("qPCR Summary") + geom_hline(yintercept=0, colour="red") +
+    xlab("Gene") + ylab("ddCt relative to CD133 negative") +
+    scale_y_continuous(breaks = round(seq(-6, 6, by = 1),1)) +
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+    theme(text = element_text(size=20))
+p
