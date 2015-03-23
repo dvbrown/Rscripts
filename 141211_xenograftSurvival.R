@@ -8,23 +8,24 @@ theData = read.delim("141211_mouseSurvival.txt")
 
 theDate = Sys.Date()
 
-colors = c("darkblue","orange", "red", "darkgreen", "yellow")
+colors = c("purple","orange", "black", "red", "blue")
 names(colors) = levels(theData$Sample)
 
 data.surv = Surv(theData$Survival, event=theData$Event)
 sur.fit = survfit(data.surv ~ Sample, theData)
 
 setwd("~/Documents/Xenograft/results/")
-pdf(file=paste(theDate, "kmPlot.pdf", sep="_"), paper="a4r", useDingbats=F)
+#pdf(file=paste(theDate, "kmPlot.pdf", sep="_"), paper="a4r", useDingbats=F)
 
-plot(sur.fit, main='Failed xenograft experiment',ylab='Survival probability', xlab='survival (days)', 
+plot(sur.fit, main="",ylab='Proportion surviving', xlab='Survival (days)', 
      col=colors,
      cex=1.75, conf.int=F, lwd=1.33, cex.axis=1.5, cex.lab=1.5)
 
-legend('bottomleft', names(colors), title="Coexpression subtype",
+legend('bottomleft', names(colors), title="Molecular subtype",
        col=colors,
        lwd=1.33, cex=1.25, bty='n', xjust=0.5, yjust=0.5)
-dev.off()
+
+#dev.off()
 
 p = ggplot(theData, aes(Sample, Survival, fill=Sample)) +
     geom_boxplot() + geom_jitter() + scale_fill_manual(values=colors) +
