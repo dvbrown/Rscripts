@@ -104,36 +104,36 @@ TukeyHSD(fit)
 # DN_Freq-CD44_Freq    0.0017871
 
 #### Make individual plots ####
-dn = ggplot(data=pdgcRep[pdgcRep$Subpopulation %in% "doubleNeg",], aes(x=Subpopulation, y=meanDiff, fill=variable)) +
+dn = ggplot(data=pdgcRep[pdgcRep$Subpopulation %in% "doubleNeg",], aes(x=variable, y=meanDiff, fill=variable)) +
         geom_bar(stat="identity", position=position_dodge(), colour="black") + 
         ggtitle("CD44-/ CD133- sorted cells") +  scale_fill_manual(values=cols) + 
         geom_errorbar(aes(ymin=meanDiff-seDiff, ymax=meanDiff+seDiff), width=.2, position=position_dodge(0.9)) +
         xlab("Sorted population") + ylab("% difference to mixed population") + theme_bw(base_size=18) + 
-        theme(axis.text.x = element_text(angle = 0, hjust = 1)) + 
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
         scale_y_continuous(limits=c(-50,52)) + theme(text = element_text(size=20))
 
-dp = ggplot(data=pdgcRep[pdgcRep$Subpopulation %in% "doublePos",], aes(x=Subpopulation, y=meanDiff, fill=variable)) +
+dp = ggplot(data=pdgcRep[pdgcRep$Subpopulation %in% "doublePos",], aes(x=variable, y=meanDiff, fill=variable)) +
         geom_bar(stat="identity", position=position_dodge(), colour="black") + 
         ggtitle("CD44+ / CD133+ sorted cells") +  scale_fill_manual(values=cols) + 
         geom_errorbar(aes(ymin=meanDiff-seDiff, ymax=meanDiff+seDiff), width=.2, position=position_dodge(0.9)) +
         xlab("Sorted population") + ylab("% difference to mixed population") + theme_bw(base_size=18) + 
         scale_y_continuous(limits=c(-50,52)) + 
-        theme(axis.text.x = element_text(angle = 0, hjust = 1)) + theme(text = element_text(size=20))
+        theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(text = element_text(size=20))
 
-cd133 = ggplot(data=pdgcRep[pdgcRep$Subpopulation %in% "CD133",], aes(x=Subpopulation, y=meanDiff, fill=variable)) +
+cd133 = ggplot(data=pdgcRep[pdgcRep$Subpopulation %in% "CD133",], aes(x=variable, y=meanDiff, fill=variable)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     ggtitle("CD133 sorted cells") +  scale_fill_manual(values=cols) + 
     geom_errorbar(aes(ymin=meanDiff-seDiff, ymax=meanDiff+seDiff), width=.2, position=position_dodge(0.9)) +
     xlab("Sorted population") + ylab("% difference to mixed population") + theme_bw(base_size=18) + 
     scale_y_continuous(limits=c(-50,52)) + 
-    theme(axis.text.x = element_text(angle = 0, hjust = 1)) + theme(text = element_text(size=20))
+    theme(axis.text.x = element_text(angle = 90, hjust = 1)) + theme(text = element_text(size=20))
 
-cd44 = ggplot(data=pdgcRep[pdgcRep$Subpopulation %in% "CD44",], aes(x=Subpopulation, y=meanDiff, fill=variable)) +
+cd44 = ggplot(data=pdgcRep[pdgcRep$Subpopulation %in% "CD44",], aes(x=variable, y=meanDiff, fill=variable)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
     ggtitle("CD44 sorted cells") +  scale_fill_manual(values=cols) + 
     geom_errorbar(aes(ymin=meanDiff-seDiff, ymax=meanDiff+seDiff), width=.2, position=position_dodge(0.9)) +
     xlab("Sorted population") + ylab("% difference to mixed population") + scale_y_continuous(limits=c(-50,52)) + 
-    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 0, hjust = 1)) +
+    theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
     theme(text = element_text(size=20))
 
 dn
