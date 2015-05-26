@@ -11,8 +11,8 @@ dm = read.csv('designMatrix.csv')
 pca = c("left", "left", "right", "right", "right", "left")
 hire = c("right", "left", "right", "right", "left", "left")
 
-#dm$group = pca
-dm$group = hire
+dm$group = pca
+# dm$group = hire
 ####
 
 df = read.delim("131021_normalisedCPM.txt")
@@ -70,14 +70,11 @@ head(nc[rn,order(labels)],5)
 o = order(de$table$PValue)
 cpm(d2)[o[1:50],]
 
-result = ensembl_2_geneName(tt$table)
-result = sort.dataframe(result, 8, highFirst=FALSE)
-cutoff = result[result$FDR < 0.05,]
+result = ensembl2officalSymbol(tt$table)
+#result1 = annotateIds(result)
+result = sort.dataframe(result, 2, highFirst=TRUE)
 cutoffLib = result[result$FDR < 0.1 & abs(result$logFC) > 1,]
 
-########################################################### Write out results ############################################## 
-#write.table(cpmFacs,'GLMedgeR/140203_facsBatch/140213_normalisedCPM_facs.txt',sep='\t')
-#write.table(logCpmFacs,'GLMedgeR/140203_facsBatch/140213_normalisedLog_CPM_facs.txt',sep='\t')
-#write.table(result, './GLMedgeR/140203_facsBatch/140203_shortVSlong.txt', sep='\t')
-#write.table(cutoff, './GLMedgeR/140203_facsBatch/140203_shortVSlongDEgenes.txt', sep='\t')
-#write.table(cutoffLib, './GLMedgeR/140203_facsBatch/140203_shortVSlongLiberalDE.txt', sep='\t')
+################## Write out results ######################
+
+# write.table(cutoffLib, '~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/output/150526_hirecClusterDEGs.csv', sep=',')
