@@ -78,3 +78,4 @@ cutoffLib = result[result$FDR < 0.1 & abs(result$logFC) > 1,]
 ################## Write out results ######################
 
 # write.table(cutoffLib, '~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/output/150526_hirecClusterDEGs.csv', sep=',')
+# write.table(cutoffLib, '~/Documents/RNAdata/danBatch1/bowtieGem/revHTSeq/GLMedgeR/output/150526_PCAclusterDEGs.csv', sep=',')
