@@ -16,6 +16,7 @@ datSub = datJoin[datJoin$external_gene_id %in% gen,]
 datSub = datSub[c(1:5,7,8),]
 row.names(datSub) = datSub$external_gene_id
 datSub = datSub[,c(2:8)]
+colnames(datSub) = c("external_gene_id", "MU011", "MU020", "MU034", "MU035", "MU039", "MU041")
 
 # Melt into for for ggplot
 datMelt = melt(datSub, id.vars="external_gene_id")
@@ -23,13 +24,21 @@ colnames(datMelt) = c("Gene", "PDGC", "Log_CPM")
 
 # Colour by survival status
 datMelt$Status = ""
-datMelt[datMelt$PDGC %in% c("GIC_011", "GIC_020", "GIC_034"),]$Status = "Short-term"
-datMelt[!datMelt$PDGC %in% c("GIC_011", "GIC_020", "GIC_034"),]$Status = "Long-term"
+datMelt[datMelt$PDGC %in% c("MU011", "MU020", "MU034"),]$Status = "Short-term"
+datMelt[!datMelt$PDGC %in% c("MU011", "MU020", "MU034"),]$Status = "Long-term"
 
 # Make a boxplot of ddCT valuse
 ggplot(data=datMelt, aes(x=Gene, y=Log_CPM)) +
-    geom_boxplot() + geom_point(aes(colour=Status), size =3, alpha=0.7,  position = position_jitter(w = 0.2)) +
+    geom_boxplot() + geom_point(aes(colour=Status), size =4, alpha=0.7,  position = position_jitter(w = 0.2)) +
     scale_colour_manual(values=c("blue", "forestgreen")) + 
     xlab("Gene") + ylab("Log CPM gene expression") +
-    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
-    theme(text = element_text(size=20))
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+    theme(text = element_text(size=28))
+
+# Make a boxplot of ddCT valuse
+ggplot(data=datMelt, aes(x=Gene, y=Log_CPM)) +
+    geom_boxplot() + geom_point(aes(colour=PDGC), size =4, alpha=0.7,  position = position_jitter(w = 0.2)) +
+    #scale_colour_manual(values=c("blue", "forestgreen")) + 
+    xlab("Gene") + ylab("Log CPM gene expression") +
+    theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+    theme(text = element_text(size=28))

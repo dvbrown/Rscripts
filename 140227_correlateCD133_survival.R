@@ -5,7 +5,7 @@ library(ggplot2)
 setwd('~/Documents/RNAdata/')
 data = read.delim('RNAseqProgress.txt')
 data = data[c(1:14),]
-data = data[c(1:11,13,14),]
+# data = data[c(1:11,13,14),]
 
 correlation = lm(Survival_.month. ~ CD133pos_percent + Age, data=data)
 #correlation = glm(Survival_.month. ~ CD133pos_percent + Age, data=data)
@@ -26,7 +26,7 @@ ggplot(data=data, aes(x=CD133pos_percent, y=Survival_.month., colour=Group)) +
     geom_point(shape=19, alpha=2/3, size=4) + geom_smooth(method=lm, colour='red', se=TRUE, alpha=1/9) +
     xlab("Percent of population expressing CD133") + ylab("Survival (months)") +
     ggtitle("") +  theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 0, hjust = 1)) +
-    theme(text = element_text(size=20))
+    theme(text = element_text(size=28))
 
 # Plot confidence intervals on line
 # a <- predict(correlation, interval="confidence")
