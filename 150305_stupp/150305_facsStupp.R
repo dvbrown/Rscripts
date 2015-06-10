@@ -145,3 +145,11 @@ G2 = ggplot(data=bioRep[bioRep$variable %in% "S/G2/M",], aes(x=variable, y=meanP
     xlab("Cell Cycle Phase") + ylab("Percent difference of CD44-/CD133-") +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 0, hjust = 1))
 G2
+
+g0 = cellCycleLong[cellCycleLong$variable %in% "G0/G1",]
+# ANOVA
+anova(lm(value ~ Subpopulation, data=g0))
+TukeyHSD.aov(aov(value ~ Subpopulation, data=g0))
+
+s =  cellCycleLong[cellCycleLong$variable %in% "S/G2/M",]
+anova(lm(value ~ Subpopulation, data=s))
