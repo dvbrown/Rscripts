@@ -152,4 +152,14 @@ ggplot(data=bioRep, aes(x=Gene, y=meanddCt, fill=Subpopulation)) +
     xlab("Gene") + ylab("ddCt") +
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
 
+# Make into boxplot
+p = ggplot(data=doubleSort, aes(x=Gene, y=ddCT)) +
+    geom_boxplot() + geom_point(aes(colour=Subpopulation), size =3, alpha=0.7,  position = position_jitter(w = 0.175)) +
+    ggtitle("qPCR Summary") + geom_hline(yintercept=0, colour="red") +
+    xlab("Gene") + ylab("ddCt relative to CD133 negative") +
+    scale_y_continuous(breaks = round(seq(-6, 6, by = 1),1)) +
+    theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
+    theme(text = element_text(size=20))
+p
+
 anova(lm(meanddCt ~ Gene + Subpopulation, data=bioRep))
