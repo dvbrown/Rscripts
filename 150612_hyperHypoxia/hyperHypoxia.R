@@ -12,10 +12,6 @@ subtractBaseline = function(dataFrame, baseline, value) {
     return (result)
 }
 
-change = rbind(subtractBaseline(dat, "control", "h2o2"),
-               subtractBaseline(dat, "control", "hypoxia"))
-
-
 dat_all = read.csv("150612_hyperHypoxia.csv",row.names=1)
 colnames(dat_all) = c("PDGC", "Treatment", "Viable", "CD44+/ CD133-",
                   "CD44+/ CD133+", "CD44-/ CD133+", "CD44-/ CD133-")
@@ -23,9 +19,12 @@ colnames(dat_all) = c("PDGC", "Treatment", "Viable", "CD44+/ CD133-",
 dat = dat_all[,c(1,2,4:7)]
 dat = dat[!dat$Treatment %in% "isotype",]
 
-# Convert from wide to long
-mDat = melt(dat, id.vars = c("PDGC", "Treatment"))
+# Calculate percent change
+change = rbind(subtractBaseline(dat, "control", "h2o2"),
+               subtractBaseline(dat, "control", "hypoxia"))
 
+# Convert from wide to long
+mDat = melt(change, id.vars = c("PDGC", "Treatment"))
 
 # Biological replicates
 bioRep = ddply(mDat, .(PDGC, Treatment, variable), summarise, meanValue = mean(value, na.rm=T), 
@@ -37,15 +36,25 @@ bioRep$seDiff = bioRep$sdDiff / (bioRep$reps)
 mu020 = ggplot(data=bioRep[bioRep$PDGC %in% "MU020",], 
               aes(x=variable, y=meanValue, fill=Treatment)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    ggtitle("Reanalysis biological Replicates n = 3") +  
-    scale_fill_manual(values=c("orange", "darkred", "darkblue", "forestgreen")) + 
+    ggtitle("Biological Replicates n = 3") +  
+    scale_fill_manual(values=c("orange", "blue")) + 
     geom_errorbar(aes(ymin=meanValue-seDiff, ymax=meanValue+seDiff), width=.2, position=position_dodge(0.9)) +
-    xlab("Subpopulation") + ylab("Percent difference \nrelative to mixed population") +
-    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    xlab("Subpopulation") + ylab("Percent difference \nrelative to control treatment") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
 mu020
 
+mu039 = ggplot(data=bioRep[bioRep$PDGC %in% "MU039",], 
+               aes(x=variable, y=meanValue, fill=Treatment)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    ggtitle("Biological Replicates n = 3") +  
+    scale_fill_manual(values=c("orange", "blue")) + 
+    geom_errorbar(aes(ymin=meanValue-seDiff, ymax=meanValue+seDiff), width=.2, position=position_dodge(0.9)) +
+    xlab("Subpopulation") + ylab("Percent difference \nrelative to control treatment") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1))
+mu039 + theme(text = element_text(size=20))
+
 ### Boxplot ###
-box = ggplot(data=mDat, aes(x=PDGC, y=value)) +
+box = ggplot(data=mDat, aes(x=variable, y=value)) +
     geom_boxplot() + geom_point(aes(colour=Treatment), size =3, alpha=0.7,  position = position_jitter(w = 0.175)) +
     ggtitle("qPCR Summary") +
     xlab("Gene") + ylab("ddCt relative to CD133 negative") +
