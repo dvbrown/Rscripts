@@ -3,15 +3,28 @@ library(reshape)
 library(plyr)
 setwd("150612_hyperHypoxia/")
 
+subtractBaseline = function(dataFrame, baseline, value) {
+    dataSorted = dataFrame[order(dataFrame[,'PDGC'], dataFrame[,'Treatment']),]
+    baseline = dataSorted[dataSorted$Treatment %in% baseline,]
+    treatment = dataSorted[dataSorted$Treatment %in% value,]
+    subtract =  treatment[,c(3:6)] - baseline[,c(3:6)]
+    result = cbind(treatment[,c(1,2)], subtract)
+    return (result)
+}
+
+change = subtractBaseline(dat, "control", "h202")
+
+
 dat_all = read.csv("150612_hyperHypoxia.csv",row.names=1)
 colnames(dat_all) = c("PDGC", "Treatment", "Viable", "CD44+/ CD133-",
-                  "CD44+/ CD133+", "CD44-/ CD133+", "CD44-/ CD133+")
+                  "CD44+/ CD133+", "CD44-/ CD133+", "CD44-/ CD133-")
 
 dat = dat_all[,c(1,2,4:7)]
+dat = dat[!dat$Treatment %in% "isotype",]
 
 # Convert from wide to long
 mDat = melt(dat, id.vars = c("PDGC", "Treatment"))
-mDat = mDat[!mDat$Treatment %in% "isotype",]
+
 
 # Biological replicates
 bioRep = ddply(mDat, .(PDGC, Treatment, variable), summarise, meanValue = mean(value, na.rm=T), 
