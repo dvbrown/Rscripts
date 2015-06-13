@@ -62,3 +62,14 @@ box = ggplot(data=mDat, aes(x=variable, y=value)) +
     theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
     theme(text = element_text(size=20))
 box
+
+#### Stats ####
+testDf = melt(dat, id.vars = c("PDGC", "Treatment"))
+test20 = testDf[testDf$PDGC %in% "MU020",]
+cast(test20, Treatment ~ variable)
+
+test39 = testDf[testDf$PDGC %in% "MU039",]
+
+
+anova(lm(value ~ Treatment, data=testDf))
+pairwise.t.test
