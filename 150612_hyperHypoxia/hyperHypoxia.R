@@ -12,7 +12,8 @@ subtractBaseline = function(dataFrame, baseline, value) {
     return (result)
 }
 
-change = subtractBaseline(dat, "control", "h202")
+change = rbind(subtractBaseline(dat, "control", "h2o2"),
+               subtractBaseline(dat, "control", "hypoxia"))
 
 
 dat_all = read.csv("150612_hyperHypoxia.csv",row.names=1)
