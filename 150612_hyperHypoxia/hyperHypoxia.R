@@ -65,8 +65,8 @@ box
 
 #### Stats ####
 testDf = melt(dat, id.vars = c("PDGC", "Treatment"))
-test20 = testDf[testDf$PDGC %in% "MU020",]
-cast(test20, Treatment ~ variable)
+test20 = dat[dat$PDGC %in% "MU020",]
+t.test(`CD44+/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "h2o2")
 
 test39 = testDf[testDf$PDGC %in% "MU039",]
 
