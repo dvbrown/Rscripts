@@ -72,16 +72,22 @@ t.test(`CD44+/ CD133+` ~ Treatment, data=test20 ,subset = !test20$Treatment == "
 t.test(`CD44-/ CD133+` ~ Treatment, data=test20 ,subset = !test20$Treatment == "h2o2") # 9.372e-05
 t.test(`CD44-/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "h2o2") #  0.000317
 
-t.test(`CD44+/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "h2o2") # 5.132e-05
+t.test(`CD44+/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "hypoxia") # 0.9
+t.test(`CD44+/ CD133+` ~ Treatment, data=test20 ,subset = !test20$Treatment == "hypoxia") # 0.15
+t.test(`CD44-/ CD133+` ~ Treatment, data=test20 ,subset = !test20$Treatment == "hypoxia") # 0.27
+t.test(`CD44-/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "hypoxia") #  0.1055
+
+
+test39 = dat[dat$PDGC %in% "MU039",]
+t.test(`CD44+/ CD133-` ~ Treatment, data=test39 ,subset = !test39$Treatment == "h2o2") # 2.464e-06
 t.test(`CD44+/ CD133+` ~ Treatment, data=test39 ,subset = !test39$Treatment == "h2o2") # 0.0001852
 t.test(`CD44-/ CD133+` ~ Treatment, data=test39 ,subset = !test39$Treatment == "h2o2") # 0.002159
 t.test(`CD44-/ CD133-` ~ Treatment, data=test39 ,subset = !test39$Treatment == "h2o2") # 0.0007407
 
-t.test(`CD44+/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "hypoxia") # 0.90
-
-test39 = dat[dat$PDGC %in% "MU039",]
 t.test(`CD44+/ CD133-` ~ Treatment, data=test39 ,subset = !test39$Treatment == "hypoxia") # 0.09
-t.test(`CD44+/ CD133-` ~ Treatment, data=test39 ,subset = !test39$Treatment == "h2o2") # 2.464e-06
+t.test(`CD44+/ CD133+` ~ Treatment, data=test39 ,subset = !test39$Treatment == "hypoxia") # 0.026
+t.test(`CD44-/ CD133+` ~ Treatment, data=test39 ,subset = !test39$Treatment == "hypoxia") # 0.497
+t.test(`CD44-/ CD133-` ~ Treatment, data=test39 ,subset = !test39$Treatment == "hypoxia") # 0.070
 
-anova(lm(value ~ Treatment, data=testDf))
-pairwise.t.test
+tet = read.csv("150614_replicatesPval.csv", row.names=1)
+tet$correct = p.adjust(tet$P.val, method = 'bonferroni')
