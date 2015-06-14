@@ -30,6 +30,7 @@ mDat = melt(change, id.vars = c("PDGC", "Treatment"))
 bioRep = ddply(mDat, .(PDGC, Treatment, variable), summarise, meanValue = mean(value, na.rm=T), 
                sdDiff = sd(value, na.rm=T), reps=length(value))
 bioRep$seDiff = bioRep$sdDiff / (bioRep$reps)
+write.csv(bioRep, "150614_replicates.csv")
 
 #### Barchart ####
 # Plot the biological replicates
@@ -66,10 +67,21 @@ box
 #### Stats ####
 testDf = melt(dat, id.vars = c("PDGC", "Treatment"))
 test20 = dat[dat$PDGC %in% "MU020",]
-t.test(`CD44+/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "h2o2")
+t.test(`CD44+/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "h2o2") # 5.132e-05
+t.test(`CD44+/ CD133+` ~ Treatment, data=test20 ,subset = !test20$Treatment == "h2o2") # 0.0009871
+t.test(`CD44-/ CD133+` ~ Treatment, data=test20 ,subset = !test20$Treatment == "h2o2") # 9.372e-05
+t.test(`CD44-/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "h2o2") #  0.000317
 
-test39 = testDf[testDf$PDGC %in% "MU039",]
+t.test(`CD44+/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "h2o2") # 5.132e-05
+t.test(`CD44+/ CD133+` ~ Treatment, data=test39 ,subset = !test39$Treatment == "h2o2") # 0.0001852
+t.test(`CD44-/ CD133+` ~ Treatment, data=test39 ,subset = !test39$Treatment == "h2o2") # 0.002159
+t.test(`CD44-/ CD133-` ~ Treatment, data=test39 ,subset = !test39$Treatment == "h2o2") # 0.0007407
 
+t.test(`CD44+/ CD133-` ~ Treatment, data=test20 ,subset = !test20$Treatment == "hypoxia") # 0.90
+
+test39 = dat[dat$PDGC %in% "MU039",]
+t.test(`CD44+/ CD133-` ~ Treatment, data=test39 ,subset = !test39$Treatment == "hypoxia") # 0.09
+t.test(`CD44+/ CD133-` ~ Treatment, data=test39 ,subset = !test39$Treatment == "h2o2") # 2.464e-06
 
 anova(lm(value ~ Treatment, data=testDf))
 pairwise.t.test
