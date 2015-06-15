@@ -30,14 +30,16 @@ mDat = melt(change, id.vars = c("PDGC", "Treatment"))
 bioRep = ddply(mDat, .(PDGC, Treatment, variable), summarise, meanValue = mean(value, na.rm=T), 
                sdDiff = sd(value, na.rm=T), reps=length(value))
 bioRep$seDiff = bioRep$sdDiff / (bioRep$reps)
+bioRep$number = rep(c(2,4,3,1), 4)
+
 write.csv(bioRep, "150614_replicates.csv")
 
 #### Barchart ####
 # Plot the biological replicates
 mu020 = ggplot(data=bioRep[bioRep$PDGC %in% "MU020",], 
-              aes(x=variable, y=meanValue, fill=Treatment)) +
+              aes(x=number, y=meanValue, fill=Treatment)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
-    ggtitle("Biological Replicates n = 3") +  
+    ggtitle("Biological Replicates n = 3") +  ylim(-20, 30) +
     scale_fill_manual(values=c("orange", "blue")) + 
     geom_errorbar(aes(ymin=meanValue-seDiff, ymax=meanValue+seDiff), width=.2, position=position_dodge(0.9)) +
     xlab("Subpopulation") + ylab("Percent difference \nrelative to control treatment") +
@@ -45,8 +47,10 @@ mu020 = ggplot(data=bioRep[bioRep$PDGC %in% "MU020",],
 mu020
 
 mu039 = ggplot(data=bioRep[bioRep$PDGC %in% "MU039",], 
-               aes(x=variable, y=meanValue, fill=Treatment)) +
+               aes(x=number, y=meanValue, fill=Treatment)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    # scale_y_continuous(breaks = round(seq(-20, 20, by = 5),1)) +
+    ylim(-20, 30) +
     ggtitle("Biological Replicates n = 3") +  
     scale_fill_manual(values=c("orange", "blue")) + 
     geom_errorbar(aes(ymin=meanValue-seDiff, ymax=meanValue+seDiff), width=.2, position=position_dodge(0.9)) +
@@ -55,11 +59,10 @@ mu039 = ggplot(data=bioRep[bioRep$PDGC %in% "MU039",],
 mu039 + theme(text = element_text(size=20))
 
 ### Boxplot ###
-box = ggplot(data=mDat, aes(x=variable, y=value)) +
+box = ggplot(data=mDat, aes(x=number, y=value)) +
     geom_boxplot() + geom_point(aes(colour=Treatment), size =3, alpha=0.7,  position = position_jitter(w = 0.175)) +
     ggtitle("qPCR Summary") +
     xlab("Gene") + ylab("ddCt relative to CD133 negative") +
-    scale_y_continuous(breaks = round(seq(-6, 6, by = 1),1)) +
     theme_bw(base_size=14) + theme(axis.text.x = element_text(angle = 90, hjust = 1)) + 
     theme(text = element_text(size=20))
 box
@@ -90,4 +93,12 @@ t.test(`CD44-/ CD133+` ~ Treatment, data=test39 ,subset = !test39$Treatment == "
 t.test(`CD44-/ CD133-` ~ Treatment, data=test39 ,subset = !test39$Treatment == "hypoxia") # 0.070
 
 tet = read.csv("150614_replicatesPval.csv", row.names=1)
-tet$correct = p.adjust(tet$P.val, method = 'bonferroni')
+# Separate MU020 and MU039
+tet20 = tet[tet$PDGC %in% "MU020",]
+tet39 = tet[tet$PDGC %in% "MU039",]
+
+tet20$correct = p.adjust(tet20$P.val, method = 'bonferroni')
+tet39$correct = p.adjust(tet39$P.val, method = 'bonferroni')
+tet = rbind(tet20, tet39)
+
+write.csv(tet, "150614_replicatesPval.csv")
