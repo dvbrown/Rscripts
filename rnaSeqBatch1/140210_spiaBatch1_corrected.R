@@ -23,7 +23,7 @@ names(de.genes) <- rnaseq.data.ent$entid[data$FDR < 0.1]
 all.genes <- rnaseq.data.ent$entid
 
 # Run spia
-result.spia = spia(de=de.genes, all=all.genes, organism='hsa', nB=2000, plots=F)
+result.spia = spia(de=de.genes, all=all.genes, organism='hsa', nB= Path, plots=F)
 result.spia$Name <- substr(spia.results$Name, 1, 25)
 result.spia[1:20, -12]
 

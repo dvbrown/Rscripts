@@ -46,6 +46,28 @@ mu020 = ggplot(data=bioRep[bioRep$PDGC %in% "MU020",],
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
 mu020
 
+### Barchartfor completion seminar ####
+bioRepHypo = bioRep[bioRep$Treatment %in% "hypoxia",]
+mu020Hypo = ggplot(data=bioRepHypo, aes(x=number, y=meanValue, fill=PDGC)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    ggtitle("Biological Replicates n = 3") +  ylim(-20, 30) +
+    scale_fill_manual(values=c("blue", "orange")) + 
+    geom_errorbar(aes(ymin=meanValue-seDiff, ymax=meanValue+seDiff), width=.2, position=position_dodge(0.9)) +
+    xlab("Subpopulation") + ylab("Percent difference \nrelative to control treatment") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
+mu020Hypo
+
+bioRepHyper = bioRep[bioRep$Treatment %in% "h2o2",]
+hyper = ggplot(data=bioRepHyper, aes(x=number, y=meanValue, fill=PDGC)) +
+    geom_bar(stat="identity", position=position_dodge(), colour="black") + 
+    ggtitle("Biological Replicates n = 3") +  ylim(-20, 30) +
+    scale_fill_manual(values=c("blue", "orange")) + 
+    geom_errorbar(aes(ymin=meanValue-seDiff, ymax=meanValue+seDiff), width=.2, position=position_dodge(0.9)) +
+    xlab("Subpopulation") + ylab("Percent difference \nrelative to control treatment") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
+hyper
+########
+
 mu039 = ggplot(data=bioRep[bioRep$PDGC %in% "MU039",], 
                aes(x=number, y=meanValue, fill=Treatment)) +
     geom_bar(stat="identity", position=position_dodge(), colour="black") + 
