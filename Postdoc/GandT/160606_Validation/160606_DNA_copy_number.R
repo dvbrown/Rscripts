@@ -18,10 +18,10 @@ readlength = 63
 input <- "Single-cells"
 type <- paste(readlength,"bases_mappable",sep="")
 
-plCN = "Mention the ploidy"
-plchr = "Mention the chromosome"
-plstart = "Mention the start"
-plend = "Mention the end"
+plCN = 3
+plchr = '12'
+plstart = '1'
+plend = '60000'
 
 library("limma")
 source("~/Code/Rscripts/Postdoc/Josien/fastPCF.R")
@@ -40,13 +40,13 @@ for(gamma in c(25))
     chrom <- c(seq(1,22),"X","Y")
    
     sampletostudy = as.character(samplelist[1])
+    basename = substr(sampletostudy, 30, 56)
     print(sampletostudy)
 
   #Define segmentation threshold data
   LogR <- read.table(as.character(samplelist[1]), sep="\t", header=T)
   
   # define ploidy based on a certain segment:
-
 
   LogRlev=mean(LogR[as.character(as.vector(LogR[,1]))==as.character(plchr)&LogR[,2]>plstart&LogR[,2]<plend,4])
   ploidy = plCN/2^LogRlev
@@ -64,16 +64,16 @@ for(gamma in c(25))
   CN[,6] = LogR[,6]
   
   setwd(writedir)
-  write.table(CN,paste("SEGMENTSlogR.GCcorrected-M30-",as.character(samplelist[1]),thresholds,type,".copynumber.refLOCUS.",plchr,".txt",sep=""),
+  write.table(CN,paste("SEGMENTSlogR.GCcorrected-M30-",as.character(basename),thresholds,type,".copynumber.refLOCUS.",plchr,".txt",sep=""),
               sep="\t",col.names=T,row.names=F,quote=F)
-  print(paste("SEGMENTSlogR.GCcorrected-M30-",as.character(samplelist[1]),thresholds,type,".copynumber.refLOCUS.",plchr,".txt",sep="")) 
+  print(paste("SEGMENTSlogR.GCcorrected-M30-",as.character(basename),thresholds,type,".copynumber.refLOCUS.",plchr,".txt",sep="")) 
 
 	#######################################
 	### plotting CN SEGMENTATION
 	setwd(writedir)
 	for(chr in 1:23){
 
-	jpeg(paste(sampletostudy,"Complete_chr_CN.gamma",gamma,".refLOCUS.",plchr,"_",type,binsize,"_",chr,".jpeg",sep=""),
+	jpeg(paste(basename,"Complete_chr_CN.gamma",gamma,".refLOCUS.",plchr,"_",type,binsize,"_",chr,".jpeg",sep=""),
 	     width = 1200, height = 600, units = "px", pointsize = 20)		#,width=10,height=10)
 	#par(mfrow=c(2,1))
 	limx <- max(as.numeric(as.character(CN[as.character(CN[,1])==chrom[chr],2]))[is.finite(as.numeric(as.character(CN[as.character(CN[,1])==chrom[chr],2])))])
@@ -86,8 +86,5 @@ for(gamma in c(25))
 	       as.numeric(as.character(CN[as.character(CN[,1])==chrom[chr],4])),col="yellow",pch=19,cex=0.7)
 	dev.off()
 	}
-
- 
-
    }
 
