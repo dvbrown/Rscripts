@@ -88,7 +88,6 @@ for(gamma in c(25))
 
 ######### Batch version ########
 for (item in samplelist) {
-  sampletostudy = as.character(samplelist[item])
 
   setwd(writedir)
   for(gamma in c(25))
@@ -97,7 +96,7 @@ for (item in samplelist) {
     setwd(root)    
     thresholds <- paste("-PCF-kmin_3-gamma_",gamma,"-fastPCF-window-",window,"vs-NoREF-M30-II",sep="")
     
-    scdata <- read.delim(sampletostudy,sep="")
+    scdata <- read.delim(item,sep="")
     
     chrom <- c(seq(1,22),"X","Y")
     SEGMENTATIONtable <- vector("list",length(chrom))
@@ -126,7 +125,7 @@ for (item in samplelist) {
     colnames(towriteSEGMENTS) <- c("Chr","Pos","logR","logRsegment","end","abs")
     
     setwd(writedir)
-    write.table(towriteSEGMENTS, paste("SEGMENTSlogR.GCcorrected-M30-",as.character(samplelist[item]),
+    write.table(towriteSEGMENTS, paste("SEGMENTSlogR.GCcorrected-M30-",as.character(item),
                                        thresholds,type,".txt",sep=""), quote=F,sep="\t",col.names=T,row.names=F)
     
     #######################################
@@ -134,7 +133,7 @@ for (item in samplelist) {
     setwd(writedir)
     for(chr in 1:23){
       
-      jpeg(paste(sampletostudy,"Complete_chr_logR.gamma",gamma,".",type,binsize,"_",chr,".jpeg",sep=""),
+      jpeg(paste(item,"Complete_chr_logR.gamma",gamma,".",type,binsize,"_",chr,".jpeg",sep=""),
            width = 1200, height = 600, units = "px", pointsize = 20)		#,width=10,height=10)
       #par(mfrow=c(2,1))
       limx <- max(as.numeric(as.character(towriteSEGMENTS[as.character(towriteSEGMENTS[,1])==chrom[chr],2]))[is.finite(as.numeric(as.character(towriteSEGMENTS[as.character(towriteSEGMENTS[,1])==chrom[chr],2])))])
@@ -143,7 +142,7 @@ for (item in samplelist) {
       plot(as.numeric(as.character(towriteSEGMENTS[as.character(towriteSEGMENTS[,1])==chrom[chr],2])),
            as.numeric(as.character(towriteSEGMENTS[as.character(towriteSEGMENTS[,1])==chrom[chr],3])),col="black",
            pch=19,ylim=c(-4,4),xlim=c(1,limx),cex=0.5, xlab=NA,ylab=paste("logR (chr ",chrom[chr],") ",sep=""),
-           main=paste(as.character(samplelist[item]),".",type,binsize,".gamma",gamma,sep=""),cex.main=1)
+           main=paste(as.character(item),".",type,binsize,".gamma",gamma,sep=""),cex.main=1)
       
       points(as.numeric(as.character(towriteSEGMENTS[as.character(towriteSEGMENTS[,1])==chrom[chr],2])),
              as.numeric(as.character(towriteSEGMENTS[as.character(towriteSEGMENTS[,1])==chrom[chr],4])),
