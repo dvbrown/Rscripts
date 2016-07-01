@@ -18,7 +18,7 @@ readlength = 63
 input <- "Single-cells"
 type <- paste(readlength,"bases_mappable",sep="")
 
-plCN = 3
+plCN = 2
 plchr = '12'
 plstart = '1'
 plend = '60000'
@@ -39,12 +39,12 @@ for(gamma in c(25))
     thresholds <- paste("-PCF-kmin_3-gamma_",gamma,"-fastPCF-window-",window,"vs-NoREF-M30-II",sep="")
     chrom <- c(seq(1,22),"X","Y")
    
-    sampletostudy = as.character(samplelist[1])
+    sampletostudy = as.character(samplelist[11])
     basename = substr(sampletostudy, 30, 56)
     print(sampletostudy)
 
   #Define segmentation threshold data
-  LogR <- read.table(as.character(samplelist[1]), sep="\t", header=T)
+  LogR <- read.table(as.character(sampletostudy), sep="\t", header=T)
   
   # define ploidy based on a certain segment:
 
