@@ -9,26 +9,20 @@
 #######  Removed the chromosome Y while calculating the segmentation
 ###############################################################
 
-root <- "/Volumes/jhaan0/GenTseqData/batch1/dna/countfiles/"
+root <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/LogR/"
 window = "500000"
 binsize <- "500K"
 #name = as.character(args[5])
-readlength = 89
+readlength = 63
 #input <- 1
 type <- paste(readlength,"bases_mappable",sep="")
 plCN = 2
-plchr =2
+plchr =12
 plstart = 45000000
 plend = 130000000
 
-samplelist <- list.files("/Volumes/jhaan0/GenTseqData/batch1/dna/countfiles/")
-samplelist<-grep("*500K_89bases.sorted.count", samplelist,value=T)
+samplelist <- list.files("/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/LogR/", pattern = '*.txt')
 gamma<-10
-
- 
- system("mkdir /Users/u0095231/Documents/GenTseq/batch1/copynumber/results/genomewideProfilesLogR500K") 
-system("mkdir /Users/u0095231/Documents/GenTseq/batch1/copynumber/results/genomewideProfilesCN500K") 
-
 
 ## rest
 for(input in 1:length(samplelist)){
@@ -38,19 +32,13 @@ print(input)
  thresholds <- paste("-PCF-kmin_3-gamma_",gamma,"-fastPCF-window-",window,"vs-NoREF-M30-II",sep="")
     chrom <- c(seq(1,22),"X","Y")
    
-writedir <-paste("/Users/u0095231/Documents/GenTseq/batch1/copynumber/results/",gsub(".sorted_dedup._mappable|.sorted.count","",sampletostudy),sep="")
+writedir <-paste("/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/Copy_number/WholeGenome/",gsub(".sorted_dedup._mappable|.sorted.count","",sampletostudy),sep="")
 setwd(writedir)
 
- 
-  
-  
   #Define segmentation threshold data
 LogR <- read.table(paste("SEGMENTSlogR.GCcorrected-M30-",sampletostudy,thresholds,type,".txt",sep=""), sep="\t", header=T)
 CN<-read.table(paste("SEGMENTSlogR.GCcorrected-M30-",sampletostudy,thresholds,type,".copynumber.refLOCUS.",plchr,".txt",sep=""),sep="\t",header=T)
  
-
-
-
 ##Plots 
 #pdf("genomewideProfiles.pdf",onefile=T)
 

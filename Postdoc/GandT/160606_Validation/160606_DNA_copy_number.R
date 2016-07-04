@@ -102,7 +102,7 @@ for (item in samplelist) {
     chrom <- c(seq(1,22),"X","Y")
     
     sampletostudy = item
-    basename = substr(sampletostudy, 30, 56)
+    basename = substr(sampletostudy, 1, 69)
     print(sampletostudy)
     
     #Define segmentation threshold data
