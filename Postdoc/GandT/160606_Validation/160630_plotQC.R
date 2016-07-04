@@ -25,23 +25,31 @@ percentages = mdata[mdata$variable %in% c("PERCENT_DUPLICATION"),]
 
 a = ggplot(mdataInteresting, aes(x=variable, y=value, label=LIBRARY)) + geom_boxplot() +
       #scale_colour_manual(values=variable) +
-      xlab("Metric") + ylab("Number") + # Set axis labels
+      xlab("") + ylab("Number") + # Set axis labels
       ggtitle("G&T-Seq") + geom_point(aes(colour=variable)) +
       theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
       theme(text = element_text(size=20)) + guides(colour=FALSE)
 
+d = ggplot(mdataInteresting, aes(x=variable, y=value, label=LIBRARY)) + geom_boxplot() +
+  #scale_colour_manual(values=variable) +
+  xlab("") + ylab("Number") + # Set axis labels
+  ggtitle("G&T-Seq") + geom_point(aes(colour=variable)) +
+  coord_cartesian(ylim = c(0, 4000000)) +
+  theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  theme(text = element_text(size=20)) + guides(colour=FALSE)
+
 b = ggplot(percentages, aes(x=variable, y=value, label=LIBRARY)) + geom_boxplot() +
     #scale_colour_manual(values=variable) +
-    xlab("Metric") + ylab("Duplicate rate") + # Set axis labels
+    xlab("") + ylab("Duplicate rate") + # Set axis labels
     ggtitle("G&T-Seq") + geom_point(aes(colour=variable)) + geom_text() +
     theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
     theme(text = element_text(size=20)) + guides(colour=FALSE)
 
 c = ggplot(mdata[mdata$variable %in% c("ESTIMATED_LIBRARY_SIZE"),], aes(x=variable, y=value, label=LIBRARY)) + geom_boxplot() +
       #scale_colour_manual(values=variable) +
-      xlab("Library Size") + ylab("Number") + # Set axis labels
+      xlab("") + ylab("Number") + # Set axis labels
       ggtitle("G&T-Seq") + geom_point(aes(colour=variable)) + geom_text() +
       theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
       theme(text = element_text(size=20)) + guides(colour=FALSE)
 
-multiplot(a, b, c, cols=2)
+multiplot(a, d, b, c, cols=2)
