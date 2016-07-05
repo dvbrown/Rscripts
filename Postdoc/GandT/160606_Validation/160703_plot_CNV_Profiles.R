@@ -9,7 +9,7 @@
 #######  Removed the chromosome Y while calculating the segmentation
 ###############################################################
 
-root_CN <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/Copy_number/"
+root_CN <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/Copy_number/"
 writedir <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/Copy_number/WholeGenome/"
 window = "500000"
 binsize <- "500K"
@@ -30,10 +30,11 @@ setwd(root_CN)
 samplelist <- list.files(pattern = '*.txt')
 
 for(input in samplelist){
+  
   sampletostudy = as.character(input)
   print(input)
   thresholds <- paste("-PCF-kmin_3-gamma_",gamma,"-fastPCF-window-",window,"vs-NoREF-M30-II",sep="")
-  chrom <- c(seq(1,22),"X","Y")
+  chrom <- c(seq(1,22),"X")
   
   CN<-read.table(input,sep="\t",header=T)
   titl = paste(as.character(substr(sampletostudy,30,98)),".refLOCUS",plchr,".",type,binsize,".gamma",gamma,sep="")
@@ -51,9 +52,10 @@ for(input in samplelist){
   axis(side = 1, at = as.integer(c(1:length(data))[1]), label = "", tick = FALSE)
 
   ax <- (cumsum(table(chrom)) + c(0, cumsum(table(chrom))[-length(cumsum(table(chrom)))]))/2 
-  axis(side = 1, at = ax, labels = c(1:24), cex = 0.2,lwd = 0.5, las = 1, cex.axis = 1, cex.lab = 1)
+  axis(side = 1, at = ax, labels = c(1:23), cex = 0.2,lwd = 0.5, las = 1, cex.axis = 1, cex.lab = 1)
   abline(h =2)
   for (iii in 1:length(cumsum(table(chrom)))) {segments(cumsum(table(chrom))[[iii]], -100, cumsum(table(chrom))[[iii]],100, lty = 2) }
+  
   graphics.off()
   
 }

@@ -28,44 +28,45 @@ gamma<-10
 samplelist <- list.files("/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/LogR/", pattern = '*.txt')
 
 for(input in samplelist){
-print(input)
- sampletostudy = as.character(input)
-    print(sampletostudy)
- thresholds <- paste("-PCF-kmin_3-gamma_",gamma,"-fastPCF-window-",window,"vs-NoREF-M30-II",sep="")
-    chrom <- c(seq(1,22),"X","Y")
-   
-setwd(root_logR)
+  print(input)
+  sampletostudy = as.character(input)
+  print(sampletostudy)
+  thresholds <- paste("-PCF-kmin_3-gamma_",gamma,"-fastPCF-window-",window,"vs-NoREF-M30-II",sep="")
+  chrom <- c(seq(1,22),"X","Y")
+  
+  setwd(root_logR)
   #Define segmentation threshold data
-LogR <-read.table(sampletostudy,sep="\t",header=T)
-
-setwd(writedir)
-titl = paste(as.character(substr(sampletostudy,1,69)),".refLOCUS",plchr,".",type,binsize,".gamma",gamma,sep="")
-jpeg(paste("logR_", titl, ".jpeg",sep=""),
-     width = 1200, height = 600, units = "px", pointsize = 20)		#,width=10,height=10)
-
-### plotProfile
-#par(mfcol=c(2,1))
-data<-LogR$logR
-min<- min(data)
-max<-6
-chrom<-as.vector(LogR$Chr)
-chrom<-as.vector(LogR$Chr)
-chrom[chrom=="X"]<-23
-chrom<-as.numeric(chrom)
-
-plot(c(1:length(data)),data, pch=19,cex=0.3,col="black",type="p", ylim=c(min-0.5,max+0.5), xlab = "Chromosomes", ylab = "logR ", main=substr(titl, 1, 20) ,xaxt = "n",cex.lab=1.2)
-points(c(1:length(data)),LogR$logRsegment, pch=19,cex=0.3,type="p", ylim=c(min-0.5,max+0.5),xaxt = "n",cex.lab=1.2,col="yellow")
-#tempSeg<-segmentData[segmentData$Sample==i,]
-#segments(c(1,cumsum(tempSeg$nclone)[-nrow(tempSeg)]), tempSeg$values,cumsum(tempSeg$nclone), tempSeg$values,lwd=5,col="black")
-axis(side = 1, at = as.integer(c(1:length(data))[1]), label = "", tick = FALSE)
-#for(j in 1:length(c)){
-#tempSeg<-segmentData[segmentData$Sample==m[j],]
-#segments(c(1,cumsum(tempSeg$nclone)[-nrow(tempSeg)]), tempSeg$values,cumsum(tempSeg$nclone), tempSeg$values,lwd=5-(j*1.2), col = c[j])
-#}
-ax <- (cumsum(table(chrom)) + c(0, cumsum(table(chrom))[-length(cumsum(table(chrom)))]))/2 
-axis(side = 1, at = ax, labels = c(1:23), cex = 0.2,lwd = 0.5, las = 1, cex.axis = 1, cex.lab = 1)
-abline(h = 0)
-for (iii in 1:length(cumsum(table(chrom)))) {segments(cumsum(table(chrom))[[iii]], -100, cumsum(table(chrom))[[iii]],100, lty = 2) }
-graphics.off()
+  LogR <-read.table(sampletostudy,sep="\t",header=T)
+  
+  setwd(writedir)
+  titl = paste(as.character(substr(sampletostudy,1,69)),".refLOCUS",plchr,".",type,binsize,".gamma",gamma,sep="")
+  jpeg(paste("logR_", titl, ".jpeg",sep=""),
+       width = 1200, height = 600, units = "px", pointsize = 20)		#,width=10,height=10)
+  
+  ### plotProfile
+  #par(mfcol=c(2,1))
+  data<-LogR$logR
+  min<- min(data)
+  max<-6
+  chrom<-as.vector(LogR$Chr)
+  chrom<-as.vector(LogR$Chr)
+  chrom[chrom=="X"]<-23
+  chrom<-as.numeric(chrom)
+  
+  plot(c(1:length(data)),data, pch=19,cex=0.3,col="black",type="p", ylim=c(min-0.5,max+0.5), xlab = "Chromosomes", ylab = "logR ", 
+       main=substr(titl, 1, 20) ,xaxt = "n",cex.lab=1.2)
+  points(c(1:length(data)),LogR$logRsegment, pch=19,cex=0.3,type="p", ylim=c(min-0.5,max+0.5),xaxt = "n",cex.lab=1.2,col="yellow")
+  #tempSeg<-segmentData[segmentData$Sample==i,]
+  #segments(c(1,cumsum(tempSeg$nclone)[-nrow(tempSeg)]), tempSeg$values,cumsum(tempSeg$nclone), tempSeg$values,lwd=5,col="black")
+  axis(side = 1, at = as.integer(c(1:length(data))[1]), label = "", tick = FALSE)
+  #for(j in 1:length(c)){
+  #tempSeg<-segmentData[segmentData$Sample==m[j],]
+  #segments(c(1,cumsum(tempSeg$nclone)[-nrow(tempSeg)]), tempSeg$values,cumsum(tempSeg$nclone), tempSeg$values,lwd=5-(j*1.2), col = c[j])
+  #}
+  ax <- (cumsum(table(chrom)) + c(0, cumsum(table(chrom))[-length(cumsum(table(chrom)))]))/2 
+  axis(side = 1, at = ax, labels = c(1:23), cex = 0.2,lwd = 0.5, las = 1, cex.axis = 1, cex.lab = 1)
+  abline(h = 0)
+  for (iii in 1:length(cumsum(table(chrom)))) {segments(cumsum(table(chrom))[[iii]], -100, cumsum(table(chrom))[[iii]],100, lty = 2) }
+  graphics.off()
 
 }
