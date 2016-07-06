@@ -16,14 +16,12 @@ binsize <- "500K"
 #name = as.character(args[5])
 readlength = 63
 type <- paste(readlength,"bases_mappable",sep="")
-plCN = 2
+plCN = 3
 plchr =12
 plstart = 45000000
 plend = 130000000
 
 gamma<-10
-
-input <- "SEGMENTSlogR.GCcorrected-M30-HCC38_1cell_DNA_SEGMENTSlogR.GCcorrected-M30-GC032370_AGGCAGAA-TACTCC-PCF-kmin_3-gamma_25-fastPCF-window-500000vs-NoREF-M30-II63bases_mappable.copynumber.refLOCUS.12.txt"
 
 ####    Copy number    ####
 setwd(root_CN)

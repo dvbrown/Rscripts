@@ -9,23 +9,23 @@
 #######  Removed the chromosome Y while calculating the segmentation
 ###############################################################
 
-root_logR <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/LogR/"
-writedir <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/Copy_number/WholeGenome/"
+root_logR <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/LogR/"
+writedir <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/Copy_number/WholeGenome/"
 window = "500000"
 binsize <- "500K"
 #name = as.character(args[5])
 readlength = 63
 #input <- 1
 type <- paste(readlength,"bases_mappable",sep="")
-plCN = 2
+plCN = 3
 plchr =12
 plstart = 45000000
 plend = 130000000
 
 gamma<-10
 
-####    LogR    ####
-samplelist <- list.files("/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/LogR/", pattern = '*.txt')
+####    LogR plot    ####
+samplelist <- list.files("/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/LogR/", pattern = '*mappable.txt')
 
 for(input in samplelist){
   print(input)
@@ -56,13 +56,9 @@ for(input in samplelist){
   plot(c(1:length(data)),data, pch=19,cex=0.3,col="black",type="p", ylim=c(min-0.5,max+0.5), xlab = "Chromosomes", ylab = "logR ", 
        main=substr(titl, 1, 20) ,xaxt = "n",cex.lab=1.2)
   points(c(1:length(data)),LogR$logRsegment, pch=19,cex=0.3,type="p", ylim=c(min-0.5,max+0.5),xaxt = "n",cex.lab=1.2,col="yellow")
-  #tempSeg<-segmentData[segmentData$Sample==i,]
-  #segments(c(1,cumsum(tempSeg$nclone)[-nrow(tempSeg)]), tempSeg$values,cumsum(tempSeg$nclone), tempSeg$values,lwd=5,col="black")
+
   axis(side = 1, at = as.integer(c(1:length(data))[1]), label = "", tick = FALSE)
-  #for(j in 1:length(c)){
-  #tempSeg<-segmentData[segmentData$Sample==m[j],]
-  #segments(c(1,cumsum(tempSeg$nclone)[-nrow(tempSeg)]), tempSeg$values,cumsum(tempSeg$nclone), tempSeg$values,lwd=5-(j*1.2), col = c[j])
-  #}
+
   ax <- (cumsum(table(chrom)) + c(0, cumsum(table(chrom))[-length(cumsum(table(chrom)))]))/2 
   axis(side = 1, at = ax, labels = c(1:23), cex = 0.2,lwd = 0.5, las = 1, cex.axis = 1, cex.lab = 1)
   abline(h = 0)

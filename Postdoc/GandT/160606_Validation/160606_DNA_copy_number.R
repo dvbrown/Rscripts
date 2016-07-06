@@ -10,7 +10,7 @@
 ###############################################################
 
 root <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/LogR/"
-writedir <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/Copy_number/"
+writedir <- "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/Copy_number/"
 window = "500000"
 binsize <- "500K"
 name = as.character(args[5])
