@@ -3,8 +3,8 @@ library(ggplot2)
 library(reshape)
 source('~/Code/Rscripts/Templates/multiplot.R')
 
-inputDir = "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/QC/"
-exportDir = "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/DNA/QC/Rplot/"
+inputDir = "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/QC/"
+exportDir = "/Users/u0107775/Data/GandT_Seq/160606_ValidationGandT/QC/Rplot/"
 
 # Get a list of the bedtools output files you'd like to read in
 setwd(inputDir)
