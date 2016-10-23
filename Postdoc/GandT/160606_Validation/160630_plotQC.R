@@ -48,8 +48,20 @@ b = ggplot(percentages, aes(x=variable, y=value, label=LIBRARY)) + geom_boxplot(
 c = ggplot(mdata[mdata$variable %in% c("ESTIMATED_LIBRARY_SIZE"),], aes(x=variable, y=value, label=LIBRARY)) + geom_boxplot() +
       #scale_colour_manual(values=variable) +
       xlab("") + ylab("Number") + # Set axis labels
-      ggtitle("G&T-Seq") + geom_point(aes(colour=variable)) + geom_text() +
+      ggtitle("G&T-Seq") + geom_jitter(aes(colour=variable, width = 0.1),size=2)  +
       theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
       theme(text = element_text(size=20)) + guides(colour=FALSE)
 
 multiplot(a, d, b, c, cols=2)
+write.table(mdata, "data.txt", sep='\t')
+
+# Get the MAPD scores
+mapd = read.delim("mapdScoreAnnotated.txt")
+mapd = mapd[c(2:6)]
+
+m = ggplot(mapd, aes(x=Cell_type, y=MAPD))  + geom_boxplot(colour=Cell_number) +
+  xlab("") + ylab("MAPD DNA analysis") + # Set axis labels
+  ggtitle("MAPD") + geom_jitter(aes(colour=Cell_number, width = 12),size=3,)  +
+  theme_bw(base_size=18) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  theme(text = element_text(size=20)) + guides(colour=FALSE)
+m
