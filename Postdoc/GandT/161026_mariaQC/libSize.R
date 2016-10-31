@@ -33,6 +33,7 @@ libSize = cbind(libSize, geneSize)
 colnames(libSize) = c("LibSize", "NonZero")
 
 libMatrix = merge.data.frame(samplesheet, libSize, by.x = 0, by.y = 0)
+write.table(libMatrix, "161031_librarySizeMaria.txt", sep='\t')
 
 m = ggplot(libMatrix, aes(x=sample_ID, y=LibSize))  + geom_boxplot() +
   xlab("Sample") + ylab("Library Size") + # Set axis labels
