@@ -20,11 +20,18 @@ correlation = ggplot(data=mungedData, aes(x=Cp.y, y=Cp.x, color=gene.x)) +
 
 
 #### Plot some metric generated from 96 well plate into a 96 well matrix ####
-# Insert well positions
-wellMap = data.frame (rown = rep (letters[1:8], each=12), coln = rep (1:12, 8))
-platelay = cbind(wellMap, dat)
 
-# Change the aesthetics according to dataset
-ggplot(platelay, aes(y = factor(rown, rev(levels(rown))),x = factor(coln))) + 
-  geom_point(aes(colour = GenesDetected, size= LibSize))  + theme_bw() + scale_size(range = c(5, 20)) +
-  labs(x=NULL, y = NULL) + scale_color_gradient(low="blue", high="red")
+plot96wellMap <- function (sampleSubset, plt_Title, variable_2_colour, variable_2_size) {
+  # DATAFRAME    sampleSubset = the 96 samples you want to plot. This must be in order with well A12 = sample 12 and well B1 = sample 13
+  # STRING    plt_Title = The title of your plot
+  # STRING     variable_2_colour = the measurement you want mapped to colour
+  # STRING     variable_2_size = the measurement you want mapped to circle size
+  wellMap = data.frame (rown = rep (LETTERS[1:8], each=12), coln = rep (1:12, 8))
+  platelay = cbind(wellMap, sampleSubset)
+  # ggplot using well coordinates generate dabove
+  plt = ggplot(platelay, aes(y = factor(rown, rev(levels(rown))),x = factor(coln))) + 
+    geom_point(aes_string(colour = variable_2_colour, size= variable_2_size)) + scale_size(range = c(5, 10)) +
+    labs(x=NULL, y = NULL) + scale_color_gradient(low="blue", high="red") + ggtitle(plt_Title) +
+    theme_bw() + theme(axis.text=element_text(size=16))
+  return(plt)
+}
