@@ -2,43 +2,39 @@ library(ggplot2)
 library(reshape)
 library(plyr)
 
-setwd('~/Data/ATAC-Seq_1/summary_info/')
+multmerge = function(mypath){
+  filenames=list.files(path=mypath, full.names=TRUE)
+  datalist = lapply(filenames, function(x){read.delim(file=x,header=F, sep='\t')})
+  return(datalist) }
+
+setwd('~/Data/ATAC_seq_digitoninBulk/Chromosome_aligned/')
+file_names = list.files()
 source('~/Code/Rscripts/Templates/multiplot.R')
-dat = read.csv('atac_seqsummary_metrics.csv')
 
-dat = dat[c(6,9,14,11,13,10),]
+dat = multmerge('~/Data/ATAC_seq_digitoninBulk/Chromosome_aligned/')
+df <- do.call("cbind", dat)
+names = rep(file_names, each = 2)
 
-dat$Percent_dups = dat$Percent_dups * 100
-dat$percent_mtDNAreads = dat$percent_mtDNAreads * 100
+# Mung data into useful for for analysing reads on chromosomes
+colnames(df) = names
+row.names(df) = df[,1]
+df = df[c(1:25),]
+chromoCounts = df[,c(2,4,6,8,10,12,14,16,18,20,22)]
+chrC = as.matrix(chromoCounts)
 
-# Remove proteinase RNase as it has a very high library size and a wierd looking bioanalyzer trace
-#dat = dat[c(114,16,17),]
+# Compute the sum
+readSum = colSums(chrC)
+
+percent = as.data.frame(chrC['MT',] / readSum)
+colnames(percent) = ('Percent_mtDNA_reads')
+percent$chr = 'mtDNA'
 
 #### Barchart ####
 color = rainbow(6)
 
-lib = ggplot(data=dat, aes(x=Sample, y=EstimatedLibSize)) +
-    geom_bar(stat="identity", position=position_dodge(), colour="black", fill=color) + 
-    ggtitle("Estimated library size") +
-    scale_fill_manual(values=rainbow(17)) + 
-    xlab("Library") + ylab("Estimated library size") +
-    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
-lib
-
-mt = ggplot(data=dat, aes(x=Sample, y=percent_mtDNAreads)) +
-  geom_bar(stat="identity", position=position_dodge(), colour="black", fill=color) + 
-  ggtitle("Percent mitochondiral reads") +
-  scale_fill_manual(values=rainbow(17)) + 
-  xlab("Library") + ylab("Percent mitochondiral reads") +
+p <- ggplot(percent, aes(factor(chr), Percent_mtDNA_reads)) +
+  geom_boxplot() + geom_jitter() +
+  ggtitle("Percent mtDNA ATAC-seq reads") +
   theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
-mt
+p
 
-dups = ggplot(data=dat, aes(x=Sample, y=Percent_dups)) +
-  geom_bar(stat="identity", position=position_dodge(), colour="black", fill=color) + 
-  ggtitle("Percent duplicated reads") +
-  scale_fill_manual(values=rainbow(17)) + 
-  xlab("Library") + ylab("Percent duplicated reads") +
-  theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
-dups
-
-multiplot(lib, mt, dups, cols=2)

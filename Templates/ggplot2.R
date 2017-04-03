@@ -18,6 +18,13 @@ correlation = ggplot(data=mungedData, aes(x=Cp.y, y=Cp.x, color=gene.x)) +
   ggtitle("Correlation of technical replicates") +  # Set title
   theme_bw(base_size=18)
 
+#### Plot a histogram
+p <- ggplot(df, aes(factor(category), dataPoints)) +
+  geom_boxplot() + geom_jitter() +
+  ggtitle("title") +
+  theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
+p
+
 
 #### Plot some metric generated from 96 well plate into a 96 well matrix ####
 
