@@ -25,6 +25,16 @@ p <- ggplot(df, aes(factor(category), dataPoints)) +
   theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
 p
 
+#### Make a dot plot vertical stacking of multiple groups
+p1 <- ggplot(df, aes(factor(chr), counts, fill = factor(groups), label = factor(treatment))) +
+    geom_dotplot(binaxis = "y", stackdir = "center", position = "dodge") +
+    scale_fill_manual(values=c("blue", "red"), name="Lysis buffer",    # Change the fill colour manually and set label title
+                      breaks=c("group_1", "group_2"), labels=c("Group A", "GROUP B")) +     # Set the labels by first mapping to the groups then replacing them
+    ggtitle("Percent mtDNA ATAC-seq reads") + geom_text(check_overlap = TRUE, size = 3) +
+    xlab("% mtDNA reads") + ylab("group") +
+    theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=16))
+p1
+
 
 #### Plot some metric generated from 96 well plate into a 96 well matrix ####
 

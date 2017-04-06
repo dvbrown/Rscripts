@@ -29,12 +29,26 @@ percent = as.data.frame(chrC['MT',] / readSum)
 colnames(percent) = ('Percent_mtDNA_reads')
 percent$chr = 'mtDNA'
 
-#### Barchart ####
+# Add the sample names
+treatments = c("GM12878_Digitonin_0.03",'GM12878_5000_Kris_IGEPAL','GM12878_50,000_Dan_IGEPAL','GM12878_50,000_Sep_lysis','GM12878_Digitonin_0.01',
+               'GM12878_Digitonin_0.02','GM12878_IGEPAL_0.15','GM12878_IGEPAL_0.2','HCC38_IGEPAL_0.1','HCC38_Digitonin_0.02','GM12878_IGEPAL_0.1')
+percent = cbind(percent, treatments)
+write.table(percent, '~/Code/Rscripts/Postdoc/170404_atacDigitoninBulk.csv', sep=",")
+percent = read.csv('~/Code/Rscripts/Postdoc/ATAC_seq/170404_bulkDigitonin/170404_atacDigitoninBulk.csv', row.names = 1)
+
+#### boxplot ####
 color = rainbow(6)
 
-p <- ggplot(percent, aes(factor(chr), Percent_mtDNA_reads)) +
-  geom_boxplot() + geom_jitter() +
+p1 <- ggplot(percent, aes(factor(chr), Percent_mtDNA)) +
+  geom_boxplot() + geom_jitter(aes(colour=Lysis_agent)) +
   ggtitle("Percent mtDNA ATAC-seq reads") +
   theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
-p
+p1
 
+p2 <- ggplot(percent, aes(factor(chr), Percent_mtDNA)) +
+  geom_boxplot() + geom_jitter(aes(colour=Cell_line)) +
+  ggtitle("Percent mtDNA ATAC-seq reads") +
+  theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
+p2
+
+multiplot(p1,p2, cols=2)
