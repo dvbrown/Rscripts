@@ -10,6 +10,7 @@ dat = dat[c(6,9,14,11,13,10),]
 
 dat$Percent_dups = dat$Percent_dups * 100
 dat$percent_mtDNAreads = dat$percent_mtDNAreads * 100
+dat$EstimatedLibSize = dat$EstimatedLibSize / 100000
 
 # Remove proteinase RNase as it has a very high library size and a wierd looking bioanalyzer trace
 #dat = dat[c(114,16,17),]
@@ -42,3 +43,12 @@ dups = ggplot(data=dat, aes(x=Sample, y=Percent_dups)) +
 dups
 
 multiplot(lib, mt, dups, cols=2)
+
+#### Plots for symbioSys
+lib1 = ggplot(data=dat, aes(x=Assay, y=EstimatedLibSize, fill = factor(Library))) +
+    geom_dotplot(binaxis = "y", stackdir = "center") +
+    scale_fill_manual(values=c("blue", "red"), name="Cell number",
+                      breaks=c("Single-cell", "Bulk"), labels=c("Single-cell", "Bulk")) +
+    ggtitle("") + xlab("") + ylab("Estimated library size (e5)") +
+    theme_bw(base_size=28) + theme(text = element_text(size=28))
+lib1
