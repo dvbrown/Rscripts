@@ -17,6 +17,7 @@ correlation = ggplot(data=mungedData, aes(x=Cp.y, y=Cp.x, color=gene.x)) +
   geom_point(shape=19) + geom_smooth(method=lm, colour='red') +
   xlab("Replicate 1") + ylab("Replicate 2") + # Set axis labels
   ggtitle("Correlation of technical replicates") +  # Set title
+  geom_hline(yintercept=13, colour = "green") + # Set a vertical line
   theme_bw(base_size=18)
 
 #### Plot a histogram
