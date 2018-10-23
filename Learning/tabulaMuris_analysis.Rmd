@@ -1,0 +1,35 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Try to analyse tabula muris data
+Read it in first
+```{r}
+require("Matrix")
+library(DropletUtils)
+library(scater)
+library(scran)
+library(EnsDb.Mmusculus.v79)
+setwd("/Volumes/SlowDrive/NGSdata/tenX_genomics/tabulaMuris/")
+sce = readRDS("marrow_droplet.rds")
+sce
+```
+
+I don't need to convert the gene names here as it is already done.
+Get the mitochondrial gene location. Be careful of geneID vs gene symbol. Here I immediately get symbol
+```{r}
+location <- mapIds(EnsDb.Mmusculus.v79, keys=row.names(sce), 
+                   column="SEQNAME", keytype="SYMBOL")
+rowData(sce)$CHR <- location
+summary(location=="MT")
+```
+I guess the mitochondrial genes were removed.
+Separate the cell drops from the empty drops
+```{r}
+bcrank <- barcodeRanks(counts(sce))
+# Only showing unique points for plotting speed.
+uniq <- !duplicated(bcrank$rank)
+plot(bcrank$rank[uniq], bcrank$total[uniq], log="xy",
+     xlab="Rank", ylab="Total UMI count", cex.lab=1.2)
+```
