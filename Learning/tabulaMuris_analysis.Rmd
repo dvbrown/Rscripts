@@ -71,6 +71,95 @@ ave <- calcAverage(sce)
 rowData(sce)$AveCount <- ave
 par(mfrow=c(1,1))
 hist(log10(ave), col="grey80")
-plotHighestExprs(sce)
+#plotHighestExprs(sce)
+```
+The average expression of many genes appears to be less than 1. Is this typical of scRNA-seq or is this a problem with the data?
+Lets continue with normalisation
+```{r}
+# Perform preclustering before normalisation to avoid grouping cells that are too different together in the normalisation
+clusters <- quickCluster(sce, method="igraph", min.mean=0.1,
+        irlba.args=list(maxit=1000)) # for convergence.
+table(clusters)
+sce <- computeSumFactors(sce, min.mean=0.1, cluster=clusters)
+summary(sizeFactors(sce))
+
+# Look at the correlation between library size and the scaling factor used in normalisation
+plot(sce$total_counts, sizeFactors(sce), log="xy")
+sce <- normalize(sce)
+
+#### Modelling the mean-variance trend ####
+# Fit a trend on technical noise using a poisson distribution
+new.trend <- makeTechTrend(x=sce)
+
+fit <- trendVar(sce, use.spikes=FALSE, loess.args=list(span=0.05))
+plot(fit$mean, fit$var, pch=16)
+curve(fit$trend(x), col="dodgerblue", add=TRUE)
+curve(new.trend(x), col="red", add=TRUE)
+
+# We decompose the variance for each gene using the Poisson-based trend
+# examine the genes with the highest biological components.
+fit0 <- fit
+fit$trend <- new.trend
+dec <- decomposeVar(fit=fit)
+top.dec <- dec[order(dec$bio, decreasing=TRUE),] 
+head(top.dec)
+
+# Plot genes with highest biological variation
+plotExpression(sce, features=rownames(top.dec)[1:10])
+```
+The are 2 patterns of variable genes. All or nothing like Hbb-b2 or multimodal like s100a8
+Lets do some dimension reduction
+For some reason I am always getting an error that the chunk files can't be found. By setting cache to false the plots are produced.
+```{r, cache=FALSE}
+sce <- denoisePCA(sce, technical=new.trend, approx=TRUE)
+ncol(reducedDim(sce, "PCA"))
+
+plot(attr(reducedDim(sce), "percentVar"), xlab="PC",
+     ylab="Proportion of variance explained")
+abline(v=ncol(reducedDim(sce, "PCA")), lty=2, col="red")
+```
+Plot the PCA representation
+```{r, cache=FALSE}
+plotPCA(sce, ncomponents=3, colour_by="log10_total_features_by_counts")
+```
+There is some structure in the data especially in dimension 1
+```{r}
+# DO a t-SNE on the PCA reduced spaceq()
+sce <- runTSNE(sce, use_dimred="PCA", perplexity=30, rand_seed=100)
+plotTSNE(sce, colour_by="log10_total_features_by_counts")
+```
+t-SNE looks OK lets try UMAP
+```{r}
+set.seed(100)
+sce = runUMAP(sce, ncomponents = 2, scale_features = TRUE, use_dimred = "PCA", n_dimred = 10)
+plotUMAP(sce, colour_by="log10_total_features_by_counts")
+```
+UMAP does indeed look nicer.
+Lets do some clustering
+```{r}
+snn.gr <- buildSNNGraph(sce, use.dimred="PCA")
+clusters <- igraph::cluster_walktrap(snn.gr)
+sce$Cluster <- factor(clusters$membership)
+table(sce$Cluster)
+
+cluster.mod <- clusterModularity(snn.gr, sce$Cluster, get.values=TRUE)
+log.ratio <- log2(cluster.mod$observed/cluster.mod$expected + 1)
+```
+
+```{r}
+library(pheatmap)
+pheatmap(log.ratio, cluster_rows=FALSE, cluster_cols=FALSE, 
+         color=colorRampPalette(c("white", "blue"))(100))
+plotUMAP(sce, colour_by="Cluster")
+```
+```{r}
+markers <- findMarkers(sce, clusters=sce$Cluster, direction="up")
+marker.set <- markers[["2"]]
+head(marker.set[,1:8], 10) # only first 8 columns, for brevity
+
+chosen <- rownames(marker.set)[marker.set$Top <= 10]
+plotHeatmap(sce, features=chosen, exprs_values="logcounts", 
+            zlim=5, center=TRUE, symmetric=TRUE, cluster_cols=FALSE,
+            colour_columns_by="Cluster", columns=order(sce$Cluster))
 ```
 
