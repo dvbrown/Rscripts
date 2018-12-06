@@ -2,8 +2,8 @@ require("Matrix")
 setwd("/Volumes/SlowDrive/NGSdata/tenX_genomics/tabulaMuris/archive/")
 
 cellbarcodes <- read.table("droplet/Marrow-10X_P7_2/barcodes.tsv")
-genenames <- read.table("droplet/Marrow-10X_P7_2//genes.tsv")
-molecules <- Matrix::readMM("droplet/Marrow-10X_P7_2//matrix.mtx")
+genenames <- read.table("droplet/Marrow-10X_P7_2/genes.tsv")
+molecules <- Matrix::readMM("droplet/Marrow-10X_P7_2/matrix.mtx")
 
 # The cell barcodes are all barcodes and there will be duplicates in other datasets
 # Attach the run name
