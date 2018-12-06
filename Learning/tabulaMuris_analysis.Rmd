@@ -11,7 +11,8 @@ library(DropletUtils)
 library(scater)
 library(scran)
 library(EnsDb.Mmusculus.v79)
-setwd("/Volumes/SlowDrive/NGSdata/tenX_genomics/tabulaMuris/")
+#setwd("/Volumes/SlowDrive/NGSdata/tenX_genomics/tabulaMuris/")
+setwd("/Users/brown.d/Data/scRNA_seq/")
 sce = readRDS("marrow_droplet.rds")
 sce
 ```
@@ -32,4 +33,44 @@ bcrank <- barcodeRanks(counts(sce))
 uniq <- !duplicated(bcrank$rank)
 plot(bcrank$rank[uniq], bcrank$total[uniq], log="xy",
      xlab="Rank", ylab="Total UMI count", cex.lab=1.2)
+abline(h=bcrank$inflection, col="darkgreen", lty=2)
+abline(h=bcrank$knee, col="dodgerblue", lty=2)
+
+legend("bottomleft", legend=c("Inflection", "Knee"), 
+       col=c("darkgreen", "dodgerblue"), lty=2, cex=1.2)
+
+# Set the empty drop threshold to 100 then perform a statistical test (FDR 0.01) to call cell drops from the empties
+set.seed(100) # Monte Carlo test is used therefore set seed
+e.out <- emptyDrops(counts(sce), lower = 100)
+sum(e.out$FDR <= 0.01, na.rm=TRUE)
+sum(e.out$FDR >= 0.01, na.rm=TRUE)
+# The number of empty drops is printed
+
+table(Sig=e.out$FDR <= 0.01, Limited=e.out$Limited)
+# Limited: = Logical, indicating whether a lower p-value could be obtained by increasing npts.
+
+# Subset the single cell experiment so it only contains cells
+sce <- sce[,which(e.out$FDR <= 0.01)]
 ```
+There are just over 3 thousand cells in the experiment
+Now we do some quality control on the cells
+```{r}
+#### Quality control on the cells ####
+# This is a very relaxed filter, Aaron recommends going back and forth from clustering to make QC tighter
+sce <- calculateQCMetrics(sce, feature_controls=list(Mito=which(location=="MT")))
+par(mfrow=c(2,1))
+hist(sce$total_counts, breaks=20, col="grey80",
+     xlab="Log-total UMI count")
+hist(sce$total_features_by_counts, breaks=20, col="grey80",
+     xlab="Log-total number of expressed features")
+```
+The number of genes per cell at just overr 2000 seems normal for a scRNA-seq experiment
+Lets look at highly expressed genes
+```{r}
+ave <- calcAverage(sce)
+rowData(sce)$AveCount <- ave
+par(mfrow=c(1,1))
+hist(log10(ave), col="grey80")
+plotHighestExprs(sce)
+```
+
