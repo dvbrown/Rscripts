@@ -3,7 +3,8 @@ library(scater)
 library(scran)
 library(EnsDb.Hsapiens.v86)
 
-fname <- "/Volumes/SlowDrive/NGSdata/tenX_genomics/filtered_gene_bc_matrices/hg19/"
+#fname <- "/Volumes/SlowDrive/NGSdata/tenX_genomics/filtered_gene_bc_matrices/hg19/"
+fname = "~/Data/scRNA_seq/"
 sce <- read10xCounts(fname, col.names=TRUE)
 sce
 
