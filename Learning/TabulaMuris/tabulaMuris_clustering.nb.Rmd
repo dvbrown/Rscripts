@@ -63,12 +63,23 @@ keep_feature <- rowSums(counts(sce) > 0) > 0
 sce <- sce[keep_feature, ]
 ```
 FIrst we need to define the genes used in the ordering.
-I will try use all genes as a toy example
+Monacle is too slow so I will furthwer reduce to the top 100 highly variable genes
 ```{r}
 rowData(sce)$gene_short_name = row.names(sce)
-mon = convertTo(sce, type="monocle",row.fields=c(1,4,5,6,11), 
-                col.fields=c(1,2,5))
+sceSmall = sce
+new.trend <- makeTechTrend(x=sce)
+fit <- trendVar(sce, use.spikes=FALSE, loess.args=list(span=0.05))
+fit0 <- fit
+fit$trend <- new.trend
+dec <- decomposeVar(fit=fit)
+top.dec <- dec[order(dec$bio, decreasing=TRUE),] 
+sceSmall = sceSmall[row.names(top.dec)[1:200],]
+sceSmall
+
+mon = convertTo(sceSmall, type="monocle",row.fields=c(1,4,5,6,11), 
+                col.fields=c(1,2,5), expressionFamily=negbinomial.size())
 mon <- estimateDispersions(mon)
+HSMM_marrow <- estimateSizeFactors(HSMM)
 HSMM_marrow <- setOrderingFilter(mon, row.names(sce))
 plot_ordering_genes(HSMM_marrow)
 ```
