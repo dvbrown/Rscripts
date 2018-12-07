@@ -20,9 +20,10 @@ library(DropletUtils)
 library(scater)
 library(scran)
 library(SC3)
+library(monacle)
 library(EnsDb.Mmusculus.v79)
 #setwd("/Volumes/SlowDrive/NGSdata/tenX_genomics/tabulaMuris/")
-sce <- readRDS(here("data", "tabula", "tabularMuris_withMarkers.rds"))
+sce <- readRDS(here("data", "tabularMuris_withMarkers.rds"))
 sce
 knitr::opts_chunk$set(fig.path = "../plots/")
 ```
@@ -49,8 +50,32 @@ SC3 estimates 24 which I think is close to what SNN graph based clustering ID'd.
 rowData(sce)$feature_symbol = row.names(sce)
 sce <- sc3(sce, ks = 24, biology = TRUE, rand_seed = 10)
 ```
-The rrun time therre was very long. Look at the summary plots
+The run time therre was very long. Look at the summary plots
 ```{r}
 sc3_plot_consensus(sce, k = 24, show_pdata = "type")
+```
+# Psudotime ordering
+
+Monocle directly builds a minimum spanning tree on a reduced dimension representation of the cells to connect all cells. Monocle then identifies the longest path in this tree to determine pseudotime.
+Unfortunately, Monocle does not work when all the genes are used, so we must carry out feature selection. First, we genes without counts in any cell.
+```{r}
+keep_feature <- rowSums(counts(sce) > 0) > 0
+sce <- sce[keep_feature, ]
+```
+FIrst we need to define the genes used in the ordering.
+I will try use all genes as a toy example
+```{r}
+rowData(sce)$gene_short_name = row.names(sce)
+mon = convertTo(sce, type="monocle",row.fields=c(1,4,5,6,11), 
+                col.fields=c(1,2,5))
+mon <- estimateDispersions(mon)
+HSMM_marrow <- setOrderingFilter(mon, row.names(sce))
+plot_ordering_genes(HSMM_marrow)
+```
+I think the zeros in the data caused a problem for the dispersion estimate
+```{r}
+mon <- reduceDimension(mon, pseudo_expr = 1)
+mon <- orderCells(mon, reverse = FALSE)
+plot_cell_trajectory(mon)
 ```
 
