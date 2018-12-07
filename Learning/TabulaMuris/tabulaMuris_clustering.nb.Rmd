@@ -1,0 +1,58 @@
+---
+title: "Tabula muris clustering and pseduotime"
+description: |
+  I did the Aaron Lun pipeline for this 10x data but now I want to go a bit more off the beaten path
+author:
+  - name: Daniel Brown
+date: "`r Sys.Date()`"
+output: 
+  radix::radix_article:
+    toc: true
+    toc_depth: 3
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup}
+require("Matrix")
+library(DropletUtils)
+library(scater)
+library(scran)
+library(SC3)
+library(EnsDb.Mmusculus.v79)
+#setwd("/Volumes/SlowDrive/NGSdata/tenX_genomics/tabulaMuris/")
+setwd("/Users/brown.d/Data/scRNA_seq/")
+sce = readRDS("tabularMuris_withMarkers.rds")
+sce
+
+knitr::opts_chunk$set(fig.path = "~/Data/scRNA_seq/")
+```
+I notice there are cell labels stored in the orginal dataset lets look clusterings on cell type
+```{r}
+par(mfrow=c(1,2))
+plotPCA(sce, ncomponents=2, colour_by="type")
+plotUMAP(sce, colour_by="type")
+plotTSNE(sce, colour_by="type")
+```
+
+
+Let’s run SC3 clustering on the Tabula Muris data. The advantage of the SC3 is that it can directly ingest a SingleCellExperiment object.
+# SC3
+## Estimation
+```{r}
+sce <- sc3_estimate_k(sce)
+metadata(sce)$sc3$k_estimation
+```
+SC3 estimates 24 which I think is close to what SNN graph based clustering ID'd.
+## Now the full SC3 classification
+```{r}
+# Got to write the gene names to a different slot
+rowData(sce)$feature_symbol = row.names(sce)
+sce <- sc3(sce, ks = 24, biology = TRUE, rand_seed = 10)
+```
+The rrun time therre was very long. Look at the summary plots
+```{r}
+sc3_plot_consensus(sce, k = 24, show_pdata = "type")
+
+```
+
