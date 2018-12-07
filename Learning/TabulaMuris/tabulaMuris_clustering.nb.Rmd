@@ -15,17 +15,16 @@ editor_options:
 
 ```{r setup}
 require("Matrix")
+library(here)
 library(DropletUtils)
 library(scater)
 library(scran)
 library(SC3)
 library(EnsDb.Mmusculus.v79)
 #setwd("/Volumes/SlowDrive/NGSdata/tenX_genomics/tabulaMuris/")
-setwd("/Users/brown.d/Data/scRNA_seq/")
-sce = readRDS("tabularMuris_withMarkers.rds")
+sce <- readRDS(here("data", "tabula", "tabularMuris_withMarkers.rds"))
 sce
-
-knitr::opts_chunk$set(fig.path = "~/Data/scRNA_seq/")
+knitr::opts_chunk$set(fig.path = "../plots/")
 ```
 I notice there are cell labels stored in the orginal dataset lets look clusterings on cell type
 ```{r}
@@ -53,6 +52,5 @@ sce <- sc3(sce, ks = 24, biology = TRUE, rand_seed = 10)
 The rrun time therre was very long. Look at the summary plots
 ```{r}
 sc3_plot_consensus(sce, k = 24, show_pdata = "type")
-
 ```
 
