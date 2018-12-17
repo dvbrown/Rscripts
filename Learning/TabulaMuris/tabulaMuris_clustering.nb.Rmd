@@ -20,7 +20,7 @@ library(DropletUtils)
 library(scater)
 library(scran)
 library(SC3)
-library(monacle)
+library(monocle)
 library(EnsDb.Mmusculus.v79)
 #setwd("/Volumes/SlowDrive/NGSdata/tenX_genomics/tabulaMuris/")
 sce <- readRDS(here("data", "tabularMuris_withMarkers.rds"))
@@ -40,8 +40,8 @@ Let’s run SC3 clustering on the Tabula Muris data. The advantage of the SC3 is
 # SC3
 ## Estimation
 ```{r}
-sce <- sc3_estimate_k(sce)
-metadata(sce)$sc3$k_estimation
+#sce <- sc3_estimate_k(sce)
+#metadata(sce)$sc3$k_estimation
 ```
 SC3 estimates 24 which I think is close to what SNN graph based clustering ID'd.
 ## Now the full SC3 classification
@@ -63,23 +63,26 @@ keep_feature <- rowSums(counts(sce) > 0) > 0
 sce <- sce[keep_feature, ]
 ```
 FIrst we need to define the genes used in the ordering.
-Monacle is too slow so I will furthwer reduce to the top 100 highly variable genes
+Monacle is too slow so I will furthwer reduce to the top 200 highly variable genes
 ```{r}
+# Attach the gene names to a slot in row data otherwise monacle datastructure complains
 rowData(sce)$gene_short_name = row.names(sce)
 sceSmall = sce
+# Get the highly variable genes
 new.trend <- makeTechTrend(x=sce)
 fit <- trendVar(sce, use.spikes=FALSE, loess.args=list(span=0.05))
 fit0 <- fit
 fit$trend <- new.trend
 dec <- decomposeVar(fit=fit)
 top.dec <- dec[order(dec$bio, decreasing=TRUE),] 
+# subset the data for top 200 variable genes
 sceSmall = sceSmall[row.names(top.dec)[1:200],]
 sceSmall
-
+# Convert to monacle datastructure
 mon = convertTo(sceSmall, type="monocle",row.fields=c(1,4,5,6,11), 
                 col.fields=c(1,2,5), expressionFamily=negbinomial.size())
 mon <- estimateDispersions(mon)
-HSMM_marrow <- estimateSizeFactors(HSMM)
+HSMM_marrow <- estimateSizeFactors(mon)
 HSMM_marrow <- setOrderingFilter(mon, row.names(sce))
 plot_ordering_genes(HSMM_marrow)
 ```
@@ -87,6 +90,22 @@ I think the zeros in the data caused a problem for the dispersion estimate
 ```{r}
 mon <- reduceDimension(mon, pseudo_expr = 1)
 mon <- orderCells(mon, reverse = FALSE)
-plot_cell_trajectory(mon)
+par(mfrow=c(1,2))
+plot_cell_trajectory(mon, color_by = "type")
+plot_cell_trajectory(mon, color_by = "type") +
+    facet_wrap(~type, nrow = 1)
+```
+# Genes that change as a function of psuedotime
+```{r}
+# to_be_tested <- row.names(subset(fData(mon),
+#   gene_short_name %in% c("Ftl1", "Vim", "Cd24a", "CD45")))
+
+to_be_tested <- row.names(subset(fData(mon), %in% c("Ftl1", "Vim", "Cd24a", "CD45")))
+
+cds_subset <- mon[to_be_tested,]
+diff_test_res <- differentialGeneTest(cds_subset,
+fullModelFormulaStr = "~sm.ns(Pseudotime)")
+diff_test_res[,c("gene_short_name", "pval", "qval")]
+plot_genes_in_pseudotime(cds_subset, color_by = "type")
 ```
 
