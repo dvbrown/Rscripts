@@ -1,0 +1,80 @@
+---
+title: "scPipe tutorial"
+description: |
+  I'm gonna try learn scPipe
+author:
+  - name: Daniel Brown
+    affiliation: WEHI SCORE
+    affiliation_url: https://wehi.edu.au
+date: "`r Sys.Date()`"
+output: 
+  radix::radix_article:
+    toc: true
+    toc_depth: 3
+editor_options: 
+  chunk_output_type: console
+# bibliography: ref.bib
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(scPipe)
+library(SingleCellExperiment)
+data_dir = tempdir()
+```
+
+Find the files which act as input
+```{r}
+ERCCfa_fn = system.file("extdata", "ERCC92.fa", package = "scPipe")
+ERCCanno_fn = system.file("extdata", "ERCC92_anno.gff3", package = "scPipe")
+barcode_annotation_fn = system.file("extdata", "barcode_anno.csv", package = "scPipe")
+```
+
+The input fastqs
+```{r}
+fq_R1 = system.file("extdata", "simu_R1.fastq.gz", package = "scPipe")
+fq_R2 = system.file("extdata", "simu_R2.fastq.gz", package = "scPipe")
+```
+
+Move the cell barcode and UMI to the read name combine fastqs
+```{r}
+sc_trim_barcode(file.path(data_dir, "combined.fastq.gz"),
+                fq_R1,
+                fq_R2,
+                read_structure = list(bs1=-1, bl1=0, bs2=6, bl2=8, us=0, ul=6))
+```
+Perform the alignment
+```{r}
+if(.Platform$OS.type != "windows"){
+  Rsubread::buildindex(basename=file.path(data_dir, "ERCC_index"), reference=ERCCfa_fn)
+
+  Rsubread::align(index=file.path(data_dir, "ERCC_index"),
+      readfile1=file.path(data_dir, "combined.fastq.gz"),
+      output_file=file.path(data_dir, "out.aln.bam"), phredOffset=64)
+}
+```
+Assign reads to exons
+```{r}
+if(.Platform$OS.type != "windows"){
+  sc_exon_mapping(file.path(data_dir, "out.aln.bam"),
+                file.path(data_dir, "out.map.bam"),
+                ERCCanno_fn)
+}
+```
+Demultiplexing and counting genes
+```{r}
+if(.Platform$OS.type != "windows"){
+  sc_demultiplex(file.path(data_dir, "out.map.bam"), data_dir, barcode_annotation_fn,has_UMI=FALSE)
+
+  sc_gene_counting(data_dir, barcode_annotation_fn)
+}
+```
+
+Create the single-cell experiment object
+```{r}
+if(.Platform$OS.type != "windows"){
+sce = create_sce_by_dir(data_dir)
+dim(sce)
+}
+```
+
