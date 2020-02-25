@@ -27,6 +27,14 @@ p <- ggplot(df, aes(factor(category), dataPoints)) +
   theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=20))
 p
 
+#### Plot a violin which is nicer than dotplot
+p5 <- ggplot(dfLong_filter, aes(x=hashtag, y=log2(value+1), colour = factor(experiment))) +
+  geom_violin() + geom_jitter(height = 0, width = 0.2) +
+  ggtitle("Log hashtag counts") +
+  xlab("hashtag") + ylab("log2 counts") +
+  theme_bw(base_size=20) + theme(axis.text.x = element_text(angle = 90, hjust = 1))
+p5
+
 #### Make a dot plot vertical stacking of multiple groups
 p1 <- ggplot(df, aes(factor(chr), counts, fill = factor(groups), label = factor(treatment))) +
     geom_dotplot(binaxis = "y", stackdir = "center", position = "dodge") +
@@ -37,6 +45,14 @@ p1 <- ggplot(df, aes(factor(chr), counts, fill = factor(groups), label = factor(
     theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=16))
 p1
 
+#### Make a stacked barchart ####
+
+plt5 <- ggplot(stats.pbmc) +
+  geom_bar(aes(y=P, x= plate, fill=type), data=stats.pbmc, stat="identity") +
+  ggtitle("") +
+  xlab("Plate") + ylab("Percent reads") + 
+  theme_bw(base_size=16) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) + theme(text = element_text(size=22))
+plt5
 
 #### Plot some metric generated from 96 well plate into a 96 well matrix ####
 
