@@ -28,6 +28,7 @@ knitr::opts_chunk$set(fig.width=8, fig.asp=0.618,
 library(here)
 library(tidyverse)
 library(scater)
+library(scran)
 library(DT)
 ```
 
@@ -42,47 +43,29 @@ chromosome <- rowData(sce)$chromosome
 is.mito <- which(chromosome=="MT")
 ```
 
-## Calculate quality control
+# Variance of the log-counts
 
 ```{r}
-sce <- addPerCellQC(sce, 
-  subsets=list(Mito=is.mito))
-
-sce <- addPerFeatureQC(sce)
+dec. <- modelGeneVar(sce.)
+chosen <- getTopHVGs(dec., prop=0.1)
+str(chosen)
 ```
 
-# Visualise QC metrics
-```{r colData}
-plotColData(sce, x="plate", y="detected")
-
-plotColData(sce, x="plate", y="detected") +
-    scale_y_log10()  + 
-    facet_wrap(~phenotype)
+```{r fit}
+fit <- metadata()
+plot(fit.$mean, fit.$var, 
+  xlab="Mean of log-expression",
+  ylab="Variance of log-expression")
+curve(fit.$trend(x), col="dodgerblue",
+  add=TRUE, lwd=2)
 ```
 
-# Remove low quality cells by adaptive threshold
-```{r}
-qc.lib <- isOutlier(sce$sum, log=TRUE, type="lower")
-qc.nexprs <- isOutlier(sce$detected, log=TRUE,
-  type="lower")
-qc.spike <- isOutlier(sce$altexps_ERCC_percent,
-  type="higher")
-qc.mito <- isOutlier(sce$subsets_Mito_percent,
-  type="higher")
-discard <- qc.lib | qc.nexprs | qc.spike | qc.mito
-```
-
-# Summarize the number of cells removed for each reason.
-
-`r attr(qc.lib, "thresholds")`  
-`r attr(qc.nexprs, "thresholds")`  
+# Ordering by largest 'biological' variation 
+Identify most interesting genes
 
 ```{r}
-DataFrame(LibSize=sum(qc.lib), NExprs=sum(qc.nexprs),
-  SpikeProp=sum(qc.spike), MitoProp=sum(qc.mito),
-  Total=sum(discard))
+dec.[order(dec.$bio, decreasing=TRUE),]
 ```
-
 
 # Cleanup
 ```{r}

@@ -47,6 +47,14 @@ sce <- SingleCellExperiment(
   )
 ```
 
+## Move ERCC to altexp slot
+
+```{r}
+is.spike <- grepl("^ERCC-", rownames(sce))
+sce <- splitAltExps(sce, ifelse(is.spike, "ERCC", "gene"))
+altExpNames(sce)
+```
+
 # Get chromosome names
 ```{r}
 ah <- AnnotationHub()
@@ -59,14 +67,16 @@ chromosome <- mapIds(ensdb, keys=rownames(sce),
 rowData(sce)$chromosome <- chromosome
 ```
 
-## Move ERCC to altexp slot
-
+# Convert Ensembl gene ID to symbol
 ```{r}
-is.spike <- grepl("^ERCC-", rownames(sce))
-sce <- splitAltExps(sce, ifelse(is.spike, "ERCC", "gene"))
-altExpNames(sce)
+rowData(sce)$ENSEMBL <- rownames(sce)
+rowData(sce)$SYMBOL <- mapIds(ensdb, 
+  keys=rownames(sce),
+  keytype="GENEID", column="SYMBOL")
+library(scater)
+rownames(sce) <- uniquifyFeatureNames(rowData(sce)$ENSEMBL, 
+  rowData(sce)$SYMBOL)
 ```
-
 
 # Cleanup
 ```{r}
