@@ -1,0 +1,144 @@
+---
+title: "Multi-sample comparisons"
+author: "D_Brown"
+date: "25/02/2020"
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data import
+```{r}
+library(MouseGastrulationData)
+sce.chimera <- WTChimeraData(samples=5:10)
+```
+
+# Feature-annotation
+
+```{r}
+library(scater)
+rownames(sce.chimera) <- uniquifyFeatureNames(
+    rowData(sce.chimera)$ENSEMBL, rowData(sce.chimera)$SYMBOL)
+```
+
+# quality-control
+already performed by authors
+
+```{r}
+# We also remove cells labelled as stripped nuclei or doublets
+drop <- sce.chimera$celltype.mapped %in% c("stripped", "Doublet")
+sce.chimera <- sce.chimera[,!drop]
+```
+
+# normalization
+using pre-computed size factors.
+
+```{r}
+sce.chimera <- logNormCounts(sce.chimera)
+```
+
+# variance-modelling
+Retaining all genes with a positive biological component, to  preserve as much signal as possible in a very heterogeneous dataset.
+
+```{r}
+library(scran)
+dec.chimera <- modelGeneVar(sce.chimera, block=sce.chimera$sample)
+chosen.hvgs <- dec.chimera$bio > 0
+```
+
+# merging
+hierarchical merge, first merge together reps with the # same genotype, then merge samples across different genotypes.
+
+```{r}
+library(batchelor)
+set.seed(01001001)
+merged <- correctExperiments(sce.chimera,
+  batch=sce.chimera$sample,
+  subset.row=chosen.hvgs,
+  PARAM=FastMnnParam(
+    merge.order=list(
+      list(1,3,5), # WT (3 replicates)
+      list(2,4,6)  # td-Tomato (3 replicates)
+    )
+  )
+)
+```
+
+# clustering
+
+```{r}
+g <- buildSNNGraph(merged, use.dimred="corrected")
+clusters <- igraph::cluster_louvain(g)
+merged$cluster <- factor(clusters$membership)
+```
+
+# dimensionality-reduction
+Using an external algorithm to compute nearest  neighbors for greater speed.  
+
+```{r}
+merged <- runTSNE(merged, dimred="corrected",
+  external_neighbors=TRUE)
+merged <- runUMAP(merged, dimred="corrected",
+  external_neighbors=TRUE)
+
+plotReducedDim(merged, colour_by = "celltype.mapped", dimred = "UMAP")
+```
+
+# Differential abundance
+```{r}
+abundances <- table(merged$celltype.mapped, merged$sample)
+abundances <- unclass(abundances)
+```
+
+## Attaching some column metadata
+```{r}
+extra.info <- colData(merged)[match(
+  colnames(abundances), merged$sample),]
+y.ab <- DGEList(abundances, samples=extra.info)
+```
+
+## Filter out low-abundance labels
+```{r}
+keep <- filterByExpr(y.ab, group=y.ab$samples$tomato)
+y.ab <- y.ab[keep,]
+```
+
+# Construct design matrix,
+Blocking on pool and  including term for td-Tomato-status
+
+```{r}
+design <- model.matrix(
+  ~0 + factor(pool) + factor(tomato),
+  y.ab$samples)
+# Tidy up design matrix column names
+colnames(design) <- gsub(
+  "factor|\\(|\\)|TRUE", "", colnames(design))
+```
+
+## Estimate and plot the negative binomial dispersions
+
+```{r}
+y.ab <- estimateDisp(y.ab, design, trend="none")
+plotBCV(y.ab, cex=1)
+
+# Estimate and plot the quasi-likelihood dispersions
+fit.ab <- glmQLFit(y.ab, design, robust=TRUE,
+  abundance.trend=FALSE)
+plotQLDisp(fit.ab, cex=1)
+```
+
+# Test for DA due to td-Tomato-status
+```{r}
+res <- glmQLFTest(fit.ab, coef="tomato")
+# Summarise the results
+summary(decideTests(res))
+
+# View the top DE genes
+datatable(as.data.frame(
+  topTags(res)
+  ))
+```

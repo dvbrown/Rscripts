@@ -1,0 +1,215 @@
+---
+title: "Data Integration"
+author: "D_Brown"
+date: "25/02/2020"
+output: html_document
+editor_options:
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data import
+
+
+```{r}
+library(TENxPBMCData)
+all.sce <- list(
+  pbmc3k=TENxPBMCData("pbmc3k"),
+  pbmc4k=TENxPBMCData("pbmc4k"))
+```
+
+# Quality Control
+```{r}
+library(scater)
+stats <- high.mito <- list()
+
+for (n in names(all.sce)) {
+  current <- all.sce[[n]]
+  is.mito <- grep("MT", rowData(current)$Symbol_TENx)
+  stats[[n]] <- perCellQCMetrics(current,
+    subsets=list(Mito=is.mito))
+  high.mito[[n]] <- isOutlier(stats[[n]]$subsets_Mito_percent,
+    type="higher")
+  all.sce[[n]] <- current[,!high.mito[[n]]]
+}
+```
+
+# Normalisation
+```{r}
+all.sce <- lapply(all.sce, logNormCounts)
+
+library(scran)
+all.dec <- lapply(all.sce, modelGeneVar)
+all.hvgs <- lapply(all.dec, getTopHVGs, prop=0.1)
+```
+
+# Dimensionality-reduction
+```{r}
+library(BiocSingular)
+set.seed(10000)
+all.sce <- mapply(FUN=runPCA, x=all.sce,
+  subset_row=all.hvgs,
+  MoreArgs=list(ncomponents=25, BSPARAM=RandomParam()),
+  SIMPLIFY=FALSE)
+
+set.seed(100000)
+all.sce <- lapply(all.sce, runTSNE, dimred="PCA")
+set.seed(1000000)
+all.sce <- lapply(all.sce, runUMAP, dimred="PCA")
+```
+
+# Clustering
+```{r}
+for (n in names(all.sce)) {
+    g <- buildSNNGraph(all.sce[[n]], k=10, use.dimred="PCA")
+    clust <- igraph::cluster_walktrap(g)$membership
+    all.sce[[n]]$cluster <- factor(clust)
+}
+```
+
+```{r}
+pbmc3k <- all.sce$pbmc3k
+dec3k <- all.dec$pbmc3k
+
+pbmc4k <- all.sce$pbmc4k
+dec4k <- all.dec$pbmc4k
+```
+
+## Subset all data to a common 'universe' of features
+
+```{r}
+universe <- intersect(rownames(pbmc3k), rownames(pbmc4k))
+
+# Subsetting the SingleCellExperiment object
+pbmc3k <- pbmc3k[universe,]
+pbmc4k <- pbmc4k[universe,]
+
+# Also subsetting the variance modelling results
+dec3k <- dec3k[universe,]
+dec4k <- dec4k[universe,]
+```
+
+Rescale to adjust for differences in sequencing depth in batches
+
+```{r}
+library(batchelor)
+rescaled <- multiBatchNorm(pbmc3k, pbmc4k)
+pbmc3k <- rescaled[[1]]
+pbmc4k <- rescaled[[2]]
+```
+
+Average the variance components across batches
+Choose those genes with positive Biological variation (2nd line)
+
+```{r}
+library(scran)
+combined.dec <- combineVar(dec3k, dec4k)
+chosen.hvgs <- combined.dec$bio > 0
+```
+
+# Diagnosing batch effects
+Synchronizing the metadata before combining.  
+'Uncorrected' is the combined single-cell experiment object.  
+
+```{r}
+rowData(pbmc3k) <- rowData(pbmc4k)
+pbmc3k$batch <- "3k"
+pbmc4k$batch <- "4k"
+uncorrected <- cbind(pbmc3k, pbmc4k)
+```
+
+## Perform PCA on the log-expression values for all genes
+With a positive (average) biological component.  
+
+```{r}
+library(scater)
+set.seed(0010101010)
+uncorrected <- runPCA(uncorrected, subset_row=chosen.hvgs)
+```
+
+Do a cluster analysis.  
+
+```{r}
+library(scran)
+snn.gr <- buildSNNGraph(uncorrected, use.dimred="PCA")
+clusters <- igraph::cluster_walktrap(snn.gr)$membership
+tab <- table(Cluster=clusters, Batch=uncorrected$batch)
+
+set.seed(1111001)
+uncorrected <- runTSNE(uncorrected, dimred="PCA")
+plt1 <- plotTSNE(uncorrected, colour_by="batch")  +
+  ggtitle("Before correction") +
+  theme_bw(base_size = 22)
+plt1
+```
+
+# Linear Regression
+Batchelor::rescaleBatches() is roughly equivalent to applying linear regression to the log-expression values per gene with some clever tricks to improve performance and efficiency (e.g., it will preserve sparsity in the input matrix)
+
+```{r}
+library(batchelor)
+rescaled <- rescaleBatches(pbmc3k, pbmc4k)
+```
+
+## PCA on corrected matrix
+
+```{r}
+set.seed(1010101010)
+rescaled <- runPCA(rescaled, subset_row=chosen.hvgs,
+  exprs_values="corrected")
+
+snn.gr <- buildSNNGraph(rescaled, use.dimred="PCA")
+clusters.resc <- igraph::cluster_walktrap(snn.gr)$membership
+tab.resc <- table(Cluster=clusters.resc,
+  Batch=rescaled$batch)
+
+rescaled <- runTSNE(rescaled, dimred="PCA")
+rescaled$batch <- factor(rescaled$batch)
+plt2 <- plotTSNE(rescaled, colour_by="batch") +
+  ggtitle("After regression correction") +
+  theme_bw(base_size = 22)
+plt2
+```
+
+```{r}
+multiplot(plt1, plt2, cols = 2)
+```
+
+# Mutual nearest neighbours (MNN)
+```{r}
+set.seed(1000101001)
+mnn.out <- fastMNN(pbmc3k, pbmc4k, d=50, k=20,
+  subset.row=chosen.hvgs,
+  BSPARAM=BiocSingular::RandomParam(deferred=TRUE))
+```
+
+Bigger values of k result in more aggressive merging, which can help if one clearly sees that the same cell types are not being adequately merged across batches.  
+
+## Correction diagnostics
+```{r}
+snn.gr <- buildSNNGraph(mnn.out, use.dimred="corrected")
+clusters.mnn <- igraph::cluster_walktrap(snn.gr)$membership
+tab.mnn <- table(Cluster=clusters.mnn, Batch=mnn.out$batch)
+datatable(tab.mnn)
+
+set.seed(0010101010)
+mnn.out <- runTSNE(mnn.out, dimred="corrected")
+mnn.out$batch <- factor(mnn.out$batch)
+plt3 <- plotTSNE(mnn.out, colour_by="batch") +
+  ggtitle("After MNN correction") +
+  theme_bw(base_size = 22)
+plt3
+```
+
+```{r}
+multiplot(plt1, plt2, plt3, cols = 3)
+```
+
+The lost percentage of variation.  `r metadata(mnn.out)$merge.info$lost.var`
+
+```{r}
+mnn.out@metadata
+```
